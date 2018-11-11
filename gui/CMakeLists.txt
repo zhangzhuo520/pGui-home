@@ -1,0 +1,7 @@
+SET(USE_QT_SQL TRUE)
+
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/library/infra/layout/oasis)
+
+ADD_SUBDIRECTORY(renderworker)
+ADD_SUBDIRECTORY(ui_widget)
+
