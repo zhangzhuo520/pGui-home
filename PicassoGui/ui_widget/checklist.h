@@ -87,7 +87,7 @@ private:
     QDialog *renameDialog;
     QLineEdit *renameEdit;
 
-    Toolbar *CheckListToolbar = NULL;
+    Toolbar *CheckListToolbar;
     QTreeView *CheckListTree;
     QStandardItemModel *CheckListModel;
     SQLManager *sqlmanager;

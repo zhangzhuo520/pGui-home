@@ -1,16 +1,17 @@
 #include "drawwidget.h"
 namespace UI {
-DrawWidget::DrawWidget(QWidget *parent) : QWidget(parent)
+DrawWidget::DrawWidget(QWidget *parent) : QWidget(parent),
+    weight(5),
+    style(1),
+    isDrawText(false),
+    checkstyle(Normal),
+    rulerIsPress(false)
 {
     setAutoFillBackground (true);
     setMouseTracking(true);
     pix = new QPixmap(size());
-    pix->fill (Qt::black);
+    pix->fill (Qt::transparent);
     setColor(Qt::white);
-    weight = 5;
-    style =  1;
-    isDrawText = false;
-    checkstyle = Normal;
 }
 
 void DrawWidget::setStyle (int s)
@@ -44,8 +45,7 @@ void DrawWidget::mousePressEvent (QMouseEvent *e)
             update();
         }
     }
-
-    if (e->button() == Qt::LeftButton)
+    else if (e->button() == Qt::LeftButton)
     {
         if (penStyle == Global::MouseStyle)
         {
@@ -53,22 +53,14 @@ void DrawWidget::mousePressEvent (QMouseEvent *e)
         }
         else if (penStyle == Global::PenStyle)
         {
-            startPos = e->pos ();
             setCursor(Qt::PointingHandCursor);
         }
         else if (penStyle == Global::RulerStyle)
         {
             setCursor(Qt::ArrowCursor);
-            if (hasMouseTracking())
-            {
-                setMouseTracking(false);
-            }
-            else
-            {
-                lineStartPoint = lineEndPoint = e->pos();
-                setMouseTracking(true);
-                update();
-            }
+            lineStartPoint = lineEndPoint = e->pos();
+            rulerIsPress = true;
+
         }
     }
      QWidget::mousePressEvent(e);
@@ -78,38 +70,42 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::RightButton)
     {
-        setMouseTracking(false);
         RubberEndPoint = e->pos();
         checkstyle = Normal;
     }
+    else if(e->button() == Qt::LeftButton)
+    {
+        lineEndPoint = e->pos();
+        rulerIsPress = false;
+    }
     setMouseTracking(true);
+    updateMouseCursor(e->pos());
     update();
     QWidget::mouseReleaseEvent(e);
 }
 
 void DrawWidget::mouseMoveEvent (QMouseEvent *e)
 {
+    qDebug() << e->type();
     if (checkstyle == RubberBand)
     {
         RubberEndPoint = e->pos();
+        drawRubberRect();
+        return;
+    }
+    else if (penStyle == Global::RulerStyle && rulerIsPress)
+    {
+        lineEndPoint = e->pos();
+        calcVertexes();
+        drawRuler();
+        signal_mouseMove(e->pos());
+        emit signal_updataDistance((lineEndPoint.x() - lineStartPoint.x())/(lineEndPoint.y() - lineStartPoint.y()) );
+        return;
     }
     else
     {
-        if (penStyle == Global::MouseStyle)
-        {
-        }
-        else if (penStyle == Global::PenStyle)
-        {
-        }
-        else if (penStyle == Global::RulerStyle)
-        {
-            lineEndPoint = e->pos();
-            calcVertexes();
-        }
+        updateMouseCursor(e->pos());
     }
-    update ();
-    signal_mouseMove(e->pos());
-    updateMouseCursor(e->pos());
     QWidget::mouseMoveEvent(e);
 }
 
@@ -118,36 +114,13 @@ void DrawWidget::paintEvent (QPaintEvent *e)
     Q_UNUSED(e);
     QPainter painter(this);
     painter.setRenderHint( QPainter::Antialiasing, true ); //Improve the quality of painting
-
-    painter.drawPixmap(QPoint(0,0), Rubbelpix);
-
-
-    if (penStyle == Global::MouseStyle)
-    {
-
-    }
-    else if (penStyle == Global::PenStyle)
-    {
-
-    }
-    else if (penStyle == Global::RulerStyle)
-    {
-
-        QPen pen;
-        pen.setStyle ((Qt::PenStyle)style);
-        pen.setWidth (weight);
-        pen.setColor (color);
-        painter.setPen(pen);
-        painter.drawLine(lineStartPoint, lineEndPoint);
-        painter.drawLine(lineEndPoint, rightArrowPoint);
-        painter.drawLine(lineEndPoint, leftArrowPoint);
-        emit signal_updataDistance((lineEndPoint.x() - lineStartPoint.x())/(lineEndPoint.y() - lineStartPoint.y()) );
-    }
     if(isDrawText)
     {
-
         isDrawText = false;
     }
+
+    painter.drawPixmap(QPoint(0,0), Rubbelpix);
+    e->accept();
 }
 
 void DrawWidget::resizeEvent (QResizeEvent *event)
@@ -155,7 +128,7 @@ void DrawWidget::resizeEvent (QResizeEvent *event)
     if (height () > pix->height () || width () > pix->width ())
     {
         QPixmap *newPix = new QPixmap(size());
-        newPix->fill (Qt::black);
+        newPix->fill (Qt::transparent);
         QPainter p(newPix);
         p.drawPixmap (QPoint(0, 0), *pix);
         pix = newPix;
@@ -179,7 +152,7 @@ void DrawWidget::calcVertexes()
 void DrawWidget::clear ()
 {
     QPixmap *clearPix = new QPixmap(size());
-    clearPix->fill (Qt::black);
+    clearPix->fill (Qt::transparent);
     pix = clearPix;
     update ();
 }
@@ -197,7 +170,7 @@ void DrawWidget::drawPoint(const QModelIndex & index)
         y = index.sibling(index.row(), 3).data().toString();
 
         QPen pen;
-        QPainer painter(pix);
+        QPainter painter(pix);
         pen.setStyle ((Qt::PenStyle)style);
         pen.setWidth (weight);
         pen.setColor (color);
@@ -206,38 +179,50 @@ void DrawWidget::drawPoint(const QModelIndex & index)
         Stringsize = "SIZE: " + Stringsize;
         painter.drawText(width() / 2, height() / 2, Stringsize);
         painter.drawText(width() / 2, height() / 2 + 20, spos);
-
-
-
         update();
 }
 
 void DrawWidget::updateMouseCursor(QPoint pos)
 {
-
     Rubbelpix = *pix;
     QPainter painter(&Rubbelpix);
     QPen pen;
-    pen.setColor(Qt::red);
+    pen.setWidth (weight);
+    pen.setColor (color);
     pen.setStyle(Qt::DashLine);
     painter.setPen(pen);
     painter.drawLine(pos.x(), 0, pos.x(), height());
     painter.drawLine(0, pos.y(), width(), pos.y());
+    update();
 }
 
 void DrawWidget::drawRubberRect()
 {
-    if (checkstyle == RubberBand)
-    {
+    Rubbelpix = *pix;
+    QPen pen;
+    pen.setColor(color);
+    pen.setWidth(weight);
+    pen.setStyle(Qt::DotLine);
 
-        QPen pen;
-        pen.setColor(color);
-        pen.setWidth(weight);
-        pen.setStyle(Qt::DotLine);
+    QPainter tempPainter(&Rubbelpix);
+    tempPainter.setPen(pen);
+    tempPainter.drawRoundRect(QRect(RubberStartPoint, RubberEndPoint), 0, 0);
+    update();
+}
 
-        QPainter tempPainter(&Rubbelpix);
-        tempPainter.setPen(pen);
-        tempPainter.drawRoundRect(QRect(RubberStartPoint, RubberEndPoint), 0, 0);
-    }
+void DrawWidget::drawRuler()
+{
+    Rubbelpix = *pix;
+    QPen pen;
+    pen.setStyle ((Qt::PenStyle)style);
+    pen.setWidth (weight);
+    pen.setColor (color);
+    QPainter tempPainter(&Rubbelpix);
+    tempPainter.setRenderHint(QPainter::Antialiasing, true);
+    tempPainter.setPen(pen);
+    tempPainter.drawLine(lineStartPoint, lineEndPoint);
+    tempPainter.drawLine(lineEndPoint, rightArrowPoint);
+    tempPainter.drawLine(lineEndPoint, leftArrowPoint);
+    update();
 }
 }

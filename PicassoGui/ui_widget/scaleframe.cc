@@ -1,5 +1,8 @@
 #include "scaleframe.h"
 #include <QPushButton>
+namespace UI
+{
+
 ScaleFrame::ScaleFrame(QWidget *parent) :
     QFrame(parent),
     ScaleUnit(16),
@@ -11,7 +14,7 @@ ScaleFrame::ScaleFrame(QWidget *parent) :
 {
 
     Hlayout = new QHBoxLayout(this);
-    Hlayout->setContentsMargins(20, 20, 0, 0);
+    Hlayout->setContentsMargins(20, 23, 0, 0);
     setMouseTracking(true);
     initImage();
     paintImage();
@@ -147,8 +150,9 @@ void ScaleFrame::resizeEvent(QResizeEvent *e)
 
 void ScaleFrame::mouseMoveEvent(QMouseEvent *e)
 {
+    qDebug() << "2222222222222222" << e->type();
     updateMouseCursor(e->pos());
     update();
 }
-
+}
 

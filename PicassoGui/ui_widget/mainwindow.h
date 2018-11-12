@@ -37,6 +37,7 @@
 #include "semimagedialog.h"
 #include "chipeditdialog.h"
 #include "scaleframe.h"
+#include "render_frame.h"
 
 namespace UI{
 
@@ -180,9 +181,11 @@ private:
 
     QStandardItemModel *layerTreeModel;
 
-    DrawWidget *paintWidget = NULL;
+    DrawWidget *paintWidget;
 
     ScaleFrame *scaleFrame;
+
+    render::RenderFrame* renderFrame;
 
     CheckList *checklistWidget;
 
@@ -191,6 +194,8 @@ private:
     Global::PaintStyle paintstyle;
 
     bool _isCreatPaintWidget;
+
+    std::vector<render::LayerProperties> layerPropertyList;
 
     //stateBar
     QLabel *currposLable_x;
@@ -201,7 +206,7 @@ private:
     QLabel *distanceLableNum;
     QLabel *stateLable;
 
-    PushButton *colorBtn = NULL;
+    PushButton *colorBtn;
     PushButton *clearBtn;
     Commbox *penWidthCombox;
 

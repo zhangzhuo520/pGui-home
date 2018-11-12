@@ -381,7 +381,7 @@ void MainWindow::slot_changePenWidth(QString penWidth)
 
 void MainWindow::ShowColorDialog()
 {
-    QColor color = QColorDialog::getColor ();
+    QColor color = QColorDialog::getColor();
 
     if (color.isValid ())
     {
@@ -471,6 +471,7 @@ void MainWindow::slot_close()
 void MainWindow::slot_showScaleAxis(bool isShow)
 {
      isShowAxis = isShow;
+
      if (paintTab->count() == 0)
      {
          return;
@@ -478,11 +479,17 @@ void MainWindow::slot_showScaleAxis(bool isShow)
 
      if (isShow)
      {
-         scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);
+         if (NULL != scaleFrame)
+         {
+             scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);
+         }
      }
      else
      {
-         scaleFrame->layout()->setContentsMargins(0, 0, 0, 0);
+         if (NULL != scaleFrame)
+         {
+             scaleFrame->layout()->setContentsMargins(0, 0, 0, 0);
+         }
      }
 }
 
@@ -590,9 +597,14 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
     {
         modelIdexList.append(index);
         scaleFrame = new ScaleFrame(paintTab);
-        paintWidget = new DrawWidget(scaleFrame);
-        scaleFrame->setDrawWidget(paintWidget);
+        renderFrame = new render::RenderFrame(scaleFrame);
+        paintWidget = new DrawWidget(renderFrame);
+        layerPropertyList = renderFrame->get_properties_list();
+        renderFrame->set_cursor_widget(paintWidget);
+        scaleFrame->setDrawWidget(renderFrame);
+        layerPropertyList.at(i).metadata();
         connect(paintWidget, SIGNAL(signal_mouseMove(const QPoint&)), this ,SLOT(slot_updataXY(const QPoint&)));
+
         if (isShowAxis)
         {
             scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);
@@ -618,9 +630,11 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
         if (isExist)
         {
             modelIdexList.append(index);
-            paintWidget = new DrawWidget();
             scaleFrame = new ScaleFrame(paintTab);
-            scaleFrame->setDrawWidget(paintWidget);
+            renderFrame = new render::RenderFrame(scaleFrame);
+            paintWidget = new DrawWidget(renderFrame);
+            renderFrame->set_cursor_widget(paintWidget);
+            scaleFrame->setDrawWidget(renderFrame);
             if (isShowAxis)
             {
                 scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);

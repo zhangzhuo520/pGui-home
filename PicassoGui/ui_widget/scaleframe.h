@@ -9,6 +9,8 @@
 #include <QLayout>
 #include <QMouseEvent>
 #include <QDebug>
+#include "drawwidget.h"
+namespace UI {
 class ScaleFrame : public QFrame
 {
     Q_OBJECT
@@ -55,5 +57,5 @@ private:
 
     QHBoxLayout *Hlayout;
 };
-
+}
 #endif // SCALEFRAME_H

@@ -39,8 +39,9 @@ void FileProjectWidget::slot_addFile(QString path)
 {
 #if 1 //check many file
 
-    QStringList filenameList = path.split('/');
-    projectTableModel->appendRow(new QStandardItem(filenameList.at(filenameList.count() - 1)));
+//    QStringList filenameList = path.split('/');
+//    projectTableModel->appendRow(new QStandardItem(filenameList.at(filenameList.count() - 1)));
+    projectTableModel->appendRow(new QStandardItem(path));
 
     for (int i = 0; i < projectTableModel->rowCount(); i ++)
     {

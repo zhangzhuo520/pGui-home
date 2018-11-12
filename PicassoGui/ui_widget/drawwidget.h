@@ -38,7 +38,7 @@ public:
 
     void updateMouseCursor(QPoint);
     void drawRubberRect();
-
+    void drawRuler();
 signals:
     void signal_mouseMove(const QPoint&);
 
@@ -71,6 +71,7 @@ private:
     QPointF lineEndPoint;
     QPointF rightArrowPoint;
     QPointF leftArrowPoint;
+    bool rulerIsPress;
     QString Stringsize;
     QString x;
     QString y;
