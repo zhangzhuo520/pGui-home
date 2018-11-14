@@ -215,7 +215,6 @@ void LayerWidget::treeItem_checkAllChild_recursion(QStandardItem * item,bool che
         item->setCheckState(check ? Qt::Checked : Qt::Unchecked);
 }
 
-
 void LayerWidget::slot_layerContextMenu(const QPoint &pos)
 {
     QStringList MenuTextList;
@@ -239,6 +238,19 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
             {
                 MenuColor *menu = new MenuColor(MenuTextList.at(i));
                 act->setMenu(menu);
+                if(i == 0)
+                {
+                    connect(menu, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setBackgroundColor(QColor)));
+                }
+                if(i == 1)
+                {
+                    connect(menu, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setTextColor(QColor)));
+                }
+                if(i == 2)
+                {
+                    connect(menu, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setLineColor(QColor)));
+                }
+
             }
             else if (i == 3)
             {
@@ -403,58 +415,63 @@ void LayerWidget::slot_showLayerControlWidget(bool ischeck)
     }
 }
 
-void LayerWidget::slot_addLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
+void LayerWidget::slot_getLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
 {
-    updataLayerData(layerProprtList, currentFile);
+    getLayerData(layerProprtList, currentFile);
 }
 
-void LayerWidget::updataLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
+void LayerWidget::slot_setBackgroundColor(QColor color)
 {
-    QStandardItem *rootFileItem = new QStandardItem(currentFile);
+    if(activeModelIndex == NULL)
+    {
+
+        showWarning(this, "Warning", "Not select Item !");
+        return;
+    }
+//    rootFileItem->setI
+//    activeModelIndex->column()
+}
+
+void LayerWidget::getLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
+{
+    rootFileItem = new QStandardItem(currentFile);
     rootFileItem->setCheckable(true);
     layerTreeModel->appendRow(rootFileItem);
-
+    m_layer_property_vector.clear();
     QStandardItem* pStandardItem = NULL;
-    //    QStandardItem* pStandardChildItem = NULL;
 
     for (uint i = 0; i < layerProprtList.size(); i ++ )
     {
-        QlayerPropertyVctor.append(layerProprtList.at(i));
-        qDebug() << "Pattern :" << layerProprtList.at(i).pattern();
-        uint uint_color = layerProprtList.at(i).frame_color();
+        m_layer_property_vector.append(layerProprtList.at(i));
+        layerStyle m_layer_style;
         qDebug() << "layer index :" << layerProprtList.at(i).layer_index();
-        uint pattenNum = layerProprtList.at(i).pattern();
         QString layerName = QString::fromStdString(layerProprtList.at(i).metadata().get_layer_name());
         QString dataType = QString::number(layerProprtList.at(i).metadata().get_data_type());
         QString layerData = QString::number(layerProprtList.at(i).metadata().get_layer_num());
+        uint pattenNum = layerProprtList.at(i).pattern();
+        m_layer_style.frame_color = layerProprtList.at(i).frame_color();
+        m_layer_style.fill_color = layerProprtList.at(i).fill_color();
+        m_layer_style.bitmap = pattern.get_bitmap(pattenNum, 64, 64);
+        m_layer_style.line_width = layerProprtList.at(i).width();
+        m_layer_style.line_style = layerProprtList.at(i).line_style();
+
+        m_layer_style_vector.append(m_layer_style);
+        QImage image = setImage(m_layer_style);
 
         pStandardItem = new QStandardItem(layerData);
         pStandardItem->setEditable(false);
         pStandardItem->setCheckable(true);
         rootFileItem->appendRow(pStandardItem);
-        bitmap = pattern.get_bitmap(pattenNum, 64, 64);
-        image = bitmap.toImage().convertToFormat(QImage::Format_RGB32);
-        QColor color = uint_to_color(uint_color);
-        for (int i = 0; i < image.height(); i ++)
-        {
-            for (int j = 0; j < image.width(); j ++)
-            {
-                if(! (color.red() && color.green() && color.blue()))
-                {
-                   image.setPixel(QPoint(i, j), qRgb(color.red(), color.green(), color.blue()));
-                }
-            }
-        }
 
         QStandardItem *childItem3 = new QStandardItem(layerName);
         childItem3->setEditable(false);
-        rootFileItem->setChild(pStandardItem->row(), 3 ,childItem3);
+        rootFileItem->setChild(pStandardItem->row(), 3, childItem3);
         QStandardItem *childItem2 = new QStandardItem(dataType);
         childItem2->setEditable(false);
-        rootFileItem->setChild(pStandardItem->row(), 2 ,childItem2);
+        rootFileItem->setChild(pStandardItem->row(), 2, childItem2);
         QStandardItem *childItem1 = new QStandardItem(QIcon(QPixmap::fromImage(image)), "");
         childItem1->setEditable(false);
-        rootFileItem->setChild(pStandardItem->row(), 1 ,childItem1);
+        rootFileItem->setChild(pStandardItem->row(), 1, childItem1);
     }
 }
 
@@ -465,5 +482,41 @@ QColor LayerWidget::uint_to_color(uint color)
     int b = color << 8 >> 24;
     return QColor(r, g, b);
 }
+
+QImage LayerWidget::setImage(layerStyle m_layer_style)
+{
+    QImage image = m_layer_style.bitmap.toImage().convertToFormat(QImage::Format_RGB32);
+    QColor fill_color = uint_to_color(m_layer_style.fill_color);
+    QColor frame_color = uint_to_color(m_layer_style.frame_color);
+
+    for (int i = 0; i < image.height(); i ++)
+    {
+        for (int j = 0; j < image.width(); j ++)
+        {
+            if(! (fill_color.red() && fill_color.green() && fill_color.blue()))
+            {
+               image.setPixel(QPoint(i, j), qRgb(fill_color.red(), fill_color.green(), fill_color.blue()));
+            }
+        }
+    }
+
+    QPainter painter(image);
+    QPen pen(frame_color);
+    pen.setWidth(m_layer_style.line_width);
+    painter.setPen(pen);
+    painter.drawRect(0, 0, image.width(), image.height());
+    return image;
+}
+
+void LayerWidget::setLayerData(layerStyle layer_style)
+{
+    int index = activeModelIndex->row();
+    m_layer_property_vector.at(index).set_fill_color(layer_style.fill_color);
+    m_layer_property_vector.at(index).set_frame_color(layer_style.frame_color);
+    m_layer_property_vector.at(index).set_line_style(layer_style.layerstyle);
+    m_layer_property_vector.at(index).set_width(layer_style.line_width);
+    m_layer_property_vector.at(index).set_pattern(layer_style.bitmap);
+}
+
 
 }

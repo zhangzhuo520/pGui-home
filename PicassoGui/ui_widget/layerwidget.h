@@ -21,13 +21,23 @@
 #include "../renderer/render_layer_metadata.h"
 #include "../renderer/render_layer_properties.h"
 #include "../renderer/render_pattern.h"
+#include "./deftools/cmessagebox.h"
 
 namespace UI{
+
+typedef struct layerstyle
+{
+    uint frame_color;
+    uint fill_color;
+    QBitmap bitmap;
+    int line_width;
+    int line_style;
+}layerStyle;
+
 class LayerWidget : public QWidget
 {
     Q_OBJECT
 public:
-
     explicit LayerWidget(QWidget *parent = 0);
 
     void initToolBar();
@@ -44,7 +54,11 @@ public:
 
     QColor uint_to_color(uint color);
 
-    void updataLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile);
+    QImage setImage(layerStyle);
+
+    void getLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile);
+
+    void setLayerData(layerStyle);
     
 signals:
     
@@ -59,7 +73,15 @@ public slots:
 
     void slot_showLayerControlWidget(bool);
 
-    void slot_addLayerData(std::vector<render::LayerProperties>, QString);
+    void slot_getLayerData(std::vector<render::LayerProperties>, QString);
+
+    void slot_setBackgroundColor(QColor);
+
+    void slot_setLineColor(QColor);
+
+    void slot_setTextColor(QColor);
+
+
 
 private:
     QWidget* layerToolBar;
@@ -85,7 +107,7 @@ private:
     QTreeView *layerTree;
 
     QStandardItemModel *layerTreeModel;
-
+    QStandardItem *rootFileItem;
     QAction *linewihthAction1;
     QAction *linewihthAction2;
     QAction *linewihthAction3;
@@ -111,13 +133,10 @@ private:
     PushButton *ButtonCut;
 
     QModelIndex * activeModelIndex;
-
-    QVector<render::LayerProperties> QlayerPropertyVctor;
     render::LayerMetaData layerData;
     render::Pattern pattern;
-    QBitmap bitmap;
-    QPixmap pixmap;
-    QImage image;
+    QVector <layerstyle> m_layer_style_vector;
+    QVector <render::LayerProperties> m_layer_property_vector;
 };
 }
 #endif // LayerWidget_H

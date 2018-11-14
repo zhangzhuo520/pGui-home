@@ -438,5 +438,4 @@ const Pattern& Pattern::default_pattern()
     static Pattern emptyPattern;
     return emptyPattern;
 }
-
 }

@@ -296,8 +296,8 @@ void MainWindow::init_fileProject_layerTree()
     layerwidget = new LayerWidget(this);
     layerwidget->setMinimumHeight(0);
     layerDockWidget->setWidget(layerwidget);
-    connect(this, SIGNAL(signal_addLayerData(std::vector<render::LayerProperties>, QString currentFile)), layerwidget,
-            SLOT(slot_addLayerData(std::vector<render::LayerProperties>, QString currentFile)));
+    connect(this, SIGNAL(signal_getLayerData(std::vector<render::LayerProperties>, QString currentFile)), layerwidget,
+            SLOT(slot_getLayerData(std::vector<render::LayerProperties>, QString currentFile)));
 }
 
 /**
@@ -652,7 +652,7 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
     connect(penWidthCombox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slot_changePenWidth(QString)));
     slot_showState("open  " + currentFile);
     layerPropertyList = renderFrame->get_properties_list();
-    emit signal_addLayerData(layerPropertyList, currentFile);
+    emit signal_getLayerData(layerPropertyList, currentFile);
 }
 
 /**

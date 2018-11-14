@@ -99,7 +99,7 @@ signals:
 
     void signal_close();
 
-    void signal_addLayerData(std::vector<render::LayerProperties>, QString);
+    void signal_getLayerData(std::vector<render::LayerProperties>, QString);
 
 private slots:
     //Menu Action
