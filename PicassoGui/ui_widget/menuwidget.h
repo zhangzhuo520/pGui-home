@@ -53,8 +53,7 @@ public slots:
 protected:
     void mousePressEvent(QMouseEvent *e)
     {
-        Q_UNUSED(e);
-        qDebug() << brush;
+
     }
 
     void paintEvent(QPaintEvent *e)
@@ -69,8 +68,6 @@ protected:
     {
         Q_UNUSED(e)
 
-//        QColor selectColor(10, 10, 200, 100);
-//        setColor(selectColor);
     }
 
     void leaveEvent(QEvent *e)
@@ -106,14 +103,12 @@ public:
         palette.setColor(QPalette::Background, color);
         setPalette(palette);
     }
-public slots:
-    void slot_selectItemColor();
 
 protected:
     void mousePressEvent(QMouseEvent *e)
     {
         Q_UNUSED(e);
-        qDebug() << color;
+        emit signal_select_color(color);
     }
 
     void paintEvent(QPaintEvent *e)
@@ -137,7 +132,8 @@ protected:
         Q_UNUSED(e)
         setColor(color);
     }
-
+signals:
+    void signal_select_color(QColor);
 private:
     QColor color;
 };
@@ -180,7 +176,12 @@ public:
     void initColorHistory();
 
 public slots:
-    void slot_selectColor();
+    void slot_selectColor(QColor);
+
+    void slot_colorDialogSelect();
+
+signals:
+    void signal_selectColor(QColor);
 
 private:
     PushButton *ColorButton;
@@ -208,10 +209,11 @@ class MenuColor : public QMenu
 public:
     explicit MenuColor(QString objectName);
     ~MenuColor(){}
-
+public slots:
+    void slot_seletColor(QColor);
 
 signals:
-
+    void signal_selectColor(QColor);
 
 private:
     QWidgetAction *ActionWidget;

@@ -44,7 +44,6 @@ public:
         return m_xor;
     }
 
-
     int width() const 
     {
         return m_width;

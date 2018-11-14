@@ -58,7 +58,6 @@ LayerProperties& LayerProperties::operator=(const LayerProperties& lp)
         {
             m_metadata = lp.m_metadata;
         }
-
     }
     return *this;
 }

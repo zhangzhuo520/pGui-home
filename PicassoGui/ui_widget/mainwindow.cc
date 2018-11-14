@@ -296,7 +296,8 @@ void MainWindow::init_fileProject_layerTree()
     layerwidget = new LayerWidget(this);
     layerwidget->setMinimumHeight(0);
     layerDockWidget->setWidget(layerwidget);
-    connect(this, SIGNAL(signal_UpdataLayerData(QString)), layerwidget, SLOT(slot_layerUpdata(QString)));
+    connect(this, SIGNAL(signal_addLayerData(std::vector<render::LayerProperties>, QString currentFile)), layerwidget,
+            SLOT(slot_addLayerData(std::vector<render::LayerProperties>, QString currentFile)));
 }
 
 /**
@@ -599,12 +600,8 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
         scaleFrame = new ScaleFrame(paintTab);
         renderFrame = new render::RenderFrame(scaleFrame);
         paintWidget = new DrawWidget(renderFrame);
-        layerPropertyList = renderFrame->get_properties_list();
         renderFrame->set_cursor_widget(paintWidget);
         scaleFrame->setDrawWidget(renderFrame);
-        layerPropertyList.at(i).metadata();
-        connect(paintWidget, SIGNAL(signal_mouseMove(const QPoint&)), this ,SLOT(slot_updataXY(const QPoint&)));
-
         if (isShowAxis)
         {
             scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);
@@ -647,13 +644,15 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
     }
 
     connect(this, SIGNAL(signal_setPenWidth(QString)), paintWidget, SLOT(setWidth(QString)));
+    connect(paintWidget, SIGNAL(signal_mouseMove(const QPoint&)), this ,SLOT(slot_updataXY(const QPoint&)));
     emit signal_setPenWidth(penWidthCombox->currentText());
     connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), paintWidget, SLOT(slot_setPaintStyle(Global::PaintStyle)));
     connect(paintWidget, SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
-    connect(clearBtn, SIGNAL(clicked()), paintWidget, SLOT(clear())) ;
+    connect(clearBtn, SIGNAL(clicked()), paintWidget, SLOT(clear()));
     connect(penWidthCombox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slot_changePenWidth(QString)));
     slot_showState("open  " + currentFile);
-    emit signal_UpdataLayerData(currentFile);
+    layerPropertyList = renderFrame->get_properties_list();
+    emit signal_addLayerData(layerPropertyList, currentFile);
 }
 
 /**

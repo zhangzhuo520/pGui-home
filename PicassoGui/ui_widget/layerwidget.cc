@@ -89,6 +89,13 @@ void LayerWidget::initTree()
     layerTree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(layerTree, SIGNAL(customContextMenuRequested(const QPoint& )), this, SLOT(slot_layerContextMenu(const QPoint&)));
     connect (layerTreeModel ,SIGNAL(itemChanged(QStandardItem*)), this , SLOT(slot_treeItemChanged(QStandardItem*)));
+    connect (layerTree ,SIGNAL(doubleClicked(QModelIndex)), this , SLOT(slot_treeDoubleClick(QModelIndex)));
+    connect (layerTree, SIGNAL(activated(QModelIndex)), this, SLOT(slot_activedModerIndex(QModelIndex)));
+}
+
+void LayerWidget::slot_activedModerIndex(QModelIndex index)
+{
+    activeModelIndex = &index;
 }
 
 void LayerWidget::slot_treeItemChanged(QStandardItem *item)
@@ -107,6 +114,11 @@ void LayerWidget::slot_treeItemChanged(QStandardItem *item)
             treeItem_CheckChildChanged (item);
         }
     }
+}
+
+void LayerWidget::slot_treeDoubleClick(QModelIndex item)
+{
+    //QlayerPropertyVctor.at(i).set_pattern();
 }
 
 void LayerWidget::treeItem_checkAllChild(QStandardItem * item, bool check)
@@ -203,46 +215,16 @@ void LayerWidget::treeItem_checkAllChild_recursion(QStandardItem * item,bool che
         item->setCheckState(check ? Qt::Checked : Qt::Unchecked);
 }
 
-void LayerWidget::slot_layerUpdata(QString currentFile)
-{
-    QStandardItem *rootFileItem = new QStandardItem(currentFile);
-    rootFileItem->setCheckable(true);
-    layerTreeModel->appendRow(rootFileItem);
-
-    QStandardItem* pStandardItem = NULL;
-    QStandardItem* pStandardChildItem = NULL;
-
-    for (int i = 0; i < 20; i ++ )
-    {
-        pStandardItem = new QStandardItem(QString::number(rand() % 10000));
-        pStandardItem->setCheckable(true);
-        rootFileItem->appendRow(pStandardItem);
-        rootFileItem->setChild(pStandardItem->row(), pStandardItem);
-
-        for (int j = 0; j < 4; j ++)
-        {
-            pStandardChildItem = new QStandardItem(QString::number(rand() % 10000));
-            pStandardChildItem->setCheckable(true);
-            pStandardItem->appendRow(pStandardChildItem);
-            for (int k = 0; k < 4; k ++)
-            {
-                pStandardItem->setChild(pStandardChildItem->row(), 3 ,new QStandardItem("DFEFSDEWWESDF"));
-                pStandardItem->setChild(pStandardChildItem->row(), 2 ,new QStandardItem("ASDASFASSFDQW"));
-                pStandardItem->setChild(pStandardChildItem->row(), 1 ,new QStandardItem(QIcon(":/new/prefix1/images/left.png"), ""));
-            }
-        }
-    }
-}
 
 void LayerWidget::slot_layerContextMenu(const QPoint &pos)
 {
     QStringList MenuTextList;
-    MenuTextList << "color"  << "Text Color" << "Line Color"
-                 << "Fill Style" << "Line Style" << "Line Width" << "Custom Style"
-                 << "On" << "All on" << "All of" << "Invert All On/Off"
-                 << "select Only" << "Status" << "Expand Layer Tree" << "Collapse Layer Tree"
-                 << "Filtering" << "Group" << "Ungroup" << "Order" << "Clipboaed"
-                 << "Edit Name" << "Edit Comment";
+    MenuTextList << "color"      << "Text Color" << "Line Color"
+                 << "Fill Style" << "Line Style" << "Line Width"        << "Custom Style"
+                 << "On"         << "All on"     << "All of"            << "Invert All On/Off"
+                 << "select Only"<< "Status"     << "Expand Layer Tree" << "Collapse Layer Tree"
+                 << "Filtering"  << "Group"      << "Ungroup"           << "Order" << "Clipboaed"
+                 << "Edit Name"  << "Edit Comment";
     QVector <QAction *> actionList;
 
     QMenu Layermenu;
@@ -266,13 +248,6 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
             else if (i == 4)
             {
                 QMenu *menu = new QMenu(this);
-                //                QPen *pen1 = new QPen(Qt::NoPen);
-                //                QPen *pen2 = new QPen(Qt::SolidLine);
-                //                QPen *pen3 = new QPen(Qt::DashLine);
-                //                QPen *pen4 = new QPen(Qt::DotLine);
-                //                QPen *pen5 = new QPen(Qt::DashDotLine);
-                //                QPen *pen6 = new QPen(Qt::DashDotDotLine);
-                //                QPen *pen7 = new QPen(Qt::CustomDashLine);
                 none = new QAction(QIcon(":/dfjy/images/line_style_1.png"), "none", this);
                 dashdotdot = new QAction(QIcon(":/dfjy/images/line_style_2.png"), "dashdotdot", this);
                 solid = new QAction(QIcon(":/dfjy/images/line_style_3.png"), "solid", this);
@@ -427,4 +402,68 @@ void LayerWidget::slot_showLayerControlWidget(bool ischeck)
         }
     }
 }
+
+void LayerWidget::slot_addLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
+{
+    updataLayerData(layerProprtList, currentFile);
+}
+
+void LayerWidget::updataLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
+{
+    QStandardItem *rootFileItem = new QStandardItem(currentFile);
+    rootFileItem->setCheckable(true);
+    layerTreeModel->appendRow(rootFileItem);
+
+    QStandardItem* pStandardItem = NULL;
+    //    QStandardItem* pStandardChildItem = NULL;
+
+    for (uint i = 0; i < layerProprtList.size(); i ++ )
+    {
+        QlayerPropertyVctor.append(layerProprtList.at(i));
+        qDebug() << "Pattern :" << layerProprtList.at(i).pattern();
+        uint uint_color = layerProprtList.at(i).frame_color();
+        qDebug() << "layer index :" << layerProprtList.at(i).layer_index();
+        uint pattenNum = layerProprtList.at(i).pattern();
+        QString layerName = QString::fromStdString(layerProprtList.at(i).metadata().get_layer_name());
+        QString dataType = QString::number(layerProprtList.at(i).metadata().get_data_type());
+        QString layerData = QString::number(layerProprtList.at(i).metadata().get_layer_num());
+
+        pStandardItem = new QStandardItem(layerData);
+        pStandardItem->setEditable(false);
+        pStandardItem->setCheckable(true);
+        rootFileItem->appendRow(pStandardItem);
+        bitmap = pattern.get_bitmap(pattenNum, 64, 64);
+        image = bitmap.toImage().convertToFormat(QImage::Format_RGB32);
+        QColor color = uint_to_color(uint_color);
+        for (int i = 0; i < image.height(); i ++)
+        {
+            for (int j = 0; j < image.width(); j ++)
+            {
+                if(! (color.red() && color.green() && color.blue()))
+                {
+                   image.setPixel(QPoint(i, j), qRgb(color.red(), color.green(), color.blue()));
+                }
+            }
+        }
+
+        QStandardItem *childItem3 = new QStandardItem(layerName);
+        childItem3->setEditable(false);
+        rootFileItem->setChild(pStandardItem->row(), 3 ,childItem3);
+        QStandardItem *childItem2 = new QStandardItem(dataType);
+        childItem2->setEditable(false);
+        rootFileItem->setChild(pStandardItem->row(), 2 ,childItem2);
+        QStandardItem *childItem1 = new QStandardItem(QIcon(QPixmap::fromImage(image)), "");
+        childItem1->setEditable(false);
+        rootFileItem->setChild(pStandardItem->row(), 1 ,childItem1);
+    }
+}
+
+QColor LayerWidget::uint_to_color(uint color)
+{
+    int r = color << 24 >> 24;
+    int g = color << 16 >> 24;
+    int b = color << 8 >> 24;
+    return QColor(r, g, b);
+}
+
 }

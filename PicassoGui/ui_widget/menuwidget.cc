@@ -6,9 +6,14 @@ MenuColor::MenuColor(QString objectName)
 
     colorwidget = new ColorWidget(this);
     ActionWidget = new QWidgetAction(this);
-
     ActionWidget->setDefaultWidget(colorwidget);
     addAction(ActionWidget);
+    connect(colorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_seletColor(QColor)));
+}
+
+void MenuColor::slot_seletColor(QColor color)
+{
+    emit signal_selectColor(color);
 }
 
 ColorWidget::ColorWidget(QWidget *parent)
@@ -26,7 +31,7 @@ ColorWidget::ColorWidget(QWidget *parent)
     initColorFrame();
     ColorFrame->setGeometry(0, 38, 200, 140);
     VlayoutWidget->setLayout(Hlayout);
-    connect(ColorButton, SIGNAL(clicked()), this, SLOT(slot_selectColor()));
+    connect(ColorButton, SIGNAL(clicked()), this, SLOT(slot_colorDialogSelect()));
 }
 
 void ColorWidget::initColorList()
@@ -114,6 +119,7 @@ void ColorWidget::initColorFrame()
             for (int i = 0; i < 2; i ++)
             {
                 cItem = new ColorItem(this, ColorList.at(j * 9 + i));
+                connect(cItem, SIGNAL(signal_select_color(QColor)), this, SLOT(slot_selectColor(QColor)));
                 HLayout->addWidget(cItem);
 
             }
@@ -132,7 +138,7 @@ void ColorWidget::initColorFrame()
             for (int i = 0; i < 9; i ++)
             {
                 cItem = new ColorItem(this, ColorList.at(j * 9 + i));
-
+                connect(cItem, SIGNAL(signal_select_color(QColor)), this, SLOT(slot_selectColor(QColor)));
                 HLayout->addWidget(cItem);
                 HLayout->setSpacing(3);
             }
@@ -151,11 +157,13 @@ void ColorWidget::initColorHistory()
     {
         if(i < UiStyle::ItemColorList.count())
         {
-              cItem = new ColorItem(this, UiStyle::ItemColorList.at(i));
+            cItem = new ColorItem(this, UiStyle::ItemColorList.at(i));
+            connect(cItem, SIGNAL(signal_select_color(QColor)), this, SLOT(slot_selectColor(QColor)));
         }
         else
         {
-              cItem = new ColorItem(this, QColor(245 , 245, 245));
+            cItem = new ColorItem(this, QColor(245 , 245, 245));
+            connect(cItem, SIGNAL(signal_select_color(QColor)), this, SLOT(slot_selectColor(QColor)));
         }
         Hlayout->addWidget(cItem);
         cItemList.append(cItem);
@@ -163,7 +171,12 @@ void ColorWidget::initColorHistory()
     }
 }
 
-void ColorWidget::slot_selectColor()
+void ColorWidget::slot_selectColor(QColor color)
+{
+    emit signal_selectColor(color);
+}
+
+void ColorWidget::slot_colorDialogSelect()
 {
     QColor color = QColorDialog::getColor ();
      static int i = 0;
@@ -173,11 +186,6 @@ void ColorWidget::slot_selectColor()
         if(i > 8) i = i - 9;
         cItemList.at(i ++)->setColor(color);
     }
-}
-
-void ColorItem::slot_selectItemColor()
-{
-
 }
 
 MenuStyle::MenuStyle(QString objectName)

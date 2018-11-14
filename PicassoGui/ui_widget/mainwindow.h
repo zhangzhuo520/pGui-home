@@ -23,6 +23,8 @@
 #include <QPoint>
 #include <QScrollArea>
 #include <QColorDialog>
+#include <iostream>
+
 #include "deftools/defcontrols.h"
 #include "deftools/cmessagebox.h"
 #include "deftools/global.h"
@@ -38,7 +40,7 @@
 #include "chipeditdialog.h"
 #include "scaleframe.h"
 #include "render_frame.h"
-
+#include "../renderer/render_layer_metadata.h"
 namespace UI{
 
 class MainWindow : public QMainWindow
@@ -87,8 +89,6 @@ signals:
 
     void signal_addFile(QString);
 
-    void signal_UpdataLayerData(QString);
-
     void signal_defgroupUpdata(QModelIndex *);
 
     void signal_defectsUpdata(QModelIndex *);
@@ -98,6 +98,8 @@ signals:
     void signal_setPaintStyle(Global::PaintStyle);
 
     void signal_close();
+
+    void signal_addLayerData(std::vector<render::LayerProperties>, QString);
 
 private slots:
     //Menu Action
@@ -196,6 +198,8 @@ private:
     bool _isCreatPaintWidget;
 
     std::vector<render::LayerProperties> layerPropertyList;
+
+    render::LayerMetaData LayerData;
 
     //stateBar
     QLabel *currposLable_x;

@@ -150,7 +150,6 @@ void ScaleFrame::resizeEvent(QResizeEvent *e)
 
 void ScaleFrame::mouseMoveEvent(QMouseEvent *e)
 {
-    qDebug() << "2222222222222222" << e->type();
     updateMouseCursor(e->pos());
     update();
 }

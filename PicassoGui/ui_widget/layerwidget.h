@@ -13,14 +13,21 @@
 #include <QIcon>
 #include <QTabWidget>
 #include <QSplitter>
+#include <QBitmap>
+#include <QPixmap>
+#include <QImage>
+
 #include "menuwidget.h"
+#include "../renderer/render_layer_metadata.h"
+#include "../renderer/render_layer_properties.h"
+#include "../renderer/render_pattern.h"
 
 namespace UI{
-
 class LayerWidget : public QWidget
 {
     Q_OBJECT
 public:
+
     explicit LayerWidget(QWidget *parent = 0);
 
     void initToolBar();
@@ -34,17 +41,25 @@ public:
     void treeItem_CheckChildChanged(QStandardItem * item);
 
     Qt::CheckState checkSibling(QStandardItem *item);
+
+    QColor uint_to_color(uint color);
+
+    void updataLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile);
     
 signals:
     
 public slots:
     void slot_treeItemChanged(QStandardItem *);
 
-    void slot_layerUpdata(QString);
+    void slot_treeDoubleClick(QModelIndex);
+
+    void slot_activedModerIndex(QModelIndex);
 
     void slot_layerContextMenu(const QPoint&);
 
     void slot_showLayerControlWidget(bool);
+
+    void slot_addLayerData(std::vector<render::LayerProperties>, QString);
 
 private:
     QWidget* layerToolBar;
@@ -94,6 +109,15 @@ private:
     PushButton *ButtonText;
     PushButton *ButtonNage;
     PushButton *ButtonCut;
+
+    QModelIndex * activeModelIndex;
+
+    QVector<render::LayerProperties> QlayerPropertyVctor;
+    render::LayerMetaData layerData;
+    render::Pattern pattern;
+    QBitmap bitmap;
+    QPixmap pixmap;
+    QImage image;
 };
 }
 #endif // LayerWidget_H

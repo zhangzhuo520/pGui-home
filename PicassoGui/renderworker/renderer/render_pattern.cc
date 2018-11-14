@@ -80,7 +80,6 @@ PatternInfo& PatternInfo::operator = (const PatternInfo &d)
     return *this;
 }
 
-
 bool PatternInfo::same(const PatternInfo &d) const
 {
     if (&d == this)
