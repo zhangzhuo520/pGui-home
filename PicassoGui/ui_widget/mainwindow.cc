@@ -296,8 +296,10 @@ void MainWindow::init_fileProject_layerTree()
     layerwidget = new LayerWidget(this);
     layerwidget->setMinimumHeight(0);
     layerDockWidget->setWidget(layerwidget);
-    connect(this, SIGNAL(signal_getLayerData(std::vector<render::LayerProperties>, QString currentFile)), layerwidget,
-            SLOT(slot_getLayerData(std::vector<render::LayerProperties>, QString currentFile)));
+    connect(this, SIGNAL(signal_getLayerData(std::vector<render::LayerProperties>, QString)), layerwidget,
+            SLOT(slot_getLayerData(std::vector<render::LayerProperties>, QString)));
+    connect(layerwidget, SIGNAL(signal_setLayerData(render::LayerProperties&)), this,
+            SLOT(slot_setLayerData(render::LayerProperties&)));
 }
 
 /**
@@ -492,6 +494,11 @@ void MainWindow::slot_showScaleAxis(bool isShow)
              scaleFrame->layout()->setContentsMargins(0, 0, 0, 0);
          }
      }
+}
+
+void MainWindow::slot_setLayerData(render::LayerProperties &layerProperty)
+{
+    renderFrame->set_properties(layerProperty);
 }
 
 /**

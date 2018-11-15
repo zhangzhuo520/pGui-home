@@ -146,6 +146,8 @@ private slots:
     void slot_close();
 
     void slot_showScaleAxis(bool);
+
+    void slot_setLayerData(render::LayerProperties&);
 private:
     DockWidget *fileDockWidget;
 

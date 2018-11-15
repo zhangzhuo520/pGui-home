@@ -1,6 +1,7 @@
 #include "drawwidget.h"
 namespace UI {
-DrawWidget::DrawWidget(QWidget *parent) : QWidget(parent),
+DrawWidget::DrawWidget(QWidget *parent):
+    QWidget(parent),
     weight(5),
     style(1),
     isDrawText(false),

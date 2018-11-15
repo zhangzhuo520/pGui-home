@@ -201,7 +201,7 @@ StyleWidget::StyleWidget(QWidget *parent)
 {
     Q_UNUSED(parent);
     setMinimumSize(QSize(200,120));
-    setMaximumSize(QSize(200,160));
+    setMaximumSize(QSize(200,120));
     QVBoxLayout *VLayout = new QVBoxLayout(this);
     Hlayout = new QHBoxLayout();
     initBrushList();

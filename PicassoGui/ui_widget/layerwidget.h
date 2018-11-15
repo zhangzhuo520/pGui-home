@@ -16,12 +16,14 @@
 #include <QBitmap>
 #include <QPixmap>
 #include <QImage>
+#include <QPaintEvent>
 
 #include "menuwidget.h"
 #include "../renderer/render_layer_metadata.h"
 #include "../renderer/render_layer_properties.h"
 #include "../renderer/render_pattern.h"
 #include "./deftools/cmessagebox.h"
+#include "./deftools/model.h"
 
 namespace UI{
 
@@ -54,13 +56,18 @@ public:
 
     QColor uint_to_color(uint color);
 
+    uint color_to_uint(QColor);
+
     QImage setImage(layerStyle);
 
     void getLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile);
 
     void setLayerData(layerStyle);
+
+    void setModelIdexImage(QImage);
     
 signals:
+    void signal_setLayerData(render::LayerProperties&);
     
 public slots:
     void slot_treeItemChanged(QStandardItem *);
@@ -80,8 +87,6 @@ public slots:
     void slot_setLineColor(QColor);
 
     void slot_setTextColor(QColor);
-
-
 
 private:
     QWidget* layerToolBar;
@@ -106,7 +111,7 @@ private:
     QHBoxLayout *TreeHLayout;
     QTreeView *layerTree;
 
-    QStandardItemModel *layerTreeModel;
+    LayerTreeModel *layerTreeModel;
     QStandardItem *rootFileItem;
     QAction *linewihthAction1;
     QAction *linewihthAction2;
@@ -133,10 +138,14 @@ private:
     PushButton *ButtonCut;
 
     QModelIndex * activeModelIndex;
+    int m_active_model_index;
     render::LayerMetaData layerData;
     render::Pattern pattern;
     QVector <layerstyle> m_layer_style_vector;
     QVector <render::LayerProperties> m_layer_property_vector;
+    render::LayerProperties m_LayerProperty;
+
+    QPixmap pixmap;
 };
 }
 #endif // LayerWidget_H
