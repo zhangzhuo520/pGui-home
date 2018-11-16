@@ -1,7 +1,7 @@
 #include "global.h"
 namespace UI {
 QVector <QColor> UiStyle::ItemColorList;
-QVector <QBrush> UiStyle::ItemBrushList;
+QVector <int> UiStyle::ItemPetternList;
 QColor UiStyle::DockTitleBarColor = QColor(149, 194, 231);
 QColor UiStyle::ToolBarColor = QColor(80, 183, 247, 50);
 QColor UiStyle::ButtonPressColor = QColor(80, 183, 180, 50);

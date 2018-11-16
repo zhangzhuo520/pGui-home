@@ -21,62 +21,69 @@
 #include <QPen>
 #include <QPaintEvent>
 #include <QBrush>
+#include <QBitmap>
+#include <QImage>
+#include "../../renderworker/renderer/render_pattern.h"
+
 
 namespace UI {
 class StyleItem :public QLabel
 {
     Q_OBJECT
 public:
-    StyleItem(QWidget *parent, QBrush Brush)
+    StyleItem(QWidget *parent, int patternId)
     {
         Q_UNUSED(parent);
-        brush = Brush;
-        setAutoFillBackground(true);
-        setStyle(brush);
-
-    }
+        id = patternId;
+        image = pattern.get_bitmap(patternId, 24 ,16).toImage().convertToFormat(QImage::Format_RGB32);
+    }    
 
     ~StyleItem()
-    {
+    {}
 
-    }
+    QColor uint_to_color(uint color);
 
-    void setStyle(QBrush Brush)
-    {
-        QPalette palette = this->palette();
-        palette.setBrush(QPalette::Background, Brush);
-        setPalette(palette);
-    }
-public slots:
-    void slot_selectItemStyle();
+    QImage &image_color_change(QImage &, QColor);
+signals:
+    void signal_selectItemStyle(int);
 
 protected:
     void mousePressEvent(QMouseEvent *e)
     {
-
+        Q_UNUSED(e);
+        signal_selectItemStyle(id);
     }
 
     void paintEvent(QPaintEvent *e)
     {
         Q_UNUSED(e);
         QPainter painter(this);
+        painter.drawImage(0, 0, image);
         painter.setPen(QPen(Qt::black));
-        painter.drawRect(QRect(0, 0, width() - 1, height() - 1));
+        painter.drawRect(QRect(0, 0, 23, 15));
     }
 
     void enterEvent(QEvent *e)
     {
         Q_UNUSED(e)
-
+        image_color_change(image, Qt::yellow);
+        update();
     }
 
     void leaveEvent(QEvent *e)
     {
         Q_UNUSED(e)
-//        setColor(color);
+        image_color_change(image, Qt::white);
+        update();
     }
 private:
-    QBrush brush;
+    QBitmap bitmap;
+
+    QImage image;
+
+    render::Pattern pattern;
+
+    int id;
 };
 
 class ColorItem : public QLabel
@@ -89,7 +96,6 @@ public:
         color = Color;
         setAutoFillBackground(true);
         setColor(color);
-
     }
 
     ~ColorItem()
@@ -140,14 +146,20 @@ private:
 
 class StyleWidget: public QWidget
 {
+    Q_OBJECT
 public:
     StyleWidget(QWidget *parent = 0);
 
-    void initBrushList();
+    void initPatternList();
 
     void initStyleHistory();
 
     void initStyleFrame();
+public slots:
+    void slot_selectItemStyle(int);
+
+signals:
+    void signal_selectItemStyle(int);
 
 private:
     QFrame *StyleFrame;
@@ -160,7 +172,9 @@ private:
 
     QPalette pale;
 
-    QVector <QBrush> BrushList;
+    QVector <int> PatternList;
+
+    render::Pattern pattern;
 };
 
 class ColorWidget: public QWidget
@@ -226,6 +240,12 @@ class MenuStyle : public QMenu
     Q_OBJECT
 public:
     explicit MenuStyle(QString objectName);
+
+public slots:
+    void slot_selectItemStyle(int);
+
+signals:
+    void signal_selectItemStyle(int);
 
 private:
     StyleWidget *stylewidget;

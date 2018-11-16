@@ -31,7 +31,7 @@ typedef struct layerstyle
 {
     uint frame_color;
     uint fill_color;
-    QBitmap bitmap;
+    int pattern_Id;
     int line_width;
     int line_style;
 }layerStyle;
@@ -87,6 +87,8 @@ public slots:
     void slot_setLineColor(QColor);
 
     void slot_setTextColor(QColor);
+
+    void slot_setLayerStyle(int);
 
 private:
     QWidget* layerToolBar;

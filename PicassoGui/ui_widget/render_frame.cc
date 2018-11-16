@@ -25,7 +25,7 @@ RenderFrame::RenderFrame(QWidget *parent) :
     setBackgroundRole(QPalette::NoRole);
     setAttribute(Qt::WA_NoSystemBackground);
     setMouseTracking(true);
-    load_file("/home/zhaofeng/picasso/build/test/hierarchy.prep.oas");
+    load_file("/home/zhuozhang/picasso/build/test/hierarchy.prep.oas");
     set_view_ops();
     set_viewport();
 }

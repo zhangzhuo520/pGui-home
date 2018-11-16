@@ -258,6 +258,7 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
             {
                 MenuStyle *menu = new MenuStyle(MenuTextList.at(i));
                 act->setMenu(menu);
+                connect(menu, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_setLayerStyle(int)));
             }
             else if (i == 4)
             {
@@ -408,6 +409,7 @@ void LayerWidget::slot_showLayerControlWidget(bool ischeck)
         TreeHLayout->addWidget(LayerControlWidget);
         connect(colorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setBackgroundColor(QColor)));
         connect(Linecolorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setLineColor(QColor)));
+        connect(styleWidget, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_setLayerStyle(int)));
     }
     else
     {
@@ -431,11 +433,11 @@ void LayerWidget::slot_setBackgroundColor(QColor color)
         showWarning(this, "Warning", "Not select Item !");
         return;
     }
-     qDebug() << "Fill: " <<  color;
     layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
     m_layerstyle.fill_color = color_to_uint(color);
-
-//    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    qDebug() <<  " m_layerstyle: " << m_layerstyle.fill_color <<endl;
+    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    qDebug() << m_active_model_index << m_layer_style_vector[m_active_model_index].fill_color;
     QImage image = setImage(m_layerstyle);
     setModelIdexImage(image);
     setLayerData(m_layerstyle);
@@ -450,7 +452,7 @@ void LayerWidget::slot_setLineColor(QColor color)
     }
     layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
     m_layerstyle.frame_color = color_to_uint(color);
-//    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    m_layer_style_vector[m_active_model_index] = m_layerstyle;
     setModelIdexImage(setImage(m_layerstyle));
     setLayerData(m_layerstyle);
 }
@@ -466,7 +468,20 @@ void LayerWidget::slot_setTextColor(QColor color)
 //    m_layerstyle. = color_to_uint(color);
 //    QImage image = setImage(m_layerstyle);
 //    setModelIdexImage(image);
-//    setLayerData(m_layerstyle);
+    //    setLayerData(m_layerstyle);
+}
+
+void LayerWidget::slot_setLayerStyle(int patternIdex)
+{
+    if(m_active_model_index == -1)
+    {
+        showWarning(this, "Warning", "Not select Item !");
+        return;
+    }
+    m_layer_style_vector[m_active_model_index].pattern_Id = patternIdex;
+    QImage image = setImage(m_layer_style_vector[m_active_model_index]);
+    setModelIdexImage(image);
+    setLayerData(m_layer_style_vector[m_active_model_index]);
 }
 
 void LayerWidget::getLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
@@ -486,13 +501,12 @@ void LayerWidget::getLayerData(std::vector<render::LayerProperties> layerProprtL
         QString layerName = QString::fromStdString(layerProprtList.at(i).metadata().get_layer_name());
         QString dataType = QString::number(layerProprtList.at(i).metadata().get_data_type());
         QString layerData = QString::number(layerProprtList.at(i).metadata().get_layer_num());
-        uint pattenNum = layerProprtList.at(i).pattern();
         layerStyle m_layer_style;
         m_layer_style.frame_color = layerProprtList.at(i).frame_color();
         m_layer_style.fill_color = layerProprtList.at(i).fill_color();
-
-        m_layer_style.bitmap = pattern.get_bitmap(pattenNum, 48, 48);
+        m_layer_style.pattern_Id = layerProprtList.at(i).pattern();
         m_layer_style.line_width = layerProprtList.at(i).width();
+        m_layer_style.line_style = layerProprtList.at(i).line_style();
         m_layer_style_vector.append(m_layer_style);
         QImage image = setImage(m_layer_style);
 
@@ -528,15 +542,29 @@ u_int LayerWidget::color_to_uint(QColor color)
 
 QImage LayerWidget::setImage(layerStyle m_layer_style)
 {
-    QImage image = m_layer_style.bitmap.toImage().convertToFormat(QImage::Format_RGB32);
+    QImage image = pattern.get_bitmap(m_layer_style.pattern_Id, 32, 24).toImage().convertToFormat(QImage::Format_RGB32);
     QColor fill_color = uint_to_color(m_layer_style.fill_color);
     QColor frame_color = uint_to_color(m_layer_style.frame_color);
-
     for (int j = 0; j < image.height() - 1; j ++)
     {
         for (int i = 0; i < image.width() - 1; i ++)
         {
-            image.setPixel(QPoint(i, j), qRgb(fill_color.red(), fill_color.green(), fill_color.blue()));
+            QColor temp_color = uint_to_color(image.pixel(i, j));
+#if 0
+            if (!(temp_color.red() == 255
+                    && temp_color.blue() == 255
+                    && temp_color.green() == 255))
+            {
+                image.setPixel(QPoint(i, j), qRgb(fill_color.red(), fill_color.green(), fill_color.blue()));
+            }
+#else
+            if (!(temp_color.red() == 0
+                    && temp_color.blue() == 0
+                    && temp_color.green() == 0))
+            {
+                image.setPixel(QPoint(i, j), qRgb(fill_color.red(), fill_color.green(), fill_color.blue()));
+            }
+#endif
         }
     }
     QPainter painter(&image);
@@ -554,7 +582,7 @@ void LayerWidget::setLayerData(layerStyle layer_style)
     m_LayerProperty.set_fill_color(layer_style.fill_color);
     m_LayerProperty.set_frame_color(layer_style.frame_color);
     m_LayerProperty.set_line_style(layer_style.line_style);
-    m_LayerProperty.set_pattern(3);
+    m_LayerProperty.set_pattern(layer_style.pattern_Id);
     emit signal_setLayerData(m_LayerProperty);
 }
 

@@ -27,7 +27,7 @@ public:
     static QString StateBarColor;
     static QString FrameBorderColor;
     static QVector <QColor> ItemColorList;
-    static QVector <QBrush> ItemBrushList;
+    static QVector <int> ItemPetternList;
     static QString DockWidgetStyle;
     static QString CommboxStyle;
     static QString TabWidgetStyle;

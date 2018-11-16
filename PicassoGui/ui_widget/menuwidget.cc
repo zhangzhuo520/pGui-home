@@ -195,6 +195,12 @@ MenuStyle::MenuStyle(QString objectName)
     ActionWidget = new QWidgetAction(this);
     ActionWidget->setDefaultWidget(stylewidget);
     addAction(ActionWidget);
+    connect(stylewidget, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_selectItemStyle(int)));
+}
+
+void MenuStyle::slot_selectItemStyle(int item)
+{
+    emit signal_selectItemStyle(item);
 }
 
 StyleWidget::StyleWidget(QWidget *parent)
@@ -204,7 +210,7 @@ StyleWidget::StyleWidget(QWidget *parent)
     setMaximumSize(QSize(200,120));
     QVBoxLayout *VLayout = new QVBoxLayout(this);
     Hlayout = new QHBoxLayout();
-    initBrushList();
+    initPatternList();
     initStyleHistory();
     initStyleFrame();
     VLayout->addLayout(Hlayout);
@@ -212,40 +218,27 @@ StyleWidget::StyleWidget(QWidget *parent)
     setLayout(VLayout);
 }
 
-void StyleWidget::initBrushList()
+void StyleWidget::initPatternList()
 {
-    BrushList << QBrush(Qt::black, Qt::NoBrush)
-              << QBrush(Qt::black, Qt::SolidPattern)
-              << QBrush(Qt::black, Qt::Dense1Pattern)
-              << QBrush(Qt::black, Qt::Dense2Pattern)
-              << QBrush(Qt::black, Qt::Dense3Pattern)
-              << QBrush(Qt::black, Qt::Dense4Pattern)
-              << QBrush(Qt::black, Qt::Dense5Pattern)
-              << QBrush(Qt::black, Qt::Dense6Pattern)
-              << QBrush(Qt::black, Qt::Dense7Pattern)
-              << QBrush(Qt::black, Qt::HorPattern)
-              << QBrush(Qt::black, Qt::VerPattern)
-              << QBrush(Qt::black, Qt::CrossPattern)
-              << QBrush(Qt::black, Qt::BDiagPattern)
-              << QBrush(Qt::black, Qt::FDiagPattern)
-              << QBrush(Qt::black, Qt::DiagCrossPattern)
-              << QBrush(Qt::black, Qt::NoBrush)
-              << QBrush(Qt::black, Qt::NoBrush)
-              << QBrush(Qt::black, Qt::NoBrush)
-              << QBrush(Qt::black, Qt::NoBrush);
+    for (uint i = 0; i < pattern.count(); i ++)
+    {
+        PatternList << i;
+    }
 }
 
 void StyleWidget::initStyleHistory()
 {
     for (int i = 0; i < 9; i ++)
     {
-        if(i < UiStyle::ItemBrushList.count())
+        if(i < UiStyle::ItemPetternList.count())
         {
-              Item = new StyleItem(this, UiStyle::ItemBrushList.at(i));
+            Item = new StyleItem(this, UiStyle::ItemPetternList.at(i));
+            connect(Item, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_selectItemStyle(int)));
         }
         else
         {
-              Item = new StyleItem(this, QBrush(QColor(245, 245, 245), Qt::NoBrush));
+            Item = new StyleItem(this, UiStyle::ItemPetternList.at(0));
+            connect(Item, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_selectItemStyle(int)));
         }
         Hlayout->addWidget(Item);
     }
@@ -262,9 +255,10 @@ void StyleWidget::initStyleFrame()
     pale.setColor(QPalette::Window, QColor(180, 180, 180));
     StyleFrame->setPalette(pale);
     int HLayoutNum = 0;
-    for(int i = 0; i < BrushList.count(); i ++)
+    for(int i = 0; i < PatternList.count(); i ++)
     {
-        Item = new StyleItem(this, BrushList.at(i));
+        Item = new StyleItem(this, PatternList.at(i));
+        connect(Item, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_selectItemStyle(int)));
         if (i % 6)
         {
             HLayout->addWidget(Item);
@@ -278,7 +272,7 @@ void StyleWidget::initStyleFrame()
             VLayoutFrame->addLayout(HLayout);
         }
     }
-    if (HLayoutNum > BrushList.count() / 5)
+    if (HLayoutNum > PatternList.count() / 5)
     {
         QSpacerItem *spaceItem = new QSpacerItem(200, 15, QSizePolicy::Preferred, QSizePolicy::Preferred);
         HLayout->addSpacerItem(spaceItem);
@@ -288,9 +282,35 @@ void StyleWidget::initStyleFrame()
     StyleFrame->setLayout(VLayoutFrame);
 }
 
-void StyleItem::slot_selectItemStyle()
+void StyleWidget::slot_selectItemStyle(int item)
 {
+    emit signal_selectItemStyle(item);
 }
+
+QImage &StyleItem::image_color_change(QImage & image, QColor color)
+{
+    for (int j = 0; j < image.height(); j ++)
+    {
+        for(int i= 0; i < image.width(); i ++)
+        {
+            QColor temp_color = uint_to_color(image.pixel(i, j));
+            if (temp_color.red() || temp_color.blue() || temp_color.green())
+            {
+                image.setPixel(i, j , qRgb(color.red(), color.green(), color.blue()));
+            }
+        }
+    }
+    return image;
+}
+
+QColor StyleItem::uint_to_color(uint color)
+{
+    int b = color << 24 >> 24;
+    int g = color << 16 >> 24;
+    int r = color << 8 >> 24;
+    return QColor(r, g, b);
+}
+
 }
 
 

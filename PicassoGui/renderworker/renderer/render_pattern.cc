@@ -46,7 +46,6 @@ static const char *pattern_strings[] = {
 
 };
 
-
 PatternInfo::PatternInfo() : m_width(1), m_height(1), m_order_index(0)
 {
     m_stride = 1;
