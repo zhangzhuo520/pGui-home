@@ -118,9 +118,6 @@ QString  UiStyle::DockWidgetStyle = \
                               "show-decoration-selected: 1;}"\
 
                               "QTreeView::item {"\
-                              "height: 15px;"\
-                              "border: none;"\
-                              "color: black;"\
                               "background: transparent;}"\
 
                               "QTreeView::item:hover {"\

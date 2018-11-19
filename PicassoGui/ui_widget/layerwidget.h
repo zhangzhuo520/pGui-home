@@ -34,6 +34,7 @@ typedef struct layerstyle
     int pattern_Id;
     int line_width;
     int line_style;
+    bool isVisible;
 }layerStyle;
 
 class LayerWidget : public QWidget
@@ -65,6 +66,8 @@ public:
     void setLayerData(layerStyle);
 
     void setModelIdexImage(QImage);
+
+    void setItemChecked(bool);
     
 signals:
     void signal_setLayerData(render::LayerProperties&);
@@ -86,9 +89,17 @@ public slots:
 
     void slot_setLineColor(QColor);
 
-    void slot_setTextColor(QColor);
+    void slot_setLineStyle(int);
 
     void slot_setLayerStyle(int);
+
+    void slot_setTextColor(QColor);
+
+    void slot_LineWidth_action();
+
+    void slot_itemChecked(QStandardItem*);
+
+    void slot_setLineWidth(int line_width);
 
 private:
     QWidget* layerToolBar;
@@ -114,7 +125,7 @@ private:
     QTreeView *layerTree;
 
     LayerTreeModel *layerTreeModel;
-    QStandardItem *rootFileItem;
+    LayerTreeItem *rootFileItem;
     QAction *linewihthAction1;
     QAction *linewihthAction2;
     QAction *linewihthAction3;

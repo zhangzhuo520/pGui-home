@@ -20,6 +20,29 @@ protected:
     QVariant data(const QModelIndex &item, int role=Qt::DisplayRole) const;
 };
 
+class LayerTreeItem : public QStandardItem
+{
+public:
+    explicit LayerTreeItem(QObject *parent = 0)
+    {
+        Q_UNUSED(parent);
+    }
+    LayerTreeItem(QIcon icon)
+    {
+        setIcon(icon);
+        setSizeHint(QSize(32, 24));
+    }
+    LayerTreeItem(QString text)
+    {
+        setText(text);
+        setSizeHint(QSize(32, 24));
+    }
+    LayerTreeItem(QColor color)
+    {
+        setBackground(QBrush(color));
+    }
+};
+
 class LayerTreeModel :public QStandardItemModel
 {
 public:

@@ -3,14 +3,11 @@
 #include <vector>
 #include <set>
 
-#include <QWidget>
-#include <QFrame>
 #include <QMutex>
-#include <QPaintEvent>
 #include <QColor>
 #include <QDebug>
-#include <QMouseEvent>
 
+#include "render_view_object.h"
 #include "render_viewport.h"
 #include "render_bitmap.h"
 #include "render_view_op.h"
@@ -21,26 +18,29 @@
 class QImage;
 class QPixmap;
 
+class QWheelEvent;
+class QKeyEvent;
+class QPaintEvent;
+class QResizeEvent;
+class QMouseEvent;
+
 namespace Oasis
 {
     class OasisLayout;
-    
+
     class OasisBox;
+
 }
 
 namespace render{
 
-class RenderFrame : public QFrame
+class RenderFrame :public RenderObjectWidget
 {
 Q_OBJECT
 public:
     RenderFrame(QWidget *parent = 0);
 
-    ~RenderFrame();
-
-    virtual void paintEvent(QPaintEvent *);
-
-    virtual void wheelEvent(QWheelEvent *);
+    virtual ~RenderFrame();
 
     void set_view_ops();
 
@@ -57,11 +57,38 @@ public:
     void set_properties(const render::LayerProperties& lp);
 
     void set_cursor_widget(QWidget *);
+
+    Oasis::OasisBox get_box() const;
+
+    void set_defect_point(double x, double y);
+
+    void center_at_point(double x, double y);
+
+    virtual void paintEvent(QPaintEvent *);
+
+    virtual void wheelEvent(QWheelEvent *);
+
+signals:
+    void signal_down_key_pressed();
+    void signal_up_key_pressed();
+    void signal_left_key_pressed();
+    void signal_right_key_pressed();
+    void signal_pos_updated(double x, double y);
+    void signal_box_updated(double left, double bot, double right, double top);
+
+public slots:
+
+    void slot_down_shift();
+    void slot_up_shift();
+    void slot_left_shift();
+    void slot_right_shift();
+
 protected:
-    void mouseMoveEvent(QMouseEvent *e)
-    {
-        QWidget::mouseMoveEvent(e);
-    }
+    virtual void mouseMoveEvent(QMouseEvent* e);
+
+    virtual void keyPressEvent(QKeyEvent* e);
+
+    virtual void resizeEvent(QResizeEvent* e);
 
 private:
     void init();
@@ -70,9 +97,10 @@ private:
 
     void zoom_box(const Oasis::OasisBox& box);
 
-    void set_viewport();
+    void init_viewport();
 
-private:
+    void shift_view(double scale, double dx, double dy);
+
     std::vector<render::ViewOp> m_view_ops;
     std::vector<render::Bitmap *> m_buffer;
 
@@ -88,6 +116,11 @@ private:
     Oasis::OasisLayout* m_layout;
     render::Viewport m_vp;
     std::vector<render::LayerProperties> m_layers_properties;
+
+    bool m_redraw_required;
+    bool m_update_image;
+
+
 };
 
 }

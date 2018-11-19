@@ -224,6 +224,7 @@ void StyleWidget::initPatternList()
     {
         PatternList << i;
     }
+    UiStyle::ItemPetternList << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1;
 }
 
 void StyleWidget::initStyleHistory()

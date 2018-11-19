@@ -26,10 +26,13 @@ public:
     void setDrawWidget(QWidget *);
 
     void updateMouseCursor(QPoint);
+
+    void updataAxisDate();
     
 signals:
     
 public slots:
+    void slot_box_updated(double,double,double,double);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -45,15 +48,17 @@ private:
 
     QPixmap cursorPixmap;
 
-    int imageH;
+    double xStart;
+
+    double xEnd;
+
+    double yStart;
+
+    double yEnd;
 
     int imageW;
 
-    int maxLimit;
-
-    int hTextNumber;
-
-    int wTextNumber;
+    int imageH;
 
     QHBoxLayout *Hlayout;
 };

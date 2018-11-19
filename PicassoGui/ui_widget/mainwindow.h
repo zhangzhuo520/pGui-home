@@ -113,6 +113,8 @@ private slots:
 
     void slot_undo();
 
+    void slot_drawPoint(const QModelIndex &);
+
     void slot_openDB(QString);
 
     void slot_addFile(QString);
@@ -121,7 +123,7 @@ private slots:
 
     void slot_closePaintTab(int);
 
-    void slot_updataXY(const QPoint&);
+    void slot_updataXY(double, double);
 
     void slot_showDefGroup(QModelIndex, int);
 
@@ -147,7 +149,13 @@ private slots:
 
     void slot_showScaleAxis(bool);
 
+    void slot_setPosAction();
+
+    void slot_setPosButton();
+
     void slot_setLayerData(render::LayerProperties&);
+
+    void slot_refreshAction();
 private:
     DockWidget *fileDockWidget;
 
@@ -221,6 +229,13 @@ private:
     QAction *mouseAction;
 
     bool isShowAxis;
+    QWidget *setPosWidget;
+    QLabel *setPosX_label;
+    QLineEdit *setPosX_lineEdit;
+    QLabel *setPosY_label;
+    QLineEdit *setPosY_lineEdit;
+    QPushButton *setPos_foundPushButton;
+    QPushButton *setPos_colsePushButton;
 };
 }
 #endif // MAINWINDOW_H

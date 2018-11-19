@@ -126,6 +126,9 @@ public:
                            "background-color: rgba(0, 0, 100, 50);}");\
         setText(text);
     }
+signals:
+    void signal_sendPos(QString, QString);
+
   ~PushButton(){}
 };
 

@@ -32,8 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-}
 
+}
 
 /**
  * @brief MainWindow::initMenubar
@@ -193,7 +193,7 @@ void MainWindow::initToolbar()
     QToolBar *RevToolBar = new QToolBar(this);
     RevToolBar->setWindowTitle(tr("REV Actions"));
     addToolBar(RevToolBar);
-
+    connect(refreshAction, SIGNAL(triggered()), this, SLOT(slot_refreshAction()));
 
     QAction *revAction = new QAction(QIcon(":/dfjy/images/REV.png"),"REV", this);
     QAction *setAction = new QAction(QIcon(":/dfjy/images/SET.png"),"SET", this);
@@ -249,6 +249,10 @@ void MainWindow::initToolbar()
     connect(scaleAction, SIGNAL(toggled(bool)), this, SLOT(slot_showScaleAxis(bool)));
     ScaleToolBar->addAction(scaleAction);
     isShowAxis = false;
+
+    QAction *setPosAction = new QAction(QIcon(":/dfjy/images/found.png"),"setPos", this);
+    connect(setPosAction, SIGNAL(triggered()), this, SLOT(slot_setPosAction()));
+    ScaleToolBar->addAction(setPosAction);
 }
 
 /**
@@ -484,7 +488,7 @@ void MainWindow::slot_showScaleAxis(bool isShow)
      {
          if (NULL != scaleFrame)
          {
-             scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);
+             scaleFrame->layout()->setContentsMargins(22, 22, 0, 0);
          }
      }
      else
@@ -496,9 +500,43 @@ void MainWindow::slot_showScaleAxis(bool isShow)
      }
 }
 
+void MainWindow::slot_setPosAction()
+{
+    setPosWidget = new QDialog(this);
+    setPosWidget->setGeometry(width() / 2, height() / 2 , 300, 160);
+    setPosX_label = new QLabel("x :", setPosWidget);
+    setPosX_label->setGeometry(60, 30, 30, 25);
+    setPosX_lineEdit = new QLineEdit(setPosWidget);
+    setPosX_lineEdit->setGeometry(100, 30, 150, 25);
+    setPosY_label = new QLabel("y :", setPosWidget);
+    setPosY_label->setGeometry(60, 80, 30, 25);
+    setPosY_lineEdit = new QLineEdit(setPosWidget);
+    setPosY_lineEdit->setGeometry(100, 80, 150, 25);
+    setPos_foundPushButton = new QPushButton("Ok", setPosWidget);
+    setPos_foundPushButton->setGeometry(50, 120, 60, 30);
+    connect(setPos_foundPushButton, SIGNAL(clicked()), this, SLOT(slot_setPosButton()));
+    setPos_colsePushButton = new QPushButton("Close", setPosWidget);
+    setPos_colsePushButton->setGeometry(200, 120, 60, 30);
+    connect(setPos_colsePushButton, SIGNAL(clicked()), setPosWidget, SLOT(close()));
+    setPosWidget->show();
+}
+
+void MainWindow::slot_setPosButton()
+{
+    if (renderFrame != NULL);
+    {
+        renderFrame->set_defect_point(setPosX_lineEdit->text().toDouble(), setPosY_lineEdit->text().toDouble());
+    }
+}
+
 void MainWindow::slot_setLayerData(render::LayerProperties &layerProperty)
 {
     renderFrame->set_properties(layerProperty);
+}
+
+void MainWindow::slot_refreshAction()
+{
+    renderFrame->center_at_point(100,20);
 }
 
 /**
@@ -547,6 +585,15 @@ void MainWindow::slot_openREV()
  */
 void MainWindow::slot_undo()
 {
+}
+
+void MainWindow::slot_drawPoint(const QModelIndex &index)
+{
+   // QString Stringsize = index.sibling(index.row(), 1).data().toString();
+    int point_x = index.sibling(index.row(), 2).data().toDouble();
+    int point_y = index.sibling(index.row(), 3).data().toDouble();
+    renderFrame->set_defect_point(point_x, point_y);
+
 }
 
 /**
@@ -611,7 +658,7 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
         scaleFrame->setDrawWidget(renderFrame);
         if (isShowAxis)
         {
-            scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);
+            scaleFrame->layout()->setContentsMargins(22, 22, 0, 0);
         }
         else
         {
@@ -641,7 +688,7 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
             scaleFrame->setDrawWidget(renderFrame);
             if (isShowAxis)
             {
-                scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);
+                scaleFrame->layout()->setContentsMargins(22, 22, 0, 0);
             }
             else
             {
@@ -651,7 +698,6 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
     }
 
     connect(this, SIGNAL(signal_setPenWidth(QString)), paintWidget, SLOT(setWidth(QString)));
-    connect(paintWidget, SIGNAL(signal_mouseMove(const QPoint&)), this ,SLOT(slot_updataXY(const QPoint&)));
     emit signal_setPenWidth(penWidthCombox->currentText());
     connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), paintWidget, SLOT(slot_setPaintStyle(Global::PaintStyle)));
     connect(paintWidget, SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
@@ -660,6 +706,8 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
     slot_showState("open  " + currentFile);
     layerPropertyList = renderFrame->get_properties_list();
     emit signal_getLayerData(layerPropertyList, currentFile);
+    connect(renderFrame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_updataXY(double, double)));
+    connect(renderFrame, SIGNAL(signal_box_updated(double,double,double,double)), scaleFrame, SLOT(slot_box_updated(double,double,double,double)));
 }
 
 /**
@@ -672,14 +720,10 @@ void MainWindow::slot_closePaintTab(int index)
     modelIdexList.remove(index);
 }
 
-/**
- * @brief MainWindow::slot_updataXY
- * @param p
- */
-void MainWindow::slot_updataXY(const QPoint &p)
+void MainWindow::slot_updataXY(double x, double y)
 {
-    currposLable_xNum->setText(QString::number(p.x()));
-    currposLable_yNum->setText(QString::number(p.y()));
+    currposLable_xNum->setText(QString::number(x));
+    currposLable_yNum->setText(QString::number(y));
 }
 
 /**
@@ -728,7 +772,7 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
         defectsDockWidget->setWidget(defectswidget);
         oldJobIndex = jobIndex;
         connect(this, SIGNAL(signal_defectsUpdata(QModelIndex *)), defectswidget, SLOT(slot_defectsUpdata(QModelIndex *)));
-        connect(defectswidget->getTableView(), SIGNAL(doubleClicked(const QModelIndex&)), paintWidget,  SLOT(drawPoint(const QModelIndex &)));
+        connect(defectswidget->getTableView(), SIGNAL(doubleClicked(const QModelIndex&)), this,  SLOT(slot_drawPoint(const QModelIndex &)));
     }
     else
     {

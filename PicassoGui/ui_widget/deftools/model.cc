@@ -55,10 +55,8 @@ QVariant LayerTreeModel::data(const QModelIndex &item, int role) const
     switch (role) {
     case Qt::DisplayRole:
         return value;
-        break;
     case Qt::TextAlignmentRole:
         return int(Qt::AlignHCenter | Qt::AlignVCenter);
-        break;
     case Qt::BackgroundRole:
     {
         if (item.row() % 2)
@@ -70,17 +68,12 @@ QVariant LayerTreeModel::data(const QModelIndex &item, int role) const
             return QColor(Qt::white);
         }
     }
-        break;
     case Qt::SizeHintRole:
         return QSize(32, 24);
-        break;
-    case Qt::DecorationRole:
-        return QSize(62, 30);
-        break;
     default:
         return value;
-        break;
     }
+    return QVariant();
 }
 }
 #endif

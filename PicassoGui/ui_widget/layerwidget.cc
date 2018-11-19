@@ -2,7 +2,7 @@
 namespace UI {
 LayerWidget::LayerWidget(QWidget *parent) :
     QWidget(parent),
-    m_active_model_index(-1)
+    m_active_model_index(0)
 {
     initToolBar();
     initTree();
@@ -90,6 +90,7 @@ void LayerWidget::initTree()
     layerTree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(layerTree, SIGNAL(customContextMenuRequested(const QPoint& )), this, SLOT(slot_layerContextMenu(const QPoint&)));
     connect (layerTreeModel ,SIGNAL(itemChanged(QStandardItem*)), this , SLOT(slot_treeItemChanged(QStandardItem*)));
+    connect(layerTreeModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slot_itemChecked(QStandardItem*)));
     connect (layerTree ,SIGNAL(doubleClicked(QModelIndex)), this , SLOT(slot_treeDoubleClick(QModelIndex)));
     connect (layerTree, SIGNAL(pressed(QModelIndex)), this, SLOT(slot_activedModerIndex(QModelIndex)));
 }
@@ -285,19 +286,25 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
             {
                 QMenu *menu = new QMenu(this);
                 linewihthAction1 = new QAction(QIcon(":/dfjy/images/line_width1.png"), "1", this);
-                linewihthAction1->setCheckable(true);
-                linewihthAction1->setChecked(true);
+//                linewihthAction1->setCheckable(true);
+//                linewihthAction1->setChecked(true);
                 menu->addAction(linewihthAction1);
                 linewihthAction2 = new QAction(QIcon(":/dfjy/images/line_width2.png"), "2", this);
-                linewihthAction2->setCheckable(true);
+//                linewihthAction2->setCheckable(true);
                 menu->addAction(linewihthAction2);
                 linewihthAction3 = new QAction(QIcon(":/dfjy/images/line_width3.png"), "3", this);
-                linewihthAction3->setCheckable(true);
+//                linewihthAction3->setCheckable(true);
                 menu->addAction(linewihthAction3);
                 linewihthAction4 = new QAction(QIcon(":/dfjy/images/line_width4.png"), "4", this);
-                linewihthAction4->setCheckable(true);
+//                linewihthAction4->setCheckable(true);
                 menu->addAction(linewihthAction4);
                 act->setMenu(menu);
+
+                for (int i = 0; i < menu->actions().count(); i ++)
+                {
+                    connect(menu->actions().at(i), SIGNAL(triggered()), this, SLOT(slot_LineWidth_action()));
+                }
+
             }
         }
         Layermenu.addAction(act);
@@ -410,6 +417,8 @@ void LayerWidget::slot_showLayerControlWidget(bool ischeck)
         connect(colorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setBackgroundColor(QColor)));
         connect(Linecolorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setLineColor(QColor)));
         connect(styleWidget, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_setLayerStyle(int)));
+
+        connect(LineStyleCommbox, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_setLineWidth(int)));
     }
     else
     {
@@ -428,6 +437,11 @@ void LayerWidget::slot_getLayerData(std::vector<render::LayerProperties> layerPr
 
 void LayerWidget::slot_setBackgroundColor(QColor color)
 {
+    if (m_layer_style_vector.isEmpty())
+    {
+        return;
+    }
+
     if(m_active_model_index == -1)
     {
         showWarning(this, "Warning", "Not select Item !");
@@ -435,9 +449,7 @@ void LayerWidget::slot_setBackgroundColor(QColor color)
     }
     layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
     m_layerstyle.fill_color = color_to_uint(color);
-    qDebug() <<  " m_layerstyle: " << m_layerstyle.fill_color <<endl;
     m_layer_style_vector[m_active_model_index] = m_layerstyle;
-    qDebug() << m_active_model_index << m_layer_style_vector[m_active_model_index].fill_color;
     QImage image = setImage(m_layerstyle);
     setModelIdexImage(image);
     setLayerData(m_layerstyle);
@@ -445,6 +457,11 @@ void LayerWidget::slot_setBackgroundColor(QColor color)
 
 void LayerWidget::slot_setLineColor(QColor color)
 {
+    if (m_layer_style_vector.isEmpty() && activeModelIndex == NULL)
+    {
+        return;
+    }
+
     if(m_active_model_index == -1)
     {
         showWarning(this, "Warning", "Not select Item !");
@@ -457,22 +474,24 @@ void LayerWidget::slot_setLineColor(QColor color)
     setLayerData(m_layerstyle);
 }
 
-void LayerWidget::slot_setTextColor(QColor color)
+void LayerWidget::slot_setLineStyle(int line_style)
 {
-//    if(m_active_model_index == -1)
-//    {
-//        showWarning(this, "Warning", "Not select Item !");
-//        return;
-//    }
-//    layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
-//    m_layerstyle. = color_to_uint(color);
-//    QImage image = setImage(m_layerstyle);
-//    setModelIdexImage(image);
-    //    setLayerData(m_layerstyle);
+    Q_UNUSED(line_style);
+}
+
+void LayerWidget::slot_LineWidth_action()
+{
+    QAction * action = static_cast <QAction *> (sender());
+    LineWidthCommbox->setCurrentIndex(action->text().toInt() - 1);
 }
 
 void LayerWidget::slot_setLayerStyle(int patternIdex)
 {
+    if (m_layer_style_vector.isEmpty())
+    {
+        return;
+    }
+
     if(m_active_model_index == -1)
     {
         showWarning(this, "Warning", "Not select Item !");
@@ -484,44 +503,113 @@ void LayerWidget::slot_setLayerStyle(int patternIdex)
     setLayerData(m_layer_style_vector[m_active_model_index]);
 }
 
+void LayerWidget::slot_setTextColor(QColor color)
+{
+    Q_UNUSED(color);
+}
+
+void LayerWidget::slot_itemChecked(QStandardItem* index)
+{
+    m_active_model_index = index->row();
+    if(index->isCheckable())
+    {
+        if (index->checkState() == Qt::Unchecked)
+        {
+            setItemChecked(false);
+        }
+        else if (index->checkState() == Qt::Checked)
+        {
+            setItemChecked(true);
+        }
+    }
+}
+
+void LayerWidget::slot_setLineWidth(int line_width)
+{
+    if (m_layer_style_vector.isEmpty())
+    {
+        return;
+    }
+
+    if(m_active_model_index == -1)
+    {
+        showWarning(this, "Warning", "Not select Item !");
+        return;
+    }
+
+    layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
+    m_layerstyle.line_width = line_width + 1;
+    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    setLayerData(m_layerstyle);
+}
+
+void LayerWidget::setItemChecked(bool check)
+{
+    if (m_layer_style_vector.isEmpty())
+    {
+        return;
+    }
+
+    if(m_active_model_index == -1)
+    {
+        showWarning(this, "Warning", "Not select Item !");
+        return;
+    }
+
+    layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
+    m_layerstyle.isVisible = check;
+    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    setLayerData(m_layerstyle);
+}
+
 void LayerWidget::getLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
 {
-    rootFileItem = new QStandardItem(currentFile);
+    rootFileItem = new LayerTreeItem(currentFile);
     rootFileItem->setCheckable(true);
     layerTreeModel->setItem(0, rootFileItem);
 
     rootFileItem->setEditable(false);
     m_layer_property_vector.clear();
-    QStandardItem* pStandardItem = NULL;
+    LayerTreeItem* pStandardItem = NULL;
 
     for (uint i = 0; i < layerProprtList.size(); i ++ )
     {
         m_layer_property_vector.append(layerProprtList.at(i));
-        qDebug() << "layer index :" << layerProprtList.at(i).layer_index();
         QString layerName = QString::fromStdString(layerProprtList.at(i).metadata().get_layer_name());
         QString dataType = QString::number(layerProprtList.at(i).metadata().get_data_type());
-        QString layerData = QString::number(layerProprtList.at(i).metadata().get_layer_num());
+        QString layerNum = QString::number(layerProprtList.at(i).metadata().get_layer_num());
         layerStyle m_layer_style;
         m_layer_style.frame_color = layerProprtList.at(i).frame_color();
         m_layer_style.fill_color = layerProprtList.at(i).fill_color();
         m_layer_style.pattern_Id = layerProprtList.at(i).pattern();
-        m_layer_style.line_width = layerProprtList.at(i).width();
+        m_layer_style.line_width = layerProprtList.at(i).line_width();
         m_layer_style.line_style = layerProprtList.at(i).line_style();
+        m_layer_style.isVisible = layerProprtList.at(i).visible();
         m_layer_style_vector.append(m_layer_style);
         QImage image = setImage(m_layer_style);
 
-        pStandardItem = new QStandardItem(layerData);
+        pStandardItem = new LayerTreeItem(layerNum);
         pStandardItem->setEditable(false);
         pStandardItem->setCheckable(true);
+        if(m_layer_style.isVisible)
+        {
+            pStandardItem->setCheckState(Qt::Checked);
+            rootFileItem->setCheckState(Qt::Checked);
+        }
+        else
+        {
+            pStandardItem->setCheckState(Qt::Unchecked);
+        }
+
         rootFileItem->appendRow(pStandardItem);
 
-        QStandardItem *childItem3 = new QStandardItem(layerName);
+        LayerTreeItem *childItem3 = new LayerTreeItem(layerName);
         childItem3->setEditable(false);
         rootFileItem->setChild(pStandardItem->row(), 3, childItem3);
-        QStandardItem *childItem2 = new QStandardItem(dataType);
+        LayerTreeItem *childItem2 = new LayerTreeItem(dataType);
         childItem2->setEditable(false);
         rootFileItem->setChild(pStandardItem->row(), 2, childItem2);
-        QStandardItem *childItem1 = new QStandardItem(QIcon(QPixmap::fromImage(image)), "");
+        LayerTreeItem *childItem1 = new LayerTreeItem(QIcon(QPixmap::fromImage(image)));
         childItem1->setEditable(false);
         rootFileItem->setChild(pStandardItem->row(), 1, childItem1);
     }
@@ -542,7 +630,7 @@ u_int LayerWidget::color_to_uint(QColor color)
 
 QImage LayerWidget::setImage(layerStyle m_layer_style)
 {
-    QImage image = pattern.get_bitmap(m_layer_style.pattern_Id, 32, 24).toImage().convertToFormat(QImage::Format_RGB32);
+    QImage image = pattern.get_bitmap(m_layer_style.pattern_Id, 40, 30).toImage().convertToFormat(QImage::Format_RGB32);
     QColor fill_color = uint_to_color(m_layer_style.fill_color);
     QColor frame_color = uint_to_color(m_layer_style.frame_color);
     for (int j = 0; j < image.height() - 1; j ++)
@@ -583,6 +671,7 @@ void LayerWidget::setLayerData(layerStyle layer_style)
     m_LayerProperty.set_frame_color(layer_style.frame_color);
     m_LayerProperty.set_line_style(layer_style.line_style);
     m_LayerProperty.set_pattern(layer_style.pattern_Id);
+    m_LayerProperty.set_visible(layer_style.isVisible);
     emit signal_setLayerData(m_LayerProperty);
 }
 

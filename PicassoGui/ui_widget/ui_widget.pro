@@ -32,7 +32,9 @@ SOURCES += main.cc\
     semimagedialog.cc \
     chipeditdialog.cc \
     scaleframe.cc \
-    render_frame.cc
+    render_frame.cc \
+    render_defect_point.cc \
+    render_view_object.cc
 
 HEADERS  += mainwindow.h \
     gearmanconnector.h \
@@ -49,7 +51,9 @@ HEADERS  += mainwindow.h \
     semimagedialog.h \
     chipeditdialog.h \
     scaleframe.h \
-    render_frame.h
+    render_frame.h \
+    render_defect_point.h \
+    render_view_object.h
 
 FORMS    +=
 

@@ -36,7 +36,7 @@ public:
         Q_UNUSED(parent);
         id = patternId;
         image = pattern.get_bitmap(patternId, 24 ,16).toImage().convertToFormat(QImage::Format_RGB32);
-    }    
+    }
 
     ~StyleItem()
     {}
@@ -60,7 +60,14 @@ protected:
         QPainter painter(this);
         painter.drawImage(0, 0, image);
         painter.setPen(QPen(Qt::black));
-        painter.drawRect(QRect(0, 0, 23, 15));
+        if (id == 3)
+        {
+            painter.drawRect(QRect(0, 0, 23, 15));
+        }
+        else
+        {
+            painter.drawRect(QRect(0, 0, 22, 15));
+        }
     }
 
     void enterEvent(QEvent *e)
