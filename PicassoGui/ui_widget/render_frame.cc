@@ -409,6 +409,11 @@ void RenderFrame::slot_right_shift()
     shift_view(1.0, m_shift_unit, 0);
 }
 
+void RenderFrame::slot_distance_point(QPointF start, QPointF end)
+{
+    qDebug() << "start :" << start << "end :" << end;
+}
+
 void RenderFrame::shift_view(Oasis::float64 scale, Oasis::float64 dx, Oasis::float64 dy)
 {
     Oasis::OasisBox box = m_vp.box();

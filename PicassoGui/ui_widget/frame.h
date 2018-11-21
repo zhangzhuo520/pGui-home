@@ -8,6 +8,9 @@
 #include <QHBoxLayout>
 #include <QEvent>
 #include <QBitmap>
+#include <QSettings>
+#include <QCloseEvent>
+
 #include "mainwindow.h"
 #include "deftools/iconhelper.h"
 #include "deftools/defcontrols.h"
@@ -25,8 +28,17 @@ public:
 //    Q_DECLARE_METATYPE(UI::Frame::sizeState)
 
     explicit Frame(QFrame *parent = 0);
+
     void initTitleBar();
+
     void setWindowsSizeChange();
+
+    void writeSettings();
+
+    void readSettings();
+
+protected:
+    void closeEvent(QCloseEvent *);
 
 signals:
 

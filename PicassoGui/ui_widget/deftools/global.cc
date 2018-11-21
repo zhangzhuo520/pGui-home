@@ -3,11 +3,11 @@ namespace UI {
 QVector <QColor> UiStyle::ItemColorList;
 QVector <int> UiStyle::ItemPetternList;
 QColor UiStyle::DockTitleBarColor = QColor(149, 194, 231);
-QColor UiStyle::ToolBarColor = QColor(80, 183, 247, 50);
+QColor UiStyle::ToolBarColor = QColor(216, 216, 216);  //QColor(80, 183, 247, 50)
 QColor UiStyle::ButtonPressColor = QColor(80, 183, 180, 50);
 QColor UiStyle::ButtonHoverColor = QColor(80, 183, 220, 50);
 QString UiStyle::TitleColor = "background-color: rgb(149, 194, 231);";
-QString UiStyle::MenuBarColor = "background-color: rgb(131, 170, 193);";
+QString UiStyle::MenuBarColor = "background-color: rgb(216, 216, 216);";//"background-color: rgb(131, 170, 193);";
 //149, 194, 231
 QString UiStyle::StateBarColor = "background-color: rgba(80, 183, 247, 50);";
 QString UiStyle::TabWidgetStyle = "background-color: rgb(230, 230, 230);";
@@ -44,18 +44,14 @@ QString UiStyle::MenuStyle = \
                             "background: #2dabf9;"\
                             "}";\
 
-#if 1
+#if 0
 QString UiStyle::TitleStyle = \
                               "QWidget{background-color: "\
                               "qlineargradient(spread:reflect, x1:0.981085,"\
                               "y1:1, x2:0.982641, y2:0, stop:0 rgba(131, 170, 193, 255),"\
                               "stop:1 rgba(255, 255, 255, 255));}";
 #else
-QString Global::titleStyle = \
-                              "QWidget {background-color: "\
-                              "qlineargradient(spread:reflect, x1:0.981085,"\
-                              "y1:1, x2:0.982641, y2:0, stop:0 rgba(77, 140, 189, 255),"\
-                              "stop:1 rgba(255, 255, 255, 255));}";
+QString UiStyle::TitleStyle = "QWidget{background-color:rgb(216, 216, 216);}";
 #endif
 #if 0
 QString Global::toolbarStyle = \
@@ -63,7 +59,11 @@ QString Global::toolbarStyle = \
                              "qlineargradient(spread:reflect, x1:0.961538, y1:1, x2:0.021,"\
                              "y2:0, stop:0 rgba(104, 162, 189, 255), stop:1 rgba(255, 255, 255, 255));}";
 #else
+#if 0
 QString UiStyle::ToolbarStyle = "QToolBar{background-color:rgb(131, 170, 193);}";
+#else
+QString UiStyle::ToolbarStyle = "QToolBar{background-color:rgb(216, 216, 216);}";
+#endif
 
 QString UiStyle::MainWindowStyle = "QMainWindow::separator {"\
                                     "width: 4px;}"\
@@ -130,7 +130,7 @@ QString  UiStyle::DockWidgetStyle = \
                               "border:none;}"\
 
                               "QTableView::item{"\
-                              "selection-background-color:rgb(128, 171, 220)}"
+                              "selection-background-color:rgb(128, 171, 220)}"\
 
                               "QHeaderView {"\
                               "background-color: rgb(200, 200, 200);"\
@@ -143,9 +143,11 @@ QString  UiStyle::DockWidgetStyle = \
                               "background-color: rgb(200, 200, 200);"\
                               "}"\
 
-                              "QDockWidget {"\
-                              "border: 3px solid rgb(128, 171, 241);"\
-                              "border-style:groove;}"\
+                              "QDockWidget > QWidget{"\
+                              "border: 1px solid rgb(128, 171, 220);}"\
+
+                              "QDockWidget{"\
+                              "border: 1px solid rgb(128, 171, 220);}"\
 
                               "QDockWidget::title {background-color: rgb(149, 194, 231); }";
 }

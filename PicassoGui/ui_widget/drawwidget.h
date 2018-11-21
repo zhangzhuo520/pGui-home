@@ -44,29 +44,33 @@ signals:
 
     void signal_updataDistance(double);
 
+    void signal_distancePoint(QPointF, QPointF);
+
 public slots:
     void setStyle (int);
     void setWidth (QString);
     void setColor (QColor);
     void clear ();
     void drawPoint(const QModelIndex &);
+    void slot_updataPos(double, double);
 
     void slot_setPaintStyle(Global::PaintStyle);
 private:    
-
     QPoint RubberStartPoint;
     QPoint RubberEndPoint;
 
-    CheckStyle checkstyle;
+    QPointF currentPos;
     QPixmap *pix;
     QPixmap Rubbelpix;
-    QPoint startPos;
-    QPoint endPos;
-    int style;
+    QPointF startPos;
+    QPointF endPos;
     int weight;
+    int style;
     QColor color;
     Global::PaintStyle penStyle;
 
+    bool isDrawText;
+    CheckStyle checkstyle;
     QPointF lineStartPoint;
     QPointF lineEndPoint;
     QPointF rightArrowPoint;
@@ -75,7 +79,6 @@ private:
     QString Stringsize;
     QString x;
     QString y;
-    bool isDrawText;
 };
 }
 #endif // DRAWWIDGET_H

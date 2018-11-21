@@ -56,18 +56,7 @@ QVariant LayerTreeModel::data(const QModelIndex &item, int role) const
     case Qt::DisplayRole:
         return value;
     case Qt::TextAlignmentRole:
-        return int(Qt::AlignHCenter | Qt::AlignVCenter);
-    case Qt::BackgroundRole:
-    {
-        if (item.row() % 2)
-        {
-            return QColor(Qt::lightGray);
-        }
-        else
-        {
-            return QColor(Qt::white);
-        }
-    }
+        return int(Qt::AlignLeft | Qt::AlignVCenter);
     case Qt::SizeHintRole:
         return QSize(32, 24);
     default:

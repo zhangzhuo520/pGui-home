@@ -21,6 +21,7 @@
 #include <QSizePolicy>
 #include <QLayout>
 namespace UI {
+
 class CheckList : public QWidget
 {
     Q_OBJECT

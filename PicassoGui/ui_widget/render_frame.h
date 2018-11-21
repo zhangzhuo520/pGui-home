@@ -77,11 +77,11 @@ signals:
     void signal_box_updated(double left, double bot, double right, double top);
 
 public slots:
-
     void slot_down_shift();
     void slot_up_shift();
     void slot_left_shift();
     void slot_right_shift();
+    void slot_distance_point(QPointF, QPointF);
 
 protected:
     virtual void mouseMoveEvent(QMouseEvent* e);

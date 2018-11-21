@@ -60,8 +60,8 @@ void DrawWidget::mousePressEvent (QMouseEvent *e)
         {
             setCursor(Qt::ArrowCursor);
             lineStartPoint = lineEndPoint = e->pos();
+            startPos = endPos = currentPos;
             rulerIsPress = true;
-
         }
     }
      QWidget::mousePressEvent(e);
@@ -87,7 +87,6 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *e)
 
 void DrawWidget::mouseMoveEvent (QMouseEvent *e)
 {
-    qDebug() << e->type();
     if (checkstyle == RubberBand)
     {
         RubberEndPoint = e->pos();
@@ -97,10 +96,12 @@ void DrawWidget::mouseMoveEvent (QMouseEvent *e)
     else if (penStyle == Global::RulerStyle && rulerIsPress)
     {
         lineEndPoint = e->pos();
+        endPos = e->pos();
         calcVertexes();
         drawRuler();
         signal_mouseMove(e->pos());
         emit signal_updataDistance((lineEndPoint.x() - lineStartPoint.x())/(lineEndPoint.y() - lineStartPoint.y()) );
+        emit signal_distancePoint(startPos, endPos);
         return;
     }
     else
@@ -181,6 +182,12 @@ void DrawWidget::drawPoint(const QModelIndex & index)
         painter.drawText(width() / 2, height() / 2, Stringsize);
         painter.drawText(width() / 2, height() / 2 + 20, spos);
         update();
+}
+
+void DrawWidget::slot_updataPos(double x, double y)
+{
+    currentPos.setX(x);
+    currentPos.setY(y);
 }
 
 void DrawWidget::updateMouseCursor(QPoint pos)

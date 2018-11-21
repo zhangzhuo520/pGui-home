@@ -14,12 +14,14 @@ SET(PicathoGui_SRCS
     scaleframe.cc
     semimagedialog.cc
     chipeditdialog.cc
-    choosefiledialog.cc
+    choosefiledialog.cc 
+    render_defect_point.cc
+    render_view_object.cc
     checklist.cc 
     gearmanconnector.cc
     drawwidget.cc
     defgroup.cc
-    defectswidget.cc		   
+    defectswidget.cc
     frame.cc
     menuwidget.cc
     fileprojectwidget.cc
@@ -29,12 +31,13 @@ SET(PicathoGui_SRCS
     deftools/framelesshelper.cc
     deftools/global.cc
     deftools/model.cc
+    deftools/delegate.cc
     db/sqlquery.cc
     db/sqlmanager.cc)
 
 SET(PicathoGui_HEADERS
     mainwindow.h
-    render_frame.h
+    render_frame.h 
     rtsconfigdialog.h
     scaleframe.h
     semimagedialog.h
@@ -53,6 +56,7 @@ SET(PicathoGui_HEADERS
     deftools/framelesshelper.h
     deftools/defcontrols.h
     deftools/datastruct.h 
+    deftools/delegate.h
     deftools/global.h
     deftools/model.h
     db/sqlquery.h
@@ -61,11 +65,11 @@ SET(PicathoGui_HEADERS
 QT4_WRAP_CPP(PicathoGui_MOCS
     mainwindow.h
     render_frame.h
-    rtsconfigdialog.h
+  	rtsconfigdialog.h
     scaleframe.h
     semimagedialog.h
     chipeditdialog.h
-    choosefiledialog.h :
+    choosefiledialog.h 
     checklist.h
     drawwidget.h
     fileprojectwidget.h
@@ -78,6 +82,7 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     deftools/cmessagebox.h 
     deftools/framelesshelper.h
     deftools/defcontrols.h
+    deftools/delegate.h
     db/sqlmanager.h)
 
 QT4_ADD_RESOURCES(PicathoGui_RESOURCES_RCC ${PicathoGui_RESOURCES})

@@ -24,6 +24,7 @@
 #include "../renderer/render_pattern.h"
 #include "./deftools/cmessagebox.h"
 #include "./deftools/model.h"
+#include "./deftools/delegate.h"
 
 namespace UI{
 
@@ -126,6 +127,7 @@ private:
 
     LayerTreeModel *layerTreeModel;
     LayerTreeItem *rootFileItem;
+    Delegate *treeDelegate;
     QAction *linewihthAction1;
     QAction *linewihthAction2;
     QAction *linewihthAction3;

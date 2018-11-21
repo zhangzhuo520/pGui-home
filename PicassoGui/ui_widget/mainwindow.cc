@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle("pGui");
 
-    setWindowFlags(Qt::FramelessWindowHint);
+    //setWindowFlags(Qt::FramelessWindowHint);
 
     initMenubar();
 
@@ -707,7 +707,9 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
     layerPropertyList = renderFrame->get_properties_list();
     emit signal_getLayerData(layerPropertyList, currentFile);
     connect(renderFrame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_updataXY(double, double)));
+    connect(renderFrame, SIGNAL(signal_pos_updated(double,double)), paintWidget, SLOT(slot_updataPos(double, double)));
     connect(renderFrame, SIGNAL(signal_box_updated(double,double,double,double)), scaleFrame, SLOT(slot_box_updated(double,double,double,double)));
+    connect(paintWidget, SIGNAL(signal_distancePoint(QPointF,QPointF)), renderFrame, SLOT(slot_distance_point(QPointF,QPointF)));
 }
 
 /**

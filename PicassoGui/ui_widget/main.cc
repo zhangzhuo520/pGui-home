@@ -13,10 +13,10 @@ int main(int argc, char *argv[])
     qApp->setStyle(new UI::ProxyStyle);
     QFont font;
     font.setFamily("Sans Serif");
-    font.setPointSize (10);
+    font.setPointSize (8);
     a.setFont(font);
 
-    UI::Frame w;
+    UI::MainWindow w;
     w.resize(1200, 800);
 #else
     UI::FlexWidget w;

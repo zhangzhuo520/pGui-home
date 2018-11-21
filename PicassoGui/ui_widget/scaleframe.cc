@@ -31,6 +31,7 @@ void ScaleFrame::initImage()
 
 void ScaleFrame::paintImage()
 {
+    image->fill(Qt::white);
     QPainter painter(image);
     QPen penDegree;
     penDegree.setColor(qRgb(0, 0, 0));
@@ -44,58 +45,58 @@ void ScaleFrame::paintImage()
     int height = imageH;   //set ScaleRuler Height and width
 
     painter.drawLine(pointx, pointy - 2, pointx, pointy - 15);
-    painter.drawText(pointx + 3, pointy - 11, "0");
+    painter.drawText(pointx + 3, pointy - 11, QString::number(xStart, 'g', 2));
 
     painter.drawLine(pointy - 2, pointx, pointy - 13, pointx);
     painter.resetTransform();
     painter.translate(pointx - 8 , pointy + 6);   //set Rotate Center
     painter.rotate(-90);
-    painter.drawText(0 , 0, "0");      //drawText in new RatateCenter
+    painter.drawText(0 , 0, QString::number(yStart, 'g', 2));      //drawText in new RatateCenter
     painter.rotate(90);
     painter.resetTransform();
-    for(int i = 0; i < ScaleUnit; i ++)
-    {
-        int bigUintLength = pointx + (i + 1) * width / ScaleUnit;
+//    for(int i = 0; i < ScaleUnit; i ++)
+//    {
+//        int bigUintLength = pointx + (i + 1) * width / ScaleUnit;
 
-        painter.drawLine(bigUintLength, pointy - 2, bigUintLength, pointy - 15);
-        for (int j = 0; j < 10; j ++)
-        {
-            int smallUnitLength = pointx + (j + i * 10 + 1) * width / ScaleUnit * 10;
-            if (j == 4)
-            {
-                painter.drawLine(smallUnitLength, pointy - 2, smallUnitLength, pointy - 12);
-            }
-            else
-            {
-                painter.drawLine(smallUnitLength, pointy - 2, smallUnitLength, pointy - 8);
-            }
-        }
-        painter.drawText(pointx + (i + 1.1) * width / ScaleUnit, pointy - 11, QString::number((xStart + (xEnd - xStart) / ScaleUnit), 'g', 3));
-    }
+//        painter.drawLine(bigUintLength, pointy - 2, bigUintLength, pointy - 15);
+//        for (int j = 0; j < 10; j ++)
+//        {
+//            int smallUnitLength = pointx + (j + i * 10 + 1) * width / ScaleUnit * 10;
+//            if (j == 4)
+//            {
+//                painter.drawLine(smallUnitLength, pointy - 2, smallUnitLength, pointy - 12);
+//            }
+//            else
+//            {
+//                painter.drawLine(smallUnitLength, pointy - 2, smallUnitLength, pointy - 8);
+//            }
+//        }
+//        painter.drawText(pointx + (i + 1.1) * width / ScaleUnit, pointy - 11, QString::number((xStart + (1 + i) * (xEnd - xStart) / ScaleUnit), 'g', 2));
+//    }
 
-    for(int i = 0; i < ScaleUnit; i ++)
-    {
-        int bigUintLength = pointy + (i + 1) * height / ScaleUnit;
+//    for(int i = 0; i < ScaleUnit; i ++)
+//    {
+//        int bigUintLength = pointy + (i + 1) * height / ScaleUnit;
 
-        painter.drawLine(pointy - 15, bigUintLength, pointy - 2, bigUintLength);
-        for (int j = 0; j < 10; j ++)
-        {
-            int smallUnitLength = pointy + (j + i * 10 + 1) * height / ScaleUnit * 10;
-            if (j == 4)
-            {
-                painter.drawLine(pointy - 12, smallUnitLength, pointy - 2, smallUnitLength);
-            }
-            else
-            {
-                painter.drawLine(pointy - 8, smallUnitLength, pointy - 2, smallUnitLength);
-            }
-        }
+//        painter.drawLine(pointy - 15, bigUintLength, pointy - 2, bigUintLength);
+//        for (int j = 0; j < 10; j ++)
+//        {
+//            int smallUnitLength = pointy + (j + i * 10 + 1) * height / ScaleUnit * 10;
+//            if (j == 4)
+//            {
+//                painter.drawLine(pointy - 12, smallUnitLength, pointy - 2, smallUnitLength);
+//            }
+//            else
+//            {
+//                painter.drawLine(pointy - 8, smallUnitLength, pointy - 2, smallUnitLength);
+//            }
+//        }
 
         //setRotate(-90d) Text
         painter.resetTransform();
         painter.translate(pointx - 19, pointy + (i + 1.05) * height / ScaleUnit);
         painter.rotate(90);
-        painter.drawText(0, 0, QString::number((yStart + (yEnd - yStart) / ScaleUnit), 'g', 3));
+        painter.drawText(0, 0, QString::number((yStart + (1 + i) * (yEnd - yStart) / ScaleUnit), 'g', 2));
         painter.rotate(-90);
         painter.resetTransform();
     }
@@ -140,7 +141,12 @@ void ScaleFrame::updataAxisDate()
 
 void ScaleFrame::slot_box_updated(double left, double bot, double right, double top)
 {
-
+    xStart = left;
+    xEnd = right;
+    yStart = top;
+    yEnd = bot;
+    paintImage();
+    update();
 }
 
 void ScaleFrame::paintEvent(QPaintEvent *e)
