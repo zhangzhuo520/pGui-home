@@ -3,12 +3,21 @@ namespace UI {
 QVector <QColor> UiStyle::ItemColorList;
 QVector <int> UiStyle::ItemPetternList;
 QColor UiStyle::DockTitleBarColor = QColor(149, 194, 231);
-QColor UiStyle::ToolBarColor = QColor(216, 216, 216);  //QColor(80, 183, 247, 50)
+#if SYS_TIPBOX
+QColor UiStyle::ToolBarColor = QColor(216, 216, 216);
+#else
+QColor UiStyle::ToolBarColor = QColor(80, 183, 247, 50)
+#endif
 QColor UiStyle::ButtonPressColor = QColor(80, 183, 180, 50);
 QColor UiStyle::ButtonHoverColor = QColor(80, 183, 220, 50);
 QString UiStyle::TitleColor = "background-color: rgb(149, 194, 231);";
-QString UiStyle::MenuBarColor = "background-color: rgb(216, 216, 216);";//"background-color: rgb(131, 170, 193);";
-//149, 194, 231
+
+#if SYS_TIPBOX
+QString UiStyle::MenuBarColor = "background-color: rgb(216, 216, 216);";
+#else
+QString UiStyle::MenuBarColor = "background-color: rgb(131, 170, 193);";
+#endif
+
 QString UiStyle::StateBarColor = "background-color: rgba(80, 183, 247, 50);";
 QString UiStyle::TabWidgetStyle = "background-color: rgb(230, 230, 230);";
 QString UiStyle::ActionStyle = \
@@ -44,25 +53,31 @@ QString UiStyle::MenuStyle = \
                             "background: #2dabf9;"\
                             "}";\
 
-#if 0
+#if SYS_TIPBOX
+QString UiStyle::TitleStyle = "QWidget{background-color:rgb(216, 216, 216);}";
+#else
 QString UiStyle::TitleStyle = \
                               "QWidget{background-color: "\
                               "qlineargradient(spread:reflect, x1:0.981085,"\
                               "y1:1, x2:0.982641, y2:0, stop:0 rgba(131, 170, 193, 255),"\
                               "stop:1 rgba(255, 255, 255, 255));}";
-#else
-QString UiStyle::TitleStyle = "QWidget{background-color:rgb(216, 216, 216);}";
+
+
 #endif
+
 #if 0
 QString Global::toolbarStyle = \
                              "QToolBar{ background-color:"\
                              "qlineargradient(spread:reflect, x1:0.961538, y1:1, x2:0.021,"\
                              "y2:0, stop:0 rgba(104, 162, 189, 255), stop:1 rgba(255, 255, 255, 255));}";
 #else
-#if 0
-QString UiStyle::ToolbarStyle = "QToolBar{background-color:rgb(131, 170, 193);}";
-#else
+
+#if SYS_TIPBOX
 QString UiStyle::ToolbarStyle = "QToolBar{background-color:rgb(216, 216, 216);}";
+
+#else
+QString UiStyle::ToolbarStyle = "QToolBar{background-color:rgb(131, 170, 193);}";
+
 #endif
 
 QString UiStyle::MainWindowStyle = "QMainWindow::separator {"\

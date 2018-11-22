@@ -39,12 +39,16 @@ public:
     void updateMouseCursor(QPoint);
     void drawRubberRect();
     void drawRuler();
+
+    void saveOpenHistory(QString);
 signals:
     void signal_mouseMove(const QPoint&);
 
     void signal_updataDistance(double);
 
     void signal_distancePoint(QPointF, QPointF);
+
+    void signal_moveCenter(int, int);
 
 public slots:
     void setStyle (int);

@@ -11,7 +11,7 @@ void Delegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     QString value = index.model()->data(index, Qt::EditRole).toString();
     QComboBox* box = static_cast<QComboBox*>(editor);
-//    box->setCurrentText(value);
+    box->addItem(value);
 }
 
 void Delegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const

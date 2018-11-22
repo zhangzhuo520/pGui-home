@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("pGui");
 
     //setWindowFlags(Qt::FramelessWindowHint);
+    initConfigFile();
 
     initMenubar();
 
@@ -27,7 +28,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initConnection();
 
+    initConfigFile();
+
     initStyle();
+
+    readSettingConfig();
 }
 
 MainWindow::~MainWindow()
@@ -50,6 +55,19 @@ void MainWindow::initMenubar()
     action = menu->addAction(tr("Close"));
     connect(action, SIGNAL(triggered()), this, SLOT(slot_closeFile()));
     menu->addSeparator();
+
+    QAction *rencentOpen_action = new QAction("Recent Open", this);
+    rencentOpen_menu = new QMenu(this);
+    getOpenHistory();
+    for (int i = 0; i < historyFileList.count(); i ++)
+    {
+        QAction *action = new QAction(historyFileList.at(i), rencentOpen_menu);
+        action->setObjectName(historyFileList.at(i));
+        rencentOpen_menu->addAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(slot_addHistoryAction()));
+    }
+    rencentOpen_action->setMenu(rencentOpen_menu);
+    menu->addAction(rencentOpen_action);
     menu->addAction(tr("&Quit"), this, SLOT(slot_close()));
 
     menu = menuBar()->addMenu(tr("View"));
@@ -372,6 +390,11 @@ void MainWindow::ChipPlacementEditor()
     chipDialog->show();
 }
 
+void MainWindow::closeEvent(QCloseEvent *)
+{
+    writeSettingConfig();
+}
+
 /**
  * @brief MainWindow::slot_showState
  * @param msg
@@ -409,6 +432,12 @@ void MainWindow::slot_mouseAction()
     rulerAction->setChecked(false);
     paintstyle = Global::MouseStyle;
     emit signal_setPaintStyle(paintstyle);
+}
+
+void MainWindow::slot_addHistoryAction()
+{
+    QString name = sender()->objectName();
+    slot_addFile(name);
 }
 
 void MainWindow::slot_penAction()
@@ -539,6 +568,11 @@ void MainWindow::slot_refreshAction()
     renderFrame->center_at_point(100,20);
 }
 
+void MainWindow::slot_moveCenter(int x, int y)
+{
+    renderFrame->zoom_center(x, y);
+}
+
 /**
  * @brief MainWindow::slot_openFile
  */
@@ -638,6 +672,9 @@ void MainWindow::slot_openDB(QString dirName)
 void MainWindow::slot_addFile(QString filePath)
 {
     emit signal_addFile(filePath);
+
+    saveOpenHistory(filePath);
+    addHistoryAction(filePath);
 }
 
 /**
@@ -710,6 +747,7 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
     connect(renderFrame, SIGNAL(signal_pos_updated(double,double)), paintWidget, SLOT(slot_updataPos(double, double)));
     connect(renderFrame, SIGNAL(signal_box_updated(double,double,double,double)), scaleFrame, SLOT(slot_box_updated(double,double,double,double)));
     connect(paintWidget, SIGNAL(signal_distancePoint(QPointF,QPointF)), renderFrame, SLOT(slot_distance_point(QPointF,QPointF)));
+    connect(paintWidget, SIGNAL(signal_moveCenter(int ,int)), this, SLOT(slot_moveCenter(int, int)));
 }
 
 /**
@@ -780,5 +818,82 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
     {
         emit signal_defectsUpdata(&index);
     }
+}
+
+void MainWindow::initConfigFile()
+{
+    QDir dir;
+
+    configFile_path = QDir::homePath() + "/.PguiConfig";
+    if(dir.mkdir(configFile_path))
+    {
+        return;
+    }
+}
+
+
+void MainWindow::saveOpenHistory(QString history)
+{
+    QString filePath = configFile_path + "/openFileHistory.txt";
+    QString str;
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
+        return;
+
+    QTextStream out(&file);
+
+    if (historyFileList.count() > 6)
+    {
+        historyFileList.insert(0, history);
+        historyFileList.removeAt(historyFileList.count());
+    }
+    else
+    {
+        historyFileList.append(history);
+    }
+
+    for (int i = 0; i < historyFileList.count(); i ++)
+    {
+            str = str + historyFileList.at(i) + "###";
+    }
+    out << str;
+    file.flush();
+    file.close();
+}
+
+void  MainWindow::getOpenHistory()
+{
+    QFile file(configFile_path + "/openFileHistory.txt");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        return;
+    }
+    historyFileList.clear();
+    QTextStream out(&file);
+    historyFileList =  out.readAll().split("###");
+    historyFileList.removeAt(historyFileList.count() - 1);
+    file.close();
+}
+
+void MainWindow::readSettingConfig()
+{
+        qDebug() << "222222222222222222";
+    QSettings configSet(configFile_path + "/configSize.ini", QSettings::IniFormat);
+    QSize mainwindow_size = configSet.value("Grometry").toSize();
+    resize(mainwindow_size.width(), mainwindow_size.height());
+}
+
+void MainWindow::writeSettingConfig()
+{
+    qDebug() << "111111111111111111111";
+    QSettings configSet(configFile_path + "/configSize.ini", QSettings::IniFormat);
+    configSet.setValue("Grometry", size());
+}
+
+void MainWindow::addHistoryAction(QString filename)
+{
+    QAction *action = new QAction(filename, rencentOpen_menu);
+    action->setObjectName(filename);
+    rencentOpen_menu->addAction(action);
 }
 }

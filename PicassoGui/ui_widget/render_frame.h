@@ -54,6 +54,13 @@ public:
 
     const std::vector<render::LayerProperties>& get_properties_list() const;
 
+    const render::LayerProperties& get_properties(int index) const;
+
+    int layers_size() const
+    {
+        return m_layers_properties.size();
+    }
+
     void set_properties(const render::LayerProperties& lp);
 
     void set_cursor_widget(QWidget *);
@@ -63,6 +70,8 @@ public:
     void set_defect_point(double x, double y);
 
     void center_at_point(double x, double y);
+
+    void zoom_center(int x, int y);
 
     virtual void paintEvent(QPaintEvent *);
 

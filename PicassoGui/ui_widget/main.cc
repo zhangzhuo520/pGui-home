@@ -4,22 +4,24 @@
 #include "deftools/defcontrols.h"
 #include "deftools/datastruct.h"
 
+
 // Only rigister Class,can use sigal and slot
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-#if 1
     qApp->setStyle(new UI::ProxyStyle);
     QFont font;
     font.setFamily("Sans Serif");
-    font.setPointSize (8);
+    font.setPointSize (9);
     a.setFont(font);
 
+#ifdef SYS_TIPBOX
     UI::MainWindow w;
-    w.resize(1200, 800);
+
 #else
-    UI::FlexWidget w;
+    UI::Frame w;
+
 #endif
     w.show();
     return a.exec();

@@ -10,6 +10,7 @@
 #include <QWheelEvent>
 #include <QResizeEvent>
 #include <QMouseEvent>
+#include <QThreadPool>
 #include <Qt>
 
 #include "render_worker.h"
@@ -47,8 +48,6 @@ RenderFrame::RenderFrame(QWidget *parent):
 	setFocusPolicy(Qt::StrongFocus);
 
     set_defect_point(0, 70);
-
-    //zoom_box(Oasis::OasisBox(0, 0, 100000, 100000));
 }
 
 
@@ -151,6 +150,9 @@ void RenderFrame::init()
         m_buffer.push_back(new render::Bitmap(width(), height(), 1.0));
     }
 
+    QThreadPool pool;
+    pool.setMaxThreadCount(layers);
+
     m_vp.set_size(width(), height());
     Oasis::OasisBox box = m_vp.box();
     Oasis::OasisTrans vp_trans = m_vp.trans();
@@ -161,8 +163,10 @@ void RenderFrame::init()
         {
             render::LayerMetaData l = it->metadata();
             Oasis::LDType ld(l.get_layer_num(), l.get_data_type());
-            render::RenderWorker worker(m_layout, -1, box, vp_trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
-            worker.run();
+//            render::RenderWorker worker(m_layout, -1, box, vp_trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
+//            worker.run();
+          render::RenderWorker* worker = new render::RenderWorker(m_layout, -1, box, vp_trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
+          pool.start(worker);
         }
     }
     
@@ -268,28 +272,27 @@ void RenderFrame::paintEvent(QPaintEvent * e )
 
 void RenderFrame::wheelEvent(QWheelEvent * e)
 {
-
-    //bool hor_direction = (e->orientation() == Qt::Horizontal);
-    Oasis::OasisPoint p = m_vp.trans().inverted().trans(Oasis::OasisPoint(e->pos().x(), e->pos().y()));
+    Oasis::OasisPoint p = m_vp.trans().inverted().trans(Oasis::OasisPoint(e->pos().x(), m_vp.height() - 1 - e->pos().y()));
     Oasis::OasisBox vp_box = m_vp.box();
     int delta = e->delta();
-
     double step = 0.25;
     double f = 1;
     if(delta > 0)
     {
-        f = 1.0 + step * (-delta / 120.0);
+        f = 1.0 / (1.0 + step * (delta / 120.0));
     }
     else
     {
-        f = 1.0 / (1.0 + step * (delta / 120.0));
+        f = 1.0 + step * (-delta / 120.0);
     }
     
-    zoom_box(Oasis::OasisBox((p.x() - (p.x() - vp_box.left()) * f),
-                             (p.y() - (p.y() - vp_box.bottom()) * f),
-                             (p.x() - (p.x() - vp_box.right()) * f),
-                             (p.y() - (p.y() - vp_box.top()) * f)
+    zoom_box(Oasis::OasisBox((p.x() - (Oasis::int64)((p.x() - vp_box.left()) * f)),
+                             (p.y() - (Oasis::int64)((p.y() - vp_box.bottom()) * f)),
+                             (p.x() - (Oasis::int64)((p.x() - vp_box.right()) * f)),
+                             (p.y() - (Oasis::int64)((p.y() - vp_box.top()) * f))
                             ));
+
+
     e->ignore();
 }
 
@@ -297,8 +300,6 @@ void RenderFrame::wheelEvent(QWheelEvent * e)
 void RenderFrame::keyPressEvent(QKeyEvent * e)
 {
     int key = e->key();
-    /*unsigned int modifiers = e->modifiers();*/
-
     if(key == Qt::Key_Down)
     {
         emit signal_down_key_pressed();
@@ -339,10 +340,13 @@ void RenderFrame::init_viewport()
 {
     m_vp.set_size(100, 100);
     m_vp.set_box(Oasis::OasisBox(0, 0, 100000, 100000));
-//    m_redraw_required = true;
-//    update();
 }
 
+
+const render::LayerProperties& RenderFrame::get_properties(int index) const
+{
+    return m_layers_properties[index];
+}
 
 const std::vector<render::LayerProperties>& RenderFrame::get_properties_list() const
 {
@@ -350,10 +354,17 @@ const std::vector<render::LayerProperties>& RenderFrame::get_properties_list() c
 }
 
 
+//void RenderFrame::set_properties(const LayerProperties& lp, int index)
 void RenderFrame::set_properties(const LayerProperties& lp)
 {
+//    if(index >= layers_size())
+//    {
+//        return;
+//    }
     int index = lp.layer_index();
     m_layers_properties[index] = lp;
+//    lp.attach_view(this);
+//    lp.set_layer_index(index);
     set_view_ops();
 	m_redraw_required = true;
     update();
@@ -447,6 +458,7 @@ void RenderFrame::set_defect_point(double x, double y)
         if ((point = dynamic_cast<DefectPoint*> (*it)) != 0)
         {
             point->set_point(x, y);
+            center_at_point(x, y);
             return;
         }
     }
@@ -461,4 +473,15 @@ void RenderFrame::center_at_point(double x, double y)
     Oasis::OasisBox box = m_vp.box();
     zoom_box(calculate_box(x, y, box));
 }
+
+
+void RenderFrame::zoom_center(int x, int y)
+{
+    if( x < width() && x > 0 && y < height() && y > 0)
+    {
+        Oasis::OasisPoint point = m_vp.trans().inverted().trans(Oasis::OasisPoint(x, m_vp.height() - 1 - y));
+        center_at_point((double)point.x() / render::dbu, (double)point.y() / render::dbu );
+    }
+}
+
 }

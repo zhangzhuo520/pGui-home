@@ -54,43 +54,43 @@ void ScaleFrame::paintImage()
     painter.drawText(0 , 0, QString::number(yStart, 'g', 2));      //drawText in new RatateCenter
     painter.rotate(90);
     painter.resetTransform();
-//    for(int i = 0; i < ScaleUnit; i ++)
-//    {
-//        int bigUintLength = pointx + (i + 1) * width / ScaleUnit;
+    for(int i = 0; i < ScaleUnit; i ++)
+    {
+        int bigUintLength = pointx + (i + 1) * width / ScaleUnit;
 
-//        painter.drawLine(bigUintLength, pointy - 2, bigUintLength, pointy - 15);
-//        for (int j = 0; j < 10; j ++)
-//        {
-//            int smallUnitLength = pointx + (j + i * 10 + 1) * width / ScaleUnit * 10;
-//            if (j == 4)
-//            {
-//                painter.drawLine(smallUnitLength, pointy - 2, smallUnitLength, pointy - 12);
-//            }
-//            else
-//            {
-//                painter.drawLine(smallUnitLength, pointy - 2, smallUnitLength, pointy - 8);
-//            }
-//        }
-//        painter.drawText(pointx + (i + 1.1) * width / ScaleUnit, pointy - 11, QString::number((xStart + (1 + i) * (xEnd - xStart) / ScaleUnit), 'g', 2));
-//    }
+        painter.drawLine(bigUintLength, pointy - 2, bigUintLength, pointy - 15);
+        for (int j = 0; j < 10; j ++)
+        {
+            int smallUnitLength = pointx + (j + i * 10 + 1) * width / ScaleUnit * 10;
+            if (j == 4)
+            {
+                painter.drawLine(smallUnitLength, pointy - 2, smallUnitLength, pointy - 12);
+            }
+            else
+            {
+                painter.drawLine(smallUnitLength, pointy - 2, smallUnitLength, pointy - 8);
+            }
+        }
+        painter.drawText(pointx + (i + 1.1) * width / ScaleUnit, pointy - 11, QString::number((xStart + (1 + i) * (xEnd - xStart) / ScaleUnit), 'g', 2));
+    }
 
-//    for(int i = 0; i < ScaleUnit; i ++)
-//    {
-//        int bigUintLength = pointy + (i + 1) * height / ScaleUnit;
+    for(int i = 0; i < ScaleUnit; i ++)
+    {
+        int bigUintLength = pointy + (i + 1) * height / ScaleUnit;
 
-//        painter.drawLine(pointy - 15, bigUintLength, pointy - 2, bigUintLength);
-//        for (int j = 0; j < 10; j ++)
-//        {
-//            int smallUnitLength = pointy + (j + i * 10 + 1) * height / ScaleUnit * 10;
-//            if (j == 4)
-//            {
-//                painter.drawLine(pointy - 12, smallUnitLength, pointy - 2, smallUnitLength);
-//            }
-//            else
-//            {
-//                painter.drawLine(pointy - 8, smallUnitLength, pointy - 2, smallUnitLength);
-//            }
-//        }
+        painter.drawLine(pointy - 15, bigUintLength, pointy - 2, bigUintLength);
+        for (int j = 0; j < 10; j ++)
+        {
+            int smallUnitLength = pointy + (j + i * 10 + 1) * height / ScaleUnit * 10;
+            if (j == 4)
+            {
+                painter.drawLine(pointy - 12, smallUnitLength, pointy - 2, smallUnitLength);
+            }
+            else
+            {
+                painter.drawLine(pointy - 8, smallUnitLength, pointy - 2, smallUnitLength);
+            }
+        }
 
         //setRotate(-90d) Text
         painter.resetTransform();
@@ -121,15 +121,28 @@ void ScaleFrame::updateMouseCursor(QPoint pos)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setBrush(QBrush(Qt::black));
 
+    double cursorX = pos.x();
+    double cursorY = pos.y();
+
+    if (cursorX < 20)
+    {
+        cursorX = 20;
+    }
+
+    if (cursorY < 20)
+    {
+        cursorY = 20;
+    }
+
     QPolygon topPolygon;
-    topPolygon.append(QPoint(pos.x() - 5, 14));
-    topPolygon.append(QPoint(pos.x() + 5, 14));
-    topPolygon.append(QPoint(pos.x(), 18));
+    topPolygon.append(QPoint(cursorX - 5, 14));
+    topPolygon.append(QPoint(cursorX + 5, 14));
+    topPolygon.append(QPoint(cursorX, 18));
 
     QPolygon leftPolygon;
-    leftPolygon.append(QPoint(14, pos.y() - 5));
-    leftPolygon.append(QPoint(14, pos.y() + 5));
-    leftPolygon.append(QPoint(18, pos.y()));
+    leftPolygon.append(QPoint(14, cursorY - 5));
+    leftPolygon.append(QPoint(14, cursorY + 5));
+    leftPolygon.append(QPoint(18, cursorY));
 
     painter.drawPolygon(topPolygon);
     painter.drawPolygon(leftPolygon);
@@ -141,6 +154,7 @@ void ScaleFrame::updataAxisDate()
 
 void ScaleFrame::slot_box_updated(double left, double bot, double right, double top)
 {
+    qDebug() << left << bot << right << top;
     xStart = left;
     xEnd = right;
     yStart = top;

@@ -24,6 +24,10 @@
 #include <QScrollArea>
 #include <QColorDialog>
 #include <iostream>
+#include <QSettings>
+#include <QFile>
+#include <QStringList>
+#include <QCloseEvent>
 
 #include "deftools/defcontrols.h"
 #include "deftools/cmessagebox.h"
@@ -67,6 +71,8 @@ public:
 
     void initDefGroup();
 
+    void initConfigFile();
+
     void init_fileProject_widget();
 
     void init_fileProject_layerTree();
@@ -77,12 +83,24 @@ public:
 
     void initStyle();
 
+    void saveOpenHistory(QString);
+    void getOpenHistory();
+
+    void readSettingConfig();
+
+    void writeSettingConfig();
+
+    void addHistoryAction(QString);
+
     void DefectReview();
     void RTSSetup();
     void RunRTS();
     void GaugeChecker();
     void SEMImageHandler();
     void ChipPlacementEditor();
+
+protected:
+    void closeEvent(QCloseEvent *);
 
 signals:
     void signal_readDB(QString);
@@ -137,6 +155,8 @@ private slots:
 
     void slot_mouseAction();
 
+    void slot_addHistoryAction();
+
     void slot_penAction();
 
     void slot_rulerAction();
@@ -156,6 +176,8 @@ private slots:
     void slot_setLayerData(render::LayerProperties&);
 
     void slot_refreshAction();
+
+    void slot_moveCenter(int, int);
 private:
     DockWidget *fileDockWidget;
 
@@ -236,6 +258,10 @@ private:
     QLineEdit *setPosY_lineEdit;
     QPushButton *setPos_foundPushButton;
     QPushButton *setPos_colsePushButton;
+
+    QMenu *rencentOpen_menu;
+    QString configFile_path;
+    QStringList historyFileList;
 };
 }
 #endif // MAINWINDOW_H

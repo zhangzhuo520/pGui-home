@@ -73,6 +73,7 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *e)
     {
         RubberEndPoint = e->pos();
         checkstyle = Normal;
+        emit signal_moveCenter(e->pos().x(), e->pos().y());
     }
     else if(e->button() == Qt::LeftButton)
     {
@@ -233,4 +234,5 @@ void DrawWidget::drawRuler()
     tempPainter.drawLine(lineEndPoint, leftArrowPoint);
     update();
 }
+
 }

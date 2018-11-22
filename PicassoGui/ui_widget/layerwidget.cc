@@ -229,12 +229,12 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
                  << "Edit Name"  << "Edit Comment";
     QVector <QAction *> actionList;
 
-    QMenu Layermenu;
+    QMenu *Layermenu = new QMenu();
 
     for (int i = 0; i < MenuTextList.count(); i ++)
     {
-        QAction *act = new QAction(MenuTextList.at(i), &Layermenu);
-        if (i == 7 || i == 13) Layermenu.addSeparator();
+        QAction *act = new QAction(MenuTextList.at(i), Layermenu);
+        if (i == 7 || i == 13) Layermenu->addSeparator();
         if (i < 7 || i == 12 || i == 15 || i == 18 || i == 19)
         {
             if(i < 3)
@@ -307,13 +307,13 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
 
             }
         }
-        Layermenu.addAction(act);
+        Layermenu->addAction(act);
         actionList.append(act);
     }
 
     QPoint tempPos = pos;
     tempPos.setY(tempPos.y() + 22);
-    Layermenu.exec(layerTree->mapToGlobal(tempPos));
+    Layermenu->exec(layerTree->mapToGlobal(tempPos));
 }
 
 void LayerWidget::slot_showLayerControlWidget(bool ischeck)

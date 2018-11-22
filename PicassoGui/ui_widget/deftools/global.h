@@ -4,6 +4,8 @@
 #include <QColor>
 #include <QVector>
 #include <QBrush>
+#include "datastruct.h"
+
 namespace UI {
 class Global
 {
