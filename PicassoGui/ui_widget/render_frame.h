@@ -38,7 +38,7 @@ class RenderFrame :public RenderObjectWidget
 {
 Q_OBJECT
 public:
-    RenderFrame(QWidget *parent = 0);
+    RenderFrame(QWidget *parent = 0, QString path = "");
 
     virtual ~RenderFrame();
 

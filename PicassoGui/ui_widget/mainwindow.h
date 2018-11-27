@@ -92,6 +92,8 @@ public:
 
     void addHistoryAction(QString);
 
+    void centerWidget_boundingSignal();
+
     void DefectReview();
     void RTSSetup();
     void RunRTS();
@@ -216,10 +218,14 @@ private:
     QStandardItemModel *layerTreeModel;
 
     DrawWidget *paintWidget;
+    QVector <DrawWidget *>paintWidget_vector;
 
     ScaleFrame *scaleFrame;
+    QVector <ScaleFrame *>scaleFrame_vector;
 
     render::RenderFrame* renderFrame;
+    QVector <render::RenderFrame*>renderFrame_vector;
+
 
     CheckList *checklistWidget;
 
@@ -251,6 +257,7 @@ private:
     QAction *mouseAction;
 
     bool isShowAxis;
+
     QWidget *setPosWidget;
     QLabel *setPosX_label;
     QLineEdit *setPosX_lineEdit;

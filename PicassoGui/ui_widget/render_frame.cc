@@ -26,7 +26,7 @@ namespace render{
 
 static const Oasis::float64 m_shift_unit = 0.1;
 
-RenderFrame::RenderFrame(QWidget *parent):
+RenderFrame::RenderFrame(QWidget *parent, QString path):
     RenderObjectWidget(parent),
     m_image(0),
     m_pixmap(0),
@@ -39,7 +39,7 @@ RenderFrame::RenderFrame(QWidget *parent):
     setBackgroundRole(QPalette::NoRole);
     setAttribute(Qt::WA_NoSystemBackground);
     setMouseTracking(true);
-    load_file("/home/zhaofeng/picasso/build/test/hierarchy.prep.oas");
+    load_file(path.toStdString());
     connect(this, SIGNAL(signal_down_key_pressed()), this, SLOT(slot_down_shift()));
     connect(this, SIGNAL(signal_up_key_pressed()), this, SLOT(slot_up_shift()));
     connect(this, SIGNAL(signal_left_key_pressed()), this, SLOT(slot_left_shift()));

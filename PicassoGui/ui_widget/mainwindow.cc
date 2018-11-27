@@ -45,16 +45,16 @@ MainWindow::~MainWindow()
  */
 void MainWindow::initMenubar()
 {
-    QMenu *menu = menuBar()->addMenu("File");    
-    QAction *action = menu->addAction(QIcon(":/dfjy/images/open.png"),tr("Open"));
+    QMenu *file_menu = menuBar()->addMenu("File");
+    QAction *action = file_menu->addAction(QIcon(":/dfjy/images/open.png"),tr("Open"));
     QStringList actionNameList;
     action->setShortcuts(QKeySequence::Open);
     connect(action, SIGNAL(triggered()), this, SLOT(slot_openFile()));
-    action = menu->addAction(tr("Save"));
+    action = file_menu->addAction(tr("Save"));
     connect(action, SIGNAL(triggered()), this, SLOT(slot_saveFile()));
-    action = menu->addAction(tr("Close"));
+    action = file_menu->addAction(tr("Close"));
     connect(action, SIGNAL(triggered()), this, SLOT(slot_closeFile()));
-    menu->addSeparator();
+    file_menu->addSeparator();
 
     QAction *rencentOpen_action = new QAction("Recent Open", this);
     rencentOpen_menu = new QMenu(this);
@@ -67,28 +67,33 @@ void MainWindow::initMenubar()
         connect(action, SIGNAL(triggered()), this, SLOT(slot_addHistoryAction()));
     }
     rencentOpen_action->setMenu(rencentOpen_menu);
-    menu->addAction(rencentOpen_action);
-    menu->addAction(tr("&Quit"), this, SLOT(slot_close()));
+    file_menu->addAction(rencentOpen_action);
+    file_menu->addAction(tr("&Quit"), this, SLOT(slot_close()));
 
-    menu = menuBar()->addMenu(tr("View"));
-    action = menu->addAction(tr("Undo"));
+    QMenu *view_menu = menuBar()->addMenu(tr("View"));
+    action = view_menu->addAction(tr("Undo"));
     connect(action, SIGNAL(triggered()), this, SLOT(slot_undo()));
 
-    menu = menuBar()->addMenu(tr("Layer"));
-    menu = menuBar()->addMenu(tr("Tool"));
-    menu = menuBar()->addMenu(tr("Option"));
-    menu = menuBar()->addMenu(tr("Window"));
-    menu = menuBar()->addMenu(tr("Help"));
-    menu = menuBar()->addMenu(tr("Addon"));
+    QMenu *layer_menu = menuBar()->addMenu(tr("Layer"));
+    layer_menu->addAction("layer");
+    QMenu *tool_menu = menuBar()->addMenu(tr("Tool"));
+    tool_menu->addAction("tool");
+    QMenu *option_menu = menuBar()->addMenu(tr("Option"));
+    option_menu->addAction("Option");
+    QMenu *window_menu = menuBar()->addMenu(tr("Window"));
+    window_menu->addAction("window");
+    QMenu *help_menu = menuBar()->addMenu(tr("Help"));
+    help_menu->addAction("help");
+    QMenu *addon_menu = menuBar()->addMenu(tr("Addon"));
     actionNameList.clear();
     actionNameList << "Defect Review" << "RTS Setup" << "Run RTS"
                    << "Gauge Checker" << "SEM Image Handler"
                    << "Chip Placement Editor";
     for(int i = 0; i < actionNameList.count(); i ++)
     {
-        QAction *action = new QAction(actionNameList.at(i), menu);
+        QAction *action = new QAction(actionNameList.at(i), addon_menu);
         action->setObjectName(actionNameList.at(i));
-        menu->addAction(action);
+        addon_menu->addAction(action);
         connect(action, SIGNAL(triggered()), this, SLOT(slot_AddonActions()));
     }
 }
@@ -515,16 +520,16 @@ void MainWindow::slot_showScaleAxis(bool isShow)
 
      if (isShow)
      {
-         if (NULL != scaleFrame)
+         for (int i = 0; i < scaleFrame_vector.count(); i ++)
          {
-             scaleFrame->layout()->setContentsMargins(22, 22, 0, 0);
+             scaleFrame_vector.at(i)->layout()->setContentsMargins(20, 20, 0, 0);
          }
      }
      else
      {
-         if (NULL != scaleFrame)
+         for (int i = 0; i < scaleFrame_vector.count(); i ++)
          {
-             scaleFrame->layout()->setContentsMargins(0, 0, 0, 0);
+             scaleFrame_vector.at(i)->layout()->setContentsMargins(0, 0, 0, 0);
          }
      }
 }
@@ -626,8 +631,11 @@ void MainWindow::slot_drawPoint(const QModelIndex &index)
    // QString Stringsize = index.sibling(index.row(), 1).data().toString();
     int point_x = index.sibling(index.row(), 2).data().toDouble();
     int point_y = index.sibling(index.row(), 3).data().toDouble();
-    renderFrame->set_defect_point(point_x, point_y);
 
+    for(int i = 0; i < renderFrame_vector.count(); i ++)
+    {
+        renderFrame_vector.at(i)->set_defect_point(point_x, point_y);
+    }
 }
 
 /**
@@ -651,7 +659,7 @@ void MainWindow::slot_openDB(QString dirName)
         }
         if (fileInfo.suffix() == "oas")
         {
-            slot_addFile(fileInfo.fileName());
+            slot_addFile(dirName + "/" + fileInfo.fileName());
         }
     }
     if (!isDbFile)
@@ -684,18 +692,21 @@ void MainWindow::slot_addFile(QString filePath)
 void MainWindow::slot_click_fileItem(QModelIndex index)
 {
     currentFile = index.data().toString();
-    bool isExist = true;
     if (modelIdexList.isEmpty())
     {
         modelIdexList.append(index);
         scaleFrame = new ScaleFrame(paintTab);
-        renderFrame = new render::RenderFrame(scaleFrame);
+        scaleFrame_vector.append(scaleFrame);
+        renderFrame = new render::RenderFrame(scaleFrame, currentFile);
+        renderFrame_vector.append(renderFrame);
         paintWidget = new DrawWidget(renderFrame);
+        paintWidget_vector.append(paintWidget);
+
         renderFrame->set_cursor_widget(paintWidget);
         scaleFrame->setDrawWidget(renderFrame);
         if (isShowAxis)
         {
-            scaleFrame->layout()->setContentsMargins(22, 22, 0, 0);
+            scaleFrame->layout()->setContentsMargins(20, 20, 0, 0);
         }
         else
         {
@@ -706,21 +717,26 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
     }
     else
     {
+        bool isExist = false;
         for (int i = 0; i < modelIdexList.count(); i ++)
         {
             if (modelIdexList.at(i) == index)
             {
                 paintTab->setCurrentIndex(i);
-                isExist = false;
+                isExist = true;
             }
         }
 
-        if (isExist)
+        if (!isExist)
         {
             modelIdexList.append(index);
             scaleFrame = new ScaleFrame(paintTab);
-            renderFrame = new render::RenderFrame(scaleFrame);
+            scaleFrame_vector.append(scaleFrame);
+            renderFrame = new render::RenderFrame(scaleFrame, currentFile);
+            renderFrame_vector.append(renderFrame);
             paintWidget = new DrawWidget(renderFrame);
+            paintWidget_vector.append(paintWidget);
+
             renderFrame->set_cursor_widget(paintWidget);
             scaleFrame->setDrawWidget(renderFrame);
             if (isShowAxis)
@@ -731,23 +747,11 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
             {
                 scaleFrame->layout()->setContentsMargins(0, 0, 0, 0);
             }
+            paintTab->addTab(scaleFrame,currentFile);
+            paintTab->setMovable(true);
         }
     }
-
-    connect(this, SIGNAL(signal_setPenWidth(QString)), paintWidget, SLOT(setWidth(QString)));
-    emit signal_setPenWidth(penWidthCombox->currentText());
-    connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), paintWidget, SLOT(slot_setPaintStyle(Global::PaintStyle)));
-    connect(paintWidget, SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
-    connect(clearBtn, SIGNAL(clicked()), paintWidget, SLOT(clear()));
-    connect(penWidthCombox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slot_changePenWidth(QString)));
-    slot_showState("open  " + currentFile);
-    layerPropertyList = renderFrame->get_properties_list();
-    emit signal_getLayerData(layerPropertyList, currentFile);
-    connect(renderFrame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_updataXY(double, double)));
-    connect(renderFrame, SIGNAL(signal_pos_updated(double,double)), paintWidget, SLOT(slot_updataPos(double, double)));
-    connect(renderFrame, SIGNAL(signal_box_updated(double,double,double,double)), scaleFrame, SLOT(slot_box_updated(double,double,double,double)));
-    connect(paintWidget, SIGNAL(signal_distancePoint(QPointF,QPointF)), renderFrame, SLOT(slot_distance_point(QPointF,QPointF)));
-    connect(paintWidget, SIGNAL(signal_moveCenter(int ,int)), this, SLOT(slot_moveCenter(int, int)));
+    centerWidget_boundingSignal();
 }
 
 /**
@@ -758,6 +762,9 @@ void MainWindow::slot_closePaintTab(int index)
 {
     paintTab->removeTab(index);
     modelIdexList.remove(index);
+    renderFrame_vector.remove(index);
+    scaleFrame_vector.remove(index);
+    paintWidget_vector.remove(index);
 }
 
 void MainWindow::slot_updataXY(double x, double y)
@@ -772,7 +779,7 @@ void MainWindow::slot_updataXY(double x, double y)
  */
 void MainWindow::slot_showDefGroup(QModelIndex index, int jobIndex)
 {
-    MyDebug
+     MyDebug
      static int oldJobIndex = 0;
      QModelIndex tableIdIndex = index.sibling(index.row(), 1);
 
@@ -822,30 +829,31 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
 
 void MainWindow::initConfigFile()
 {
-    QDir dir;
+    configFile_path = QDir::homePath() + "/.pgui_config";
+    QDir dir(configFile_path);
 
-    configFile_path = QDir::homePath() + "/.PguiConfig";
-    if(dir.mkdir(configFile_path))
+    if (!dir.exists())
     {
-        return;
+        if(!dir.mkdir(configFile_path))
+        {
+            qDebug() << "make config_dir error !";
+            return;
+        }
     }
 }
-
 
 void MainWindow::saveOpenHistory(QString history)
 {
     QString filePath = configFile_path + "/openFileHistory.txt";
     QString str;
     QFile file(filePath);
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return;
-
     QTextStream out(&file);
 
     if (historyFileList.count() > 6)
     {
         historyFileList.insert(0, history);
-        historyFileList.removeAt(historyFileList.count());
     }
     else
     {
@@ -854,7 +862,15 @@ void MainWindow::saveOpenHistory(QString history)
 
     for (int i = 0; i < historyFileList.count(); i ++)
     {
-            str = str + historyFileList.at(i) + "###";
+        if (historyFileList.count() > 6)
+        {
+            historyFileList.removeAt(historyFileList.count() - 1);
+        }
+    }
+
+    for (int i = 0; i < historyFileList.count(); i ++)
+    {
+        str = str + historyFileList.at(i) + "###";
     }
     out << str;
     file.flush();
@@ -877,7 +893,6 @@ void  MainWindow::getOpenHistory()
 
 void MainWindow::readSettingConfig()
 {
-        qDebug() << "222222222222222222";
     QSettings configSet(configFile_path + "/configSize.ini", QSettings::IniFormat);
     QSize mainwindow_size = configSet.value("Grometry").toSize();
     resize(mainwindow_size.width(), mainwindow_size.height());
@@ -885,7 +900,6 @@ void MainWindow::readSettingConfig()
 
 void MainWindow::writeSettingConfig()
 {
-    qDebug() << "111111111111111111111";
     QSettings configSet(configFile_path + "/configSize.ini", QSettings::IniFormat);
     configSet.setValue("Grometry", size());
 }
@@ -895,5 +909,25 @@ void MainWindow::addHistoryAction(QString filename)
     QAction *action = new QAction(filename, rencentOpen_menu);
     action->setObjectName(filename);
     rencentOpen_menu->addAction(action);
+}
+
+void MainWindow::centerWidget_boundingSignal()
+{
+    for (int i = 0; i < renderFrame_vector.count(); i ++)
+    {
+        connect(this, SIGNAL(signal_setPenWidth(QString)), paintWidget_vector.at(i), SLOT(setWidth(QString)));
+        emit signal_setPenWidth(penWidthCombox->currentText());
+        connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), paintWidget_vector.at(i), SLOT(slot_setPaintStyle(Global::PaintStyle)));
+        connect(paintWidget_vector.at(i), SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
+        connect(clearBtn, SIGNAL(clicked()), paintWidget_vector.at(i), SLOT(clear()));
+        connect(renderFrame_vector.at(i), SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_updataXY(double, double)));
+        connect(renderFrame_vector.at(i), SIGNAL(signal_box_updated(double,double,double,double)), scaleFrame_vector.at(i), SLOT(slot_box_updated(double,double,double,double)));
+        connect(paintWidget_vector.at(i), SIGNAL(signal_moveCenter(int ,int)), this, SLOT(slot_moveCenter(int, int)));
+
+        layerPropertyList = renderFrame_vector.at(i)->get_properties_list();
+        emit signal_getLayerData(layerPropertyList, currentFile);
+    }
+    connect(penWidthCombox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slot_changePenWidth(QString)));
+    slot_showState("open " + currentFile);
 }
 }

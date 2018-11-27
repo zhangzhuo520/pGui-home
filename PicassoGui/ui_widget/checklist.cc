@@ -271,11 +271,6 @@ void CheckList::readDB(QString DBname)
              detectorMap.insert("defrange", query.value(defrange).toString());
              detectorMap.insert("unit", query.value(unit).toString());
              detectorVector.append(detectorMap);
-             qDebug() << query.value(detector_table_id).toString()
-                      << query.value(d_name).toString()
-                      << query.value(defect_number).toString()
-                      << query.value(defrange).toString()
-                      << query.value(unit).toString();
          }
         query.exec("select sum(defect_number) from detector where mask1_id and cond1_id");
         while(query.next())

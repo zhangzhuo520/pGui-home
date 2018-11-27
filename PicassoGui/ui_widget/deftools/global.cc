@@ -3,22 +3,23 @@ namespace UI {
 QVector <QColor> UiStyle::ItemColorList;
 QVector <int> UiStyle::ItemPetternList;
 QColor UiStyle::DockTitleBarColor = QColor(149, 194, 231);
-#if SYS_TIPBOX
+//#ifdef SYS_TIPBOX
 QColor UiStyle::ToolBarColor = QColor(216, 216, 216);
-#else
-QColor UiStyle::ToolBarColor = QColor(80, 183, 247, 50)
-#endif
-QColor UiStyle::ButtonPressColor = QColor(80, 183, 180, 50);
-QColor UiStyle::ButtonHoverColor = QColor(80, 183, 220, 50);
+//#else
+////QColor UiStyle::ToolBarColor = QColor(80, 183, 247, 50);
+//#endif
+
+QColor UiStyle::ButtonPressColor = QColor(80, 183, 180);
+QColor UiStyle::ButtonHoverColor = QColor(80, 183, 220);
 QString UiStyle::TitleColor = "background-color: rgb(149, 194, 231);";
 
-#if SYS_TIPBOX
+//#ifdef SYS_TIPBOX
 QString UiStyle::MenuBarColor = "background-color: rgb(216, 216, 216);";
-#else
-QString UiStyle::MenuBarColor = "background-color: rgb(131, 170, 193);";
-#endif
+//#else
+////QString UiStyle::MenuBarColor = "background-color: rgb(131, 170, 193);";
+//#endif
 
-QString UiStyle::StateBarColor = "background-color: rgba(80, 183, 247, 50);";
+//QString UiStyle::StateBarColor = "background-color: rgba(80, 183, 247, 50);";
 QString UiStyle::TabWidgetStyle = "background-color: rgb(230, 230, 230);";
 QString UiStyle::ActionStyle = \
                                     "QAction{background:rgb(255, 255, 255);"\
@@ -53,7 +54,7 @@ QString UiStyle::MenuStyle = \
                             "background: #2dabf9;"\
                             "}";\
 
-#if SYS_TIPBOX
+#ifdef SYS_TIPBOX
 QString UiStyle::TitleStyle = "QWidget{background-color:rgb(216, 216, 216);}";
 #else
 QString UiStyle::TitleStyle = \
@@ -72,25 +73,29 @@ QString Global::toolbarStyle = \
                              "y2:0, stop:0 rgba(104, 162, 189, 255), stop:1 rgba(255, 255, 255, 255));}";
 #else
 
-#if SYS_TIPBOX
+//#ifdef SYS_TIPBOX
 QString UiStyle::ToolbarStyle = "QToolBar{background-color:rgb(216, 216, 216);}";
 
-#else
-QString UiStyle::ToolbarStyle = "QToolBar{background-color:rgb(131, 170, 193);}";
+//#else
+//QString UiStyle::ToolbarStyle = "QToolBar{background-color:rgb(131, 170, 193);}";
 
-#endif
+//#endif
 
 QString UiStyle::MainWindowStyle = "QMainWindow::separator {"\
                                     "width: 4px;}"\
                                     "QMainWindow::separator:hover {"\
                                     "background: rgb(0, 180, 200);}"\
 
+                                    "QTabWidget{"\
+                                    "border: 1px solid rgba(0, 0, 0, 0);"\
+                                    "background: rgba(200, 200, 200);}"\
+
                                     "QTabWidget::tab-bar {"\
-                                    "border-color:transparent;"\
-                                    "background: rgba(80, 183, 247, 50);}"\
+                                    "background: rgba(80, 183, 247);}"\
 
                                     "QDialog {"\
                                     "background: rgba(230, 230, 230);}";
+
 
 #endif
 QString UiStyle::ButtonStyle = \
