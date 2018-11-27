@@ -96,5 +96,5 @@ ADD_EXECUTABLE(PicathoGui
     ${PicathoGui_SRCS}
     ${PicathoGui_MOCS})
 
-TARGET_LINK_LIBRARIES(PicathoGui renderer oasis ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(PicathoGui renderer oasis_api systemutil ${QT_LIBRARIES})
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

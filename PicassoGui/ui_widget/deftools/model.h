@@ -7,8 +7,8 @@
 #include <QVector>
 #include <QString>
 #include <QStandardItemModel>
-
-
+#include <QStringListModel>
+//QStringListModel
 namespace UI {
 class SqlQueryModel : public QSqlQueryModel
 {
@@ -20,36 +20,42 @@ protected:
     QVariant data(const QModelIndex &item, int role=Qt::DisplayRole) const;
 };
 
-class LayerTreeItem : public QStandardItem
+class TreeItem : public QStandardItem
 {
 public:
-    explicit LayerTreeItem(QObject *parent = 0)
+    explicit TreeItem(QObject *parent = 0)
     {
         Q_UNUSED(parent);
     }
-    LayerTreeItem(QIcon icon)
+    TreeItem(QIcon icon)
     {
         setIcon(icon);
         setSizeHint(QSize(32, 24));
     }
-    LayerTreeItem(QString text)
+    TreeItem(QString text)
     {
         setText(text);
         setSizeHint(QSize(32, 24));
     }
-    LayerTreeItem(QColor color)
+    TreeItem(QColor color)
     {
         setBackground(QBrush(color));
     }
 };
 
-class LayerTreeModel :public QStandardItemModel
+class TreeModel :public QAbstractItemModel
 {
 public:
-       explicit LayerTreeModel(QObject *parent = 0);
+       explicit TreeModel(QObject *parent = 0);
+
 
 protected:
+
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex());
+
     QVariant data(const QModelIndex &item, int role=Qt::DisplayRole) const;
+
+    QModelIndex parent(const QModelIndex &child);
 };
 }
 #endif // MODEL_H

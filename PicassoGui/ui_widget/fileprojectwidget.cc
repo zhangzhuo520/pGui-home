@@ -39,13 +39,14 @@ void FileProjectWidget::slot_addFile(QString path)
 {
 #if 1 //check many file
 
+//    QStringList filenameList = path.split('/');
+//    projectTableModel->appendRow(new QStandardItem(filenameList.at(filenameList.count() - 1)));
     projectTableModel->appendRow(new QStandardItem(path));
 
     for (int i = 0; i < projectTableModel->rowCount(); i ++)
     {
         projectTableModel->item(i)->setTextAlignment(Qt::AlignCenter);
     }
-
     QModelIndex modelIndex = projectTableModel->index(projectTableModel->rowCount() - 1, 0);
     emit signal_click_fileItem(modelIndex);
 #else

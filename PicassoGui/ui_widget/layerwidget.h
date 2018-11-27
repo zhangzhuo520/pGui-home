@@ -125,8 +125,8 @@ private:
     QHBoxLayout *TreeHLayout;
     QTreeView *layerTree;
 
-    LayerTreeModel *layerTreeModel;
-    LayerTreeItem *rootFileItem;
+    TreeModel *layerTreeModel;
+    TreeItem *rootFileItem;
     Delegate *treeDelegate;
     QAction *linewihthAction1;
     QAction *linewihthAction2;
@@ -152,8 +152,9 @@ private:
     PushButton *ButtonNage;
     PushButton *ButtonCut;
 
-    QModelIndex * activeModelIndex;
+    QVector <TreeItem *> rootItem_vector;
     int m_active_model_index;
+    int m_active_model_rootIndex;
     render::LayerMetaData layerData;
     render::Pattern pattern;
     QVector <layerstyle> m_layer_style_vector;

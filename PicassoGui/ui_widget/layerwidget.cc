@@ -14,6 +14,8 @@ LayerWidget::LayerWidget(QWidget *parent) :
     Vayout->setMargin(0);
     setLayout(Vayout);
     setStyleSheet(UiStyle::ActionStyle);
+    QMainWindow *parent_mainwindow = static_cast <QMainWindow *> (this->parent());
+    qDebug() << parent_mainwindow->objectName();
 }
 
 void LayerWidget::initToolBar()
@@ -81,24 +83,24 @@ void LayerWidget::initTree()
     TreeHLayout->setContentsMargins(0, 0, 0, 0);
     layerTree = new QTreeView(this);
     TreeHLayout->addWidget(layerTree);
-    layerTreeModel = new LayerTreeModel(layerTree);
+    layerTreeModel = new TreeModel(layerTree);
 
     layerTreeModel->setHorizontalHeaderLabels(QStringList() << "Name"
                                           << "Icon"<< "Desc");
 
     layerTree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(layerTree, SIGNAL(customContextMenuRequested(const QPoint& )), this, SLOT(slot_layerContextMenu(const QPoint&)));
-    connect (layerTreeModel ,SIGNAL(itemChanged(QStandardItem*)), this , SLOT(slot_treeItemChanged(QStandardItem*)));
+    connect(layerTreeModel ,SIGNAL(itemChanged(QStandardItem*)), this , SLOT(slot_treeItemChanged(QStandardItem*)));
     connect(layerTreeModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slot_itemChecked(QStandardItem*)));
-    connect (layerTree ,SIGNAL(doubleClicked(QModelIndex)), this , SLOT(slot_treeDoubleClick(QModelIndex)));
-    connect (layerTree, SIGNAL(pressed(QModelIndex)), this, SLOT(slot_activedModerIndex(QModelIndex)));
+    connect(layerTree ,SIGNAL(doubleClicked(QModelIndex)), this , SLOT(slot_treeDoubleClick(QModelIndex)));
+    connect(layerTree, SIGNAL(pressed(QModelIndex)), this, SLOT(slot_activedModerIndex(QModelIndex)));
     layerTree->setModel(layerTreeModel);
 }
 
 void LayerWidget::slot_activedModerIndex(QModelIndex index)
 {
     m_active_model_index =  index.row();
-    activeModelIndex = &index;
+    m_active_model_rootIndex = index.parent().row();
 }
 
 void LayerWidget::slot_treeItemChanged(QStandardItem *item)
@@ -457,7 +459,7 @@ void LayerWidget::slot_setBackgroundColor(QColor color)
 
 void LayerWidget::slot_setLineColor(QColor color)
 {
-    if (m_layer_style_vector.isEmpty() && activeModelIndex == NULL)
+    if (m_layer_style_vector.isEmpty())
     {
         return;
     }
@@ -564,13 +566,14 @@ void LayerWidget::setItemChecked(bool check)
 
 void LayerWidget::getLayerData(std::vector<render::LayerProperties> layerProprtList, QString currentFile)
 {
-    rootFileItem = new LayerTreeItem(currentFile);
+    rootFileItem = new TreeItem(currentFile);
+    rootItem_vector.append(rootFileItem);
     rootFileItem->setCheckable(true);
-    layerTreeModel->setItem(0, rootFileItem);
-
     rootFileItem->setEditable(false);
+    qDebug() << rootItem_vector.count() - 1;
+    layerTreeModel->setItem(rootItem_vector.count() - 1, rootFileItem);
     m_layer_property_vector.clear();
-    LayerTreeItem* pStandardItem = NULL;
+    TreeItem* pStandardItem = NULL;
 
     for (uint i = 0; i < layerProprtList.size(); i ++ )
     {
@@ -588,9 +591,9 @@ void LayerWidget::getLayerData(std::vector<render::LayerProperties> layerProprtL
         m_layer_style_vector.append(m_layer_style);
         QImage image = setImage(m_layer_style);
 
-        pStandardItem = new LayerTreeItem(layerNum + "/" + dataType);
-        pStandardItem->setEditable(false);
+        pStandardItem = new TreeItem(layerNum + "/" + dataType);
         pStandardItem->setCheckable(true);
+        pStandardItem->setEditable(false);
         if(m_layer_style.isVisible)
         {
             pStandardItem->setCheckState(Qt::Checked);
@@ -603,13 +606,12 @@ void LayerWidget::getLayerData(std::vector<render::LayerProperties> layerProprtL
 
         rootFileItem->appendRow(pStandardItem);
 
-        layerName = "TTTTTest";
-        LayerTreeItem *childItem2 = new LayerTreeItem(layerName);
+        TreeItem *childItem2 = new TreeItem(layerName);
         childItem2->setEditable(false);
         rootFileItem->setChild(pStandardItem->row(), 2, childItem2);
-        LayerTreeItem *childItem1 = new LayerTreeItem();
+        TreeItem *childItem1 = new TreeItem();
+        childItem2->setEditable(false);
         childItem1->setData(image, Qt::DecorationRole);
-        childItem1->setEditable(false);
         rootFileItem->setChild(pStandardItem->row(), 1, childItem1);
     }
     layerTree->setColumnWidth(1, 40);
@@ -677,9 +679,12 @@ void LayerWidget::setLayerData(layerStyle layer_style)
 
 void LayerWidget::setModelIdexImage(QImage image)
 {
-    QStandardItem *childItem = new QStandardItem();
+    TreeItem *childItem = new TreeItem();
     childItem->setData(image, Qt::DecorationRole);
-    rootFileItem->child(m_active_model_index, 1)->removeRow(0);
-    rootFileItem->setChild(m_active_model_index, 1, childItem);
+
+    TreeItem *rootItem = rootItem_vector.at(m_active_model_rootIndex);
+
+    rootItem->child(m_active_model_index, 1)->removeRow(0);
+    rootItem->setChild(m_active_model_index, 1, childItem);
 }
 }

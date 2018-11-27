@@ -6,8 +6,7 @@ HEADERS += \
     deftools/iconhelper.h\
     deftools/global.h\
     deftools/framelesshelper.h \
-    deftools/model.h \
-    deftools/delegate.h
+    deftools/model.h
 
 SOURCES += \
     $$PWD/defcontrols.cc \
@@ -15,7 +14,6 @@ SOURCES += \
     deftools/iconhelper.cc \
     deftools/global.cc\
     deftools/framelesshelper.cc \
-    deftools/model.cc \
-    deftools/delegate.cc
+    deftools/model.cc
 
 FORMS +=

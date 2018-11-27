@@ -34,7 +34,6 @@ Frame::Frame(QFrame *parent) :
     setStyleSheet(UiStyle::FrameBorderColor);
     connect(mianwindow, SIGNAL(signal_close()), this, SLOT(close()));
     setWindowsSizeChange();
-    readSettings();
 }
 
 void Frame::initTitleBar()
@@ -63,42 +62,15 @@ void Frame::initTitleBar()
 
 void Frame::setWindowsSizeChange()
 {
-//    pHelper = new FramelessHelper(this);
-//    pHelper->activateOn(this);
-//    pHelper->setTitleHeight(30);
-//    pHelper->setWidgetMovable(true);
-//    pHelper->setWidgetResizable(true);
-//    pHelper->setRubberBandOnMove(true);
-//    pHelper->setRubberBandOnResize(true);
+    pHelper = new FramelessHelper(this);
+    pHelper->activateOn(this);
+    pHelper->setTitleHeight(30);
+    pHelper->setWidgetMovable(true);
+    pHelper->setWidgetResizable(true);
+    pHelper->setRubberBandOnMove(true);
+    pHelper->setRubberBandOnResize(true);
 }
 
-void Frame::writeSettings()
-{
-
-    QSettings settings("size.ini", QSettings::IniFormat);
-    settings.setValue("geometry", saveGeometry());
-//    settings.setValue("recentFiles", recentFiles);
-//    settings.setValue("showGrid", showGridAction->isChecked());
-//    settings.setValue("autoRecalc", autoRecalcAction->isChecked());
-}
-
-void Frame::readSettings()
-{
-    QSettings settings("size.ini",  QSettings::IniFormat);
-    restoreGeometry(settings.value("geometry").toByteArray());
-//    recentFiles = settings.value("recentFiles").toStringList();
-//    updateRecentFileActions();
-//    bool showGrid = settings.value("showGrid", true).toBool();
-//    showGridAction->setChecked(showGrid);
-//    bool autoRecalc = settings.value("autoRecalc", true).toBool();
-//    autoRecalcAction->setChecked(autoRecalc);
-}
-
-void Frame::closeEvent(QCloseEvent *e)
-{
-    writeSettings();
-    e->ignore();
-}
 
 void Frame::slot_changeWindowSize()
 {
@@ -114,4 +86,5 @@ void Frame::slot_changeWindowSize()
     }
 
 }
+
 }

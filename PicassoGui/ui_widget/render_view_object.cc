@@ -3,7 +3,6 @@
 
 namespace render
 {
-
 RenderObject::RenderObject(RenderObjectWidget* _widget, bool is_static): m_view(_widget),m_visible(true),m_static(is_static)
 {
     if(_widget)

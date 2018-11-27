@@ -38,7 +38,7 @@ class RenderFrame :public RenderObjectWidget
 {
 Q_OBJECT
 public:
-    RenderFrame(QWidget *parent = 0, QString path = "");
+    RenderFrame(QWidget *parent = 0);
 
     virtual ~RenderFrame();
 
@@ -50,7 +50,7 @@ public:
 
     const render::Pattern& pattern() const { return m_pattern; }
 
-    Oasis::OasisLayout*  load_file(std::string file_name);
+    Oasis::OasisLayout*  load_file(std::string file_name, std::string prep_dir);
 
     const std::vector<render::LayerProperties>& get_properties_list() const;
 

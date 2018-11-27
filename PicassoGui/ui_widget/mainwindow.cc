@@ -697,7 +697,8 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
         modelIdexList.append(index);
         scaleFrame = new ScaleFrame(paintTab);
         scaleFrame_vector.append(scaleFrame);
-        renderFrame = new render::RenderFrame(scaleFrame, currentFile);
+        renderFrame = new render::RenderFrame(scaleFrame);
+		renderFrame->load_file(currentFile.toStdString(), prep_dir.toStdString());
         renderFrame_vector.append(renderFrame);
         paintWidget = new DrawWidget(renderFrame);
         paintWidget_vector.append(paintWidget);
@@ -732,7 +733,8 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
             modelIdexList.append(index);
             scaleFrame = new ScaleFrame(paintTab);
             scaleFrame_vector.append(scaleFrame);
-            renderFrame = new render::RenderFrame(scaleFrame, currentFile);
+            renderFrame = new render::RenderFrame(scaleFrame);
+			renderFrame->load_file(currentFile.toStdString(), prep_dir.toStdString());
             renderFrame_vector.append(renderFrame);
             paintWidget = new DrawWidget(renderFrame);
             paintWidget_vector.append(paintWidget);
@@ -751,7 +753,7 @@ void MainWindow::slot_click_fileItem(QModelIndex index)
             paintTab->setMovable(true);
         }
     }
-    centerWidget_boundingSignal();
+    centerWidget_boundingSignal(scaleFrame_vector.count() - 1);
 }
 
 /**
@@ -842,6 +844,20 @@ void MainWindow::initConfigFile()
     }
 }
 
+void MainWindow::initPrepDir()
+{
+    prep_dir = QDir::homePath() + "/.PguiPrep";
+	QDir dir(prep_dir);
+	    if (!dir.exists())
+    {
+		 if(!dir.mkdir(prep_dir))
+        {
+            qDebug() << "make prep_dir error !";
+            return;
+        }
+	}
+}
+
 void MainWindow::saveOpenHistory(QString history)
 {
     QString filePath = configFile_path + "/openFileHistory.txt";
@@ -911,22 +927,19 @@ void MainWindow::addHistoryAction(QString filename)
     rencentOpen_menu->addAction(action);
 }
 
-void MainWindow::centerWidget_boundingSignal()
+void MainWindow::centerWidget_boundingSignal(int index)
 {
-    for (int i = 0; i < renderFrame_vector.count(); i ++)
-    {
-        connect(this, SIGNAL(signal_setPenWidth(QString)), paintWidget_vector.at(i), SLOT(setWidth(QString)));
-        emit signal_setPenWidth(penWidthCombox->currentText());
-        connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), paintWidget_vector.at(i), SLOT(slot_setPaintStyle(Global::PaintStyle)));
-        connect(paintWidget_vector.at(i), SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
-        connect(clearBtn, SIGNAL(clicked()), paintWidget_vector.at(i), SLOT(clear()));
-        connect(renderFrame_vector.at(i), SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_updataXY(double, double)));
-        connect(renderFrame_vector.at(i), SIGNAL(signal_box_updated(double,double,double,double)), scaleFrame_vector.at(i), SLOT(slot_box_updated(double,double,double,double)));
-        connect(paintWidget_vector.at(i), SIGNAL(signal_moveCenter(int ,int)), this, SLOT(slot_moveCenter(int, int)));
+    connect(this, SIGNAL(signal_setPenWidth(QString)), paintWidget_vector.at(index), SLOT(setWidth(QString)));
+    emit signal_setPenWidth(penWidthCombox->currentText());
+    connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), paintWidget_vector.at(index), SLOT(slot_setPaintStyle(Global::PaintStyle)));
+    connect(paintWidget_vector.at(index), SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
+    connect(clearBtn, SIGNAL(clicked()), paintWidget_vector.at(index), SLOT(clear()));
+    connect(renderFrame_vector.at(index), SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_updataXY(double, double)));
+    connect(renderFrame_vector.at(index), SIGNAL(signal_box_updated(double,double,double,double)), scaleFrame_vector.at(index), SLOT(slot_box_updated(double,double,double,double)));
+    connect(paintWidget_vector.at(index), SIGNAL(signal_moveCenter(int ,int)), this, SLOT(slot_moveCenter(int, int)));
 
-        layerPropertyList = renderFrame_vector.at(i)->get_properties_list();
-        emit signal_getLayerData(layerPropertyList, currentFile);
-    }
+    layerPropertyList = renderFrame_vector.at(index)->get_properties_list();
+    emit signal_getLayerData(layerPropertyList, currentFile);
     connect(penWidthCombox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slot_changePenWidth(QString)));
     slot_showState("open " + currentFile);
 }

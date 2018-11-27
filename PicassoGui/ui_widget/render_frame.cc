@@ -21,12 +21,14 @@
 
 #include "OasisParser.h"
 #include "OasisLayout.h"
+#include "OasisException.h"
+#include "xtOasisApi.h"
 
 namespace render{
 
 static const Oasis::float64 m_shift_unit = 0.1;
 
-RenderFrame::RenderFrame(QWidget *parent, QString path):
+RenderFrame::RenderFrame(QWidget *parent):
     RenderObjectWidget(parent),
     m_image(0),
     m_pixmap(0),
@@ -39,7 +41,6 @@ RenderFrame::RenderFrame(QWidget *parent, QString path):
     setBackgroundRole(QPalette::NoRole);
     setAttribute(Qt::WA_NoSystemBackground);
     setMouseTracking(true);
-    load_file(path.toStdString());
     connect(this, SIGNAL(signal_down_key_pressed()), this, SLOT(slot_down_shift()));
     connect(this, SIGNAL(signal_up_key_pressed()), this, SLOT(slot_up_shift()));
     connect(this, SIGNAL(signal_left_key_pressed()), this, SLOT(slot_left_shift()));
@@ -85,11 +86,22 @@ void RenderFrame::set_pattern(const render::Pattern &p)
     }
 }
 
-Oasis::OasisLayout* RenderFrame::load_file(std::string file_name)
+Oasis::OasisLayout* RenderFrame::load_file(std::string file_name, std::string prep_dir)
 {
     m_layout = new Oasis::OasisLayout(file_name);
-    Oasis::OasisParser parser;
-    parser.ImportFile(m_layout);
+    try
+    {
+        Oasis::OasisParser parser;
+        parser.ImportFile(m_layout);
+    }
+    catch (Oasis::OasisException& e)
+    {
+        std::string prep_file_name = Oasis::preprocessLayout(file_name, prep_dir, false, Oasis::prep_options());
+        delete m_layout;
+        m_layout = new Oasis::OasisLayout(prep_file_name);
+        Oasis::OasisParser parser;
+        parser.ImportFile(m_layout);
+    }
     std::set<std::pair<int, int> >layers;
     m_layout->getLayers(layers);
 
@@ -98,6 +110,7 @@ Oasis::OasisLayout* RenderFrame::load_file(std::string file_name)
     {
         int layer_num = it->first;
         int data_type = it->second;
+        //std::string layer_name = m_layout->getLayerName(layer_num, data_type);
         m_layers_properties.push_back(render::LayerProperties());
         m_layers_properties.back().set_metadata(m_layout->getLayerName(layer_num, data_type), layer_num, data_type);
         m_layers_properties.back().set_layer_index(std::distance(layers.begin(), it));

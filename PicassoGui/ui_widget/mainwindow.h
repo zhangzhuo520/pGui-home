@@ -72,6 +72,8 @@ public:
     void initDefGroup();
 
     void initConfigFile();
+	
+	void initPrepDir();
 
     void init_fileProject_widget();
 
@@ -92,7 +94,7 @@ public:
 
     void addHistoryAction(QString);
 
-    void centerWidget_boundingSignal();
+    void centerWidget_boundingSignal(int);
 
     void DefectReview();
     void RTSSetup();
@@ -269,6 +271,7 @@ private:
     QMenu *rencentOpen_menu;
     QString configFile_path;
     QStringList historyFileList;
+	QString prep_dir;
 };
 }
 #endif // MAINWINDOW_H
