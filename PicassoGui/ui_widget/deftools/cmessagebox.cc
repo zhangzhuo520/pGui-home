@@ -1,6 +1,6 @@
 #include "cmessagebox.h"
 #include "QDebug"
-namespace UI {
+namespace ui {
 CMessageBox::CMessageBox(QWidget *parent,
                          const QString &title,
                          const QString &text,

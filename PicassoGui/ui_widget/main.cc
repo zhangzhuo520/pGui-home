@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "frame.h"
+#include "ui_frame.h"
 #include <QFont>
 #include "deftools/defcontrols.h"
 #include "deftools/datastruct.h"
@@ -10,13 +10,13 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 #if 1
-    qApp->setStyle(new UI::ProxyStyle);
+    qApp->setStyle(new ui::ProxyStyle);
     QFont font;
     font.setFamily("Sans Serif");
     font.setPointSize (9);
     a.setFont(font);
 
-    UI::MainWindow w;
+    ui::MainWindow w;
 #else
     UI::FlexWidget w;
 #endif

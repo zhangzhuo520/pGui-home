@@ -11,7 +11,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QMouseEvent>
-namespace UI {
+namespace ui {
 class CMessageBox : public QDialog
 {
     Q_OBJECT

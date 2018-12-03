@@ -1,5 +1,5 @@
 #include "sqlmanager.h"
-namespace UI {
+namespace ui {
 SQLManager::SQLManager(QObject *parent) :
     QObject(parent)
 {

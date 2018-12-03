@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QStringList>
 #include <QtSql/QSqlRecord>
-namespace UI {
+namespace ui {
 class SQLManager : public QObject
 {
     Q_OBJECT

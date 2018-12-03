@@ -4,7 +4,24 @@
 #include <QColor>
 #include <QVector>
 #include <QBrush>
-namespace UI {
+#include <QDateTime>
+#include <QDebug>
+namespace ui {
+
+#ifndef TEST_DEBUG
+#define TEST_DEBUG  qDebug()<<"[FILE:"<<__FILE__<<",LINE"<<__LINE__<<",FUNC"<<__FUNCTION__<<"]";
+#endif
+
+#ifndef TIME_DEBUG
+#define TIME_DEBUG qDebug() << QDateTime::currentDateTime().toString("yyyy-MM-dd") +" "+QDateTime::currentDateTime().toString("hh:mm:ss.zzz")<<":"\
+    <<"[" << "FILE:"<<__FILE__<<",LINE("<<__LINE__<<"),FUNC" <<__FUNCTION__<< "]";
+#endif
+
+
+#ifndef NeedContinue
+#define NeedContinue  qDebug()<<"[FILE:"<<__FILE__<<",LINE"<<__LINE__<<",FUNC"<<__FUNCTION__<<"] Donn't finished!";
+#endif
+
 class Global
 {
 public:
@@ -20,25 +37,10 @@ class UiStyle{
 public:
     static QColor ToolBarColor;
     static QColor ButtonPressColor;
+    static QColor DockTitleBarColor;
     static QColor ButtonHoverColor;
-    static QString TitleColor;
-    static QString ButtonStyle;
-    static QString MenuBarColor;
-    static QString StateBarColor;
-    static QString FrameBorderColor;
     static QVector <QColor> ItemColorList;
     static QVector <int> ItemPetternList;
-    static QString DockWidgetStyle;
-    static QString CommboxStyle;
-    static QString TabWidgetStyle;
-    static QString TitleStyle;
-    static QString MenuBarStyle;
-    static QString ToolbarStyle;
-    static QString MainWindowStyle;
-    static QColor DockTitleBarColor;
-    static QString MenuStyle;
-    static QString StatusBarStyle;
-    static QString ActionStyle;
 };
 }
 #endif // GLOBAL_H

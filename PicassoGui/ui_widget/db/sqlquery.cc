@@ -1,5 +1,5 @@
 #include "sqlquery.h"
-namespace UI {
+namespace ui {
 //defectSQL
 defectSQL::defectSQL()
 {

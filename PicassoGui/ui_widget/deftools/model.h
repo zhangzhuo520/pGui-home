@@ -9,7 +9,7 @@
 #include <QStandardItemModel>
 #include <QStringListModel>
 //QStringListModel
-namespace UI {
+namespace ui {
 class SqlQueryModel : public QSqlQueryModel
 {
 public:
@@ -43,19 +43,13 @@ public:
     }
 };
 
-class TreeModel :public QAbstractItemModel
+class TreeModel :public QStandardItemModel
 {
 public:
        explicit TreeModel(QObject *parent = 0);
 
-
 protected:
-
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex());
-
     QVariant data(const QModelIndex &item, int role=Qt::DisplayRole) const;
-
-    QModelIndex parent(const QModelIndex &child);
 };
 }
 #endif // MODEL_H

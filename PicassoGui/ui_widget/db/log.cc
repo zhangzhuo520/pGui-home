@@ -1,5 +1,5 @@
 #include "log.h"
-namespace UI{
+namespace ui{
 Log::Log()
 {
 }

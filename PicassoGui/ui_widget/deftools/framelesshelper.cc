@@ -1,5 +1,5 @@
 #include "framelesshelper.h"
-namespace UI {
+namespace ui {
 int CursorPosCalculator::m_nBorderWidth = 5;
 int CursorPosCalculator::m_nTitleHeight = 30;
 /***** CursorPosCalculator *****/

@@ -1,6 +1,6 @@
 #include "defcontrols.h"
 #include <QDebug>
-namespace UI {
+namespace ui {
 /**
  * @brief DockWidget::DockWidget
  * @param title
@@ -15,7 +15,6 @@ DockWidget::DockWidget(const QString &title, QWidget *parent, Qt::WindowFlags fl
     setMinimumHeight(0);
     TitleBar = new DockTitleBar(this, title);
     setTitleBarWidget(TitleBar);
-    setStyleSheet(UiStyle::DockWidgetStyle);
 }
 
 /**
@@ -58,7 +57,6 @@ TabWidget::TabWidget(QWidget *parent)
 {
     Q_UNUSED(parent);
     sizePolicy().setVerticalPolicy(QSizePolicy::Ignored);
-    setStyleSheet(UiStyle::TabWidgetStyle);
     setTabsClosable(true);
     setMouseTracking(true);
 }
@@ -77,7 +75,6 @@ TabWidget::~TabWidget()
 Commbox::Commbox(QWidget *parent)
 {
     Q_UNUSED(parent);
-    setStyleSheet(UiStyle::CommboxStyle);
 }
 
 /**

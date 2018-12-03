@@ -1,5 +1,5 @@
 #include "model.h"
-namespace UI {
+namespace ui {
 SqlQueryModel::SqlQueryModel(QObject *parent)
 {
     Q_UNUSED(parent);
@@ -45,29 +45,6 @@ TreeModel::TreeModel(QObject *parent)
     Q_UNUSED(parent);
 }
 
-QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
-{
-    TreeItem *parentItem = NULL;
-    if (!parent.isValid())
-    {
-         return QModelIndex();
-    }
-    else
-    {
-         parentItem = static_cast <TreeItem *> parent.internalPointer();
-    }
-
-    if (row < 0 || column < 0 || row >= parentItem->rowCount()
-            || row >= parentItem->columnCount())
-    {
-        return QModelIndex();
-    }
-    else
-    {
-        createIndex(row, column, parentItem);
-    }
-}
-
 QVariant TreeModel::data(const QModelIndex &item, int role) const
 {
     if (!item.isValid())
@@ -88,9 +65,33 @@ QVariant TreeModel::data(const QModelIndex &item, int role) const
     return QVariant();
 }
 
-QModelIndex TreeModel::parent(const QModelIndex &child)
-{
-    return child.parent();
-}
+
+//QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
+//{
+//    TreeItem *parentItem = NULL;
+//    if (!parent.isValid())
+//    {
+//         return QModelIndex();
+//    }
+//    else
+//    {
+//         parentItem = static_cast <TreeItem *> parent.internalPointer();
+//    }
+
+//    if (row < 0 || column < 0 || row >= parentItem->rowCount()
+//            || row >= parentItem->columnCount())
+//    {
+//        return QModelIndex();
+//    }
+//    else
+//    {
+//        createIndex(row, column, parentItem);
+//    }
+//}
+
+//QModelIndex TreeModel::parent(const QModelIndex &child)
+//{
+//    return child.parent();
+//}
 }
 #endif

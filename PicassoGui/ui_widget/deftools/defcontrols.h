@@ -39,7 +39,7 @@
 #include <QPropertyAnimation>
 #include "global.h"
 #include "framelesshelper.h"
-namespace UI {
+namespace ui {
 
 class ProxyStyle : public QProxyStyle
 {

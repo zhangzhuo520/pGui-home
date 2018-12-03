@@ -17,43 +17,39 @@ include(db/db.pri)
 
 
 SOURCES += main.cc\
-        mainwindow.cc \
-    gearmanconnector.cc \
-    checklist.cc \
-    defgroup.cc \
-    drawwidget.cc \
-    defectswidget.cc \
-    layerwidget.cc \
-    fileprojectwidget.cc \
-    frame.cc \
-    menuwidget.cc \
-    rtsconfigdialog.cc \
-    choosefiledialog.cc \
-    semimagedialog.cc \
-    chipeditdialog.cc \
-    scaleframe.cc \
-    render_frame.cc \
-    render_defect_point.cc \
-    render_view_object.cc
+    ui_mainwindow.cc \
+    ui_gearmanconnector.cc \
+    ui_checklist.cc \
+    ui_defgroup.cc \
+    ui_draw_widget.cc \
+    ui_defects_widget.cc \
+    ui_layer_widget.cc \
+    ui_fileproject_widget.cc \
+    ui_frame.cc \
+    ui_menu_widget.cc \
+    ui_rtsconfig_dialog.cc \
+    ui_choosefile_dialog.cc \
+    ui_semimage_dialog.cc \
+    ui_chipedit_dialog.cc \
+    ui_scale_frame.cc \
+    ui_fileproject_model.cc
 
 HEADERS  += mainwindow.h \
     gearmanconnector.h \
-    checklist.h \
-    defgroup.h \
-    drawwidget.h \
-    defectswidget.h \
-    fileprojectwidget.h \
-    layerwidget.h \
-    frame.h \
-    menuwidget.h \
-    rtsconfigdialog.h \
-    choosefiledialog.h \
-    semimagedialog.h \
-    chipeditdialog.h \
-    scaleframe.h \
-    render_frame.h \
-    render_defect_point.h \
-    render_view_object.h
+    ui_checklist.h \
+    ui_defgroup.h \
+    ui_draw_widget.h \
+    ui_defects_widget.h \
+    ui_fileproject_widget.h \
+    ui_layer_widget.h \
+    ui_frame.h \
+    ui_menu_widget.h \
+    ui_rtsconfig_dialog.h \
+    ui_choosefile_dialog.h \
+    ui_semimage_dialog.h \
+    ui_chipedit_dialog.h \
+    ui_scale_frame.h \
+    ui_fileproject_model.h
 
 FORMS    +=
 

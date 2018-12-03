@@ -1,6 +1,6 @@
 #include "iconhelper.h"
 #include <QDebug>
-namespace UI {
+namespace ui {
 IconHelper *IconHelper::_instance = 0;
 
 IconHelper::IconHelper(QObject *parent) :
@@ -33,7 +33,8 @@ void IconHelper::setIcon(QPushButton *button, QChar chr)
     button->setText(chr);
 }
 
-void IconHelper::setStyle(const QString &qssFile) {
+void IconHelper::setStyle(const QString &qssFile)
+{
     QFile file(qssFile);
     if (file.open(QFile::ReadOnly)) {
         QString qss = QLatin1String(file.readAll());
@@ -43,4 +44,7 @@ void IconHelper::setStyle(const QString &qssFile) {
         file.close();
     }
 }
+
+
+
 }

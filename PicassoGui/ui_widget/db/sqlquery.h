@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <QDebug>
 #include "../deftools/datastruct.h"
-namespace UI {
+namespace ui {
+
 class defectSQL
 {
 public:

@@ -6,7 +6,7 @@
 #include <QApplication>
 #include <QDir>
 
-namespace UI{
+namespace ui{
 class Log
 {
 public:

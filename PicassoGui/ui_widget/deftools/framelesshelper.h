@@ -6,7 +6,7 @@
 #include <QPainter>
 #include "global.h"
 
-namespace UI {
+namespace ui {
 class WidgetData;
 class LinuxRubberBand : public QRubberBand
 {

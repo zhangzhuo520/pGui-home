@@ -7,26 +7,26 @@ SET(QT_USE_SQL TRUE)
 SET(PicathoGui_RESOURCES images.qrc)
 
 SET(PicathoGui_SRCS
-    main.cc 
-    mainwindow.cc 
+    main.cc
+    ui_mainwindow.cc
+    gearmanconnector.cc
+    ui_checklist.cc
+    ui_defgroup.cc
+    ui_draw_widget.cc
+    ui_defects_widget.cc
+    ui_layer_widget.cc
+    ui_fileproject_widget.cc
+    ui_frame.cc
+    ui_menu_widget.cc
+    ui_rtsconfig_dialog.cc
+    ui_choosefile_dialog.cc
+    ui_semimage_dialog.cc
+    ui_chipedit_dialog.cc
+    ui_scale_frame.cc
     render_frame.cc
-    rtsconfigdialog.cc
-    scaleframe.cc
-    semimagedialog.cc
-    chipeditdialog.cc
-    choosefiledialog.cc 
     render_defect_point.cc
     render_view_object.cc
-    checklist.cc 
-    gearmanconnector.cc
-    drawwidget.cc
-    defgroup.cc
-    defectswidget.cc
-    frame.cc
-    menuwidget.cc
-    fileprojectwidget.cc
-    layerwidget.cc
-    deftools/cmessagebox.cc 
+    deftools/cmessagebox.cc
     deftools/defcontrols.cc
     deftools/framelesshelper.cc
     deftools/global.cc
@@ -36,26 +36,24 @@ SET(PicathoGui_SRCS
     db/sqlmanager.cc)
 
 SET(PicathoGui_HEADERS
-    mainwindow.h
-    render_frame.h 
-    rtsconfigdialog.h
-    scaleframe.h
-    semimagedialog.h
-    chipeditdialog.h
-    choosefiledialog.h 
-    checklist.h 
+    ui_mainwindow.h
     gearmanconnector.h
-    drawwidget.h 
-    defgroup.h
-    frame.h
-    layerwidget.h
-    defectswidget.h
-    menuwidget.h
-    fileprojectwidget.h
-    deftools/cmessagebox.h 
+    ui_checklist.h
+    ui_defgroup.h
+    ui_draw_widget.h
+    ui_defects_widget.h
+    ui_fileproject_widget.h
+    ui_layer_widget.h
+    ui_frame.h
+    ui_menu_widget.h
+    ui_rtsconfig_dialog.h
+    ui_choosefile_dialog.h
+    ui_semimage_dialog.h
+    ui_chipedit_dialog.h
+    deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/defcontrols.h
-    deftools/datastruct.h 
+    deftools/datastruct.h
     deftools/delegate.h
     deftools/global.h
     deftools/model.h
@@ -63,23 +61,25 @@ SET(PicathoGui_HEADERS
     db/sqlmanager.h)
 
 QT4_WRAP_CPP(PicathoGui_MOCS
-    mainwindow.h
+    ui_mainwindow.h
+    ui_rtsconfig_dialog.h
+    ui_scale_frame.h
+    ui_semimage_dialog.h
+    ui_chipedit_dialog.h
+    ui_choosefile_dialog.h
+    ui_checklist.h
+    ui_draw_widget.h
+    ui_fileproject_widget.h
+    ui_layer_widget.h
+    ui_defgroup.h
+    ui_frame.h
+    ui_menu_widget.h
+    ui_defects_widget.h
+    ui_defgroup.h
     render_frame.h
-  	rtsconfigdialog.h
-    scaleframe.h
-    semimagedialog.h
-    chipeditdialog.h
-    choosefiledialog.h 
-    checklist.h
-    drawwidget.h
-    fileprojectwidget.h
-    layerwidget.h
-    defgroup.h
-    frame.h
-    menuwidget.h
-    defectswidget.h
-    defgroup.h
-    deftools/cmessagebox.h 
+    render_defect_point.h
+    render_view_object.h
+    deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/defcontrols.h
     deftools/delegate.h
