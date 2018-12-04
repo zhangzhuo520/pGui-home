@@ -186,4 +186,9 @@ void FlexWidget::addWidget(QWidget *widget)
     Vlayout->addWidget(widget);
 }
 
+void TabWidget::slot_TabClose(int index)
+{
+    removeTab(index);
+}
+
 }

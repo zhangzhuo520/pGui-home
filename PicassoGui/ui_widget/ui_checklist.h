@@ -91,7 +91,7 @@ private:
 
     Toolbar *m_checklist_toolbar;
     QTreeView *m_checklist_tree;
-    QStandardItemModel *m_checklist_model;
+    TreeModel *m_checklist_model;
     SQLManager *m_sqlmanager;
     QStringList m_joblist;
     QString m_jobdata;

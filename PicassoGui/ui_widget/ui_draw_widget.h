@@ -54,7 +54,7 @@ public slots:
     void setWidth (QString);
     void setColor (QColor);
     void clear();
-    void drawPoint(const QModelIndex &);
+    void draw_point_text(double, double, QString);
     void slot_updataPos(double, double);
     void slot_setPaintStyle(Global::PaintStyle);
 

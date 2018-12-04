@@ -81,6 +81,7 @@ bool FileProjectModel::insertRow(int position, render::LayoutView& lv, const QMo
 bool FileProjectModel::insertRows(int position, int rows, const QModelIndex &index)
 {
     Q_UNUSED(index);
+
     beginInsertRows(QModelIndex(), position, position + rows - 1);
     std::vector<render::LayoutView>::iterator it = m_layout_views.begin() + position;
 
@@ -105,6 +106,11 @@ bool FileProjectModel::removeRows(int position, int rows, const QModelIndex &ind
     m_layout_views.erase(it_begin, it_end);
     endRemoveRows();
     return true;
+}
+
+void FileProjectModel::removeFile(int row)
+{
+    removeRow(row);
 }
 
 }

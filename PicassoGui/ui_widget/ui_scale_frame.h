@@ -31,7 +31,11 @@ public:
 
     void set_defect_point(double x, double y);
 
-    void drawDefectPoint(double, double);
+    void drawDefectPoint(double, double, QString);
+
+    void calcu_defecttext_point();
+
+    void draw_point_text();
 
     render::LayoutView load_file(const QString &, const QString &, bool);
     render::RenderFrame* getRenderFrame();
@@ -53,6 +57,7 @@ protected:
     void paintEvent(QPaintEvent *);
     void resizeEvent(QResizeEvent *);
     void mouseMoveEvent(QMouseEvent *);
+    void wheelEvent(QWheelEvent *e);
 
 private:
     void initRenderFrame();
@@ -64,6 +69,14 @@ private:
     void darw_Y_axis(QPainter &);
     double toDouble_1(double);
 
+    double m_xratio;
+    double m_yratio;
+    double m_xratio_prev;
+    double m_yratio_prev;
+    double m_point_x;
+    double m_point_y;
+    QString m_size_text;
+    bool m_isdraw_pointtext;
     QImage *m_image;
     QPixmap m_cursor_pixmap;
     double m_xstart;

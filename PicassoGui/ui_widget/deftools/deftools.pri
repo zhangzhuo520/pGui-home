@@ -1,18 +1,19 @@
+#自定义工具，包括自定义控件等��
 HEADERS += \
-    deftools/model.h \
-    deftools/iconhelper.h \
-    deftools/global.h \
-    deftools/framelesshelper.h \
-    deftools/delegate.h \
-    deftools/defcontrols.h \
+    $$PWD/defcontrols.h \
+    $$PWD/cmessagebox.h \
     deftools/datastruct.h \
-    deftools/cmessagebox.h
+    deftools/iconhelper.h\
+    deftools/global.h\
+    deftools/framelesshelper.h \
+    deftools/model.h
 
 SOURCES += \
-    deftools/model.cc \
+    $$PWD/defcontrols.cc \
+    $$PWD/cmessagebox.cc \
     deftools/iconhelper.cc \
-    deftools/global.cc \
+    deftools/global.cc\
     deftools/framelesshelper.cc \
-    deftools/delegate.cc \
-    deftools/defcontrols.cc \
-    deftools/cmessagebox.cc
+    deftools/model.cc
+
+FORMS +=

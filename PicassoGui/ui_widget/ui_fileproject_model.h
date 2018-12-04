@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 
 #include "render_layout_view.h"
+#include "deftools/global.h"
 
 namespace ui
 {
@@ -21,6 +22,7 @@ public:
     bool insertRow(int position, render::LayoutView& lv, const QModelIndex& index = QModelIndex());
     bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
+    void removeFile(int row);
 
     std::vector<render::LayoutView>::iterator get_layout_view_iter(int index)
     {

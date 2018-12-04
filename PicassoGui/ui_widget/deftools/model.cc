@@ -45,27 +45,6 @@ TreeModel::TreeModel(QObject *parent)
     Q_UNUSED(parent);
 }
 
-QVariant TreeModel::data(const QModelIndex &item, int role) const
-{
-    if (!item.isValid())
-    {
-        return QVariant();
-    }
-    QVariant value = QStandardItemModel::data(item, role);
-    switch (role) {
-    case Qt::DisplayRole:
-        return value;
-    case Qt::TextAlignmentRole:
-        return int(Qt::AlignLeft | Qt::AlignVCenter);
-    case Qt::SizeHintRole:
-        return QSize(32, 24);
-    default:
-        return value;
-    }
-    return QVariant();
-}
-
-
 //QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
 //{
 //    TreeItem *parentItem = NULL;
@@ -88,6 +67,24 @@ QVariant TreeModel::data(const QModelIndex &item, int role) const
 //        createIndex(row, column, parentItem);
 //    }
 //}
+
+QVariant TreeModel::data(const QModelIndex &item, int role) const
+{
+    if (!item.isValid())
+    {
+        return QVariant();
+    }
+    QVariant value = QStandardItemModel::data(item, role);
+    switch (role) {
+    case Qt::DisplayRole:
+        return value;
+    case Qt::TextAlignmentRole:
+        return int(Qt::AlignLeft | Qt::AlignVCenter);
+    default:
+        return value;
+    }
+    return QVariant();
+}
 
 //QModelIndex TreeModel::parent(const QModelIndex &child)
 //{

@@ -8,9 +8,9 @@ DrawWidget::DrawWidget(QWidget *parent):
     checkstyle(Normal),
     rulerIsPress(false)
 {
+	setObjectName("DrawWidget");
     setAutoFillBackground (true);
     setMouseTracking(true);
-    qDebug() << size();
     pix = new QPixmap(size());
     pix->fill(Qt::transparent);
     setColor(Qt::white);
@@ -170,23 +170,22 @@ void DrawWidget::slot_setPaintStyle(Global::PaintStyle paintstyle)
     penStyle = paintstyle;
 }
 
-void DrawWidget::drawPoint(const QModelIndex & index)
+void DrawWidget::draw_point_text(double x, double y, QString Stringsize)
 {
         isDrawText = true;
-        Stringsize = index.sibling(index.row(), 1).data().toString();
-        x = index.sibling(index.row(), 2).data().toString();
-        y = index.sibling(index.row(), 3).data().toString();
+        QPixmap *clearPix = new QPixmap(size());
+        clearPix->fill (Qt::transparent);
+        pix = clearPix;
 
         QPen pen;
+
         QPainter painter(pix);
         pen.setStyle ((Qt::PenStyle)style);
         pen.setWidth (weight);
         pen.setColor (color);
         painter.setPen(pen);
-        QString spos = "X: " + x + "   ,Y: " + y;
-        Stringsize = "SIZE: " + Stringsize;
-        painter.drawText(width() / 2, height() / 2, Stringsize);
-        painter.drawText(width() / 2, height() / 2 + 20, spos);
+        Stringsize = "size: " + Stringsize;
+        painter.drawText(x * width(), y * height() - 10, Stringsize);
         update();
 }
 

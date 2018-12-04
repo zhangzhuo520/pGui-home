@@ -45,8 +45,8 @@ void DefectsWidget::initOtherButton()
     m_sort_commbox->addItems(QStringList() <<"id" << "x" << "y" << "size");
     m_descent_button = new QRadioButton("Descent", m_button_bar);
     m_ascen_button = new QRadioButton("Ascent",m_button_bar);
-    m_extract_button = new PushButton("Extract", this);
-    m_moreoptions_button = new PushButton("more options", this);
+    m_extract_button = new QPushButton("Extract", this);
+    m_moreoptions_button = new QPushButton("more options", this);
     if(!m_descent_button->isChecked())
     {
         m_descent_button->setChecked(true);
@@ -57,11 +57,11 @@ void DefectsWidget::initOtherButton()
         m_descent_button->setChecked(false);
         m_ascen_button->setChecked(true);
     }
-    m_perv_button = new PushButton("Perv Page" ,this);
-    m_next_button = new PushButton("Next Page", this);
+    m_perv_button = new QPushButton("Perv Page" ,this);
+    m_next_button = new QPushButton("Next Page", this);
     connect(m_descent_button, SIGNAL(clicked()), this, SLOT(slot_m_descent_buttonCheck()));
     connect(m_ascen_button, SIGNAL(clicked()), this, SLOT(slot_m_ascen_buttonCheck()));
-    connect(m_sort_commbox, SIGNAL(currentm_model_indexChanged(QString)), SLOT(slot_changSortQrder(QString)));
+    connect(m_sort_commbox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
     connect(m_perv_button, SIGNAL(clicked()), this, SLOT(slot_pervPage()));
     connect(m_next_button, SIGNAL(clicked()), this, SLOT(slot_nextPage()));
 }

@@ -16,6 +16,7 @@ SET(PicathoGui_SRCS
     ui_defects_widget.cc
     ui_layer_widget.cc
     ui_fileproject_widget.cc
+    ui_fileproject_model.cc
     ui_frame.cc
     ui_menu_widget.cc
     ui_rtsconfig_dialog.cc
@@ -23,13 +24,12 @@ SET(PicathoGui_SRCS
     ui_semimage_dialog.cc
     ui_chipedit_dialog.cc
     ui_scale_frame.cc
-    render_frame.cc
-    render_defect_point.cc
-    render_view_object.cc
+    ui_application.cc
     deftools/cmessagebox.cc
     deftools/defcontrols.cc
     deftools/framelesshelper.cc
     deftools/global.cc
+	deftools/iconhelper.cc
     deftools/model.cc
     deftools/delegate.cc
     db/sqlquery.cc
@@ -43,6 +43,7 @@ SET(PicathoGui_HEADERS
     ui_draw_widget.h
     ui_defects_widget.h
     ui_fileproject_widget.h
+    ui_fileproject_model.h
     ui_layer_widget.h
     ui_frame.h
     ui_menu_widget.h
@@ -50,8 +51,10 @@ SET(PicathoGui_HEADERS
     ui_choosefile_dialog.h
     ui_semimage_dialog.h
     ui_chipedit_dialog.h
+    ui_application.h
     deftools/cmessagebox.h
     deftools/framelesshelper.h
+	deftools/iconhelper.h
     deftools/defcontrols.h
     deftools/datastruct.h
     deftools/delegate.h
@@ -70,18 +73,17 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     ui_checklist.h
     ui_draw_widget.h
     ui_fileproject_widget.h
+    ui_fileproject_model.h
     ui_layer_widget.h
     ui_defgroup.h
     ui_frame.h
     ui_menu_widget.h
     ui_defects_widget.h
     ui_defgroup.h
-    render_frame.h
-    render_defect_point.h
-    render_view_object.h
     deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/defcontrols.h
+	deftools/iconhelper.h
     deftools/delegate.h
     db/sqlmanager.h)
 

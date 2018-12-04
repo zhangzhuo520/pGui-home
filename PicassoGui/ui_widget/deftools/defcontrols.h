@@ -112,8 +112,10 @@ public:
         setParent(parent);
         setStyle(new ProxyStyle());
         setStyleSheet("QPushButton {"\
+                      "border:0px;"
                             "background-color: rgba(0, 0, 0, 0);}"\
                       "QPushButton::hover{"\
+                             "border:0px;"
                                  "background-color: rgba(0, 0, 100, 50);}");\
 
     }
@@ -121,8 +123,10 @@ public:
     {
         Q_UNUSED(parent);
         setStyleSheet("QPushButton{"\
+                          "border:0px;"
                            "background-color: rgba(0, 0, 0, 0);}"\
                       "QPushButton::hover{"\
+                           "border:0px;"
                            "background-color: rgba(0, 0, 100, 50);}");\
         setText(text);
     }
@@ -137,16 +141,20 @@ public:
     {
         Q_UNUSED(parent);
         setStyleSheet("QPushButton {"\
+                            "border:0px;"
                             "background-color: rgba(0, 0, 0, 0);}"\
                       "QPushButton::hover{"\
+                                 "border:0px;"
                                  "background-color: rgba(0, 0, 100, 50);}");\
     }
   explicit MenuButton(const QString &text, QWidget *parent=0)
     {
         Q_UNUSED(parent);
         setStyleSheet("QPushButton{"\
+                           "border:0px;"
                            "background-color: rgba(0, 0, 0, 0);}"\
                       "QPushButton::hover{"\
+                      "border:0px;"
                       "background-color: rgba(0, 0, 100, 50);}");\
         setText(text);
     }
@@ -239,14 +247,18 @@ public:
 
 signals:
     void signal_mouseMove(const QPoint& p);
-protected:
+
+public slots:
+    void slot_TabClose(int);
+
+private:
     void mouseMoveEvent(QMouseEvent *e)
     {
         setCursor(Qt::ArrowCursor);
         QWidget::mouseMoveEvent(e);
     }
 
-private:
+
 };
 
 class Commbox :public QComboBox

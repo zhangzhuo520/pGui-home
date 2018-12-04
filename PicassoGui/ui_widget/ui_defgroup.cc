@@ -53,8 +53,8 @@ void DefGroup::initOtherButton()
         descentButton->setChecked(false);
         ascentButton->setChecked(true);
     }
-    pervButton = new PushButton("Perv Page" ,this);
-    nextButton = new PushButton("Next Page", this);
+    pervButton = new QPushButton("Perv Page" ,this);
+    nextButton = new QPushButton("Next Page", this);
 
     connect(descentButton, SIGNAL(clicked()), this, SLOT(slot_descentButtonCheck()));
     connect(ascentButton, SIGNAL(clicked()), this, SLOT(slot_ascentButtonCheck()));

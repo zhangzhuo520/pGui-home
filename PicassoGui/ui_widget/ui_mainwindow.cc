@@ -316,6 +316,7 @@ void MainWindow::init_fileProject_widget()
     fileDockWidget->setWidget(fileWidget);
     connect(fileWidget, SIGNAL(signal_DoubleClickItem(QModelIndex)), this, SLOT(slot_creat_canvas(QModelIndex)));
     connect(this, SIGNAL(signal_addFile(QString)), fileWidget, SLOT(slot_addFile(QString)));
+    connect(fileWidget, SIGNAL(close_currentFile(int)), paintTab, SLOT(slot_TabClose(int)));
 }
 
 /**
@@ -342,6 +343,7 @@ void MainWindow::initConnection()
 {
     connect(this, SIGNAL(signal_readDB(QString)), checklistWidget ,SLOT(slot_readDB(QString)));
     connect(checklistWidget, SIGNAL(signal_showDefGroup(QModelIndex, int)), this ,SLOT(slot_showDefGroup(QModelIndex, int)));
+    connect(fileWidget, SIGNAL(signal_openFile()), this, SLOT(slot_openFile()));
 }
 
 /**
@@ -565,12 +567,17 @@ void MainWindow::slot_currentTab_changed(int index)
 {
     Q_UNUSED(index);
     m_current_tabid = paintTab->currentIndex();
-    render::RenderFrame *renderFrame = m_scaleFrame_vector.at(m_current_tabid)->getRenderFrame();
+    render::RenderFrame *renderFrame = NULL;
     if (paintTab->count() <= 0)
     {
         m_scaleFrame_vector.clear();
         renderFrame = NULL;
     }
+    else
+    {
+        renderFrame = m_scaleFrame_vector.at(m_current_tabid)->getRenderFrame();
+    }
+
     layerwidget->getLayerData(renderFrame, m_current_filename);
 }
 
@@ -627,10 +634,11 @@ void MainWindow::slot_drawPoint(const QModelIndex &index)
    // QString Stringsize = index.sibling(index.row(), 1).data().toString();
     int point_x = index.sibling(index.row(), 2).data().toDouble();
     int point_y = index.sibling(index.row(), 3).data().toDouble();
+    QString Stringsize = index.sibling(index.row(), 1).data().toString();
 
     for(int i = 0; i < m_scaleFrame_vector.count(); i ++)
     {
-        m_scaleFrame_vector.at(i)->drawDefectPoint(point_x, point_y);
+        m_scaleFrame_vector.at(i)->drawDefectPoint(point_x, point_y, Stringsize);
     }
 }
 

@@ -83,9 +83,9 @@ private:
 
     QLabel *m_sort_lable;
 
-    PushButton *m_perv_button;
+    QPushButton *m_perv_button;
 
-    PushButton *m_next_button;
+    QPushButton *m_next_button;
 
     QModelIndex *m_model_index;
 
@@ -97,9 +97,9 @@ private:
 
     QRadioButton *m_ascen_button;
 
-    PushButton *m_extract_button;
+    QPushButton *m_extract_button;
 
-    PushButton *m_moreoptions_button;
+    QPushButton *m_moreoptions_button;
 
     SqlQueryModel *m_defects_model;
 

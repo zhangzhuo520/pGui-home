@@ -5,6 +5,10 @@ namespace ui
 
 ScaleFrame::ScaleFrame(QWidget *parent) :
     QFrame(parent),
+    m_xratio(0),
+    m_yratio(0),
+    m_size_text(""),
+    m_isdraw_pointtext(false),
     m_xstart(0),
     m_xend(0),
     m_ystart(0),
@@ -15,7 +19,7 @@ ScaleFrame::ScaleFrame(QWidget *parent) :
     m_current_posY(0)
 {
     m_hlayout = new QHBoxLayout(this);
-    m_hlayout->setContentsMargins(0, 0, 0, 0);
+    m_hlayout->setContentsMargins(xSpace, ySpace, 0, 0);
     setMouseTracking(true);
     initRenderFrame();
     initImage();
@@ -29,6 +33,7 @@ void ScaleFrame::initRenderFrame()
     m_draw_widget = new DrawWidget(m_render_frame);
     m_render_frame->set_cursor_widget(m_draw_widget);
     m_hlayout->addWidget(m_render_frame);
+
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), this, SLOT(slot_box_updated(double,double,double,double)));
     connect(this, SIGNAL(signal_box_updated()), m_render_frame, SLOT(slot_box_updated()));
     connect(m_render_frame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_pos_updated(double, double)));
@@ -670,7 +675,6 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
 					m = m + 0.01;
                 }
             }
-
 			
             for(int j = 0; j < 10; j ++)
             {
@@ -689,9 +693,33 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
     }
 }
 
-void ScaleFrame::drawDefectPoint(double x, double y)
+void ScaleFrame::drawDefectPoint(double x, double y, QString Stringsize)
 {
+    m_isdraw_pointtext = true;
     m_render_frame->set_defect_point(x, y);
+    m_size_text = Stringsize;
+    m_point_x = x;
+    m_point_y = y;
+    draw_point_text();
+}
+
+void ScaleFrame::calcu_defecttext_point()
+{
+    m_xratio_prev = m_xratio;
+    m_yratio_prev = m_yratio;
+    m_xratio = (m_point_x - m_xstart) / (m_xend - m_xstart);
+    m_yratio = (m_yend - m_point_y) / (m_yend - m_ystart);
+}
+
+void ScaleFrame::draw_point_text()
+{
+    calcu_defecttext_point();
+    if((m_isdraw_pointtext == true) &&
+            (m_xratio_prev != m_xratio) &&
+            (m_yratio_prev != m_yratio))
+    {
+        m_draw_widget->draw_point_text(m_xratio, m_yratio, m_size_text);
+    }
 }
 
 void ScaleFrame::slot_set_pen_width(QString width)
@@ -767,7 +795,9 @@ void ScaleFrame::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
     QPainter painter(this);
+    draw_point_text();
     painter.drawPixmap(0, 0, m_cursor_pixmap);
+
 }
 
 void ScaleFrame::resizeEvent(QResizeEvent *e)
@@ -784,5 +814,10 @@ void ScaleFrame::mouseMoveEvent(QMouseEvent *e)
     update();
 }
 
+void ScaleFrame::wheelEvent(QWheelEvent *e)
+{
+    updateMouseCursor(e->pos());
+    update();
+}
 }
 

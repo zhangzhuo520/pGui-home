@@ -29,17 +29,19 @@ void FileProjectWidget::init()
 
     connect(m_project_table, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slot_DoubleClickItem(QModelIndex)));
     connect(m_project_table, SIGNAL(clicked(QModelIndex)), this, SLOT(slot_ClickItem(QModelIndex)));
+    connect(m_project_table, SIGNAL(activated(QModelIndex)), this, SLOT(slot_Activated(QModelIndex)));
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_context_menu(QPoint)));
 }
 
 void FileProjectWidget::slot_DoubleClickItem(QModelIndex index)
 {
+    m_active_index = index.row();
     emit signal_DoubleClickItem(index);
 }
 
 void FileProjectWidget::slot_ClickItem(QModelIndex modelIndex)
 {
-    m_current_index = modelIndex.row();
+    m_active_index = modelIndex.row();
     emit signal_DoubleClickItem(modelIndex);
 }
 
@@ -47,10 +49,13 @@ void FileProjectWidget::slot_context_menu(QPoint pos)
 {
     QMenu *context_menu = new QMenu(this);
     QAction *close_item_action = new QAction("close file", context_menu);
+    QAction *open_file_action = new QAction("open file", context_menu);
+    context_menu->addAction(open_file_action);
     context_menu->addAction(close_item_action);
     connect(close_item_action, SIGNAL(triggered()), this, SLOT(slot_CloseItem()));
+    connect(open_file_action, SIGNAL(triggered()), this, SLOT(slot_OpenFile()));
     QPoint tempPos = pos;
-    tempPos.setY(tempPos.y() + 22);
+    tempPos.setY(tempPos.y());
     context_menu->exec(m_project_table->mapToGlobal(tempPos));
 
 }
@@ -61,10 +66,30 @@ void FileProjectWidget::slot_addFile(QString path)
     std::string s = path.toStdString();
     lv.set_file_name(s);
     m_project_tablemodel->insertRow(m_project_tablemodel->rowCount(QModelIndex()), lv);
+    QModelIndex modelIndex = m_project_tablemodel->index(m_project_tablemodel->rowCount(QModelIndex()) - 1, 0);
+
+    emit signal_DoubleClickItem(modelIndex);
 }
 
 void FileProjectWidget::slot_CloseItem()
 {
-    m_project_tablemodel->removeRow(m_current_index);
+    if (m_active_index < 0 || m_active_index > (m_project_tablemodel->rowCount(QModelIndex()) - 1))
+    {
+        showWarning(this, "Warning", "Not Select File!");
+        return;
+    }
+
+    emit close_currentFile(m_active_index);
+    m_project_tablemodel->removeFile(m_active_index);
 }
+
+void FileProjectWidget::slot_OpenFile()
+{
+    emit signal_openFile();
+}
+
+void FileProjectWidget::slot_Activated(QModelIndex modelIndex)
+{
+}
+
 }

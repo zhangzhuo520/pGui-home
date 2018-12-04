@@ -82,9 +82,9 @@ private:
 
     QLabel *sortLable;
 
-    PushButton *pervButton;
+    QPushButton *pervButton;
 
-    PushButton *nextButton;
+    QPushButton *nextButton;
 
     QModelIndex *index;
 

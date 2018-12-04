@@ -1,4 +1,4 @@
-﻿#ifndef ICONHELPER_H
+#ifndef ICONHELPER_H
 #define ICONHELPER_H
 
 #include <QObject>
@@ -10,7 +10,6 @@
 #include <QFontDatabase>
 #include <QApplication>
 #include <QFile>
-
 namespace ui {
 class IconHelper : public QObject
 {
@@ -36,7 +35,7 @@ public:
     void setIcon(QLabel *, QChar);
     void setIcon(QPushButton *, QChar);
 
-    static void setStyle(const QString &);
+    void setStyle(const QString &);
 signals:
     
 public slots:

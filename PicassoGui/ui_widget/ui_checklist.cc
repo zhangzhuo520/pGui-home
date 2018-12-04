@@ -58,15 +58,15 @@ void CheckList::initToolbar()
     m_checklist_toolbar->addWidget(m_prev_button);
     m_checklist_toolbar->addWidget(m_next_button);
     m_checklist_toolbar->addWidget(m_found_button);
-    m_checklist_toolbar->addSeparator();
-    m_checklist_toolbar->addWidget(m_rtsconfig_button);
-    m_checklist_toolbar->addWidget(m_runrts_button);
-    m_checklist_toolbar->addWidget(m_closejob_button);
-    m_checklist_toolbar->addWidget(m_appendjob_button);
-    m_checklist_toolbar->addWidget(m_setting_button);
+//    m_checklist_toolbar->addSeparator();
+//    m_checklist_toolbar->addWidget(m_rtsconfig_button);
+//    m_checklist_toolbar->addWidget(m_runrts_button);
+//    m_checklist_toolbar->addWidget(m_closejob_button);
+//    m_checklist_toolbar->addWidget(m_appendjob_button);
+//    m_checklist_toolbar->addWidget(m_setting_button);
 
-    m_checklist_toolbar->layout()->setSpacing(0);
-    m_checklist_toolbar->layout()->setContentsMargins(0, 0, 0, 0);
+    m_checklist_toolbar->layout()->setSpacing(5);
+    m_checklist_toolbar->layout()->setContentsMargins(1, 1, 1, 1);
 
     QMenu *saveMenu = new QMenu(this);
     m_save_button->setMenu(saveMenu);
@@ -103,7 +103,7 @@ void CheckList::initFoundWidget()
 void CheckList::initTreeView()
 {
     m_checklist_tree = new QTreeView(this);
-    m_checklist_model = new QStandardItemModel(m_checklist_tree);
+    m_checklist_model = new TreeModel(m_checklist_tree);
 
     m_checklist_tree->setModel(m_checklist_model);
     m_headerlist << "Name" << "Detector_table_id" << "Focus" << "Dose" << "Bias" << "Type"
@@ -130,7 +130,7 @@ void CheckList::initTreeView()
 
 void CheckList::updataTreeView()
 {
-    QStandardItem *rootFileItem = new QStandardItem(m_jobdata);
+    QStandardItem *rootFileItem = new TreeItem(m_jobdata);
     m_checklist_model->appendRow(rootFileItem);
 
     QStandardItem* pStandardItem = NULL;
@@ -139,32 +139,32 @@ void CheckList::updataTreeView()
 
     for (int i = 0; i < m_maskvector.count(); i ++ )
     {
-        pStandardItem = new QStandardItem(m_maskvector.at(i).value("mask_desc"));
+        pStandardItem = new TreeItem(m_maskvector.at(i).value("mask_desc"));
         rootFileItem->appendRow(pStandardItem);
-        rootFileItem->setChild(pStandardItem->row(), m_headerlist.indexOf("Count") ,new QStandardItem(m_count));
+        rootFileItem->setChild(pStandardItem->row(), m_headerlist.indexOf("Count") ,new TreeItem(m_count));
 
         for (int j = 0; j < m_pw_conditionvector.count(); j ++)
         {
-            pStandardChildItem = new QStandardItem(m_pw_conditionvector.at(j).value("cond_name"));
+            pStandardChildItem = new TreeItem(m_pw_conditionvector.at(j).value("cond_name"));
             pStandardItem->appendRow(pStandardChildItem);
-            pStandardItem->setChild(pStandardItem->row(), m_headerlist.indexOf("Count") ,new QStandardItem(m_count));
-            pStandardItem->setChild(j, m_headerlist.indexOf("Focus") ,new QStandardItem(m_pw_conditionvector.at(j).value("defocus")));
-            pStandardItem->setChild(j, m_headerlist.indexOf("Dose") ,new QStandardItem(m_pw_conditionvector.at(j).value("dedose")));
-            pStandardItem->setChild(j, m_headerlist.indexOf("Bias") ,new QStandardItem(m_pw_conditionvector.at(j).value("bias")));
+            pStandardItem->setChild(pStandardItem->row(), m_headerlist.indexOf("Count") ,new TreeItem(m_count));
+            pStandardItem->setChild(j, m_headerlist.indexOf("Focus") ,new TreeItem(m_pw_conditionvector.at(j).value("defocus")));
+            pStandardItem->setChild(j, m_headerlist.indexOf("Dose") ,new TreeItem(m_pw_conditionvector.at(j).value("dedose")));
+            pStandardItem->setChild(j, m_headerlist.indexOf("Bias") ,new TreeItem(m_pw_conditionvector.at(j).value("bias")));
 
             for (int k = 0; k < m_detectorvector.count(); k ++)
             {
-                pStandardGrandsonItem = new QStandardItem(m_detectorvector.at(k).value("d_name"));
+                pStandardGrandsonItem = new TreeItem(m_detectorvector.at(k).value("d_name"));
                 if (m_detectorvector.at(k).value("cond1_id") == m_pw_conditionvector.at(j).value("cond_id"))
                 {
                     pStandardChildItem->appendRow(pStandardGrandsonItem);
                     pStandardChildItem->setChild(k, 0 ,pStandardGrandsonItem);
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Detector_table_id") ,new QStandardItem(m_detectorvector.at(k).value("detector_table_id")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Type") ,new QStandardItem(m_detectorvector.at(k).value("d_type")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Groups") ,new QStandardItem(m_detectorvector.at(k).value("group_num")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Loose_groups") ,new QStandardItem(m_detectorvector.at(k).value("loose_group_num")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Defect_range") ,new QStandardItem(m_detectorvector.at(k).value("defrange")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Unit") ,new QStandardItem(m_detectorvector.at(k).value("unit")));
+                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Detector_table_id") ,new TreeItem(m_detectorvector.at(k).value("detector_table_id")));
+                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Type") ,new TreeItem(m_detectorvector.at(k).value("d_type")));
+                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Groups") ,new TreeItem(m_detectorvector.at(k).value("group_num")));
+                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Loose_groups") ,new TreeItem(m_detectorvector.at(k).value("loose_group_num")));
+                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Defect_range") ,new TreeItem(m_detectorvector.at(k).value("defrange")));
+                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Unit") ,new TreeItem(m_detectorvector.at(k).value("unit")));
                 }
             }
         }
