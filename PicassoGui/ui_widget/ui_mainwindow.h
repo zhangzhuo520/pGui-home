@@ -35,7 +35,6 @@
 #include "deftools/global.h"
 #include "ui_checklist.h"
 #include "ui_defgroup.h"
-#include "ui_draw_widget.h"
 #include "ui_defects_widget.h"
 #include "ui_fileproject_widget.h"
 #include "ui_layer_widget.h"
@@ -91,6 +90,8 @@ signals:
     void signal_defectsUpdata(QModelIndex *);
 
     void signal_setPenWidth(QString);
+
+    void signal_setPenColor(const QColor &);
 
     void signal_setPaintStyle(Global::PaintStyle);
 

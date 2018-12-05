@@ -21,7 +21,6 @@ SOURCES += main.cc\
     ui_gearmanconnector.cc \
     ui_checklist.cc \
     ui_defgroup.cc \
-    ui_draw_widget.cc \
     ui_defects_widget.cc \
     ui_layer_widget.cc \
     ui_fileproject_widget.cc \
@@ -32,13 +31,14 @@ SOURCES += main.cc\
     ui_semimage_dialog.cc \
     ui_chipedit_dialog.cc \
     ui_scale_frame.cc \
-    ui_fileproject_model.cc
+    ui_fileproject_model.cc \
+    ui_measurepoint.cc \
+    ui_paint_widget.cc
 
 HEADERS  += mainwindow.h \
     gearmanconnector.h \
     ui_checklist.h \
     ui_defgroup.h \
-    ui_draw_widget.h \
     ui_defects_widget.h \
     ui_fileproject_widget.h \
     ui_layer_widget.h \
@@ -49,7 +49,9 @@ HEADERS  += mainwindow.h \
     ui_semimage_dialog.h \
     ui_chipedit_dialog.h \
     ui_scale_frame.h \
-    ui_fileproject_model.h
+    ui_fileproject_model.h \
+    ui_measurepoint.h \
+    ui_paint_widget.h
 
 FORMS    +=
 

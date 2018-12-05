@@ -11,7 +11,7 @@
 #include <QDebug>
 #include <math.h>
 
-#include "ui_draw_widget.h"
+#include "ui_paint_widget.h"
 #include "../renderer/render_frame.h"
 namespace ui {
 
@@ -51,6 +51,7 @@ public slots:
     void slot_distance_updated(double);
     void slot_set_painter_style(Global::PaintStyle);
     void slot_set_pen_width(QString);
+    void slot_set_pen_color(const QColor&);
     void slot_move_point_center();
 
 protected:
@@ -90,7 +91,7 @@ private:
 
 
     QHBoxLayout *m_hlayout;
-    DrawWidget *m_draw_widget;
+    PaintWidget *m_paint_widget;
     render::RenderFrame *m_render_frame;
 };
 }

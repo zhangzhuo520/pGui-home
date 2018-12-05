@@ -55,7 +55,7 @@ void DockWidget::place(Qt::DockWidgetArea area, bool place)
  */
 TabWidget::TabWidget(QWidget *parent)
 {
-    Q_UNUSED(parent);
+    setPalette(parent);
     sizePolicy().setVerticalPolicy(QSizePolicy::Ignored);
     setTabsClosable(true);
     setMouseTracking(true);

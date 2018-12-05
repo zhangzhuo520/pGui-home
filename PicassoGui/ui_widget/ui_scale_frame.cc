@@ -30,16 +30,16 @@ ScaleFrame::ScaleFrame(QWidget *parent) :
 void ScaleFrame::initRenderFrame()
 {
     m_render_frame = new render::RenderFrame(this);
-    m_draw_widget = new DrawWidget(m_render_frame);
-    m_render_frame->set_cursor_widget(m_draw_widget);
+    m_paint_widget = new PaintWidget(m_render_frame);
+    m_render_frame->set_cursor_widget(m_paint_widget);
     m_hlayout->addWidget(m_render_frame);
 
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), this, SLOT(slot_box_updated(double,double,double,double)));
     connect(this, SIGNAL(signal_box_updated()), m_render_frame, SLOT(slot_box_updated()));
     connect(m_render_frame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_pos_updated(double, double)));
-    connect(m_draw_widget, SIGNAL(signal_distancePoint(QPointF,QPointF)), m_render_frame, SLOT(slot_distance_point(QPointF,QPointF)));
-    connect(m_draw_widget, SIGNAL(signal_updataDistance(double)), this, SLOT(slot_distance_updated(double)));
-    connect(m_draw_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
+    connect(m_paint_widget, SIGNAL(signal_distancePoint(QPointF,QPointF)), m_render_frame, SLOT(slot_distance_point(QPointF,QPointF)));
+    connect(m_paint_widget, SIGNAL(signal_updataDistance(double)), this, SLOT(slot_distance_updated(double)));
+    connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
 }
 
 void ScaleFrame::slot_move_point_center()
@@ -98,7 +98,11 @@ void ScaleFrame::darw_X_axis(QPainter &painter)
     double pointX = 0;
     double zoomIn = m_xend - m_xstart;
 
-    if (zoomIn >= 1600)
+    if (zoomIn > 9000)
+    {
+        ;
+    }
+    else if (zoomIn >= 1600 && zoomIn <= 9000)
     {
         for (int i = 0; i < zoomIn;)
         {
@@ -385,7 +389,11 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
     double pointY = 0;
     double zoomIn = m_yend - m_ystart;
 
-    if (zoomIn >= 1600)
+    if (zoomIn >= 9000)
+    {
+        ;
+    }
+    else if (zoomIn >= 1600 && zoomIn <= 9000)
     {
         for (int i = 0; i < (m_yend - m_ystart);)
         {
@@ -718,13 +726,18 @@ void ScaleFrame::draw_point_text()
             (m_xratio_prev != m_xratio) &&
             (m_yratio_prev != m_yratio))
     {
-        m_draw_widget->draw_point_text(m_xratio, m_yratio, m_size_text);
+        m_paint_widget->draw_point_text(m_xratio, m_yratio, m_size_text);
     }
 }
 
 void ScaleFrame::slot_set_pen_width(QString width)
 {
-    m_draw_widget->setWidth(width);
+    m_paint_widget->setWidth(width);
+}
+
+void ScaleFrame::slot_set_pen_color(const QColor& color)
+{
+    m_paint_widget->setColor(color);
 }
 
 render::LayoutView ScaleFrame::load_file(const QString & filename, const QString &dirpath, bool add_layout_view)
@@ -771,6 +784,7 @@ void ScaleFrame::slot_box_updated(double left, double bot, double right, double 
     m_ystart = bot;
     m_yend = top;
     paintImage();
+    draw_point_text();
     update();
 }
 
@@ -788,14 +802,13 @@ void ScaleFrame::slot_distance_updated(double distance)
 
 void ScaleFrame::slot_set_painter_style(Global::PaintStyle paintStyle)
 {
-    m_draw_widget->setPaintStyle(paintStyle);
+    m_paint_widget->setPaintStyle(paintStyle);
 }
 
 void ScaleFrame::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
     QPainter painter(this);
-    draw_point_text();
     painter.drawPixmap(0, 0, m_cursor_pixmap);
 
 }

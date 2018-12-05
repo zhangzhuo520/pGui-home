@@ -286,6 +286,7 @@ void MainWindow::initToolbar()
 void MainWindow::initPaintTab()
 {
     paintTab = new TabWidget(this);
+    paintTab->setObjectName("paintTab");
     setCentralWidget(paintTab);
     _isCreatPaintWidget = false;
     QHBoxLayout *hLayout = new QHBoxLayout();
@@ -421,13 +422,10 @@ void MainWindow::ShowColorDialog()
 
     if (color.isValid ())
     {
-//        if (NULL != m_drawwidget_vector.at(m_current_tabid))
-//        {
-////            set_defect_point.at(m_current_tabid)->setColor (color);
-//        }
         QPixmap p(20, 20);
         p.fill (color);
         colorBtn->setIcon (QIcon(p));
+        emit signal_setPenColor(color);
     }
 }
 
@@ -565,10 +563,10 @@ void MainWindow::slot_refreshAction()
 
 void MainWindow::slot_currentTab_changed(int index)
 {
-    Q_UNUSED(index);
-    m_current_tabid = paintTab->currentIndex();
+    m_current_tabid = index;
+    paintTab->setCurrentIndex(index);
     render::RenderFrame *renderFrame = NULL;
-    if (paintTab->count() <= 0)
+    if (index == -1)
     {
         m_scaleFrame_vector.clear();
         renderFrame = NULL;
@@ -577,7 +575,6 @@ void MainWindow::slot_currentTab_changed(int index)
     {
         renderFrame = m_scaleFrame_vector.at(m_current_tabid)->getRenderFrame();
     }
-
     layerwidget->getLayerData(renderFrame, m_current_filename);
 }
 
@@ -721,7 +718,6 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
 void MainWindow::slot_closePaintTab(int index)
 {
     paintTab->removeTab(index);
-    m_scaleFrame_vector.remove(index);
 }
 
 void MainWindow::slot_updataXY(double x, double y)
@@ -883,6 +879,7 @@ void MainWindow::addHistoryAction(QString filename)
 void MainWindow::centerWidget_boundingSignal(int index)
 {
     connect(this, SIGNAL(signal_setPenWidth(QString)), m_scaleFrame_vector.at(index), SLOT(slot_set_pen_width(QString)));
+    connect(this, SIGNAL(signal_setPenColor(const QColor&)), m_scaleFrame_vector.at(index), SLOT(slot_set_pen_color(const QColor&)));
     connect(m_scaleFrame_vector.at(index), SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
     connect(m_scaleFrame_vector.at(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updataXY(double, double)));
     connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), m_scaleFrame_vector.at(index), SLOT(slot_set_painter_style(Global::PaintStyle)));

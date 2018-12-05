@@ -2,21 +2,23 @@
 namespace ui {
 SqlQueryModel::SqlQueryModel(QObject *parent)
 {
-    Q_UNUSED(parent);
+    setParent(parent);
 }
 
 void SqlQueryModel::setquery(const QSqlQuery &query)
 {
     setQuery(query);
 }
-#if 1
+
 QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
 {
     if (!item.isValid())
     {
         return QVariant();
     }
+
     QVariant value = QSqlQueryModel::data(item, role);
+
     if((Qt::DisplayRole == role))
     {
         return value;
@@ -29,7 +31,7 @@ QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
     {
         if (item.row() % 2)
         {
-            return QColor(Qt::lightGray);
+        return QBrush(QColor(Qt::lightGray));
         }
         else
         {
@@ -42,31 +44,9 @@ QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
 
 TreeModel::TreeModel(QObject *parent)
 {
-    Q_UNUSED(parent);
+    setParent(parent);
 }
 
-//QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent)
-//{
-//    TreeItem *parentItem = NULL;
-//    if (!parent.isValid())
-//    {
-//         return QModelIndex();
-//    }
-//    else
-//    {
-//         parentItem = static_cast <TreeItem *> parent.internalPointer();
-//    }
-
-//    if (row < 0 || column < 0 || row >= parentItem->rowCount()
-//            || row >= parentItem->columnCount())
-//    {
-//        return QModelIndex();
-//    }
-//    else
-//    {
-//        createIndex(row, column, parentItem);
-//    }
-//}
 
 QVariant TreeModel::data(const QModelIndex &item, int role) const
 {
@@ -80,15 +60,21 @@ QVariant TreeModel::data(const QModelIndex &item, int role) const
         return value;
     case Qt::TextAlignmentRole:
         return int(Qt::AlignLeft | Qt::AlignVCenter);
+    case Qt::BackgroundColorRole :
+        if (item.row() % 2)
+        {
+            return QColor(Qt::lightGray);
+        }
+        else
+        {
+            return QColor(Qt::white);
+        }
+    case Qt::SizeHintRole:
+        return QSize(32, 16);
     default:
         return value;
     }
     return QVariant();
 }
 
-//QModelIndex TreeModel::parent(const QModelIndex &child)
-//{
-//    return child.parent();
-//}
 }
-#endif

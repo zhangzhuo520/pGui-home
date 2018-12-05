@@ -1,4 +1,8 @@
 /**********QMainWindow**********/
+QMainWindow{
+     background:rgb(216, 216, 216);
+}
+
 QMainWindow::separator{
      width: 2px;
 }
@@ -7,8 +11,8 @@ QMainWindow::separator:hover{
      background: rgb(145, 194, 242);
 }
 
-QWidget #DrawWidget{
-	background:transparent;
+QWidget #PaintWidget{
+     background:transparent;
 }
 
 /**********QTabBar**********/
@@ -81,7 +85,6 @@ QComboBox QAbstractItemView{
 /**********QTabWidget**********/
 QTabWidget{
      border: 2px solid rgb(80, 183, 220);
-     background: rgb(0, 0, 0);
 }
 
 QTabWidget::pane{
@@ -90,6 +93,10 @@ QTabWidget::pane{
 
 QTabWidget::tab-bar{
      left: 5px;
+}
+
+QTabWidget#paintTab QStackedWidget{
+    background: rgb(100, 100, 100);
 }
 
 /**********QStatusBar**********/
@@ -142,10 +149,6 @@ QTableView{
      show-decoration-selected: 1;
 }
 
-QTableView::item{
-     background: transparent;
-}
-
 QTableView::item:selected{
      background: rgb(128, 171, 220);
 }
@@ -162,12 +165,15 @@ QHeaderView::section{
      background-color: rgb(200, 200, 200);
 }
 
-QDockWidget > QWidget{
-     border: 1px solid rgb(128, 171, 220);
+/**********QDockWidget**********/
+QDockWidget{
+     background: rgb(149, 194, 231);
+     border: 2px solid rgb(149, 194, 231);
 }
 
- QDockWidget{
-     border: 1px solid rgb(128, 171, 220);
+QDockWidget > QWidget {
+     background: rgb(149, 194, 231);
+      border: 2px solid rgb(149, 194, 231);
 }
 
 QDockWidget::title{
@@ -181,9 +187,7 @@ QDialog{
 
 /**********QFrame**********/
 QFrame#Frame{
-     border-style: outset;
-     border: 1px solid rgb(50, 50, 50);
-     border-radius:2px;
-     background:rgb(200, 210 ,220);
+     border: 1px solid rgb(149, 194, 231);
+     background:rgb(216, 216 ,216);
 }
 

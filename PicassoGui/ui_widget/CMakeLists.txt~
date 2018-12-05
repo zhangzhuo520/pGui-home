@@ -12,7 +12,7 @@ SET(PicathoGui_SRCS
     gearmanconnector.cc
     ui_checklist.cc
     ui_defgroup.cc
-    ui_paint_widget.cc
+    ui_draw_widget.cc
     ui_defects_widget.cc
     ui_layer_widget.cc
     ui_fileproject_widget.cc

@@ -26,6 +26,7 @@ void DefectsWidget::initm_defects_table()
     m_defects_model = new SqlQueryModel(m_defects_table);
 
     //When selected, select the entire row and allow only one row to be selected
+    m_defects_table->setShowGrid(false);
     m_defects_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_defects_table->setSelectionMode(QAbstractItemView::SingleSelection);
     m_defects_table->horizontalHeader()->setClickable(false);

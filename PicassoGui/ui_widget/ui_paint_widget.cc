@@ -1,38 +1,41 @@
-#include "ui_draw_widget.h"
+#include "ui_paint_widget.h"
 namespace ui {
-DrawWidget::DrawWidget(QWidget *parent):
+PaintWidget::PaintWidget(QWidget *parent):
     QWidget(parent),
+    m_is_drawtext(false),
     weight(5),
     style(1),
-    isDrawText(false),
     checkstyle(Normal),
     rulerIsPress(false)
 {
-	setObjectName("DrawWidget");
+    setObjectName("PaintWidget");
     setAutoFillBackground (true);
     setMouseTracking(true);
     pix = new QPixmap(size());
     pix->fill(Qt::transparent);
+    m_text_pix = new QPixmap(size());
+    m_text_pix->fill(Qt::transparent);
     setColor(Qt::white);
 }
 
-void DrawWidget::setStyle (int s)
+void PaintWidget::setStyle (int s)
 {
     style = s;
 }
 
-void DrawWidget::setWidth (QString w)
+void PaintWidget::setWidth (QString w)
 {
     weight = w.toInt();
 }
 
-void DrawWidget::setColor (QColor c)
+void PaintWidget::setColor (QColor c)
 {
     color = c;
 }
 
-void DrawWidget::mousePressEvent (QMouseEvent *e)
+void PaintWidget::mousePressEvent (QMouseEvent *e)
 {
+    currentPos = e->pos();
     RubberEndPoint = RubberStartPoint = e->pos();
     if (e->button() == Qt::RightButton)
     {
@@ -61,6 +64,7 @@ void DrawWidget::mousePressEvent (QMouseEvent *e)
         {
             setCursor(Qt::ArrowCursor);
             lineStartPoint = lineEndPoint = e->pos();
+
             startPos = endPos = currentPos;
             rulerIsPress = true;
         }
@@ -68,7 +72,7 @@ void DrawWidget::mousePressEvent (QMouseEvent *e)
      QWidget::mousePressEvent(e);
 }
 
-void DrawWidget::mouseReleaseEvent(QMouseEvent *e)
+void PaintWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::RightButton)
     {
@@ -87,8 +91,9 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *e)
     QWidget::mouseReleaseEvent(e);
 }
 
-void DrawWidget::mouseMoveEvent (QMouseEvent *e)
+void PaintWidget::mouseMoveEvent (QMouseEvent *e)
 {
+    currentPos  = e->pos();
     if (checkstyle == RubberBand)
     {
         RubberEndPoint = e->pos();
@@ -99,7 +104,6 @@ void DrawWidget::mouseMoveEvent (QMouseEvent *e)
     {
         lineEndPoint = e->pos();
         endPos = e->pos();
-        calcVertexes();
         drawRuler();
         signal_mouseMove(e->pos());
         emit signal_updataDistance((lineEndPoint.x() - lineStartPoint.x())/(lineEndPoint.y() - lineStartPoint.y()) );
@@ -110,23 +114,20 @@ void DrawWidget::mouseMoveEvent (QMouseEvent *e)
     {
         updateMouseCursor(e->pos());
     }
+
     QWidget::mouseMoveEvent(e);
 }
 
-void DrawWidget::paintEvent (QPaintEvent *e)
+void PaintWidget::paintEvent (QPaintEvent *e)
 {
     Q_UNUSED(e);
     QPainter painter(this);
     painter.setRenderHint( QPainter::Antialiasing, true ); //Improve the quality of painting
-    if(isDrawText)
-    {
-        isDrawText = false;
-    }
-
     painter.drawPixmap(QPoint(0,0), Rubbelpix);
+    QWidget::paintEvent(e);
 }
 
-void DrawWidget::resizeEvent (QResizeEvent *event)
+void PaintWidget::resizeEvent (QResizeEvent *event)
 {
     if (height () > pix->height () || width () > pix->width ())
     {
@@ -139,12 +140,12 @@ void DrawWidget::resizeEvent (QResizeEvent *event)
     QWidget::resizeEvent (event);
 }
 
-void DrawWidget::setPaintStyle(Global::PaintStyle paintStyle)
+void PaintWidget::setPaintStyle(Global::PaintStyle paintStyle)
 {
     penStyle = paintStyle;
 }
 
-void DrawWidget::calcVertexes()
+void PaintWidget::calcVertexes()
 {
     double arrow_lenght_ = 13;//Arrow Len
     double arrow_degrees_ = 0.6;//Arrow angle
@@ -157,7 +158,7 @@ void DrawWidget::calcVertexes()
     leftArrowPoint.setY(lineEndPoint.y() + arrow_lenght_ * qSin(angle + arrow_degrees_));
 }
 
-void DrawWidget::clear ()
+void PaintWidget::clear ()
 {
     QPixmap *clearPix = new QPixmap(size());
     clearPix->fill (Qt::transparent);
@@ -165,39 +166,36 @@ void DrawWidget::clear ()
     update ();
 }
 
-void DrawWidget::slot_setPaintStyle(Global::PaintStyle paintstyle)
+void PaintWidget::slot_setPaintStyle(Global::PaintStyle paintstyle)
 {
     penStyle = paintstyle;
 }
 
-void DrawWidget::draw_point_text(double x, double y, QString Stringsize)
+void PaintWidget::draw_point_text(double x, double y, QString Stringsize)
 {
-        isDrawText = true;
-        QPixmap *clearPix = new QPixmap(size());
-        clearPix->fill (Qt::transparent);
-        pix = clearPix;
-
+        *m_text_pix = *pix;
+        m_is_drawtext = true;
         QPen pen;
-
-        QPainter painter(pix);
+        QPainter painter(m_text_pix);
         pen.setStyle ((Qt::PenStyle)style);
         pen.setWidth (weight);
         pen.setColor (color);
         painter.setPen(pen);
         Stringsize = "size: " + Stringsize;
         painter.drawText(x * width(), y * height() - 10, Stringsize);
-        update();
+        updateMouseCursor(currentPos);
 }
 
-void DrawWidget::slot_updataPos(double x, double y)
+void PaintWidget::updateMouseCursor(QPoint pos)
 {
-    currentPos.setX(x);
-    currentPos.setY(y);
-}
-
-void DrawWidget::updateMouseCursor(QPoint pos)
-{
-    Rubbelpix = *pix;
+    if (m_is_drawtext)
+    {
+        Rubbelpix = *m_text_pix;
+    }
+    else
+    {
+        Rubbelpix = *pix;
+    }
     QPainter painter(&Rubbelpix);
     QPen pen;
     pen.setWidth (weight);
@@ -209,9 +207,16 @@ void DrawWidget::updateMouseCursor(QPoint pos)
     update();
 }
 
-void DrawWidget::drawRubberRect()
+void PaintWidget::drawRubberRect()
 {
-    Rubbelpix = *pix;
+    if (m_is_drawtext)
+    {
+        Rubbelpix = *m_text_pix;
+    }
+    else
+    {
+        Rubbelpix = *pix;
+    }
     QPen pen;
     pen.setColor(color);
     pen.setWidth(weight);
@@ -223,9 +228,17 @@ void DrawWidget::drawRubberRect()
     update();
 }
 
-void DrawWidget::drawRuler()
+void PaintWidget::drawRuler()
 {
-    Rubbelpix = *pix;
+    calcVertexes();
+    if (m_is_drawtext)
+    {
+        Rubbelpix = *m_text_pix;
+    }
+    else
+    {
+        Rubbelpix = *pix;
+    }
     QPen pen;
     pen.setStyle ((Qt::PenStyle)style);
     pen.setWidth (weight);

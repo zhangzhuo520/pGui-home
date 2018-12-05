@@ -18,16 +18,32 @@
 #include "deftools/datastruct.h"
 
 namespace ui {
-class DrawWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit DrawWidget(QWidget *parent = 0);
 
+class PaintPrivate
+{
+public:
     enum CheckStyle{
         RubberBand,
         Normal
     };
+
+    enum PaintStyle
+    {
+        MouseStyle,
+        PenStyle,
+        RulerStyle
+    };
+
+    explicit PaintPrivate();
+};
+
+class PaintWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit PaintWidget(QWidget *parent = 0);
+
+
     void mousePressEvent (QMouseEvent *);
     void mouseReleaseEvent (QMouseEvent *);
     void mouseMoveEvent (QMouseEvent *);
@@ -55,24 +71,24 @@ public slots:
     void setColor (QColor);
     void clear();
     void draw_point_text(double, double, QString);
-    void slot_updataPos(double, double);
     void slot_setPaintStyle(Global::PaintStyle);
 
-private:    
+private:
     QPoint RubberStartPoint;
     QPoint RubberEndPoint;
 
-    QPointF currentPos;
+    QPoint currentPos;
     QPixmap *pix;
     QPixmap Rubbelpix;
+    QPixmap *m_text_pix;
     QPointF startPos;
     QPointF endPos;
+    bool m_is_drawtext;
     int weight;
     int style;
     QColor color;
     Global::PaintStyle penStyle;
 
-    bool isDrawText;
     CheckStyle checkstyle;
     QPointF lineStartPoint;
     QPointF lineEndPoint;

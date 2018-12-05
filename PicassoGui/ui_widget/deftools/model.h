@@ -8,6 +8,9 @@
 #include <QString>
 #include <QStandardItemModel>
 #include <QStringListModel>
+#include <QDebug>
+#include "global.h"
+
 //QStringListModel
 namespace ui {
 class SqlQueryModel : public QSqlQueryModel
@@ -26,16 +29,16 @@ public:
     explicit TreeItem(QObject *parent = 0)
     {
         Q_UNUSED(parent);
+
     }
     TreeItem(QIcon icon)
     {
         setIcon(icon);
-        setSizeHint(QSize(32, 24));
+        setSizeHint(QSize(26, 20));
     }
     TreeItem(QString text)
     {
         setText(text);
-        setSizeHint(QSize(32, 24));
     }
     TreeItem(QColor color)
     {
