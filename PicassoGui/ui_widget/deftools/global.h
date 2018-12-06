@@ -27,9 +27,9 @@ class Global
 public:
     enum PaintStyle
     {
-        MouseStyle,
-        PenStyle,
-        RulerStyle
+        Normal,
+        Mark,
+        Measrue
     };
 };
 

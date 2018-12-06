@@ -3,17 +3,29 @@
 
 #include <QObject>
 #include <QPoint>
+#include <QList>
 
-class MeasurePoint :public QObject
-{
-    Q_OBJECT
+class LineData{
 public:
-    explicit MeasurePoint(QObject *parent = 0);
-    
-
-private:
     QPoint m_first_point;
-    QPoint m_end_point;
+    QPoint m_last_point;
+};
+
+class MeasureLine
+{
+public:
+    explicit MeasureLine();
+    
+    inline void appendLineData(const LineData &linedata)
+    {
+        m_linedata_list.append(linedata);
+    }
+
+    QList <LineData> get_point_list();
+
+    void clear_all_data();
+private:
+    QList <LineData> m_linedata_list;
 };
 
 #endif // UI_MEASUREPOINT_H

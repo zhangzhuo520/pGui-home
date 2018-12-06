@@ -133,9 +133,9 @@ void MainWindow::initDockWidget()
     } sets [] = {
         { "File", 0, Qt::LeftDockWidgetArea },
         { "Layer", 0, Qt::LeftDockWidgetArea },
-        { "Workspace", 0, Qt::LeftDockWidgetArea },
-        { "ChickList", 0, Qt::RightDockWidgetArea },
-        { "Log", 0, Qt::RightDockWidgetArea },
+        { "Workspace", 0, Qt::BottomDockWidgetArea },
+        { "ChickList", 0, Qt::BottomDockWidgetArea },
+        { "Log", 0, Qt::BottomDockWidgetArea },
         { "Broser", 0, Qt::RightDockWidgetArea }
     };
 
@@ -335,6 +335,7 @@ void MainWindow::init_fileProject_layerTree()
  */
 void MainWindow::init_fileProject_workSpace()
 {
+    broserDockWidget->setFixedHeight(50);
 }
 
 /**
@@ -428,20 +429,19 @@ void MainWindow::ShowColorDialog()
         emit signal_setPenColor(color);
     }
 }
+void MainWindow::slot_addHistoryAction()
+{
+    QString name = sender()->objectName();
+    slot_addFile(name);
+}
 
 void MainWindow::slot_mouseAction()
 {
     mouseAction->setChecked(true);
     penAction->setChecked(false);
     rulerAction->setChecked(false);
-    paintstyle = Global::MouseStyle;
+    paintstyle = Global::Normal;
     emit signal_setPaintStyle(paintstyle);
-}
-
-void MainWindow::slot_addHistoryAction()
-{
-    QString name = sender()->objectName();
-    slot_addFile(name);
 }
 
 void MainWindow::slot_penAction()
@@ -449,7 +449,7 @@ void MainWindow::slot_penAction()
     mouseAction->setChecked(false);
     penAction->setChecked(true);
     rulerAction->setChecked(false);
-    paintstyle = Global::PenStyle;
+    paintstyle = Global::Mark;
     emit signal_setPaintStyle(paintstyle);
 }
 
@@ -458,7 +458,7 @@ void MainWindow::slot_rulerAction()
     mouseAction->setChecked(false);
     penAction->setChecked(false);
     rulerAction->setChecked(true);
-    paintstyle = Global::RulerStyle;
+    paintstyle = Global::Measrue;
     emit signal_setPaintStyle(paintstyle);
 }
 

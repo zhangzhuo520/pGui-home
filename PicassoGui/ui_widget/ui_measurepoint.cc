@@ -1,6 +1,10 @@
 #include "ui_measurepoint.h"
 
-MeasurePoint::MeasurePoint(QObject *parent) :
-    QObject(parent)
+MeasureLine::MeasureLine()
 {
+}
+
+void MeasureLine::clear_all_data()
+{
+    m_linedata_list.clear();
 }
