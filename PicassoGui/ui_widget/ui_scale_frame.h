@@ -89,6 +89,7 @@ private:
     double m_current_posX;
     double m_current_posY;
 
+
     QHBoxLayout *m_hlayout;
     PaintWidget *m_paint_widget;
     render::RenderFrame *m_render_frame;

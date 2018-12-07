@@ -119,7 +119,7 @@ private slots:
 
     void slot_closePaintTab(int);
 
-    void slot_updataXY(double, double);
+    void slot_updateXY(double, double);
 
     void slot_showDefGroup(QModelIndex, int);
 

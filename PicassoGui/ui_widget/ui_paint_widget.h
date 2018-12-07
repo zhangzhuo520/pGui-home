@@ -51,8 +51,7 @@ public:
 
     void setPaintStyle(Global::PaintStyle);
 
-
-    void draw_point_text(double, double, QString);
+    void draw_defect_point_text(double, double, QString);
 
     QImage merge_two_images(const QImage& baseImage, const QImage&);
     void drawRuler();
@@ -69,16 +68,15 @@ signals:
 
     void signal_updataDistance(double);
 
-    void signal_distancePoint(QPointF, QPointF);
-
     void signal_moveCenter();
+
+    void signal_get_snap_pos(QPoint, int);
 
 public slots:
     void setStyle (int);
     void setWidth (QString);
     void setColor (QColor);
-
-
+    void slot_get_snap_pos(QPoint, double, double, int);
     void slot_setPaintStyle(Global::PaintStyle);
     void clear();
 
@@ -97,9 +95,10 @@ private:
     QImage *m_empty_image;
 
     QImage m_ruler_image;
-    QImage m_crossline_image;
+    QImage m_ruler_save_image;
+    QImage m_cross_line_image;
     QImage m_dotted_box_image;
-    QImage m_database_text_image;
+    QImage m_defectpoint_size_image;
 
     QImage m_paint_image;
 
@@ -122,6 +121,8 @@ private:
     QString Stringsize;
     QString x;
     QString y;
+
+    double distance;
 };
 }
 #endif // DRAWWIDGET_H

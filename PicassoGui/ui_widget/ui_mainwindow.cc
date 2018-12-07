@@ -720,7 +720,7 @@ void MainWindow::slot_closePaintTab(int index)
     paintTab->removeTab(index);
 }
 
-void MainWindow::slot_updataXY(double x, double y)
+void MainWindow::slot_updateXY(double x, double y)
 {
     currposLable_xNum->setText(QString::number(x));
     currposLable_yNum->setText(QString::number(y));
@@ -797,14 +797,14 @@ void MainWindow::initPrepDir()
 {
     m_prep_dir = QDir::homePath() + "/.PguiPrep";
     QDir dir(m_prep_dir);
-	    if (!dir.exists())
+    if (!dir.exists())
     {
          if(!dir.mkdir(m_prep_dir))
         {
             qDebug() << "make prep_dir error !";
             return;
         }
-	}
+    }
 }
 
 void MainWindow::saveOpenHistory(QString history)
@@ -881,7 +881,7 @@ void MainWindow::centerWidget_boundingSignal(int index)
     connect(this, SIGNAL(signal_setPenWidth(QString)), m_scaleFrame_vector.at(index), SLOT(slot_set_pen_width(QString)));
     connect(this, SIGNAL(signal_setPenColor(const QColor&)), m_scaleFrame_vector.at(index), SLOT(slot_set_pen_color(const QColor&)));
     connect(m_scaleFrame_vector.at(index), SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
-    connect(m_scaleFrame_vector.at(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updataXY(double, double)));
+    connect(m_scaleFrame_vector.at(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
     connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), m_scaleFrame_vector.at(index), SLOT(slot_set_painter_style(Global::PaintStyle)));
     emit signal_setPenWidth(penWidthCombox->currentText());
 }

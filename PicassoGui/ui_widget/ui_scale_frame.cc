@@ -33,13 +33,13 @@ void ScaleFrame::initRenderFrame()
     m_paint_widget = new PaintWidget(m_render_frame);
     m_render_frame->set_cursor_widget(m_paint_widget);
     m_hlayout->addWidget(m_render_frame);
-
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), this, SLOT(slot_box_updated(double,double,double,double)));
     connect(this, SIGNAL(signal_box_updated()), m_render_frame, SLOT(slot_box_updated()));
     connect(m_render_frame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_pos_updated(double, double)));
-    connect(m_paint_widget, SIGNAL(signal_distancePoint(QPointF,QPointF)), m_render_frame, SLOT(slot_distance_point(QPointF,QPointF)));
     connect(m_paint_widget, SIGNAL(signal_updataDistance(double)), this, SLOT(slot_distance_updated(double)));
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
+    connect(m_paint_widget, SIGNAL(signal_get_snap_pos(QPoint, int)), m_render_frame, SLOT(slot_get_snap_pos(QPoint, int)));
+	connect(m_render_frame, SIGNAL(signal_get_snap_pos(QPoint, double, double, int)), m_paint_widget, SLOT(slot_get_snap_pos(QPoint, double, double, int)));
 }
 
 void ScaleFrame::slot_move_point_center()
@@ -726,7 +726,7 @@ void ScaleFrame::draw_point_text()
             (m_xratio_prev != m_xratio) &&
             (m_yratio_prev != m_yratio))
     {
-        m_paint_widget->draw_point_text(m_xratio, m_yratio, m_size_text);
+        m_paint_widget->draw_defect_point_text(m_xratio, m_yratio, m_size_text);
     }
 }
 
