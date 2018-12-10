@@ -13,7 +13,7 @@ PaintWidget::PaintWidget(QWidget *parent):
     m_empty_image->fill(Qt::transparent);
     m_mouse_clicks = LineEnd;
     m_mouse_state = release;
-    setColor(Qt::white);
+    setColor(Qt::black);
     m_ruler_image = *m_empty_image;
     m_defectpoint_size_image = *m_empty_image;
     m_dotted_box_image = *m_empty_image;
@@ -69,10 +69,7 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
             if(m_mouse_clicks == LineStart)
             {
                 m_mouse_clicks = LineEnd;
-                LineData tempLine;
-                tempLine.m_first_point = m_ruler_first_point;
-                tempLine.m_last_point = m_ruler_last_point;
-                m_measure_point.appendLineData(tempLine);
+                emit signal_get_snap_pos(m_current_mousepos, 2);
             }
             else
             {
@@ -152,13 +149,11 @@ void PaintWidget::mouseMoveEvent (QMouseEvent *e)
 
 void PaintWidget::paintEvent (QPaintEvent *e)
 {
-    TIME_DEBUG
     Q_UNUSED(e);
     QPainter painter(this);
     painter.setRenderHint( QPainter::Antialiasing, true ); //Improve the quality of painting
     painter.drawPixmap(QPoint(0,0), QPixmap::fromImage(m_paint_image));
     QWidget::paintEvent(e);
-    TIME_DEBUG
 }
 
 void PaintWidget::resizeEvent (QResizeEvent *event)
@@ -179,10 +174,9 @@ void PaintWidget::setPaintStyle(Global::PaintStyle paintStyle)
 
 void PaintWidget::clear ()
 {
-//    QPixmap *clearPix = new QPixmap(size());
-//    clearPix->fill (Qt::transparent);
-//    pix = clearPix;
-//    update ();
+    m_ruler_image.fill(Qt::transparent);
+    m_measure_point.clear_all_data();
+    merge_image();
 }
 
 void PaintWidget::slot_setPaintStyle(Global::PaintStyle paintstyle)
@@ -232,7 +226,6 @@ void PaintWidget::draw_dotted_box()
 
 void PaintWidget::merge_image()
 {
-    TIME_DEBUG
     switch (m_select_mode) {
     case Global::Normal:
     {
@@ -245,20 +238,24 @@ void PaintWidget::merge_image()
     }
     case Global::Measrue:
     {
-        m_paint_image = merge_two_images(m_defectpoint_size_image, m_ruler_image);
+        if (m_mouse_clicks == LineStart)
+        {
+            m_paint_image = merge_two_images(m_defectpoint_size_image, m_ruler_save_image);
+        }
+        else
+        {
+            m_paint_image = merge_two_images(m_defectpoint_size_image, m_ruler_image);
+        }
         break;
     }
     default:
-        break;
+            break;
+        }
+        update();
     }
-    update();
-    TIME_DEBUG
-}
 
 void PaintWidget::drawRuler()
 {
-
-    TIME_DEBUG
     double arrow_lenght_ = 13;
     double arrow_degrees_ = 0.6;
 
@@ -300,8 +297,54 @@ void PaintWidget::drawRuler()
         tempPainter.drawLine(m_ruler_first_point, m_ruler_last_point);
         tempPainter.drawLine(m_ruler_last_point, rightArrowPoint);
         tempPainter.drawLine(m_ruler_last_point, leftArrowPoint);
+        LineData tempLine;
+        tempLine.m_first_point = startPos;
+        tempLine.m_last_point = endPos;
+        m_measure_point.appendLineData(tempLine);
     }
-    TIME_DEBUG
+}
+
+void PaintWidget::resizeRuler(double m_xstart, double m_xend, double m_ystart, double m_yend)
+{
+    QList <LineData> listLine = m_measure_point.get_point_list();
+    m_ruler_image = *m_empty_image;
+    for (int i = 0; i < listLine.count(); i ++)
+    {
+        double m_xratio_start = (listLine.at(i).m_first_point.x() - m_xstart) / (m_xend - m_xstart);
+        double m_yratio_start = (m_yend - listLine.at(i).m_first_point.y()) / (m_yend - m_ystart);
+
+        double m_xratio_end = (listLine.at(i).m_last_point.x() - m_xstart) / (m_xend - m_xstart);
+        double m_yratio_end = (m_yend - listLine.at(i).m_last_point.y()) / (m_yend - m_ystart);
+
+        m_ruler_first_point = QPointF (m_xratio_start * width(), m_yratio_start * height());
+        m_ruler_last_point = QPointF (m_xratio_end * width(), m_yratio_end * height());
+
+
+        double arrow_lenght_ = 13;
+        double arrow_degrees_ = 0.6;
+
+        double angle = atan2(m_ruler_last_point.y() - m_ruler_first_point.y(), m_ruler_last_point.x() - m_ruler_first_point.x()) + 3.1415926;//
+
+        QPointF rightArrowPoint;
+        QPointF leftArrowPoint;
+
+        rightArrowPoint.setX(m_ruler_last_point.x() + arrow_lenght_ * cos(angle - arrow_degrees_));
+        rightArrowPoint.setY(m_ruler_last_point.y() + arrow_lenght_ * qSin(angle - arrow_degrees_));
+        leftArrowPoint.setX(m_ruler_last_point.x() + arrow_lenght_ * qCos(angle + arrow_degrees_));
+        leftArrowPoint.setY(m_ruler_last_point.y() + arrow_lenght_ * qSin(angle + arrow_degrees_));
+        QPen pen;
+        pen.setStyle ((Qt::PenStyle)style);
+        pen.setWidth (weight);
+        pen.setColor (color);
+        QPainter tempPainter(&m_ruler_image);
+        tempPainter.setRenderHint(QPainter::Antialiasing, true);
+        tempPainter.setPen(pen);
+        tempPainter.drawText(QPoint(m_ruler_last_point.x() - 10, m_ruler_last_point.y() - 5), QString::number(distance,'f', 6));
+        tempPainter.drawLine(m_ruler_first_point, m_ruler_last_point);
+        tempPainter.drawLine(m_ruler_last_point, rightArrowPoint);
+        tempPainter.drawLine(m_ruler_last_point, leftArrowPoint);
+    }
+    merge_image();
 }
 
 QImage PaintWidget::merge_two_images(const QImage& baseImage, const QImage& overlayImage)

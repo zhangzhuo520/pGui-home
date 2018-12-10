@@ -84,7 +84,7 @@ void LayerWidget::initTree()
     layerTree = new QTreeView(this);
     TreeHLayout->addWidget(layerTree);
     layerTreeModel = new TreeModel(layerTree);
-
+    layerTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     layerTreeModel->setHorizontalHeaderLabels(QStringList() << "Name"
                                           << "Icon"<< "Desc");
 
@@ -124,7 +124,7 @@ void LayerWidget::slot_treeItemChanged(QStandardItem *item)
 
 void LayerWidget::slot_treeDoubleClick(QModelIndex item)
 {
-    TIME_DEBUG
+//    TIME_DEBUG
     //QlayerPropertyVctor.at(i).set_pattern();
 }
 
@@ -472,6 +472,7 @@ void LayerWidget::slot_setLineColor(QColor color)
     m_layer_style_vector[m_active_model_index] = m_layerstyle;
     setModelIdexImage(setImage(m_layerstyle));
     setLayerData(m_layerstyle);
+    TIME_DEBUG
 }
 
 void LayerWidget::slot_setLineStyle(int line_style)
@@ -574,15 +575,17 @@ void LayerWidget::getLayerData(render::RenderFrame* view, QString currentFile)
     m_renderFrame = view;
     rootFileItem = new TreeItem(currentFile);
     rootItem_vector.append(rootFileItem);
+
     rootFileItem->setCheckable(true);
     rootFileItem->setEditable(false);
 
-    if(rootItem_vector.count())
+    if(rootItem_vector.count() > 1)
     {
         rootItem_vector.remove(0);
     }
 
     layerTreeModel->setItem(0, rootFileItem);
+
     TreeItem* pStandardItem = NULL;
 
     m_view = view;
@@ -621,7 +624,7 @@ void LayerWidget::getLayerData(render::RenderFrame* view, QString currentFile)
         childItem2->setEditable(false);
         rootFileItem->setChild(pStandardItem->row(), 2, childItem2);
         TreeItem *childItem1 = new TreeItem();
-        childItem2->setEditable(false);
+        childItem1->setEditable(false);
         childItem1->setData(image, Qt::DecorationRole);
         rootFileItem->setChild(pStandardItem->row(), 1, childItem1);
     }
@@ -695,8 +698,11 @@ void LayerWidget::setModelIdexImage(QImage image)
 {
     TreeItem *childItem = new TreeItem();
     childItem->setData(image, Qt::DecorationRole);
+    if (m_active_model_rootIndex < 0)
+    {
+       m_active_model_rootIndex = 0;
+    }
     TreeItem *rootItem = rootItem_vector.at(m_active_model_rootIndex);
-
     rootItem->child(m_active_model_index, 1)->removeRow(0);
     rootItem->setChild(m_active_model_index, 1, childItem);
 }

@@ -35,7 +35,9 @@ public:
 
     void calcu_defecttext_point();
 
-    void draw_point_text();
+    void draw_point_size();
+
+    void draw_measure_point();
 
     render::LayoutView load_file(const QString &, const QString &, bool);
     render::RenderFrame* getRenderFrame();
@@ -53,6 +55,7 @@ public slots:
     void slot_set_pen_width(QString);
     void slot_set_pen_color(const QColor&);
     void slot_move_point_center();
+    void slot_clear_measure_point();
 
 protected:
     void paintEvent(QPaintEvent *);

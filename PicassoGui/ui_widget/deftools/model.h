@@ -29,20 +29,24 @@ public:
     explicit TreeItem(QObject *parent = 0)
     {
         Q_UNUSED(parent);
+        setEditable(false);
 
     }
     TreeItem(QIcon icon)
     {
         setIcon(icon);
         setSizeHint(QSize(26, 20));
+        setEditable(false);
     }
     TreeItem(QString text)
     {
         setText(text);
+        setEditable(false);
     }
     TreeItem(QColor color)
     {
         setBackground(QBrush(color));
+        setEditable(false);
     }
 };
 

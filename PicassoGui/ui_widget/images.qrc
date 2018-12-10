@@ -20,13 +20,9 @@
         <file>images/zoomout.png</file>
         <file>images/zoomIn.png</file>
         <file>images/waring.png</file>
-        <file>images/SEM.png</file>
         <file>images/save.png</file>
-        <file>images/SET.png</file>
         <file>images/ruler.png</file>
-        <file>images/RTS.png</file>
         <file>images/right.png</file>
-        <file>images/REV.png</file>
         <file>images/rename.png</file>
         <file>images/colorButton.png</file>
         <file>images/colorIcon.png</file>
@@ -64,5 +60,6 @@
         <file>images/scale.png</file>
         <file>images/style.qss</file>
         <file>images/waring_title.png</file>
+        <file>images/rev.png</file>
     </qresource>
 </RCC>

@@ -47,6 +47,11 @@ void ScaleFrame::slot_move_point_center()
     m_render_frame->center_at_point(m_current_posX, m_current_posY);
 }
 
+void ScaleFrame::slot_clear_measure_point()
+{
+    m_paint_widget->clear();
+}
+
 void ScaleFrame::set_defect_point(double x, double y)
 {
     m_render_frame->set_defect_point(x, y);
@@ -708,7 +713,7 @@ void ScaleFrame::drawDefectPoint(double x, double y, QString Stringsize)
     m_size_text = Stringsize;
     m_point_x = x;
     m_point_y = y;
-    draw_point_text();
+    draw_point_size();
 }
 
 void ScaleFrame::calcu_defecttext_point()
@@ -719,7 +724,7 @@ void ScaleFrame::calcu_defecttext_point()
     m_yratio = (m_yend - m_point_y) / (m_yend - m_ystart);
 }
 
-void ScaleFrame::draw_point_text()
+void ScaleFrame::draw_point_size()
 {
     calcu_defecttext_point();
     if((m_isdraw_pointtext == true) &&
@@ -728,6 +733,11 @@ void ScaleFrame::draw_point_text()
     {
         m_paint_widget->draw_defect_point_text(m_xratio, m_yratio, m_size_text);
     }
+}
+
+void ScaleFrame::draw_measure_point()
+{
+      m_paint_widget->resizeRuler(m_xstart, m_xend, m_ystart, m_yend);
 }
 
 void ScaleFrame::slot_set_pen_width(QString width)
@@ -784,7 +794,8 @@ void ScaleFrame::slot_box_updated(double left, double bot, double right, double 
     m_ystart = bot;
     m_yend = top;
     paintImage();
-    draw_point_text();
+    draw_point_size();
+    draw_measure_point();
     update();
 }
 

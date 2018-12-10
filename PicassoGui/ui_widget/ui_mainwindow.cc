@@ -218,19 +218,9 @@ void MainWindow::initToolbar()
     addToolBar(RevToolBar);
     connect(refreshAction, SIGNAL(triggered()), this, SLOT(slot_refreshAction()));
 
-    QAction *revAction = new QAction(QIcon(":/dfjy/images/REV.png"),"REV", this);
-    QAction *setAction = new QAction(QIcon(":/dfjy/images/SET.png"),"SET", this);
-    QAction *rstAction = new QAction(QIcon(":/dfjy/images/RTS.png"),"RTS", this);
-    QAction *gckAction = new QAction(QIcon(":/dfjy/images/GCK.png"),"GCK", this);
-    QAction *semAction = new QAction(QIcon(":/dfjy/images/SEM.png"),"SEM", this);
-    QAction *cpeAction = new QAction(QIcon(":/dfjy/images/CPE.png"),"CPE", this);
+    QAction *revAction = new QAction(QIcon(":/dfjy/images/rev.png"),"REV", this);
 
     RevToolBar->addAction(revAction);
-    RevToolBar->addAction(setAction);
-    RevToolBar->addAction(rstAction);
-    RevToolBar->addAction(gckAction);
-    RevToolBar->addAction(semAction);
-    RevToolBar->addAction(cpeAction);
     connect(revAction, SIGNAL(triggered()), this, SLOT(slot_openREV()));
 
     QToolBar *PenBar = new QToolBar(this);
@@ -429,6 +419,7 @@ void MainWindow::ShowColorDialog()
         emit signal_setPenColor(color);
     }
 }
+
 void MainWindow::slot_addHistoryAction()
 {
     QString name = sender()->objectName();
@@ -503,7 +494,6 @@ void MainWindow::slot_AddonActions()
     }
 }
 
-
 void MainWindow::slot_showScaleAxis(bool isShow)
 {
      isShowAxis = isShow;
@@ -564,7 +554,6 @@ void MainWindow::slot_refreshAction()
 void MainWindow::slot_currentTab_changed(int index)
 {
     m_current_tabid = index;
-    paintTab->setCurrentIndex(index);
     render::RenderFrame *renderFrame = NULL;
     if (index == -1)
     {
@@ -576,6 +565,7 @@ void MainWindow::slot_currentTab_changed(int index)
         renderFrame = m_scaleFrame_vector.at(m_current_tabid)->getRenderFrame();
     }
     layerwidget->getLayerData(renderFrame, m_current_filename);
+
 }
 
 /**
@@ -702,6 +692,7 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
 
         m_scaleFrame_vector.append(scaleFrame);
         paintTab->addTab(scaleFrame, m_current_filename);
+        paintTab->setCurrentIndex(paintTab->count() - 1);
         centerWidget_boundingSignal(m_scaleFrame_vector.count() - 1);
     }
     else
@@ -881,6 +872,7 @@ void MainWindow::centerWidget_boundingSignal(int index)
     connect(this, SIGNAL(signal_setPenWidth(QString)), m_scaleFrame_vector.at(index), SLOT(slot_set_pen_width(QString)));
     connect(this, SIGNAL(signal_setPenColor(const QColor&)), m_scaleFrame_vector.at(index), SLOT(slot_set_pen_color(const QColor&)));
     connect(m_scaleFrame_vector.at(index), SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
+    connect(clearBtn, SIGNAL(clicked()), m_scaleFrame_vector.at(index), SLOT(slot_clear_measure_point()));
     connect(m_scaleFrame_vector.at(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
     connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), m_scaleFrame_vector.at(index), SLOT(slot_set_painter_style(Global::PaintStyle)));
     emit signal_setPenWidth(penWidthCombox->currentText());

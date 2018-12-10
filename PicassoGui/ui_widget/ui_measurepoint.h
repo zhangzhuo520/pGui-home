@@ -7,8 +7,8 @@
 
 class LineData{
 public:
-    QPoint m_first_point;
-    QPoint m_last_point;
+    QPointF m_first_point;
+    QPointF m_last_point;
 };
 
 class MeasureLine
@@ -21,9 +21,15 @@ public:
         m_linedata_list.append(linedata);
     }
 
-    QList <LineData> get_point_list();
+    inline QList <LineData> get_point_list()
+    {
+        return m_linedata_list;
+    }
 
-    void clear_all_data();
+    inline void clear_all_data()
+    {
+        m_linedata_list.clear();
+    }
 private:
     QList <LineData> m_linedata_list;
 };

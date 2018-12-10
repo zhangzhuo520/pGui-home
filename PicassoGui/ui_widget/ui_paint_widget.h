@@ -54,7 +54,8 @@ public:
     void draw_defect_point_text(double, double, QString);
 
     QImage merge_two_images(const QImage& baseImage, const QImage&);
-    void drawRuler();
+
+    void resizeRuler(double, double, double, double);
 
 protected:
     virtual void mousePressEvent (QMouseEvent *);
@@ -84,9 +85,8 @@ private:
 
     void draw_cross_line(const QPoint&);
     void draw_dotted_box();
-
     void merge_image();
-
+    void drawRuler();
 
     Global::PaintStyle m_select_mode;
     LineClicks m_mouse_clicks;
@@ -102,8 +102,8 @@ private:
 
     QImage m_paint_image;
 
-    QPoint m_ruler_first_point;
-    QPoint m_ruler_last_point;
+    QPointF m_ruler_first_point;
+    QPointF m_ruler_last_point;
     QPoint m_dotted_box_start;
     QPoint m_dotted_box_end;
 
@@ -116,7 +116,6 @@ private:
     int weight;
     int style;
     QColor color;
-
 
     QString Stringsize;
     QString x;
