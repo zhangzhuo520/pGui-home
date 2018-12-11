@@ -33,7 +33,8 @@ SOURCES += main.cc\
     ui_scale_frame.cc \
     ui_fileproject_model.cc \
     ui_measurepoint.cc \
-    ui_paint_widget.cc
+    ui_paint_widget.cc \
+    ui_paint_toolbar.cc
 
 HEADERS  += mainwindow.h \
     gearmanconnector.h \
@@ -51,7 +52,8 @@ HEADERS  += mainwindow.h \
     ui_scale_frame.h \
     ui_fileproject_model.h \
     ui_measurepoint.h \
-    ui_paint_widget.h
+    ui_paint_widget.h \
+    ui_paint_toolbar.h
 
 FORMS    +=
 

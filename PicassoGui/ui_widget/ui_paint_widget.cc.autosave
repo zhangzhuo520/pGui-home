@@ -269,11 +269,11 @@ void PaintWidget::use_angle()
         }
         else if (0.2 <= angle_range && angle_range < 3)
         {
-           m_ruler_last_point.setY(m_ruler_first_point.x() + m_ruler_last_point.y() - m_ruler_first_point.y());
+           m_ruler_last_point.setX(m_ruler_first_point.y() + m_ruler_last_point.x() - m_ruler_first_point.x());
         }
         else if (-3 <=angle_range &&  angle_range< -0.2)
         {
-           m_ruler_last_point.setX(m_ruler_first_point.y() + m_ruler_last_point.x() - m_ruler_first_point.x());
+           m_ruler_last_point.setY(m_ruler_first_point.x() + m_ruler_last_point.y() - m_ruler_first_point.y());
         }
         else if (3 <= angle_range || angle_range < -3)
         {

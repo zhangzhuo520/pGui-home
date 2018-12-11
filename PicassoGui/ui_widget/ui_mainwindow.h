@@ -43,6 +43,7 @@
 #include "ui_semimage_dialog.h"
 #include "ui_chipedit_dialog.h"
 #include "ui_scale_frame.h"
+#include "ui_paint_toolbar.h"
 
 namespace ui{
 
@@ -139,7 +140,7 @@ private slots:
 
     void slot_rulerAction();
 
-    void slot_updataDistance(double);
+    void slot_updateDistance(double);
 
     void slot_AddonActions();
 
@@ -152,6 +153,10 @@ private slots:
     void slot_refreshAction();
 
     void slot_currentTab_changed(int);
+
+    void slot_zoom_in();
+
+    void slot_zoom_out();
 
 private:
     void initTitleBar();
@@ -196,6 +201,8 @@ private:
     DockWidget *defectsDockWidget;
 
     TabWidget *paintTab;
+    PaintToolbar *m_paint_toolbar;
+    QWidget * m_center_widget;
     DefGroup *defgroup;
     DefectsWidget *defectswidget;
 

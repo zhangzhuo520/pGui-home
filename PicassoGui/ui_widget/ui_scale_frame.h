@@ -42,16 +42,22 @@ public:
     render::LayoutView load_file(const QString &, const QString &, bool);
     render::RenderFrame* getRenderFrame();
 
+    void zoom_in();
+
+    void zoom_out();
+
 signals:
     void signal_pos_updated(double, double);
-    void signal_updataDistance(double);
+    void signal_updateDistance(double);
     void signal_box_updated();
+    void signal_zoom_in();
+    void signal_zoom_out();
 
 public slots:
     void slot_box_updated(double,double,double,double);
     void slot_pos_updated(double, double);
     void slot_distance_updated(double);
-    void slot_set_painter_style(Global::PaintStyle);
+    void slot_set_painter_style(Global::PaintTool);
     void slot_set_pen_width(QString);
     void slot_set_pen_color(const QColor&);
     void slot_move_point_center();

@@ -1,13 +1,11 @@
 <RCC>
     <qresource prefix="/dfjy">
-        <file>images/CPE.png</file>
         <file>images/delete.png</file>
         <file>images/dfjy.png</file>
         <file>images/error.png</file>
         <file>images/fontawesome-webfont.ttf</file>
         <file>images/Font Awesome Cheatsheet.png</file>
         <file>images/fullScren.png</file>
-        <file>images/GCK.png</file>
         <file>images/info.png</file>
         <file>images/lineWidth.png</file>
         <file>images/left.png</file>
@@ -61,5 +59,9 @@
         <file>images/style.qss</file>
         <file>images/waring_title.png</file>
         <file>images/rev.png</file>
+        <file>images/cross.png</file>
+        <file>images/45du.png</file>
+        <file>images/measure_line.png</file>
+        <file>images/tool.png</file>
     </qresource>
 </RCC>

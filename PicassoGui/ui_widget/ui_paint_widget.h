@@ -28,7 +28,6 @@ class PaintPrivate
 
 private:
 
-
 };
 
 class PaintWidget : public QWidget
@@ -49,14 +48,13 @@ class PaintWidget : public QWidget
 public:
     explicit PaintWidget(QWidget *parent = 0);
 
-    void setPaintStyle(Global::PaintStyle);
-
     void draw_defect_point_text(double, double, QString);
 
     QImage merge_two_images(const QImage& baseImage, const QImage&);
 
     void resizeRuler(double, double, double, double);
 
+    void setPaintStyle(Global::PaintTool);
 protected:
     virtual void mousePressEvent (QMouseEvent *);
     virtual void mouseReleaseEvent (QMouseEvent *);
@@ -78,17 +76,18 @@ public slots:
     void setWidth (QString);
     void setColor (QColor);
     void slot_get_snap_pos(QPoint, double, double, int);
-    void slot_setPaintStyle(Global::PaintStyle);
+
     void clear();
 
 private:
-
+    void use_angle();
     void draw_cross_line(const QPoint&);
     void draw_dotted_box();
     void merge_image();
-    void drawRuler();
+    void drawMeasureLine();
+    QPointF get_render_frame_point(QPointF);
 
-    Global::PaintStyle m_select_mode;
+    Global::PaintTool m_select_mode;
     LineClicks m_mouse_clicks;
     MouseState m_mouse_state;
 
@@ -110,8 +109,13 @@ private:
     MeasureLine m_measure_point;
 
     QPoint m_current_mousepos;
-    QPointF startPos;
-    QPointF endPos;
+    QPointF m_start_pos;
+    QPointF m_end_pos;
+
+    double m_scale_xstart;
+    double m_scale_xend;
+    double m_scale_ystart;
+    double m_scale_yend;
 
     int weight;
     int style;

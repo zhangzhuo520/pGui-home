@@ -39,7 +39,9 @@ void ScaleFrame::initRenderFrame()
     connect(m_paint_widget, SIGNAL(signal_updataDistance(double)), this, SLOT(slot_distance_updated(double)));
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
     connect(m_paint_widget, SIGNAL(signal_get_snap_pos(QPoint, int)), m_render_frame, SLOT(slot_get_snap_pos(QPoint, int)));
-	connect(m_render_frame, SIGNAL(signal_get_snap_pos(QPoint, double, double, int)), m_paint_widget, SLOT(slot_get_snap_pos(QPoint, double, double, int)));
+    connect(m_render_frame, SIGNAL(signal_get_snap_pos(QPoint, double, double, int)), m_paint_widget, SLOT(slot_get_snap_pos(QPoint, double, double, int)));
+    connect(this, SIGNAL(signal_zoom_in()), m_render_frame, SLOT(slot_zoom_in()));
+    connect(this, SIGNAL(signal_zoom_out()), m_render_frame, SLOT(slot_zoom_out()));
 }
 
 void ScaleFrame::slot_move_point_center()
@@ -403,7 +405,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
         for (int i = 0; i < (m_yend - m_ystart);)
         {
             int tempY = 0;
-			double tempDouble = 0;
+            double tempDouble = 0;
             if (m_yend > 0)
             {
                 tempY = m_yend / 1000;
@@ -418,7 +420,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
             }
 
             pointY = ySpace + (tempDouble + i) * k;
-            
+
             if (pointY >= ySpace)
             {
                 painter.drawLine(QPoint(axis_unit_start, pointY), QPoint(axis_unit_long, pointY));
@@ -439,7 +441,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
                     {
                         painter.drawLine(QPoint(axis_unit_start, pointY - miny), QPoint(axis_unit_short, pointY - miny));
                     }
-					m = m + 100;
+                    m = m + 100;
                 }
             }
 
@@ -463,7 +465,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
         for (int i = 0; i < (m_yend - m_ystart);)
         {
             int tempY = 0;
-			double tempDouble = 0;
+            double tempDouble = 0;
             if (m_yend > 0)
             {
                 tempY = m_yend / 100;
@@ -478,7 +480,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
             }
 
             pointY = ySpace + (tempDouble + i) * k;
-            
+
             if (pointY >= ySpace)
             {
                 painter.drawLine(QPoint(axis_unit_start, pointY), QPoint(axis_unit_long, pointY));
@@ -499,7 +501,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
                     {
                         painter.drawLine(QPoint(axis_unit_start, pointY - miny), QPoint(axis_unit_short, pointY - miny));
                     }
-					m = m + 10;
+                    m = m + 10;
                 }
             }
 
@@ -523,7 +525,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
          for (int i = 0; i < (m_yend - m_ystart);)
         {
             int tempY = 0;
-			double tempDouble = 0;
+            double tempDouble = 0;
             if (m_yend > 0)
             {
                 tempY = m_yend / 10;
@@ -538,7 +540,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
             }
 
             pointY = ySpace + (tempDouble + i) * k;
-            
+
             if (pointY >= ySpace)
             {
                 painter.drawLine(QPoint(axis_unit_start, pointY), QPoint(axis_unit_long, pointY));
@@ -559,7 +561,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
                     {
                         painter.drawLine(QPoint(axis_unit_start, pointY - miny), QPoint(axis_unit_short, pointY - miny));
                     }
-					m = m + 1;
+                    m = m + 1;
                 }
             }
 
@@ -583,7 +585,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
            for (int i = 0; i < (m_yend - m_ystart);)
         {
             int tempY = 0;
-			double tempDouble = 0;
+            double tempDouble = 0;
             if (m_yend > 0)
             {
                 tempY = m_yend;
@@ -596,7 +598,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
             }
 
             pointY = ySpace + (tempDouble + i) * k;
-            
+
             if (pointY >= ySpace)
             {
                 painter.drawLine(QPoint(axis_unit_start, pointY), QPoint(axis_unit_long, pointY));
@@ -617,7 +619,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
                     {
                         painter.drawLine(QPoint(axis_unit_start, pointY - miny), QPoint(axis_unit_short, pointY - miny));
                     }
-					m = m + 0.1;
+                    m = m + 0.1;
                 }
             }
 
@@ -638,11 +640,11 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
     }
     if(zoomIn <= 2)
     {
-		
+
         for (double i = 0; i < (m_yend - m_ystart);)
         {
             double tempY = 0;
-			double tempDouble = 0;
+            double tempDouble = 0;
             if (m_yend > 0)
             {
                 tempY = toDouble_1(m_yend);
@@ -652,19 +654,18 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
             {
                 tempY = toDouble_1(m_yend);
                 if(tempY == m_yend)
-				{
-					;
-				}
-				else
-				{
-					tempY = tempY + 0.1;
-				}
-				
+                {
+                    ;
+                }
+                else
+                {
+                    tempY = tempY + 0.1;
+                }
+
                 tempDouble = - (tempY - m_yend);
             }
 
             pointY = ySpace + (tempDouble + i) * k;
-            
             if (pointY >= ySpace)
             {
                 painter.drawLine(QPoint(axis_unit_start, pointY), QPoint(axis_unit_long, pointY));
@@ -685,10 +686,10 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
                     {
                         painter.drawLine(QPoint(axis_unit_start, pointY - miny), QPoint(axis_unit_short, pointY - miny));
                     }
-					m = m + 0.01;
+                    m = m + 0.01;
                 }
             }
-			
+
             for(int j = 0; j < 10; j ++)
             {
                 double minX = pointY + j * k * 0.01;
@@ -808,10 +809,10 @@ void ScaleFrame::slot_pos_updated(double x, double y)
 
 void ScaleFrame::slot_distance_updated(double distance)
 {
-    emit signal_updataDistance(distance);
+    emit signal_updateDistance(distance);
 }
 
-void ScaleFrame::slot_set_painter_style(Global::PaintStyle paintStyle)
+void ScaleFrame::slot_set_painter_style(Global::PaintTool paintStyle)
 {
     m_paint_widget->setPaintStyle(paintStyle);
 }
@@ -843,5 +844,16 @@ void ScaleFrame::wheelEvent(QWheelEvent *e)
     updateMouseCursor(e->pos());
     update();
 }
+
+void ScaleFrame::zoom_in()
+{
+    emit signal_zoom_in();
+}
+
+void ScaleFrame::zoom_out()
+{
+    emit signal_zoom_out();
+}
+
 }
 

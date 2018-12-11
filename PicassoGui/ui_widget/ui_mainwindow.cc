@@ -143,14 +143,14 @@ void MainWindow::initDockWidget()
     addDockWidget(sets[0].area, fileDockWidget);
     layerDockWidget = new DockWidget(sets[1].name, this, Qt::WindowFlags(sets[1].flags));
     addDockWidget(sets[1].area, layerDockWidget);
-    workspaceDockWidget = new DockWidget(sets[2].name, this, Qt::WindowFlags(sets[2].flags));
-    addDockWidget(sets[2].area, workspaceDockWidget);
+    //workspaceDockWidget = new DockWidget(sets[2].name, this, Qt::WindowFlags(sets[2].flags));
+    //addDockWidget(sets[2].area, workspaceDockWidget);
     checkListDockWidget = new DockWidget(sets[3].name, this, Qt::WindowFlags(sets[3].flags));
     addDockWidget(sets[3].area, checkListDockWidget);
-    logDockWidget = new DockWidget(sets[4].name, this, Qt::WindowFlags(sets[4].flags));
-    addDockWidget(sets[4].area, logDockWidget);
-    broserDockWidget = new DockWidget(sets[5].name, this, Qt::WindowFlags(sets[5].flags));
-    addDockWidget(sets[5].area, broserDockWidget);
+    //logDockWidget = new DockWidget(sets[4].name, this, Qt::WindowFlags(sets[4].flags));
+    //addDockWidget(sets[4].area, logDockWidget);
+    //broserDockWidget = new DockWidget(sets[5].name, this, Qt::WindowFlags(sets[5].flags));
+    //addDockWidget(sets[5].area, broserDockWidget);
 
     tabifyDockWidget(fileDockWidget,layerDockWidget);
     tabifyDockWidget(fileDockWidget,workspaceDockWidget);
@@ -201,10 +201,13 @@ void MainWindow::initToolbar()
 
     QAction *forwardAction = new QAction(QIcon(":/dfjy/images/right.png"),"forward", this);
     QAction *retreatAction = new QAction(QIcon(":/dfjy/images/left.png"),"retreat", this);
-    QAction *zoomInAction = new QAction(QIcon(":/dfjy/images/zoomIn.png"),"zoomIn", this);
-    QAction *zoomOutAction = new QAction(QIcon(":/dfjy/images/zoomout.png"),"zoomout", this);
+    QAction *zoomInAction = new QAction(QIcon(":/dfjy/images/zoomout.png"),"zoomIn", this);
+    QAction *zoomOutAction = new QAction(QIcon(":/dfjy/images/zoomIn.png"),"zoomout", this);
     QAction *refreshAction = new QAction(QIcon(":/dfjy/images/refresh.png"),"refresh", this);
     QAction *fullAction = new QAction(QIcon(":/dfjy/images/fullScren.png"),"full", this);
+
+    connect(zoomInAction, SIGNAL(triggered()), this, SLOT(slot_zoom_in()));
+    connect(zoomOutAction,SIGNAL(triggered()), this, SLOT(slot_zoom_out()));
 
     screenContrlBar->addAction(forwardAction);
     screenContrlBar->addAction(retreatAction);
@@ -275,15 +278,24 @@ void MainWindow::initToolbar()
  */
 void MainWindow::initPaintTab()
 {
+    m_center_widget = new QWidget(this);
+    m_paint_toolbar = new PaintToolbar(centralWidget());
     paintTab = new TabWidget(this);
     paintTab->setObjectName("paintTab");
-    setCentralWidget(paintTab);
+    setCentralWidget(m_center_widget);
+    QVBoxLayout *vLayout = new QVBoxLayout;
+    vLayout->addWidget(paintTab);
+    vLayout->addWidget(m_paint_toolbar);
+    vLayout->setContentsMargins(0, 0, 0, 0);
+    vLayout->setSpacing(0);
+    m_center_widget->setLayout(vLayout);
     _isCreatPaintWidget = false;
     QHBoxLayout *hLayout = new QHBoxLayout();
     paintTab->setLayout(hLayout);
     hLayout->setContentsMargins(0, 0, 0, 0);
     connect(paintTab, SIGNAL(tabCloseRequested(int)), this, SLOT(slot_closePaintTab(int)));
     connect(paintTab, SIGNAL(currentChanged(int)), this, SLOT(slot_currentTab_changed(int)));
+    connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), m_paint_toolbar, SLOT(slot_setPaintStyle(Global::PaintStyle)));
 }
 
 /**
@@ -453,7 +465,7 @@ void MainWindow::slot_rulerAction()
     emit signal_setPaintStyle(paintstyle);
 }
 
-void MainWindow::slot_updataDistance(double length)
+void MainWindow::slot_updateDistance(double length)
 {
     distanceLableNum->setText(QString::number(length));
 }
@@ -566,6 +578,22 @@ void MainWindow::slot_currentTab_changed(int index)
     }
     layerwidget->getLayerData(renderFrame, m_current_filename);
 
+}
+
+void MainWindow::slot_zoom_in()
+{
+    if(m_scaleFrame_vector.at(m_current_tabid) != NULL)
+    {
+        m_scaleFrame_vector.at(m_current_tabid)->zoom_in();
+    }
+}
+
+void MainWindow::slot_zoom_out()
+{
+    if(m_scaleFrame_vector.at(m_current_tabid) != NULL)
+    {
+        m_scaleFrame_vector.at(m_current_tabid)->zoom_out();
+    }
 }
 
 /**
@@ -800,6 +828,12 @@ void MainWindow::initPrepDir()
 
 void MainWindow::saveOpenHistory(QString history)
 {
+
+//    if(historyFileList.contains(history))
+//    {
+//        return ;
+//    }
+
     QString filePath = configFile_path + "/openFileHistory.txt";
     QString str;
     QFile file(filePath);
@@ -871,10 +905,10 @@ void MainWindow::centerWidget_boundingSignal(int index)
 {
     connect(this, SIGNAL(signal_setPenWidth(QString)), m_scaleFrame_vector.at(index), SLOT(slot_set_pen_width(QString)));
     connect(this, SIGNAL(signal_setPenColor(const QColor&)), m_scaleFrame_vector.at(index), SLOT(slot_set_pen_color(const QColor&)));
-    connect(m_scaleFrame_vector.at(index), SIGNAL(signal_updataDistance(double)), this, SLOT(slot_updataDistance(double)));
+    connect(m_scaleFrame_vector.at(index), SIGNAL(signal_updateDistance(double)), this, SLOT(slot_updateDistance(double)));
     connect(clearBtn, SIGNAL(clicked()), m_scaleFrame_vector.at(index), SLOT(slot_clear_measure_point()));
     connect(m_scaleFrame_vector.at(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
-    connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), m_scaleFrame_vector.at(index), SLOT(slot_set_painter_style(Global::PaintStyle)));
+    connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_scaleFrame_vector.at(index), SLOT(slot_set_painter_style(Global::PaintTool)));
     emit signal_setPenWidth(penWidthCombox->currentText());
 }
 

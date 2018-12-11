@@ -31,6 +31,14 @@ public:
         Mark,
         Measrue
     };
+
+    enum PaintTool
+    {
+        Nothing,
+        MeasureLine,
+        MeasureAngle,
+        MarkCross
+    };
 };
 
 class UiStyle{
