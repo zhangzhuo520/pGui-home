@@ -81,7 +81,6 @@ CMessageBox::CMessageBox(QWidget *parent,
         }
     }
 
-
     m_lTitle->setText(title);
     m_lText->setText(text);
 

@@ -36,7 +36,7 @@ void ScaleFrame::initRenderFrame()
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), this, SLOT(slot_box_updated(double,double,double,double)));
     connect(this, SIGNAL(signal_box_updated()), m_render_frame, SLOT(slot_box_updated()));
     connect(m_render_frame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_pos_updated(double, double)));
-    connect(m_paint_widget, SIGNAL(signal_updataDistance(double)), this, SLOT(slot_distance_updated(double)));
+    connect(m_paint_widget, SIGNAL(signal_updateDistance(double)), this, SLOT(slot_distance_updated(double)));
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
     connect(m_paint_widget, SIGNAL(signal_get_snap_pos(QPoint, int)), m_render_frame, SLOT(slot_get_snap_pos(QPoint, int)));
     connect(m_render_frame, SIGNAL(signal_get_snap_pos(QPoint, double, double, int)), m_paint_widget, SLOT(slot_get_snap_pos(QPoint, double, double, int)));
@@ -52,6 +52,11 @@ void ScaleFrame::slot_move_point_center()
 void ScaleFrame::slot_clear_measure_point()
 {
     m_paint_widget->clear();
+}
+
+void ScaleFrame::slot_set_snapfalg(Global::SnapFLag snapflag)
+{
+    m_paint_widget->set_snap_flag(snapflag);
 }
 
 void ScaleFrame::set_defect_point(double x, double y)
@@ -84,19 +89,24 @@ void ScaleFrame::paintImage()
 
 double ScaleFrame::toDouble_1(double x)
 {
-   QString str = QString::number(x, 'g', 6);
-   QStringList list = str.split('.');
-   double pointNum = list.at(1).left(1).toDouble() * 0.1;
-   double value = 0;
-   if (x >= 0)
-   {
-       value  = list.at(0).toDouble() + pointNum;
-   }
-   else
-   {
-       value  = list.at(0).toDouble() - pointNum;
-   }
-   return value;
+    double pointNum = 0;
+    QString str = QString::number(x, 'g', 6);
+    QStringList list = str.split('.');
+    if (list.count() > 1)
+    {
+        pointNum = list.at(1).left(1).toDouble() * 0.1;
+    }
+
+    double value = 0;
+    if (x >= 0)
+    {
+        value  = list.at(0).toDouble() + pointNum;
+    }
+    else
+    {
+        value  = list.at(0).toDouble() - pointNum;
+    }
+    return value;
 }
 
 void ScaleFrame::darw_X_axis(QPainter &painter)
@@ -714,31 +724,32 @@ void ScaleFrame::drawDefectPoint(double x, double y, QString Stringsize)
     m_size_text = Stringsize;
     m_point_x = x;
     m_point_y = y;
+
     draw_point_size();
 }
 
 void ScaleFrame::calcu_defecttext_point()
 {
-    m_xratio_prev = m_xratio;
-    m_yratio_prev = m_yratio;
+//    m_xratio_prev = m_xratio;
+//    m_yratio_prev = m_yratio;
     m_xratio = (m_point_x - m_xstart) / (m_xend - m_xstart);
     m_yratio = (m_yend - m_point_y) / (m_yend - m_ystart);
 }
 
 void ScaleFrame::draw_point_size()
 {
-    calcu_defecttext_point();
-    if((m_isdraw_pointtext == true) &&
-            (m_xratio_prev != m_xratio) &&
-            (m_yratio_prev != m_yratio))
-    {
+     calcu_defecttext_point();
+//    if((m_isdraw_pointtext == true) &&
+//            (m_xratio_prev != m_xratio) &&
+//            (m_yratio_prev != m_yratio))
+//    {
         m_paint_widget->draw_defect_point_text(m_xratio, m_yratio, m_size_text);
-    }
+//    }
 }
 
 void ScaleFrame::draw_measure_point()
 {
-      m_paint_widget->resizeRuler(m_xstart, m_xend, m_ystart, m_yend);
+      m_paint_widget->repaintRuler(m_xstart, m_xend, m_ystart, m_yend);
 }
 
 void ScaleFrame::slot_set_pen_width(QString width)

@@ -1,8 +1,8 @@
 #include "ui_checklist.h"
 
 namespace ui {
-CheckList::CheckList(QWidget *parent) :
-    QWidget(parent)
+CheckList::CheckList(int width, int height, QWidget *parent):
+    QWidget(parent), m_width(width), m_height(height)
 {
     m_vlayout = new QVBoxLayout(this);
     initToolbar();
@@ -17,7 +17,7 @@ CheckList::CheckList(QWidget *parent) :
 
 void CheckList::initToolbar()
 {
-    m_checklist_toolbar = new Toolbar(this);
+    m_checklist_toolbar = new Toolbar(this, m_width, m_height);
     m_checklist_toolbar->setAutoFillBackground(true);
     QPalette pale = m_checklist_toolbar->palette();
     pale.setColor(QPalette::Base, UiStyle::ToolBarColor);

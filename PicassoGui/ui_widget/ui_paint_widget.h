@@ -50,11 +50,12 @@ public:
 
     void draw_defect_point_text(double, double, QString);
 
-    QImage merge_two_images(const QImage& baseImage, const QImage&);
 
-    void resizeRuler(double, double, double, double);
+    void repaintRuler(double, double, double, double);
 
     void setPaintStyle(Global::PaintTool);
+
+    void set_snap_flag(Global::SnapFLag);
 protected:
     virtual void mousePressEvent (QMouseEvent *);
     virtual void mouseReleaseEvent (QMouseEvent *);
@@ -65,11 +66,13 @@ protected:
 signals:
     void signal_mouseMove(const QPoint&);
 
-    void signal_updataDistance(double);
+    void signal_updateDistance(double);
 
     void signal_moveCenter();
 
     void signal_get_snap_pos(QPoint, int);
+
+
 
 public slots:
     void setStyle (int);
@@ -81,15 +84,22 @@ public slots:
 
 private:
     void use_angle();
+    QPointF calcu_physical_point(QPointF);
+
     void draw_cross_line(const QPoint&);
     void draw_dotted_box();
-    void merge_image();
     void drawMeasureLine();
-    QPointF get_render_frame_point(QPointF);
+
+    void snap_repaint_ruler();
+    void repaint_ruler(double, double, double, double);
+
+    QImage merge_two_images(const QImage&, const QImage&);
+    void merge_image();
 
     Global::PaintTool m_select_mode;
     LineClicks m_mouse_clicks;
     MouseState m_mouse_state;
+    Global::SnapFLag m_snap_flag;
 
     QImage *m_empty_image;
 

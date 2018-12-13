@@ -21,7 +21,15 @@ QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
 
     if((Qt::DisplayRole == role))
     {
-        return value;
+        if (value.toString().split('.').count() > 1 &&
+                value.toString().split('.').at(1).left(5).toInt() >= esp)
+        {
+            return QString ::number(value.toDouble(), 'f', 4);
+        }
+        else
+        {
+            return value;
+        }
     }
     else if (role == Qt::TextAlignmentRole)
     {

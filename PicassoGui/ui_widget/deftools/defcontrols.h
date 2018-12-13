@@ -94,13 +94,19 @@ protected:
 class Toolbar :public QToolBar
 {
 public:
-    explicit Toolbar(QWidget *parent)
+    explicit Toolbar(QWidget *parent , int width, int heigth):
+    m_width(width),
+    m_height(heigth)
     {
         Q_UNUSED(parent);
         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     }
 
-    QSize sizeHint() const { return QSize(320, 20);}
+    QSize sizeHint() const { return QSize(m_width, 20);}
+
+private:
+    int m_width;
+    int m_height;
 };
 
 class PushButton :public QPushButton
@@ -113,21 +119,34 @@ public:
         setStyle(new ProxyStyle());
         setStyleSheet("QPushButton {"\
                       "border:0px;"
-                            "background-color: rgba(0, 0, 0, 0);}"\
+                      "background-color: rgba(0, 0, 0, 0);}"\
                       "QPushButton::hover{"\
-                             "border:0px;"
-                                 "background-color: rgba(0, 0, 100, 50);}");\
+                      "border:0px;"
+                      "background-color: rgba(220, 220, 220);}"
+                      "QPushButton::pressed{"\
+                      "background-color: rgba(150, 150, 150);}"
+
+                      "QPushButton#markButton,QPushButton#measureLineButton,QPushButton#measureAngleButton,QPushButton#snapButton{"\
+                      "border:0px;}"
+                      "QPushButton#markButton::hover,QPushButton#measureLineButton::hover,QPushButton#measureAngleButton::hover,QPushButton#snapButton::hover{"\
+                      "border:0px;"
+                      "background-color: rgba(180, 180, 180);}"
+                      "QPushButton#markButton::checked,QPushButton#measureLineButton::checked,QPushButton#measureAngleButton::checked,QPushButton#snapButton::checked{"\
+                      "border:0px;"
+                      "background-color: rgba(100, 100, 100);}");\
 
     }
   explicit PushButton(const QString &text, QWidget *parent=0)
     {
         Q_UNUSED(parent);
         setStyleSheet("QPushButton{"\
-                          "border:0px;"
-                           "background-color: rgba(0, 0, 0, 0);}"\
+                      "border:0px;"
+                      "background-color: rgba(0, 0, 0, 0);}"\
                       "QPushButton::hover{"\
-                           "border:0px;"
-                           "background-color: rgba(0, 0, 100, 50);}");\
+                      "background-color: rgba(200, 200, 200);}"
+                      "QPushButton::pressed{"\
+                      "border:0px;"
+                      "background-color: rgba(150, 150, 150);}");\
         setText(text);
     }
   ~PushButton(){}

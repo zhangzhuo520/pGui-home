@@ -12,6 +12,11 @@ RenderObject::RenderObject(RenderObjectWidget* _widget, bool is_static): m_view(
     }
 }
 
+RenderObject::~RenderObject()
+{
+    redraw();
+}
+
 void RenderObject::set_visible(bool visible)
 {
     m_visible = visible;

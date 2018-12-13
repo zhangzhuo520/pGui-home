@@ -1,13 +1,14 @@
 #ifndef RENDER_WORKER_H
 #define RENDER_WORKER_H
 
-#include "OasisLayout.h"
+#include "oasis_layout.h"
+#include <QRunnable>
 
 namespace render{
 
 class Bitmap;
 
-class RenderWorker
+class RenderWorker: public QRunnable
 {
 public:
     RenderWorker(
@@ -23,6 +24,7 @@ public:
         Bitmap* fill,
         Bitmap* vertex);
 
+    ~RenderWorker();
     void run();
 
 private:

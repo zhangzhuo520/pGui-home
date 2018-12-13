@@ -32,6 +32,12 @@ RenderWorker::RenderWorker(
 
 }
 
+RenderWorker::~RenderWorker()
+{
+
+}
+
+
 void RenderWorker::run()
 {
     m_layout->DrawBitmap(m_infoindex, m_q_box, m_trans, m_ld, m_width, m_height, m_resolution, m_contour, m_fill, m_vertex);

@@ -10,6 +10,7 @@ namespace render
 {
 
 class RenderFrame;
+
 class LayerProperties
 {
 public:
@@ -86,14 +87,14 @@ public:
         m_visible = visible;
     }
 
-    int width() const
+    int line_width() const
     {
-        return m_width;
+        return m_line_width;
     }
 
-    void set_width(int width)
+    void set_line_width(int width)
     {
-        m_width = width;
+        m_line_width = width;
     }
 
     void set_metadata(const std::string& layer_name, int layer_num, int data_type);
@@ -120,9 +121,19 @@ public:
         return mp_frame;
     }
 
-    void attach_view(RenderFrame* view)
+    void set_view(RenderFrame* view)
     {
         mp_frame = view;
+    }
+
+    int view_index() const
+    {
+        return m_layout_view_index;
+    }
+
+    void set_view_index(int index)
+    {
+        m_layout_view_index = index;
     }
 
 private:
@@ -132,13 +143,15 @@ private:
     mutable int m_line_style;
     bool m_transparent;
     bool m_visible;
-    int m_width;
+    int m_line_width;
 
     render::LayerMetaData m_metadata;
     mutable int m_layer_index;
 
     RenderFrame* mp_frame;
+
+    int m_layout_view_index;
 };
+
 }
-qRegisterMetaType(render::LayerProperties);
 #endif // RENDER_LAYER_PROPERTIES_H

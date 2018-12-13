@@ -6,7 +6,7 @@ ViewOp::ViewOp() :
     m_line_style_index(0),
     m_pattern_index(0),
     m_shape(Rect),
-    m_width(0),
+    m_width(0), //line_width
     m_bitmap_index(0)
 {
     init(0, Copy);

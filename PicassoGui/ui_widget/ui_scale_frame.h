@@ -30,13 +30,9 @@ public:
     explicit ScaleFrame(QWidget *parent = 0);
 
     void set_defect_point(double x, double y);
-
     void drawDefectPoint(double, double, QString);
-
     void calcu_defecttext_point();
-
     void draw_point_size();
-
     void draw_measure_point();
 
     render::LayoutView load_file(const QString &, const QString &, bool);
@@ -62,6 +58,7 @@ public slots:
     void slot_set_pen_color(const QColor&);
     void slot_move_point_center();
     void slot_clear_measure_point();
+    void slot_set_snapfalg(Global::SnapFLag);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -81,8 +78,8 @@ private:
 
     double m_xratio;
     double m_yratio;
-    double m_xratio_prev;
-    double m_yratio_prev;
+//    double m_xratio_prev;
+//    double m_yratio_prev;
     double m_point_x;
     double m_point_y;
     QString m_size_text;

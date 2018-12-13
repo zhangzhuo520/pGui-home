@@ -39,6 +39,12 @@ public:
         MeasureAngle,
         MarkCross
     };
+
+    enum SnapFLag
+    {
+        SnapOpen,
+        SnapClose
+    };
 };
 
 class UiStyle{

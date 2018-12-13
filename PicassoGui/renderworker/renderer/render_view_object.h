@@ -19,6 +19,8 @@ class RenderObject{
 public:
     RenderObject(RenderObjectWidget* widget = 0, bool is_static = true);
 
+    virtual ~RenderObject();
+
     virtual void render(const render::Viewport& viewport, RenderObjectWidget* frame) = 0;
 
     bool is_visible() const
@@ -66,20 +68,24 @@ public:
         return m_foreground_bitmaps.size();
     }
 
+
     unsigned int plane_width() const
     {
         return m_plane_width;
     }
+
 
     void set_plane_width(unsigned int width)
     {
         m_plane_width = width;
     }
 
+
     unsigned int plane_height() const
     {
         return m_plane_height;
     }
+
 
     void set_plane_height(unsigned int height)
     {

@@ -46,6 +46,7 @@ static const char *pattern_strings[] = {
 
 };
 
+
 PatternInfo::PatternInfo() : m_width(1), m_height(1), m_order_index(0)
 {
     m_stride = 1;
@@ -78,6 +79,7 @@ PatternInfo& PatternInfo::operator = (const PatternInfo &d)
     }
     return *this;
 }
+
 
 bool PatternInfo::same(const PatternInfo &d) const
 {
@@ -165,23 +167,23 @@ QBitmap PatternInfo::get_bitmap(int width, int height) const
     unsigned int segs = (width + 7)/8;
     unsigned char * data = new unsigned char[segs * height];
     memset(data, 0, size_t (segs * height));
-        
-    for(unsigned int i = 1; i < (unsigned int) (height - 1); i++)
+
+    for(unsigned int i = 0; i< (unsigned int) (height - 1); i++)
     {
-        for(unsigned int j = 0; j < segs ; j++)
+        for(unsigned int j = 0; j< segs; j++)
         {
             data[i * segs + j] = 0xff;
         }
     }
-    
-    for(unsigned int i = 0; i < (unsigned int) (height - 4);++i)
+
+    for(unsigned int i = 0; i< (unsigned int) (height - 1); i++)
     {
-        uint32_t w = *( p[(height - 5 - i) % m_height]);
-        for(unsigned int j = 0 ; j < (unsigned int) (width - 2); ++j)
+        uint32_t w = *(p[(height - 1 - i) % m_height]);
+        for(unsigned int j = 0; j <(unsigned int) (segs * 8) ;j++)
         {
             if(!(w &(1 << (j % m_width))))
             {
-                 data[segs *(i + 2) + (j + 1) / 8] &= ~(1<< ((j + 1) % 8));
+                data[segs * i + j / 8] &= ~(1 << (j % 8));
             }
         }
     }
@@ -437,4 +439,5 @@ const Pattern& Pattern::default_pattern()
     static Pattern emptyPattern;
     return emptyPattern;
 }
+
 }

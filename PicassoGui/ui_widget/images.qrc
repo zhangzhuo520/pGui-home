@@ -15,8 +15,6 @@
         <file>images/pen.png</file>
         <file>images/question.png</file>
         <file>images/refresh.png</file>
-        <file>images/zoomout.png</file>
-        <file>images/zoomIn.png</file>
         <file>images/waring.png</file>
         <file>images/save.png</file>
         <file>images/ruler.png</file>
@@ -63,5 +61,8 @@
         <file>images/45du.png</file>
         <file>images/measure_line.png</file>
         <file>images/tool.png</file>
+        <file>images/snap.png</file>
+        <file>images/zoomOut.png</file>
+        <file>images/zoomIn.png</file>
     </qresource>
 </RCC>

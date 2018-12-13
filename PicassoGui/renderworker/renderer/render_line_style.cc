@@ -230,7 +230,7 @@ LineStyleInfo::to_string()  const
     std::string res;
     for(unsigned int i = 0; i < m_width; i++)
     {
-        if( (m_pattern[0] & (1<<i)) !=0)
+        if( (m_pattern[0] & (1 << i)) !=0)
         {
             res += "*";
         }

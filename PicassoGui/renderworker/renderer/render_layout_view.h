@@ -1,7 +1,7 @@
 #ifndef RENDER_LAYOUT_VIEW_H
 #define RENDER_LAYOUT_VIEW_H
 
-#include "OasisLayout.h"
+#include "oasis_layout.h"
 
 #include <memory>
 namespace render{

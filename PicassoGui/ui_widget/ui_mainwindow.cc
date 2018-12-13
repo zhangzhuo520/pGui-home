@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initConnection();
 
+    initPointer();
+
     initPrepDir();
 
     initStyle();
@@ -50,9 +52,9 @@ void MainWindow::initMenubar()
     QStringList actionNameList;
     action->setShortcuts(QKeySequence::Open);
     connect(action, SIGNAL(triggered()), this, SLOT(slot_openFile()));
-    action = file_menu->addAction(tr("Save"));
+//    action = file_menu->addAction(tr("Save"));
     connect(action, SIGNAL(triggered()), this, SLOT(slot_saveFile()));
-    action = file_menu->addAction(tr("Close"));
+//    action = file_menu->addAction(tr("Close"));
     connect(action, SIGNAL(triggered()), this, SLOT(slot_closeFile()));
     file_menu->addSeparator();
 
@@ -84,17 +86,17 @@ void MainWindow::initMenubar()
     window_menu->addAction("window");
     QMenu *help_menu = menuBar()->addMenu(tr("Help"));
     help_menu->addAction("help");
-    QMenu *addon_menu = menuBar()->addMenu(tr("Addon"));
+//    QMenu *addon_menu = menuBar()->addMenu(tr("Addon"));
     actionNameList.clear();
     actionNameList << "Defect Review" << "RTS Setup" << "Run RTS"
                    << "Gauge Checker" << "SEM Image Handler"
                    << "Chip Placement Editor";
     for(int i = 0; i < actionNameList.count(); i ++)
     {
-        QAction *action = new QAction(actionNameList.at(i), addon_menu);
-        action->setObjectName(actionNameList.at(i));
-        addon_menu->addAction(action);
-        connect(action, SIGNAL(triggered()), this, SLOT(slot_AddonActions()));
+//        QAction *action = new QAction(actionNameList.at(i), addon_menu);
+//        action->setObjectName(actionNameList.at(i));
+//        addon_menu->addAction(action);
+//        connect(action, SIGNAL(triggered()), this, SLOT(slot_AddonActions()));
     }
 }
 
@@ -153,8 +155,9 @@ void MainWindow::initDockWidget()
     //addDockWidget(sets[5].area, broserDockWidget);
 
     tabifyDockWidget(fileDockWidget,layerDockWidget);
-    tabifyDockWidget(fileDockWidget,workspaceDockWidget);
+//    tabifyDockWidget(fileDockWidget,workspaceDockWidget);
     fileDockWidget->raise();
+    checkListDockWidget->hide();
 }
 
 /**
@@ -166,15 +169,10 @@ void MainWindow::initToolbar()
     QToolBar *FileToolBar = new QToolBar(this);
     FileToolBar->setWindowTitle(tr("File Actions"));
     addToolBar(FileToolBar);
-    QAction *fileOpen, *fileClose, *fileSave;
-
+    QAction *fileOpen;
     fileOpen = new QAction(QIcon(":/dfjy/images/open.png"), "Open" ,this);
-    fileSave = new QAction(QIcon(":/dfjy/images/save.png"), "Save" ,this);
-    fileClose = new QAction(QIcon(":/dfjy/images/delete.png"), "Close" ,this);
 
     FileToolBar->addAction(fileOpen);
-    FileToolBar->addAction(fileSave);
-    FileToolBar->addAction(fileClose);
     connect(fileOpen, SIGNAL(triggered()), this, SLOT(slot_openFile()));
 
     QToolBar *MeasureToolbar = new QToolBar(this);
@@ -199,29 +197,22 @@ void MainWindow::initToolbar()
     addToolBar(screenContrlBar);
     mouseAction->setChecked(true);
 
-    QAction *forwardAction = new QAction(QIcon(":/dfjy/images/right.png"),"forward", this);
-    QAction *retreatAction = new QAction(QIcon(":/dfjy/images/left.png"),"retreat", this);
-    QAction *zoomInAction = new QAction(QIcon(":/dfjy/images/zoomout.png"),"zoomIn", this);
-    QAction *zoomOutAction = new QAction(QIcon(":/dfjy/images/zoomIn.png"),"zoomout", this);
+    QAction *zoomInAction = new QAction(QIcon(":/dfjy/images/zoomIn.png"),"zoomIn", this);
+    QAction *zoomOutAction = new QAction(QIcon(":/dfjy/images/zoomOut.png"),"zoomout", this);
     QAction *refreshAction = new QAction(QIcon(":/dfjy/images/refresh.png"),"refresh", this);
-    QAction *fullAction = new QAction(QIcon(":/dfjy/images/fullScren.png"),"full", this);
 
     connect(zoomInAction, SIGNAL(triggered()), this, SLOT(slot_zoom_in()));
     connect(zoomOutAction,SIGNAL(triggered()), this, SLOT(slot_zoom_out()));
+    connect(refreshAction, SIGNAL(triggered()), this, SLOT(slot_refrush()));
 
-    screenContrlBar->addAction(forwardAction);
-    screenContrlBar->addAction(retreatAction);
     screenContrlBar->addAction(zoomInAction);
     screenContrlBar->addAction(zoomOutAction);
     screenContrlBar->addAction(refreshAction);
-    screenContrlBar->addAction(fullAction);
 
     QToolBar *RevToolBar = new QToolBar(this);
     RevToolBar->setWindowTitle(tr("REV Actions"));
     addToolBar(RevToolBar);
-    connect(refreshAction, SIGNAL(triggered()), this, SLOT(slot_refreshAction()));
-
-    QAction *revAction = new QAction(QIcon(":/dfjy/images/rev.png"),"REV", this);
+    QAction *revAction = new QAction(QIcon(":/dfjy/images/rev.png"),"rev", this);
 
     RevToolBar->addAction(revAction);
     connect(revAction, SIGNAL(triggered()), this, SLOT(slot_openREV()));
@@ -303,7 +294,7 @@ void MainWindow::initPaintTab()
  */
 void MainWindow::initCheckList()
 {
-    checklistWidget = new CheckList(this);
+    checklistWidget = new CheckList(width(), 200, this);
     checklistWidget->setMinimumHeight(0);
     checkListDockWidget->resize(100, 300);
     checkListDockWidget->setWidget(checklistWidget);
@@ -523,23 +514,28 @@ void MainWindow::slot_showScaleAxis(bool isShow)
 
 void MainWindow::slot_setPosAction()
 {
-    setPosWidget = new QDialog(this);
-    setPosWidget->setGeometry(width() / 2, height() / 2 , 300, 160);
-    setPosX_label = new QLabel("x :", setPosWidget);
+    if (m_setpos_widget == NULL)
+    {
+        m_setpos_widget = new QWidget(this);
+        m_setpos_widget->setObjectName("setpos_widget");
+    }
+    m_setpos_widget->setWindowModality(Qt::ApplicationModal);
+    m_setpos_widget->setGeometry(width() / 2 - 150, height() / 2 - 150 , 300, 160);
+    setPosX_label = new QLabel("x :", m_setpos_widget);
     setPosX_label->setGeometry(60, 30, 30, 25);
-    setPosX_lineEdit = new QLineEdit(setPosWidget);
+    setPosX_lineEdit = new QLineEdit(m_setpos_widget);
     setPosX_lineEdit->setGeometry(100, 30, 150, 25);
-    setPosY_label = new QLabel("y :", setPosWidget);
+    setPosY_label = new QLabel("y :", m_setpos_widget);
     setPosY_label->setGeometry(60, 80, 30, 25);
-    setPosY_lineEdit = new QLineEdit(setPosWidget);
+    setPosY_lineEdit = new QLineEdit(m_setpos_widget);
     setPosY_lineEdit->setGeometry(100, 80, 150, 25);
-    setPos_foundPushButton = new QPushButton("Ok", setPosWidget);
+    setPos_foundPushButton = new QPushButton("Ok", m_setpos_widget);
     setPos_foundPushButton->setGeometry(50, 120, 60, 30);
     connect(setPos_foundPushButton, SIGNAL(clicked()), this, SLOT(slot_setPosButton()));
-    setPos_colsePushButton = new QPushButton("Close", setPosWidget);
+    setPos_colsePushButton = new QPushButton("Close", m_setpos_widget);
     setPos_colsePushButton->setGeometry(200, 120, 60, 30);
-    connect(setPos_colsePushButton, SIGNAL(clicked()), setPosWidget, SLOT(close()));
-    setPosWidget->show();
+    connect(setPos_colsePushButton, SIGNAL(clicked()), m_setpos_widget, SLOT(close()));
+    m_setpos_widget->show();
 }
 
 void MainWindow::slot_setPosButton()
@@ -547,19 +543,6 @@ void MainWindow::slot_setPosButton()
     if (m_scaleFrame_vector.at(m_current_tabid) != NULL);
     {
         m_scaleFrame_vector.at(m_current_tabid)->set_defect_point(setPosX_lineEdit->text().toDouble(), setPosY_lineEdit->text().toDouble());
-    }
-}
-
-void MainWindow::slot_refreshAction()
-{
-    if (paintTab->count() == 0)
-    {
-        showWarning(this, "Waring", "No open File!");
-        return;
-    }
-    else
-    {
-//        m_scaleFrame_vector.at(m_current_tabid)->slot_move_point_center();
     }
 }
 
@@ -582,7 +565,7 @@ void MainWindow::slot_currentTab_changed(int index)
 
 void MainWindow::slot_zoom_in()
 {
-    if(m_scaleFrame_vector.at(m_current_tabid) != NULL)
+    if(m_scaleFrame_vector.count() > 0)
     {
         m_scaleFrame_vector.at(m_current_tabid)->zoom_in();
     }
@@ -590,10 +573,18 @@ void MainWindow::slot_zoom_in()
 
 void MainWindow::slot_zoom_out()
 {
-    if(m_scaleFrame_vector.at(m_current_tabid) != NULL)
+    if(m_scaleFrame_vector.count() > 0)
     {
         m_scaleFrame_vector.at(m_current_tabid)->zoom_out();
     }
+}
+
+void MainWindow::slot_refrush()
+{
+//    if(m_scaleFrame_vector.count() > 0)
+//    {
+//        m_scaleFrame_vector.at(m_current_tabid)->slot_move_point_center();
+//    }
 }
 
 /**
@@ -601,14 +592,18 @@ void MainWindow::slot_zoom_out()
  */
 void MainWindow::slot_openFile()
 {
-    QFileDialog *fileDialog = new QFileDialog(this);
-    fileDialog->setWindowTitle(tr("Open Layout File"));
-    fileDialog->setDirectory("/home/dfjy/workspace/job");
-    fileDialog->setNameFilter(tr("All layout files(*.oas *.OAS *.oas.gz *.OAS.gz)"));
-    connect(fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_addFile(QString)), Qt::UniqueConnection);
-    fileDialog->setFileMode(QFileDialog::ExistingFiles);
-    fileDialog->setViewMode(QFileDialog::List);
-    fileDialog->show();
+    if (m_file_dialog == NULL)
+    {
+        m_file_dialog = new QFileDialog(this);
+    }
+    m_file_dialog->setWindowModality(Qt::ApplicationModal);
+    m_file_dialog->setWindowTitle(tr("Open Layout File"));
+    m_file_dialog->setDirectory("/home/dfjy/workspace/job");
+    m_file_dialog->setNameFilter(tr("All layout files(*.oas *.OAS *.GDS *.gds)"));
+    connect(m_file_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_addFile(QString)), Qt::UniqueConnection);
+    m_file_dialog->setFileMode(QFileDialog::ExistingFiles);
+    m_file_dialog->setViewMode(QFileDialog::List);
+    m_file_dialog->show();
 }
 
 /**
@@ -627,14 +622,18 @@ void MainWindow::slot_closeFile()
 
 void MainWindow::slot_openREV()
 {
-    QFileDialog *fileDialog = new QFileDialog(this);
-    fileDialog->setWindowTitle(tr("Open Layout File"));
-    fileDialog->setDirectory("/home/dfjy/workspace/job");
-    fileDialog->setNameFilter(tr("Directories"));
-    connect(fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_openDB(QString)), Qt::UniqueConnection);
-    fileDialog->setFileMode(QFileDialog::Directory);
-    fileDialog->setViewMode(QFileDialog::List);
-    fileDialog->show();
+    if (m_file_dialog == NULL)
+    {
+        m_file_dialog = new QFileDialog(this);
+    }
+    m_file_dialog->setWindowModality(Qt::ApplicationModal);
+    m_file_dialog->setWindowTitle(tr("Open Layout File"));
+    m_file_dialog->setDirectory("/home/dfjy/workspace/job");
+    m_file_dialog->setNameFilter(tr("Directories"));
+    connect(m_file_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_show_checklist(QString)), Qt::UniqueConnection);
+    m_file_dialog->setFileMode(QFileDialog::Directory);
+    m_file_dialog->setViewMode(QFileDialog::List);
+    m_file_dialog->show();
 }
 
 /**
@@ -646,9 +645,8 @@ void MainWindow::slot_undo()
 
 void MainWindow::slot_drawPoint(const QModelIndex &index)
 {
-   // QString Stringsize = index.sibling(index.row(), 1).data().toString();
-    int point_x = index.sibling(index.row(), 2).data().toDouble();
-    int point_y = index.sibling(index.row(), 3).data().toDouble();
+    double point_x = index.sibling(index.row(), 2).data().toDouble();
+    double point_y = index.sibling(index.row(), 3).data().toDouble();
     QString Stringsize = index.sibling(index.row(), 1).data().toString();
 
     for(int i = 0; i < m_scaleFrame_vector.count(); i ++)
@@ -661,8 +659,9 @@ void MainWindow::slot_drawPoint(const QModelIndex &index)
  * @brief MainWindow::slot_openDB
  * @param dirName
  */
-void MainWindow::slot_openDB(QString dirName)
+void MainWindow::open_database(QString dirName)
 {
+    checkListDockWidget->show();
     QDir dir(dirName);
     bool isDbFile = false;
     QString DBname = "";
@@ -690,6 +689,12 @@ void MainWindow::slot_openDB(QString dirName)
         DbPath = dirName + "/" + DBname;
         emit signal_readDB(DbPath);
     }
+}
+
+void MainWindow::slot_show_checklist(QString dirName)
+{
+    checkListDockWidget->show();
+    open_database(dirName);
 }
 
 /**
@@ -789,7 +794,7 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
         defectsDockWidget->setWidget(defectswidget);
         oldJobIndex = jobIndex;
         connect(this, SIGNAL(signal_defectsUpdata(QModelIndex *)), defectswidget, SLOT(slot_defectsUpdata(QModelIndex *)));
-        connect(defectswidget->getTableView(), SIGNAL(doubleClicked(const QModelIndex&)), this,  SLOT(slot_drawPoint(const QModelIndex &)));
+        connect(defectswidget->getTableView(), SIGNAL(clicked(const QModelIndex&)), this,  SLOT(slot_drawPoint(const QModelIndex &)));
     }
     else
     {
@@ -812,6 +817,12 @@ void MainWindow::initConfigDir()
     }
 }
 
+void MainWindow::initPointer()
+{
+    m_file_dialog = NULL;
+    m_setpos_widget = NULL;
+}
+
 void MainWindow::initPrepDir()
 {
     m_prep_dir = QDir::homePath() + "/.PguiPrep";
@@ -828,12 +839,6 @@ void MainWindow::initPrepDir()
 
 void MainWindow::saveOpenHistory(QString history)
 {
-
-//    if(historyFileList.contains(history))
-//    {
-//        return ;
-//    }
-
     QString filePath = configFile_path + "/openFileHistory.txt";
     QString str;
     QFile file(filePath);
@@ -908,6 +913,7 @@ void MainWindow::centerWidget_boundingSignal(int index)
     connect(m_scaleFrame_vector.at(index), SIGNAL(signal_updateDistance(double)), this, SLOT(slot_updateDistance(double)));
     connect(clearBtn, SIGNAL(clicked()), m_scaleFrame_vector.at(index), SLOT(slot_clear_measure_point()));
     connect(m_scaleFrame_vector.at(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
+    connect(m_paint_toolbar, SIGNAL(signal_setSnapFlag(Global::SnapFLag)), m_scaleFrame_vector.at(index), SLOT(slot_set_snapfalg(Global::SnapFLag)));
     connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_scaleFrame_vector.at(index), SLOT(slot_set_painter_style(Global::PaintTool)));
     emit signal_setPenWidth(penWidthCombox->currentText());
 }

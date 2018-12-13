@@ -15,6 +15,7 @@
 namespace ui {
 class SqlQueryModel : public QSqlQueryModel
 {
+    const int esp = 5;
 public:
     explicit SqlQueryModel(QObject *parent = 0);
 

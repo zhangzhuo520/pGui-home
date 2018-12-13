@@ -29,6 +29,8 @@ public:
     
 signals:
     void signal_setPaintStyle(Global::PaintTool);
+
+    void signal_setSnapFlag(Global::SnapFLag);
     
 public slots:
     void slot_setPaintStyle(Global::PaintStyle);
@@ -41,12 +43,15 @@ public slots:
 
     void slot_measure_angle_click(bool);
 
+    void slot_snap_click(bool);
+
 private:
     Global::PaintStyle m_paint_style;
     PushButton *m_normal_button;
     PushButton *m_mark_point_button;
     PushButton *m_measure_line_button;
     PushButton *m_measure_angle_button;
+    PushButton *m_snap_button;
 };
 }
 #endif // UI_PAINT_TOOLBAR_H

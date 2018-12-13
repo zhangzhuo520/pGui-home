@@ -112,7 +112,7 @@ private slots:
 
     void slot_drawPoint(const QModelIndex &);
 
-    void slot_openDB(QString);
+    void slot_show_checklist(QString);
 
     void slot_addFile(QString);
 
@@ -150,13 +150,15 @@ private slots:
 
     void slot_setPosButton();
 
-    void slot_refreshAction();
+//    void slot_refreshAction();
 
     void slot_currentTab_changed(int);
 
     void slot_zoom_in();
 
     void slot_zoom_out();
+
+    void slot_refrush();
 
 private:
     void initTitleBar();
@@ -177,6 +179,8 @@ private:
 
     void initConfigDir();
 
+    void initPointer();
+
     void initPrepDir();
 
     void init_fileProject_widget();
@@ -189,6 +193,8 @@ private:
 
     void initStyle();
 
+    void open_database(QString);
+
     DockWidget *fileDockWidget;
     FileProjectWidget *fileWidget;
     DockWidget *layerDockWidget;
@@ -199,6 +205,7 @@ private:
     DockWidget *broserDockWidget;
     DockWidget *defGroupDockWidget;
     DockWidget *defectsDockWidget;
+    QFileDialog *m_file_dialog;
 
     TabWidget *paintTab;
     PaintToolbar *m_paint_toolbar;
@@ -238,7 +245,7 @@ private:
 
     bool isShowAxis;
 
-    QWidget *setPosWidget;
+    QWidget *m_setpos_widget;
     QLabel *setPosX_label;
     QLineEdit *setPosX_lineEdit;
     QLabel *setPosY_label;

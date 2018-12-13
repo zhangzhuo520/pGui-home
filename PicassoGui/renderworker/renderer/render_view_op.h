@@ -6,10 +6,10 @@
 namespace render{
 
 typedef unsigned int color_t;
+
 const unsigned int wordlen = 32;
 const unsigned int wordbits = 6;
 const unsigned int wordones = 0xffffffff;
-
 
 class ViewOp
 {
@@ -43,6 +43,7 @@ public:
     {
         return m_xor;
     }
+
 
     int width() const 
     {
@@ -103,14 +104,8 @@ public:
         {
             return m_pattern_index < v.m_pattern_index;
         }
-        if (m_width != v.m_width)
-        {
-            return m_width < v.m_width;
-        }
-        if (m_bitmap_index != v.m_bitmap_index)
-        {
-            return m_bitmap_index < v.m_bitmap_index;
-        }
+
+        return m_width < v.m_width;
     }
 
 private:

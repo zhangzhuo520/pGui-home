@@ -53,7 +53,7 @@ render_scanline_default(
 
     if(x > 0)
     {
-        *buffer = *sl;
+        *buffer = *sl & *iter;
     }
 
 }
@@ -185,9 +185,18 @@ bitmaps_to_image_rgb(
             
             for(unsigned int i = 0; i< size; i++)
             {
-                const render::Bitmap *pb = pbitmap_in[i];
-                const render::ViewOp &op = view_ops_in[i];
 
+                const render::ViewOp &op = view_ops_in[i];
+                int bitmap_index = -1;
+                if(op.bitmap_index() != -1)
+                {
+                    bitmap_index = op.bitmap_index();
+                }
+                else
+                {
+                    bitmap_index = i;
+                }
+                const render::Bitmap *pb = pbitmap_in[bitmap_index];
                 if(pb != 0  &&(pb->first_scanline () < y + lines && pb->last_scanline () > y) && ((op.ormask() | ~op.andmask()) != 0))
                 {
                     uint32_t non_empty_sl = 0;

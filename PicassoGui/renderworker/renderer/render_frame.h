@@ -5,7 +5,6 @@
 
 #include <QMutex>
 #include <QColor>
-#include <QDebug>
 
 #include "render_view_object.h"
 #include "render_viewport.h"
@@ -18,7 +17,8 @@
 
 class QImage;
 class QPixmap;
-
+class QPoint;
+class QLine;
 class QWheelEvent;
 class QKeyEvent;
 class QPaintEvent;
@@ -104,6 +104,14 @@ public:
 
     Oasis::OasisBox get_box() const;
 
+    const Oasis::OasisTrans& get_trans() const
+    {
+        return m_vp.trans();
+    }
+
+
+    std::pair<QPoint, std::pair<double,double> > get_snap_point(QPoint p);
+
     void set_defect_point(double x, double y);
 
     void center_at_point(double x, double y);
@@ -125,14 +133,17 @@ signals:
     void signal_right_key_pressed();
     void signal_pos_updated(double x, double y);
     void signal_box_updated(double left, double bot, double right, double top);
+    void signal_get_snap_pos(QPoint p, double, double, int mode);
 
 public slots:
     void slot_down_shift();
     void slot_up_shift();
     void slot_left_shift();
     void slot_right_shift();
-    void slot_distance_point(QPointF, QPointF);
+    void slot_get_snap_pos(QPoint, int mode);
     void slot_box_updated();
+    void slot_zoom_in();
+    void slot_zoom_out();
 
 protected:
     virtual void mouseMoveEvent(QMouseEvent* e);
@@ -142,7 +153,7 @@ protected:
     virtual void resizeEvent(QResizeEvent* e);
 
 private:
-    void init();
+    void start_render();
 
     void prepare_drawing();
 

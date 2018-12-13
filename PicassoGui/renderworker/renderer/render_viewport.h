@@ -1,8 +1,10 @@
 #ifndef RENDER_VIEWPORT_H
 #define RENDER_VIEWPORT_H
-#include "OasisType.h"
+#include "oasis_types.h"
 
 namespace render{
+
+const Oasis::int64 dbu = 10000;
 
 class Viewport
 {

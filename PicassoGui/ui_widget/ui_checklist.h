@@ -29,7 +29,7 @@ class CheckList : public QWidget
     Q_OBJECT
     
 public:
-    explicit CheckList(QWidget *parent = 0);
+    explicit CheckList(int width, int height, QWidget *parent = 0);
 
     void initToolbar();
 
@@ -42,6 +42,22 @@ public:
     void readDB(QString DBname);
 
     ~CheckList();
+
+    QSize sizeHint() const
+    {
+        return QSize(m_width, m_height);
+    }
+
+    void set_width(int width)
+    {
+        m_width = width;
+    }
+
+    void set_height(int height)
+    {
+        m_height = height;
+    }
+
 protected:
 
 signals:
@@ -113,6 +129,9 @@ private:
     PushButton *m_infound_button;
     QVBoxLayout *m_vlayout;
     QHBoxLayout *m_hlayout;
+
+    int m_width;
+    int m_height;
 };
 }
 #endif // CheckList_H

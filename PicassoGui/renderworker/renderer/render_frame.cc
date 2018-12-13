@@ -2,6 +2,7 @@
 
 #include <QtGui>
 #include <QPoint>
+#include <QLine>
 #include <QPixmap>
 #include <QImage>
 #include <QPainter>
@@ -16,13 +17,14 @@
 #include "render_worker.h"
 #include "render_bitmaps_to_image.h"
 #include "render_palette.h"
-
+#include "render_snap.h"
 #include "render_defect_point.h"
 
-#include "OasisParser.h"
-#include "OasisLayout.h"
-#include "OasisException.h"
-#include "xtOasisApi.h"
+#include "oasis_parser.h"
+#include "oasis_layout.h"
+#include "oasis_exception.h"
+#include "layout_preprocess.h"
+
 
 namespace render{
 
@@ -48,8 +50,6 @@ RenderFrame::RenderFrame(QWidget *parent):
     init_viewport();
 
     setFocusPolicy(Qt::StrongFocus);
-
-    set_defect_point(0, 70);
 
 }
 
@@ -87,50 +87,6 @@ void RenderFrame::set_pattern(const render::Pattern &p)
     }
 }
 
-//Oasis::OasisLayout* RenderFrame::load_file(std::string file_name, std::string prep_dir)
-//{
-//    m_layout = new Oasis::OasisLayout(file_name);
-//    try
-//    {
-//        Oasis::OasisParser parser;
-//        parser.ImportFile(m_layout);
-//    }
-//    catch (Oasis::OasisException& e)
-//    {
-//        std::string prep_file_name = Oasis::preprocessLayout(file_name, prep_dir, false, Oasis::prep_options());
-//        delete m_layout;
-//        m_layout = new Oasis::OasisLayout(prep_file_name);
-//        Oasis::OasisParser parser;
-//        parser.ImportFile(m_layout);
-//    }
-//    std::set<std::pair<int, int> >layers;
-//    m_layout->getLayers(layers);
-
-//    int j = 0;
-//    for(std::set<std::pair<int,int> >::iterator it = layers.begin(); it != layers.end(); it++, j++)
-//    {
-//        int layer_num = it->first;
-//        int data_type = it->second;
-//        //std::string layer_name = m_layout->getLayerName(layer_num, data_type);
-//        m_layers_properties.push_back(render::LayerProperties());
-//        m_layers_properties.back().set_metadata(m_layout->getLayerName(layer_num, data_type), layer_num, data_type);
-//        m_layers_properties.back().set_layer_index(std::distance(layers.begin(), it));
-//        m_layers_properties.back().set_fill_color(render::color_table[j]);
-//        m_layers_properties.back().set_frame_color(render::color_table[j]);
-//        m_layers_properties.back().set_pattern(1);
-//        m_layers_properties.back().set_line_width(1);
-//        if(j == render::color_table_size - 1)
-//        {
-//            j = -1;
-//        }
-//    }
-
-//    set_view_ops();
-//    init_viewport();
-
-//    return m_layout;
-//}
-
 void RenderFrame::set_view_ops()
 {
 //    bool bright = background_color().green() > 128;
@@ -140,20 +96,23 @@ void RenderFrame::set_view_ops()
     m_view_ops.clear();
     m_view_ops.reserve(layers * planes_per_layer);
     render::ViewOp::Mode mode = render::ViewOp::Copy;
-
-    for(std::vector<render::LayerProperties*>::iterator it = m_layers_properties.begin(); it != m_layers_properties.end(); it++)
+    int i = 0;
+    for(std::vector<render::LayerProperties*>::iterator it = m_layers_properties.begin(); it != m_layers_properties.end(); it++, i++)
     {
         //contour fill vertex
         if((*it)->visible())
         {
             m_view_ops.push_back(render::ViewOp((*it)->frame_color(), mode, (*it)->line_style(), 0, render::ViewOp::Rect, (*it)->line_width()));
+            m_view_ops.back().bitmap_index(i * planes_per_layer + 0);
             m_view_ops.push_back(render::ViewOp((*it)->fill_color(), mode, 0, (*it)->pattern()));
+            m_view_ops.back().bitmap_index(i * planes_per_layer + 1);
             m_view_ops.push_back(render::ViewOp((*it)->fill_color(), mode, 0, (*it)->pattern()));
+            m_view_ops.back().bitmap_index(i * planes_per_layer + 2);
         }
     }
 }
 
-void RenderFrame::init()
+void RenderFrame::start_render()
 {
     size_t layers = m_layers_properties.size();
     size_t planes_per_layer = 3;
@@ -177,11 +136,9 @@ void RenderFrame::init()
         {
             render::LayerMetaData l = (*it)->metadata();
             Oasis::LDType ld(l.get_layer_num(), l.get_data_type());
-//            render::RenderWorker worker(m_layout, -1, box, vp_trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
-//            worker.run();
             render::LayoutView lv = m_layout_views[(*it)->view_index()];
-          render::RenderWorker* worker = new render::RenderWorker(lv.get_layout(), -1, box, vp_trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
-          pool.start(worker);
+            render::RenderWorker* worker = new render::RenderWorker(lv.get_layout(), -1, box, vp_trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
+            pool.start(worker);
         }
     }
     
@@ -210,10 +167,10 @@ void RenderFrame::prepare_drawing()
 
         if(m_image)
         {
-            m_image->fill(palette().color(QPalette::Normal, QPalette::Background));
+            m_image->fill(QColor(255, 255, 255));
         }
 
-        init();
+        start_render();
         set_plane_width(width());
         set_plane_height(height());
         set_plane_resolution(1.0);
@@ -433,9 +390,27 @@ void RenderFrame::slot_right_shift()
     shift_view(1.0, m_shift_unit, 0);
 }
 
-void RenderFrame::slot_distance_point(QPointF start, QPointF end)
+void RenderFrame::slot_zoom_in()
 {
-    qDebug() << "start :" << start << "end :" << end;
+    shift_view(0.8, 0, 0);
+}
+
+void RenderFrame::slot_zoom_out()
+{
+    shift_view(1.2, 0, 0);
+}
+
+void RenderFrame::slot_get_snap_pos(QPoint pos, int mode)
+{
+    if(mode == 1 || mode == 2)
+    {
+        std::pair<QPoint, std::pair<double, double> > result = get_snap_point(pos);
+        emit signal_get_snap_pos(result.first, result.second.first, result.second.second, mode);
+    }
+    else if(mode == 3)
+    {
+
+    }
 }
 
 void RenderFrame::shift_view(Oasis::float64 scale, Oasis::float64 dx, Oasis::float64 dy)
@@ -456,7 +431,7 @@ void RenderFrame::shift_view(Oasis::float64 scale, Oasis::float64 dx, Oasis::flo
 
 static Oasis::OasisBox calculate_box(double x, double y, const Oasis::OasisBox& box)
 {
-    Oasis::OasisPoint center(Oasis::int64(x * render::dbu), Oasis::int64(y * render::dbu));
+    Oasis::OasisPoint center((Oasis::int64) x, (Oasis::int64) y);
     Oasis::int64 half_width = Oasis::int64(box.width() * 0.5);
     Oasis::int64 half_height = Oasis::int64(box.height() * 0.5);
     Oasis::OasisBox new_box(center.x() - half_width, center.y() - half_height, center.x() + half_width, center.y() + half_height);
@@ -484,7 +459,7 @@ void RenderFrame::set_defect_point(double x, double y)
 void RenderFrame::center_at_point(double x, double y)
 {
     Oasis::OasisBox box = m_vp.box();
-    zoom_box(calculate_box(x, y, box));
+    zoom_box(calculate_box(x * render::dbu, y * render::dbu, box));
 }
 
 
@@ -545,6 +520,11 @@ render::LayoutView RenderFrame::load_file(std::string file_name, std::string pre
 
     create_and_initial_layer_properties(lv_index, layers);
 
+    Oasis::OasisBox box = layout->get_bbox();
+    Oasis::OasisPoint center(box.left() + (box.right() - box.left()) / 2, box.bottom() + (box.top() - box.bottom()) / 2 );
+    Oasis::OasisBox new_box = calculate_box(center.x(), center.y(), m_vp.box());
+    m_vp.set_box(new_box);
+
     update_view();
     return lv;
 }
@@ -596,6 +576,7 @@ void RenderFrame::set_layout_view(render::LayoutView& lv, int lv_index)
         m_layout_views.push_back(render::LayoutView());
     }
     m_layout_views[lv_index] = lv;
+    lv.set_index(lv_index);
 }
 
 void RenderFrame::create_and_initial_layer_properties(int lv_index, std::set<std::pair<int,int> >& layers)
@@ -677,6 +658,23 @@ void RenderFrame::slot_box_updated()
                             (double)physical_box.bottom() /render::dbu,
                             (double)physical_box.right() / render::dbu,
                             (double)physical_box.top() / render::dbu);
+}
+
+std::pair<QPoint, std::pair<double,double> > RenderFrame::get_snap_point(QPoint p1)
+{
+    Oasis::OasisPoint p = get_trans().inverted().trans(Oasis::OasisPoint(p1.x(), m_vp.height() - 1- p1.y()));
+    int snap_range = 5;
+    std::pair<bool,Oasis::OasisPoint> result = snap_point(this, p, snap_range);
+    if(result.first)
+    {
+        Oasis::OasisPoint snap_phy_p = result.second;
+        Oasis::OasisPoint snap_bitmap_p = get_trans().trans(snap_phy_p);
+        QPoint snap_pix_p(snap_bitmap_p.x(), m_vp.height() - 1 - snap_bitmap_p.y());
+        return std::make_pair(snap_pix_p, std::make_pair((double)snap_phy_p.x() / render::dbu, (double)snap_phy_p.y() / render::dbu));
+    }
+    else{
+        return std::make_pair(p1, std::make_pair((double)p.x() / render::dbu, (double) p.y() / render::dbu));
+    }
 }
 
 }

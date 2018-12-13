@@ -85,7 +85,7 @@ void DefectPoint::render(const Viewport &vp, RenderObjectWidget *widget)
 
     std::vector<render::ViewOp> result;
     result.reserve(3);
-    render::Bitmap* frame, *fill, *vertex;
+    render::Bitmap* frame, *fill;
 
     if(m_pattern >= 0)
     {
@@ -108,7 +108,6 @@ void DefectPoint::render(const Viewport &vp, RenderObjectWidget *widget)
                                           render::ViewOp::Rect,
                                           m_line_width));
     frame->render_contour_ortho(edges);
-    vertex = 0;
 
 }
 

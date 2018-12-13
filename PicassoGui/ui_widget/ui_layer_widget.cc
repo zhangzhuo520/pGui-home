@@ -1,11 +1,11 @@
 #include "ui_layer_widget.h"
 #include "render_frame.h"
-#include <QDebug>
 
 namespace ui {
 LayerWidget::LayerWidget(QWidget *parent) :
     QWidget(parent),
-    m_active_model_index(0)
+    m_active_model_index(0),
+    m_active_model_rootIndex(-1)
 {
     initToolBar();
     initTree();
@@ -25,52 +25,52 @@ void LayerWidget::initToolBar()
     QPalette pale = layerToolBar->palette();
     pale.setColor(QPalette::Window, UiStyle::ToolBarColor);
     layerToolBar->setPalette(pale);
-    layerButton = new PushButton(layerToolBar);
-    layerButton->setIcon(QIcon(":/dfjy/images/layout.png"));
-    layerMenu = new QMenu(layerToolBar);
+//    layerButton = new PushButton(layerToolBar);
+//    layerButton->setIcon(QIcon(":/dfjy/images/layout.png"));
+//    layerMenu = new QMenu(layerToolBar);
     QHBoxLayout *HLayout = new QHBoxLayout(layerToolBar);
 
-    loadAction = new QAction("Load LayerSet", layerMenu);
-    saveAction = new QAction("Save LayerSet", layerMenu);
-    reassignAction = new QAction("Reassign LayerSet", layerMenu);
-    layerMenu->addAction(loadAction);
-    layerMenu->addAction(saveAction);
-    layerMenu->addAction(reassignAction);
-    layerButton->setMenu(layerMenu);
+//    loadAction = new QAction("Load LayerSet", layerMenu);
+//    saveAction = new QAction("Save LayerSet", layerMenu);
+//    reassignAction = new QAction("Reassign LayerSet", layerMenu);
+//    layerMenu->addAction(loadAction);
+//    layerMenu->addAction(saveAction);
+//    layerMenu->addAction(reassignAction);
+//    layerButton->setMenu(layerMenu);
 
-    SaveButton = new PushButton(layerToolBar);
-    SaveButton->setIcon(QIcon(":/dfjy/images/quick.png"));
-    SaveMenu = new QMenu(layerToolBar);
-    QuickloadAction1 = new QAction("[1] Quick Load", SaveMenu);
-    QuickloadAction2 = new QAction("[2] Quick Load", SaveMenu);
-    QuickloadAction3 = new QAction("[3] Quick Load", SaveMenu);
-    QuicksaveAction1 = new QAction("[1] Quick Save", SaveMenu);
-    QuicksaveAction2 = new QAction("[2] Quick Save", SaveMenu);
-    QuicksaveAction3 = new QAction("[3] Quick Save", SaveMenu);
-    SaveMenu->addAction(QuickloadAction1);
-    SaveMenu->addAction(QuickloadAction2);
-    SaveMenu->addAction(QuickloadAction3);
-    SaveMenu->addSeparator();
-    SaveMenu->addAction(QuicksaveAction1);
-    SaveMenu->addAction(QuicksaveAction2);
-    SaveMenu->addAction(QuicksaveAction3);
-    SaveButton->setMenu(SaveMenu);
+//    SaveButton = new PushButton(layerToolBar);
+//    SaveButton->setIcon(QIcon(":/dfjy/images/quick.png"));
+//    SaveMenu = new QMenu(layerToolBar);
+//    QuickloadAction1 = new QAction("[1] Quick Load", SaveMenu);
+//    QuickloadAction2 = new QAction("[2] Quick Load", SaveMenu);
+//    QuickloadAction3 = new QAction("[3] Quick Load", SaveMenu);
+//    QuicksaveAction1 = new QAction("[1] Quick Save", SaveMenu);
+//    QuicksaveAction2 = new QAction("[2] Quick Save", SaveMenu);
+//    QuicksaveAction3 = new QAction("[3] Quick Save", SaveMenu);
+//    SaveMenu->addAction(QuickloadAction1);
+//    SaveMenu->addAction(QuickloadAction2);
+//    SaveMenu->addAction(QuickloadAction3);
+//    SaveMenu->addSeparator();
+//    SaveMenu->addAction(QuicksaveAction1);
+//    SaveMenu->addAction(QuicksaveAction2);
+//    SaveMenu->addAction(QuicksaveAction3);
+//    SaveButton->setMenu(SaveMenu);
 
-    layerCombox = new Commbox(layerToolBar);
-    layerCombox->addItem("default");
-    layerCombox->addItem("5-colors");
-    layerCombox->addItem("transparent");
-    linkButton = new PushButton(layerToolBar);
-    linkButton->setIcon(QIcon(":/dfjy/images/link.png"));
+//    layerCombox = new Commbox(layerToolBar);
+//    layerCombox->addItem("default");
+//    layerCombox->addItem("5-colors");
+//    layerCombox->addItem("transparent");
+//    linkButton = new PushButton(layerToolBar);
+//    linkButton->setIcon(QIcon(":/dfjy/images/link.png"));
     LayerControlButton = new PushButton(layerToolBar);
     LayerControlButton->setCheckable(true);
     LayerControlButton->setIcon(QIcon(":/dfjy/images/showColor.png"));
-    HLayout->addWidget(layerButton);
-    HLayout->addWidget(layerCombox);
-    HLayout->addWidget(linkButton);
+//    HLayout->addWidget(layerButton);
+//    HLayout->addWidget(layerCombox);
+//    HLayout->addWidget(linkButton);
     HLayout->addWidget(LayerControlButton);
-    HLayout->addSpacerItem(new QSpacerItem(54, 15, QSizePolicy::Fixed, QSizePolicy::Fixed));
-    HLayout->addWidget(SaveButton);
+    HLayout->addSpacerItem(new QSpacerItem(180, 15, QSizePolicy::Fixed, QSizePolicy::Fixed));
+//    HLayout->addWidget(SaveButton);
     HLayout->setContentsMargins(0, 0, 0, 0);
     HLayout->setSpacing(0);
 
@@ -101,6 +101,7 @@ void LayerWidget::slot_activedModelIndex(QModelIndex index)
 {
     m_active_model_index =  index.row();
     m_active_model_rootIndex = index.parent().row();
+
     m_view->set_current_layer(m_active_model_index);
 }
 
@@ -472,7 +473,6 @@ void LayerWidget::slot_setLineColor(QColor color)
     m_layer_style_vector[m_active_model_index] = m_layerstyle;
     setModelIdexImage(setImage(m_layerstyle));
     setLayerData(m_layerstyle);
-    TIME_DEBUG
 }
 
 void LayerWidget::slot_setLineStyle(int line_style)
@@ -498,6 +498,7 @@ void LayerWidget::slot_setLayerStyle(int patternIdex)
         showWarning(this, "Warning", "Not select Item !");
         return;
     }
+
     m_layer_style_vector[m_active_model_index].pattern_Id = patternIdex;
     QImage image = setImage(m_layer_style_vector[m_active_model_index]);
     setModelIdexImage(image);
@@ -698,9 +699,9 @@ void LayerWidget::setModelIdexImage(QImage image)
 {
     TreeItem *childItem = new TreeItem();
     childItem->setData(image, Qt::DecorationRole);
-    if (m_active_model_rootIndex < 0)
+    if (m_active_model_rootIndex < 0 || rootItem_vector.isEmpty())
     {
-       m_active_model_rootIndex = 0;
+        return;
     }
     TreeItem *rootItem = rootItem_vector.at(m_active_model_rootIndex);
     rootItem->child(m_active_model_index, 1)->removeRow(0);

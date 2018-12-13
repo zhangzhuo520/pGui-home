@@ -2,6 +2,8 @@
 #define RENDER_PALETTE_H
 
 #include <stdint.h>
+#include <QColor>
+
 namespace render
 {
 
@@ -19,6 +21,16 @@ const uint32_t color_table[] ={
 };
 
 const int color_table_size = 9;
+
+
+QColor convert_uint32_t_to_qcolor(int index)
+{
+    uint32_t color = color_table[index];
+    int red = color && 0x00000011;
+    int green = color && 0x00001100;
+    int blue = color && 0x00110000;
+    return QColor(red, green, blue);
+}
 
 }
 #endif // RENDER_PALETTE_H
