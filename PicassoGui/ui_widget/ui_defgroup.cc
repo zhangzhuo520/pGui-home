@@ -128,7 +128,6 @@ void DefGroup::openDB()
     }
     if(!sqlManager->openDB())
     {
-        MyDebug
         qDebug() << "DB open Failed";
     }
 }
@@ -141,8 +140,6 @@ void DefGroup::showDefects(QModelIndex *index)
 
     tableId = tableIdIndex.data().toInt();
     groupId = groupIdIndex.data().toInt();
-    MyDebug
-    qDebug() << "tableId: " << tableId;
     setData();
 }
 

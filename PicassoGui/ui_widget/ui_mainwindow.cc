@@ -336,7 +336,7 @@ void MainWindow::init_fileProject_workSpace()
  */
 void MainWindow::initConnection()
 {
-    connect(this, SIGNAL(signal_readDB(QString)), checklistWidget ,SLOT(slot_readDB(QString)));
+    connect(this, SIGNAL(singal_append_job(QString)), checklistWidget ,SLOT(slot_append_job(QString)));
     connect(checklistWidget, SIGNAL(signal_showDefGroup(QModelIndex, int)), this ,SLOT(slot_showDefGroup(QModelIndex, int)));
     connect(fileWidget, SIGNAL(signal_openFile()), this, SLOT(slot_openFile()));
 }
@@ -675,7 +675,7 @@ void MainWindow::open_database(QString dirName)
             isDbFile = true;
             DBname = fileInfo.fileName();
         }
-        if (fileInfo.suffix() == "oas")
+        if (fileInfo.fileName() == "DefectFile.oas")
         {
             slot_addFile(dirName + "/" + fileInfo.fileName());
         }
@@ -687,7 +687,7 @@ void MainWindow::open_database(QString dirName)
     else
     {
         DbPath = dirName + "/" + DBname;
-        emit signal_readDB(DbPath);
+        emit singal_append_job(DbPath);
     }
 }
 
@@ -846,7 +846,8 @@ void MainWindow::saveOpenHistory(QString history)
         return;
     QTextStream out(&file);
 
-    if (historyFileList.count() > 6)
+    qDebug() << history;
+    if (historyFileList.count() > 4)
     {
         historyFileList.insert(0, history);
     }
@@ -867,6 +868,7 @@ void MainWindow::saveOpenHistory(QString history)
     {
         str = str + historyFileList.at(i) + "###";
     }
+
     out << str;
     file.flush();
     file.close();

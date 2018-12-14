@@ -82,7 +82,7 @@ protected:
     void closeEvent(QCloseEvent *);
 
 signals:
-    void signal_readDB(QString);
+    void singal_append_job(QString);
 
     void signal_addFile(QString);
 

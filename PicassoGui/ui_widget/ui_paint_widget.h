@@ -50,7 +50,6 @@ public:
 
     void draw_defect_point_text(double, double, QString);
 
-
     void repaintRuler(double, double, double, double);
 
     void setPaintStyle(Global::PaintTool);
@@ -71,8 +70,6 @@ signals:
     void signal_moveCenter();
 
     void signal_get_snap_pos(QPoint, int);
-
-
 
 public slots:
     void setStyle (int);

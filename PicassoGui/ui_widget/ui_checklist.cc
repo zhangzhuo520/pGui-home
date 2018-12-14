@@ -147,7 +147,7 @@ void CheckList::updataTreeView()
         {
             pStandardChildItem = new TreeItem(m_pw_conditionvector.at(j).value("cond_name"));
             pStandardItem->appendRow(pStandardChildItem);
-            pStandardItem->setChild(pStandardItem->row(), m_headerlist.indexOf("Count") ,new TreeItem(m_count));
+            pStandardItem->setChild(j, m_headerlist.indexOf("Count") ,new TreeItem(m_pw_conditionvector.at(j).value("Count")));
             pStandardItem->setChild(j, m_headerlist.indexOf("Focus") ,new TreeItem(m_pw_conditionvector.at(j).value("defocus")));
             pStandardItem->setChild(j, m_headerlist.indexOf("Dose") ,new TreeItem(m_pw_conditionvector.at(j).value("dedose")));
             pStandardItem->setChild(j, m_headerlist.indexOf("Bias") ,new TreeItem(m_pw_conditionvector.at(j).value("bias")));
@@ -161,6 +161,7 @@ void CheckList::updataTreeView()
                     pStandardChildItem->setChild(k, 0 ,pStandardGrandsonItem);
                     pStandardChildItem->setChild(k, m_headerlist.indexOf("Detector_table_id") ,new TreeItem(m_detectorvector.at(k).value("detector_table_id")));
                     pStandardChildItem->setChild(k, m_headerlist.indexOf("Type") ,new TreeItem(m_detectorvector.at(k).value("d_type")));
+                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Count") ,new TreeItem(m_detectorvector.at(k).value("defect_number")));
                     pStandardChildItem->setChild(k, m_headerlist.indexOf("Groups") ,new TreeItem(m_detectorvector.at(k).value("group_num")));
                     pStandardChildItem->setChild(k, m_headerlist.indexOf("Loose_groups") ,new TreeItem(m_detectorvector.at(k).value("loose_group_num")));
                     pStandardChildItem->setChild(k, m_headerlist.indexOf("Defect_range") ,new TreeItem(m_detectorvector.at(k).value("defrange")));
@@ -171,7 +172,7 @@ void CheckList::updataTreeView()
     }
 }
 
-void CheckList::readDB(QString DBname)
+void CheckList::read_database(QString DBname)
 {
     // use to save DBdata
     m_maskmap.clear();
@@ -202,7 +203,7 @@ void CheckList::readDB(QString DBname)
     {
          QSqlQuery query;
 
-         m_jobdata = "job" +  QString::number(m_jobindex - 1) +":" + DBname;
+         m_jobdata = "job" +  QString::number(m_jobindex) +":" + DBname;
 
          //mask data
          QString maskDescColName = "mask_desc";
@@ -277,13 +278,29 @@ void CheckList::readDB(QString DBname)
                       << query.value(defrange).toString()
                       << query.value(unit).toString();
          }
+         QVector <QMap < QString , QString> >::iterator pw_iterator = m_pw_conditionvector.begin();
+         for (; pw_iterator != m_pw_conditionvector.end(); pw_iterator ++)
+         {
+             query.exec(QString("select sum(defect_number) from detector where cond1_id = %1;").arg(pw_iterator->value("cond_id")));
+             while (query.next())
+             {
+                 if (query.value(0).toString().isEmpty())
+                 {
+                     pw_iterator->insert("Count", "0");
+                 }
+                 else
+                 {
+                     pw_iterator->insert("Count", query.value(0).toString());
+                 }
+             }
+         }
+
         query.exec("select sum(defect_number) from detector where mask1_id and cond1_id");
         while(query.next())
         {
             m_count = query.value(0).toString();
         }
     }
-    updataTreeView();
     m_sqlmanager->closeDB();
 }
 
@@ -291,9 +308,10 @@ CheckList::~CheckList()
 {
 }
 
-void CheckList::slot_readDB(QString dbName)
+void CheckList::slot_append_job(QString dbName)
 {
-    readDB(dbName);
+    read_database(dbName);
+    updataTreeView();
 }
 
 void CheckList::slot_CheckListContextMenu(const QPoint& point)

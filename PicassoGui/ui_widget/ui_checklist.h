@@ -39,7 +39,7 @@ public:
 
     void updataTreeView();
 
-    void readDB(QString DBname);
+    void read_database(QString DBname);
 
     ~CheckList();
 
@@ -84,7 +84,7 @@ private slots:
 
     void slot_RenameOk();
 public slots:
-    void slot_readDB(QString);
+    void slot_append_job(QString);
 
 private:
     Commbox *m_checklist_commbox;
@@ -112,6 +112,7 @@ private:
     QStringList m_joblist;
     QString m_jobdata;
     QString m_count;
+    QString m_cond_count;
     QStringList m_headerlist;
 
     QMap < QString , QString> m_maskmap;
