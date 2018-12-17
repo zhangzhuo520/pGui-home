@@ -136,7 +136,6 @@ protected:
     void enterEvent(QEvent *e)
     {
         Q_UNUSED(e)
-
         QColor selectColor(10, 10, 200, 100);
         setColor(selectColor);
     }

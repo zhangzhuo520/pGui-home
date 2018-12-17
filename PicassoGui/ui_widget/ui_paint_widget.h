@@ -7,6 +7,7 @@
 #include <QResizeEvent>
 #include <QColor>
 #include <QPixmap>
+#include <QPair>
 #include <QPoint>
 #include <QPainter>
 #include <QPalette>
@@ -80,6 +81,7 @@ public slots:
     void clear();
 
 private:
+
     void use_angle();
     QPointF calcu_physical_point(QPointF);
 
@@ -132,7 +134,7 @@ private:
     QString x;
     QString y;
 
-    double distance;
+    double m_distance;
 };
 }
 #endif // DRAWWIDGET_H

@@ -50,6 +50,8 @@ public:
 
     void showDefects(QModelIndex *);
 
+    void updata_all_data(QModelIndex *);
+
 protected:
     void closeEvent(QCloseEvent *e)
     {

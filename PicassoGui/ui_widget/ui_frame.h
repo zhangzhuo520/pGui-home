@@ -23,6 +23,7 @@ class Frame : public QFrame
 public:
 
 //    Q_DECLARE_METATYPE(UI::Frame::sizeState)
+
     explicit Frame(QFrame *parent = 0);
     void initTitleBar();
     void setWindowsSizeChange();

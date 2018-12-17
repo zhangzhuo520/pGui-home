@@ -215,6 +215,11 @@ void DefectsWidget::showDefects(QModelIndex *index)
      setData();
 }
 
+void DefectsWidget::update_all_data(QModelIndex * index)
+{
+       showDefects(index);
+}
+
 QTableView *DefectsWidget::getTableView()
 {
     return m_defects_table;

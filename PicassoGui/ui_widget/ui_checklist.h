@@ -63,7 +63,13 @@ protected:
 signals:
     void signal_showDefGroup(QModelIndex, int);
 
-private slots:
+    void signal_close_job(QString);
+
+    void signal_append_job(QString);
+
+private slots:    
+    void slot_close_currentjob();
+
     void slot_CheckListContextMenu(const QPoint&);
 
     void slot_showDefGroup(QModelIndex);
@@ -86,7 +92,14 @@ private slots:
 public slots:
     void slot_append_job(QString);
 
+    void slot_close_job(int);
+
 private:
+    void romove_job(int);
+
+    QModelIndex get_current_rootindex(QModelIndex);
+
+
     Commbox *m_checklist_commbox;
     PushButton *m_rename_button;
     PushButton *m_delete_button;

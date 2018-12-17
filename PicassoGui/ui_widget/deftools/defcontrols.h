@@ -277,6 +277,8 @@ private:
         QWidget::mouseMoveEvent(e);
     }
 
+    void remove_paint_tab(QString);
+
 
 };
 

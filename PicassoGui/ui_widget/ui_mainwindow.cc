@@ -203,7 +203,7 @@ void MainWindow::initToolbar()
 
     connect(zoomInAction, SIGNAL(triggered()), this, SLOT(slot_zoom_in()));
     connect(zoomOutAction,SIGNAL(triggered()), this, SLOT(slot_zoom_out()));
-    connect(refreshAction, SIGNAL(triggered()), this, SLOT(slot_refrush()));
+    connect(refreshAction, SIGNAL(triggered()), this, SLOT(slot_refresh()));
 
     screenContrlBar->addAction(zoomInAction);
     screenContrlBar->addAction(zoomOutAction);
@@ -337,6 +337,9 @@ void MainWindow::init_fileProject_workSpace()
 void MainWindow::initConnection()
 {
     connect(this, SIGNAL(singal_append_job(QString)), checklistWidget ,SLOT(slot_append_job(QString)));
+    connect(this, SIGNAL(signal_close_job(int)), checklistWidget, SLOT(slot_close_job(int)));
+//    connect(checklistWidget, SIGNAL(signal_close_job(QString)), this, SLOT(slot_close_job(QString)));
+//    connect(checklistWidget, SIGNAL(signal_append_job(QString)), this, SLOT(slot_append_job(QString)));
     connect(checklistWidget, SIGNAL(signal_showDefGroup(QModelIndex, int)), this ,SLOT(slot_showDefGroup(QModelIndex, int)));
     connect(fileWidget, SIGNAL(signal_openFile()), this, SLOT(slot_openFile()));
 }
@@ -579,12 +582,12 @@ void MainWindow::slot_zoom_out()
     }
 }
 
-void MainWindow::slot_refrush()
+void MainWindow::slot_refresh()
 {
-//    if(m_scaleFrame_vector.count() > 0)
-//    {
-//        m_scaleFrame_vector.at(m_current_tabid)->slot_move_point_center();
-//    }
+    if(m_scaleFrame_vector.count() > 0)
+    {
+        m_scaleFrame_vector.at(m_current_tabid)->refresh();
+    }
 }
 
 /**
@@ -664,6 +667,7 @@ void MainWindow::open_database(QString dirName)
     checkListDockWidget->show();
     QDir dir(dirName);
     bool isDbFile = false;
+    bool file_exist = false;
     QString DBname = "";
     QFileInfoList flist = dir.entryInfoList();
     foreach(QFileInfo fileInfo, flist)
@@ -677,14 +681,22 @@ void MainWindow::open_database(QString dirName)
         }
         if (fileInfo.fileName() == "DefectFile.oas")
         {
-            slot_addFile(dirName + "/" + fileInfo.fileName());
+            QString str = dirName + "/" + fileInfo.fileName();
+            for (int i = 0; i < m_job_filename_list.count(); i ++)
+            {
+                if (str == m_job_filename_list.at(i))
+                    file_exist = true;
+            }
+
+            //if fiel exist , don't need append file
+            if (!file_exist)
+            {
+                slot_addFile(str);
+                m_job_filename_list.append(str);
+            }
         }
     }
-    if (!isDbFile)
-    {
-        showWarning(this, "" , "Open an invalid dir.");
-    }
-    else
+    if (isDbFile)
     {
         DbPath = dirName + "/" + DBname;
         emit singal_append_job(DbPath);
@@ -727,6 +739,19 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
         paintTab->addTab(scaleFrame, m_current_filename);
         paintTab->setCurrentIndex(paintTab->count() - 1);
         centerWidget_boundingSignal(m_scaleFrame_vector.count() - 1);
+
+        //verify job name exit in fileList
+        for (int i = 0; i < m_job_filename_list.count(); i ++)
+        {
+
+            if (m_current_filename == m_job_filename_list.at(i))
+            {
+                //get job path
+                QString path = m_current_filename.left(m_current_filename.size() - 15);
+                open_database(path);
+            }
+        }
+        m_job_tempname_list.append(m_current_filename);
     }
     else
     {
@@ -741,7 +766,16 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
  */
 void MainWindow::slot_closePaintTab(int index)
 {
+    QString jobname = paintTab->tabText(index);
     paintTab->removeTab(index);
+    for (int i = 0; i < m_job_tempname_list.count(); i ++)
+    {
+        if (jobname == m_job_tempname_list.at(i))
+        {
+            emit signal_close_job(i);
+            m_job_tempname_list.removeAt(i);
+        }
+    }
 }
 
 void MainWindow::slot_updateXY(double x, double y)
@@ -754,27 +788,31 @@ void MainWindow::slot_updateXY(double x, double y)
  * @brief MainWindow::slot_showDefGroup
  * @param index
  */
-void MainWindow::slot_showDefGroup(QModelIndex index, int jobIndex)
+void MainWindow::slot_showDefGroup(QModelIndex index, int current_defgroup_index)
 {
-     static int oldJobIndex = 0;
+    qDebug() << current_defgroup_index;
+     static int defgroup_count = 0;
      QModelIndex tableIdIndex = index.sibling(index.row(), 1);
 
-    if(!tableIdIndex.data().toString().isEmpty() && oldJobIndex < jobIndex)
+    if(!tableIdIndex.data().toString().isEmpty() && defgroup_count < current_defgroup_index)
     {
-        defGroupDockWidget = new DockWidget("Job" + QString::number(jobIndex) +"_defGroup", this, 0);
+        defGroupDockWidget = new DockWidget("Job" + QString::number(current_defgroup_index) +"_defGroup", this, 0);
         addDockWidget(Qt::RightDockWidgetArea, defGroupDockWidget);
 
-        defgroup = new DefGroup(defGroupDockWidget, DbPath, &index, jobIndex);
-        defGroupDockWidget->setWidget(defgroup);
+        DefGroup *defgroup = new DefGroup(defGroupDockWidget, DbPath, &index, current_defgroup_index);
+        m_defgroup_vector.append(defgroup);
+        defGroupDockWidget->setWidget(m_defgroup_vector.at(m_defgroup_vector.count() - 1));
 
-        oldJobIndex = jobIndex;
+        //defgrout always is most large defgroup index
+        defgroup_count = current_defgroup_index;
 
-        connect(this, SIGNAL(signal_defgroupUpdata(QModelIndex *)), defgroup, SLOT(slot_DefGroupUpdata(QModelIndex *)));
-        connect(defgroup, SIGNAL(signal_showDefects(QModelIndex, int)), this, SLOT(slot_showDefects(QModelIndex, int)));
+    //    connect(this, SIGNAL(signal_defgroupUpdata(QModelIndex *), m_defgroup_vector.at(m_defgroup_vector.count() - 1), SLOT(slot_DefGroupUpdata(QModelIndex *)));
+        connect(m_defgroup_vector.at(m_defgroup_vector.count() - 1), SIGNAL(signal_showDefects(QModelIndex, int)), this, SLOT(slot_showDefects(QModelIndex, int)));
     }
     else
     {
-        emit signal_defgroupUpdata(&index);
+        m_defgroup_vector.at(current_defgroup_index - 1)->updata_all_data(&index);
+      //  emit signal_defgroupUpdata(&index);
     }
 }
 
@@ -790,15 +828,16 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
     {
         defectsDockWidget = new DockWidget("Job" + QString::number(jobIndex) +"_defects", this, 0);
         addDockWidget(Qt::RightDockWidgetArea, defectsDockWidget);
-        defectswidget = new DefectsWidget(defectsDockWidget, DbPath, &index, jobIndex);
-        defectsDockWidget->setWidget(defectswidget);
+        DefectsWidget *defectswidget = new DefectsWidget(defectsDockWidget, DbPath, &index, jobIndex);
+        m_defectswidget_vector.append(defectswidget);
+        defectsDockWidget->setWidget(m_defectswidget_vector.at(m_defectswidget_vector.count() - 1));
         oldJobIndex = jobIndex;
-        connect(this, SIGNAL(signal_defectsUpdata(QModelIndex *)), defectswidget, SLOT(slot_defectsUpdata(QModelIndex *)));
+//        connect(this, SIGNAL(signal_defectsUpdata(QModelIndex *)), defectswidget, SLOT(slot_defectsUpdata(QModelIndex *)));
         connect(defectswidget->getTableView(), SIGNAL(clicked(const QModelIndex&)), this,  SLOT(slot_drawPoint(const QModelIndex &)));
     }
     else
     {
-        emit signal_defectsUpdata(&index);
+        m_defectswidget_vector.at(jobIndex - 1)->update_all_data(&index);
     }
 }
 
@@ -846,7 +885,6 @@ void MainWindow::saveOpenHistory(QString history)
         return;
     QTextStream out(&file);
 
-    qDebug() << history;
     if (historyFileList.count() > 4)
     {
         historyFileList.insert(0, history);
@@ -891,14 +929,18 @@ void  MainWindow::getOpenHistory()
 void MainWindow::readSettingConfig()
 {
     QSettings configSet(configFile_path + "/configSize.ini", QSettings::IniFormat);
-    QSize mainwindow_size = configSet.value("Grometry").toSize();
+    QSize mainwindow_size = configSet.value("Grometry", QVariant(QSize(600,600))).toSize();
+    QPoint point = configSet.value("Pos", QVariant(QPoint(0,0))).toPoint();
     resize(mainwindow_size.width(), mainwindow_size.height());
+    move(point);
 }
 
 void MainWindow::writeSettingConfig()
 {
     QSettings configSet(configFile_path + "/configSize.ini", QSettings::IniFormat);
     configSet.setValue("Grometry", size());
+    configSet.setValue("Pos", pos());
+
 }
 
 void MainWindow::addHistoryAction(QString filename)

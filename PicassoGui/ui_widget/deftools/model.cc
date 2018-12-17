@@ -56,7 +56,6 @@ TreeModel::TreeModel(QObject *parent)
     setParent(parent);
 }
 
-
 QVariant TreeModel::data(const QModelIndex &item, int role) const
 {
     if (!item.isValid())

@@ -174,6 +174,7 @@ void CheckList::updataTreeView()
 
 void CheckList::read_database(QString DBname)
 {
+    TIME_DEBUG
     // use to save DBdata
     m_maskmap.clear();
     m_maskvector.clear();
@@ -186,18 +187,7 @@ void CheckList::read_database(QString DBname)
     m_sqlmanager->setDatabaseName(DBname);
 
     m_joblist.append(DBname);
-
-    for(int i = 0; i < m_joblist.count(); i ++)
-    {
-        if(DBname == m_joblist.at(i) && m_joblist.count() != 1)
-        {
-            return;
-        }
-        else
-        {
-            m_jobindex = m_joblist.count();
-        }
-    }
+    m_jobindex = m_joblist.count();
 
     if(m_sqlmanager->openDB())
     {
@@ -314,6 +304,25 @@ void CheckList::slot_append_job(QString dbName)
     updataTreeView();
 }
 
+void CheckList::slot_close_job(int index)
+{
+    romove_job(index);
+}
+
+void CheckList::romove_job(int index)
+{
+    m_checklist_model->removeRow(index);
+    m_joblist.removeAt(index);
+}
+
+QModelIndex CheckList::get_current_rootindex(QModelIndex index)
+{
+    while (!index.parent().data().toString().isEmpty()){
+      index = index.parent();
+    }
+    return index;
+}
+
 void CheckList::slot_CheckListContextMenu(const QPoint& point)
 {
     QMenu Checkmenu;
@@ -397,15 +406,20 @@ void CheckList::slot_CheckListContextMenu(const QPoint& point)
     Checkmenu.addAction(SetPageAction);
     Checkmenu.addSeparator();
     Checkmenu.addAction(DeleteAction);
-
+       TIME_DEBUG
+   connect(DeleteAction, SIGNAL(triggered()), this, SLOT(slot_close_currentjob()));
     QPoint tempPos = point;
     tempPos.setY(tempPos.y() + 22);
     Checkmenu.exec(m_checklist_tree->mapToGlobal(tempPos));
+
+
 }
 
 void CheckList::slot_showDefGroup(QModelIndex index)
 {
-  emit signal_showDefGroup(index, m_jobindex);
+    QString str = get_current_rootindex(index).data().toString().split(":").at(0);
+    int int_index = str.right(str.size() - 3).toInt();
+    emit signal_showDefGroup(index, int_index);
 }
 
 void CheckList::slot_openLVCK(QString)
@@ -469,7 +483,6 @@ void CheckList::slot_BtnFound(bool isPress)
     {
         m_vlayout->insertWidget(1, m_findwidget);
         m_findwidget->show();
-
     }
     else
     {
@@ -482,5 +495,10 @@ void CheckList::slot_RenameOk()
 {
     m_rename_dialog->close();
     m_checklist_commbox->setItemText(m_checklist_commbox->currentIndex(), m_rename_edit->text());
+}
+
+void CheckList::slot_close_currentjob()
+{
+    romove_job(1);
 }
 }

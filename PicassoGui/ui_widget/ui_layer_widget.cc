@@ -513,6 +513,11 @@ void LayerWidget::slot_setTextColor(QColor color)
 void LayerWidget::slot_itemChecked(QStandardItem* index)
 {
     m_active_model_index = index->row();
+    if(index->parent())
+    {
+        m_active_model_rootIndex = index->parent()->row();
+    }
+
     if(index->isCheckable())
     {
         if (index->checkState() == Qt::Unchecked)
@@ -683,6 +688,10 @@ QImage LayerWidget::setImage(layerStyle m_layer_style)
 
 void LayerWidget::setLayerData(layerStyle layer_style)
 {
+    if (m_active_model_rootIndex < 0 || rootItem_vector.isEmpty())
+    {
+        return;
+    }
     int index = m_active_model_index;
     m_view->set_current_layer(index);
     render::LayerProperties layerProperty = *(m_view->get_properties(index));
@@ -703,6 +712,7 @@ void LayerWidget::setModelIdexImage(QImage image)
     {
         return;
     }
+
     TreeItem *rootItem = rootItem_vector.at(m_active_model_rootIndex);
     rootItem->child(m_active_model_index, 1)->removeRow(0);
     rootItem->setChild(m_active_model_index, 1, childItem);

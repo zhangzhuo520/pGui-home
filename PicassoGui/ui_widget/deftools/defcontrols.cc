@@ -191,4 +191,15 @@ void TabWidget::slot_TabClose(int index)
     removeTab(index);
 }
 
+void TabWidget::remove_paint_tab(QString filename)
+{
+    for (int i = 0; i < count(); i ++)
+    {
+        if (filename == tabText(i))
+        {
+            removeTab(i);
+        }
+    }
+}
+
 }

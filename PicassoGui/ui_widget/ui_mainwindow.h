@@ -98,6 +98,8 @@ signals:
 
     void signal_getLayerData(render::RenderFrame*, QString);
 
+    void signal_close_job(int);
+
 private slots:
     //Menu Action
     void slot_openFile();
@@ -158,7 +160,7 @@ private slots:
 
     void slot_zoom_out();
 
-    void slot_refrush();
+    void slot_refresh();
 
 private:
     void initTitleBar();
@@ -210,8 +212,9 @@ private:
     TabWidget *paintTab;
     PaintToolbar *m_paint_toolbar;
     QWidget * m_center_widget;
-    DefGroup *defgroup;
-    DefectsWidget *defectswidget;
+
+    QVector <DefGroup *> m_defgroup_vector;
+    QVector <DefectsWidget *> m_defectswidget_vector;
 
     int m_current_tabid;
     QString m_current_filename;
@@ -257,6 +260,9 @@ private:
     QString configFile_path;
     QStringList historyFileList;
     QString m_prep_dir;
+
+    QStringList m_job_filename_list;
+    QStringList m_job_tempname_list;
 };
 }
 #endif // MAINWINDOW_H

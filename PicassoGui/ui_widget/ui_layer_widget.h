@@ -102,22 +102,22 @@ public slots:
 
 private:
     QWidget* layerToolBar;
-    //    PushButton *layerButton;
-    //    QAction *layerAction;
-    //    QMenu *layerMenu;
-    //    QAction *loadAction;
-    //    QAction *saveAction;
-    //    QAction *reassignAction;
-    //    PushButton *SaveButton;
-    //    QMenu *SaveMenu;
-    //    QAction *QuickloadAction1;
-    //    QAction *QuickloadAction2;
-    //    QAction *QuickloadAction3;
-    //    QAction *QuicksaveAction1;
-    //    QAction *QuicksaveAction2;
-    //    QAction *QuicksaveAction3;
-    //    Commbox *layerCombox;
-    //    PushButton *linkButton;
+//    PushButton *layerButton;
+//    QAction *layerAction;
+//    QMenu *layerMenu;
+//    QAction *loadAction;
+//    QAction *saveAction;
+//    QAction *reassignAction;
+//    PushButton *SaveButton;
+//    QMenu *SaveMenu;
+//    QAction *QuickloadAction1;
+//    QAction *QuickloadAction2;
+//    QAction *QuickloadAction3;
+//    QAction *QuicksaveAction1;
+//    QAction *QuicksaveAction2;
+//    QAction *QuicksaveAction3;
+//    Commbox *layerCombox;
+//    PushButton *linkButton;
     PushButton *LayerControlButton;
 
     QHBoxLayout *TreeHLayout;

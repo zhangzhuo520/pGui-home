@@ -9,6 +9,7 @@ class LineData{
 public:
     QPointF m_first_point;
     QPointF m_last_point;
+    double m_distance;
 };
 
 class MeasureLine
