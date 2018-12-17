@@ -793,10 +793,13 @@ void MainWindow::slot_showDefGroup(QModelIndex index, int current_defgroup_index
     qDebug() << current_defgroup_index;
      static int defgroup_count = 0;
      QModelIndex tableIdIndex = index.sibling(index.row(), 1);
+     QString widget_title = "Job" + QString::number(current_defgroup_index) +"_defGroup";
 
     if(!tableIdIndex.data().toString().isEmpty() && defgroup_count < current_defgroup_index)
     {
-        defGroupDockWidget = new DockWidget("Job" + QString::number(current_defgroup_index) +"_defGroup", this, 0);
+        DockWidget *defGroupDockWidget = new DockWidget(widget_title, this, 0);
+//        defGroupDockWidget->
+        m_defgroupdockwidget_vector.append(defGroupDockWidget);
         addDockWidget(Qt::RightDockWidgetArea, defGroupDockWidget);
 
         DefGroup *defgroup = new DefGroup(defGroupDockWidget, DbPath, &index, current_defgroup_index);
@@ -811,6 +814,7 @@ void MainWindow::slot_showDefGroup(QModelIndex index, int current_defgroup_index
     }
     else
     {
+        m_defgroupdockwidget_vector.at(current_defgroup_index - 1)->show();
         m_defgroup_vector.at(current_defgroup_index - 1)->updata_all_data(&index);
       //  emit signal_defgroupUpdata(&index);
     }
@@ -826,8 +830,9 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
     static int oldJobIndex = 0;
     if(!index.data().toString().isEmpty() && oldJobIndex < jobIndex)
     {
-        defectsDockWidget = new DockWidget("Job" + QString::number(jobIndex) +"_defects", this, 0);
+        DockWidget* defectsDockWidget = new DockWidget("Job" + QString::number(jobIndex) +"_defects", this, 0);
         addDockWidget(Qt::RightDockWidgetArea, defectsDockWidget);
+        m_defectsdockwidget_vector.append(defectsDockWidget);
         DefectsWidget *defectswidget = new DefectsWidget(defectsDockWidget, DbPath, &index, jobIndex);
         m_defectswidget_vector.append(defectswidget);
         defectsDockWidget->setWidget(m_defectswidget_vector.at(m_defectswidget_vector.count() - 1));
@@ -837,6 +842,7 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
     }
     else
     {
+        m_defectsdockwidget_vector.at(jobIndex - 1)->show();
         m_defectswidget_vector.at(jobIndex - 1)->update_all_data(&index);
     }
 }

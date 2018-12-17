@@ -205,8 +205,8 @@ private:
     DockWidget *checkListDockWidget;
     DockWidget *logDockWidget;
     DockWidget *broserDockWidget;
-    DockWidget *defGroupDockWidget;
-    DockWidget *defectsDockWidget;
+    QVector <DockWidget *> m_defgroupdockwidget_vector;
+    QVector <DockWidget *> m_defectsdockwidget_vector;
     QFileDialog *m_file_dialog;
 
     TabWidget *paintTab;
