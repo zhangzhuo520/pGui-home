@@ -24,7 +24,7 @@ class DefectsWidget : public QWidget
 public:
     explicit DefectsWidget(QWidget *parent = 0, QString m_db_path = "", QModelIndex* modelIndex = 0, int m_jobindex = 0);
 
-    void initm_defects_table();
+    void init_defects_table();
 
     void initOtherButton();
 
@@ -73,6 +73,8 @@ public slots:
 
     void slot_m_ascen_buttonCheck();
 
+    void slot_sort_by_column(int, Qt::SortOrder);
+
     void slot_pervPage();
 
     void slot_nextPage();
@@ -120,6 +122,8 @@ private:
     CountDefectSqlData m_countdefect_data;
 
     SQLManager *m_sqlmanager;
+
+    QLabel *m_pagecount_label;
 
     int m_jobindex;
 

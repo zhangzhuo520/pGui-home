@@ -36,7 +36,7 @@ public:
 
     void openDB();
 
-    void changeSortKey();
+//    void changeSortKey();
 
     void resizeColumns();
 
@@ -64,18 +64,22 @@ signals:
 public slots:
     void slot_showDefects(QModelIndex);
 
-    void slot_DefGroupUpdata(QModelIndex *);
+//    void slot_DefGroupUpdata(QModelIndex *);
 
-    void slot_changSortQrder(QString);
+//    void slot_changSortQrder(QString);
 
-    void slot_descentButtonCheck();
+//    void slot_descentButtonCheck();
 
-    void slot_ascentButtonCheck();
+//    void slot_ascentButtonCheck();
 
     void slot_pervPage();
 
     void slot_nextPage();
+
+    void slot_sort_by_column(int, Qt::SortOrder);
 private:
+    void update_page();
+
     QString DbPath;
 
     QTableView *DefGroupTable;
@@ -100,11 +104,11 @@ private:
 
     SqlQueryModel *DefGroupModel;
 
-    QVBoxLayout *Vlayout;
+    QVBoxLayout *m_vlayout;
 
     QHBoxLayout *Hlayout;
 
-    QHBoxLayout *Hlayout1;
+    QHBoxLayout *m_hlayout1;
 
     defectGroupSQL *DefectGroupQuery;
 
@@ -113,6 +117,8 @@ private:
     defectGroupSqlData DefectGroupData;
 
     CountGroupSqlData CountGroupData;
+
+    QLabel *m_pagecount_label;
 
     SQLManager *sqlManager;
 

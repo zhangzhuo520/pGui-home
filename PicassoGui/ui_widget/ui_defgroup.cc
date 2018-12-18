@@ -25,65 +25,75 @@ void DefGroup::initDefGroupTable()
     DefGroupTable->setShowGrid(false);
     DefGroupTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     DefGroupTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    DefGroupTable->horizontalHeader()->setClickable(false);
+//    DefGroupTable->horizontalHeader()->setClickable(false);
     DefGroupTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     DefGroupTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     DefGroupTable->verticalHeader()->setDefaultSectionSize(20);
     DefGroupTable->verticalHeader()->setMinimumSectionSize(20);
     DefGroupTable->verticalHeader()->hide();
+
+    DefGroupTable->horizontalHeader()->setSortIndicator(-1, Qt::AscendingOrder);
+//    DefGroupTable->horizontalHeader()->setSortIndicator(2, Qt::AscendingOrder);
+//    DefGroupTable->horizontalHeader()->setSortIndicator(3, Qt::AscendingOrder);
+    DefGroupTable->horizontalHeader()->setSortIndicatorShown(true);
+    DefGroupTable->horizontalHeader()->setClickable(true);
+    connect(DefGroupTable->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT (slot_sort_by_column(int, Qt::SortOrder)));
+
     connect(DefGroupTable, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slot_showDefects(QModelIndex)));
 }
 
 void DefGroup::initOtherButton()
 {
-    Buttonbar = new QWidget(this);
-    Buttonbar->setMinimumWidth(10);
-    sortLable = new QLabel("sort :", Buttonbar);
-    sortCombox = new Commbox(Buttonbar);
-    sortCombox->addItems(QStringList() <<"worst_size" << "defect_number" << "detDefGroup_id");
-    descentButton = new QRadioButton("Descent", Buttonbar);
-    ascentButton = new QRadioButton("Ascent",Buttonbar);
-    if(!descentButton->isChecked())
-    {
-        descentButton->setChecked(true);
-        ascentButton->setChecked(false);
-    }
-    else
-    {
-        descentButton->setChecked(false);
-        ascentButton->setChecked(true);
-    }
+//    Buttonbar = new QWidget(this);
+//    Buttonbar->setMinimumWidth(10);
+//    sortLable = new QLabel("sort :", Buttonbar);
+//    sortCombox = new Commbox(Buttonbar);
+//    sortCombox->addItems(QStringList() <<"worst_size" << "defect_number" << "detDefGroup_id");
+//    descentButton = new QRadioButton("Descent", Buttonbar);
+//    ascentButton = new QRadioButton("Ascent",Buttonbar);
+//    if(!descentButton->isChecked())
+//    {
+//        descentButton->setChecked(true);
+//        ascentButton->setChecked(false);
+//    }
+//    else
+//    {
+//        descentButton->setChecked(false);
+//        ascentButton->setChecked(true);
+//    }
     pervButton = new QPushButton("Perv Page" ,this);
     nextButton = new QPushButton("Next Page", this);
+    m_pagecount_label = new QLabel(this);
 
-    connect(descentButton, SIGNAL(clicked()), this, SLOT(slot_descentButtonCheck()));
-    connect(ascentButton, SIGNAL(clicked()), this, SLOT(slot_ascentButtonCheck()));
-    connect(sortCombox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
+//    connect(descentButton, SIGNAL(clicked()), this, SLOT(slot_descentButtonCheck()));
+//    connect(ascentButton, SIGNAL(clicked()), this, SLOT(slot_ascentButtonCheck()));
+//    connect(sortCombox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
     connect(pervButton, SIGNAL(clicked()), this, SLOT(slot_pervPage()));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(slot_nextPage()));
 }
 
 void DefGroup::addLayout()
 {
-    Vlayout = new QVBoxLayout(this);
-    Vlayout->addWidget(DefGroupTable);
+    m_vlayout = new QVBoxLayout(this);
+    m_vlayout->addWidget(DefGroupTable);
 
-    QHBoxLayout* ButtonBarLayout = new QHBoxLayout();
-    Hlayout1 = new QHBoxLayout();
-    ButtonBarLayout->addWidget(sortLable);
-    ButtonBarLayout->addWidget(sortCombox);
-    ButtonBarLayout->addWidget(descentButton);
-    ButtonBarLayout->addWidget(ascentButton);
-    ButtonBarLayout->setContentsMargins(0, 0, 0, 0);
-    Buttonbar->setLayout(ButtonBarLayout);
-    Vlayout->addWidget(Buttonbar);
-
-    Hlayout1 = new QHBoxLayout();
-    Hlayout1->addWidget(pervButton);
-    Hlayout1->addWidget(nextButton);
-    Vlayout->addLayout(Hlayout1);
-    Vlayout->setContentsMargins(2, 2, 2, 2);
-    setLayout(Vlayout);
+//    QHBoxLayout* ButtonBarLayout = new QHBoxLayout(this);
+//    Hlayout1 = new QHBoxLayout();
+//    ButtonBarLayout->addWidget(sortLable);
+//    ButtonBarLayout->addWidget(sortCombox);
+//    ButtonBarLayout->addWidget(descentButton);
+//    ButtonBarLayout->addWidget(ascentButton);
+//    ButtonBarLayout->setContentsMargins(0, 0, 0, 0);
+//    Buttonbar->setLayout(ButtonBarLayout);
+//    Vlayout->addWidget(Buttonbar);
+    m_hlayout1 = new QHBoxLayout();
+    m_hlayout1->addWidget(pervButton);
+    m_hlayout1->addWidget(nextButton);
+    m_hlayout1->addWidget(m_pagecount_label);
+    m_hlayout1->setContentsMargins(0, 0, 0, 0);
+    m_vlayout->addLayout(m_hlayout1);
+    m_vlayout->setContentsMargins(2, 2, 2, 2);
+    setLayout(m_vlayout);
 }
 
 void DefGroup::initSql()
@@ -97,7 +107,6 @@ void DefGroup::updataTable()
 {
     openDB();
     setTotal();
-
     if(totalCount <= DefectGroupData.pageCount.toInt())
     {
         pervButton->setEnabled(false);
@@ -128,19 +137,20 @@ void DefGroup::openDB()
     }
     if(!sqlManager->openDB())
     {
-        MyDebug
         qDebug() << "DB open Failed";
     }
 }
 
 void DefGroup::showDefects(QModelIndex *index)
 {
-    QModelIndex tableIdIndex = index->sibling(index->row(), 1);
+    QModelIndex tableIdIndex = index->sibling(index->row(), 9);
     QModelIndex groupIdIndex = index->sibling(index->row(), 2);
 
 
     tableId = tableIdIndex.data().toInt();
     groupId = groupIdIndex.data().toInt();
+    DefectGroupData.orderBy = "worst_size";
+    DefectGroupData.order = "asc";
     setData();
 }
 
@@ -149,48 +159,48 @@ void DefGroup::updata_all_data(QModelIndex *index)
         showDefects(index);
 }
 
-void DefGroup::slot_DefGroupUpdata(QModelIndex *index)
-{
-    showDefects(index);
-}
+//void DefGroup::slot_DefGroupUpdata(QModelIndex *index)
+//{
+//    showDefects(index);
+//}
 
-void DefGroup::slot_changSortQrder(QString order)
-{
-    DefectGroupData.orderBy = order;
-    DefectGroupQuery->setData(DefectGroupData);
-    DefGroupModel->setQuery(DefectGroupQuery->outputSQL());
-    updataTable();
-}
+//void DefGroup::slot_changSortQrder(QString order)
+//{
+//    DefectGroupData.orderBy = order;
+//    DefectGroupQuery->setData(DefectGroupData);
+//    DefGroupModel->setQuery(DefectGroupQuery->outputSQL());
+//    updataTable();
+//}
 
-void DefGroup::slot_descentButtonCheck()
-{
-    if(descentButton->isDown())
-    {
-        descentButton->setDown(false);
-        ascentButton->setDown(true);
-    }
-    else
-    {
-        descentButton->setDown(true);
-        ascentButton->setDown(false);
-    }
-    setData();
-}
+//void DefGroup::slot_descentButtonCheck()
+//{
+//    if(descentButton->isDown())
+//    {
+//        descentButton->setDown(false);
+//        ascentButton->setDown(true);
+//    }
+//    else
+//    {
+//        descentButton->setDown(true);
+//        ascentButton->setDown(false);
+//    }
+//    setData();
+//}
 
-void DefGroup::slot_ascentButtonCheck()
-{
-    if(ascentButton->isDown())
-    {
-        descentButton->setDown(true);
-        ascentButton->setDown(false);
-    }
-    else
-    {
-        descentButton->setDown(false);
-        ascentButton->setDown(true);
-    }
-    setData();
-}
+//void DefGroup::slot_ascentButtonCheck()
+//{
+//    if(ascentButton->isDown())
+//    {
+//        descentButton->setDown(true);
+//        ascentButton->setDown(false);
+//    }
+//    else
+//    {
+//        descentButton->setDown(false);
+//        ascentButton->setDown(true);
+//    }
+//    setData();
+//}
 
 void DefGroup::slot_pervPage()
 {
@@ -230,21 +240,68 @@ void DefGroup::slot_nextPage()
     upDataPage();
 }
 
+void DefGroup::slot_sort_by_column(int index, Qt::SortOrder sort_order)
+{
+    switch (index) {
+    case 1:
+    {
+        DefectGroupData.orderBy = "detDefGroup_id";
+        if (sort_order == Qt::AscendingOrder)
+        {
+            DefectGroupData.order = "asc";
+        }
+        else
+        {
+            DefectGroupData.order = "desc";
+        }
+        break;
+    }
+    case 2:
+    {
+        DefectGroupData.orderBy = "defect_number";
+        if (sort_order == Qt::AscendingOrder)
+        {
+            DefectGroupData.order = "asc";
+        }
+        else
+        {
+            DefectGroupData.order = "desc";
+        }
+        break;
+    }
+    case 3:
+    {
+        DefectGroupData.orderBy = "worst_size";
+        if (sort_order == Qt::AscendingOrder)
+        {
+            DefectGroupData.order = "asc";
+        }
+        else
+        {
+            DefectGroupData.order = "desc";
+        }
+        break;
+
+        break;
+    }
+    default:
+        break;
+    }
+    setData();
+}
+
+void DefGroup::update_page()
+{
+    QString str = QString::number(CurrentPage)  + "/" + DefectGroupData.pageCount;
+    m_pagecount_label->setText(str);
+}
+
 void DefGroup::setData()
 {
     Q_UNUSED(groupId);
     DefectGroupData.table_id = QString::number(tableId);
     DefectGroupData.pageCount = "10";
-    DefectGroupData.orderBy = sortCombox->currentText();
     CurrentPage = 0;
-    if(descentButton->isChecked())
-    {
-        DefectGroupData.order = "desc";
-    }
-    else
-    {
-        DefectGroupData.order = "asc";
-    }
     DefectGroupData.limitIndex = QString::number(CurrentPage);
     updataTable();
 }
