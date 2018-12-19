@@ -24,7 +24,7 @@ typedef struct defectsql
     QString pageCount;
 }DefectSqlData;
 
-typedef struct defectGroupSql
+typedef struct defectgroupsql
 {
     QString table_id;
     QString orderBy;
@@ -33,7 +33,7 @@ typedef struct defectGroupSql
     QString pageCount;
 }defectGroupSqlData;
 
-typedef struct CountGroupSql
+typedef struct countgroupsql
 {
     QString tableName;
     QString table_id;
@@ -45,5 +45,11 @@ typedef struct CountDefectSql
     QString table_id;
     QString defGroup_id;
 }CountDefectSqlData;
+
+typedef struct fileinfo
+{
+    int id;
+    QString filename;
+}FileInfo;
 
 #endif // DATASTRUCT_H

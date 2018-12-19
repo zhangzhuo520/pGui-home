@@ -1,6 +1,6 @@
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/gui/renderworker/renderer)
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/library/infra/layout/oasis)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/component/infra/gdshandling/oasis)
 
 SET(QT_USE_SQL TRUE)
 
@@ -13,11 +13,13 @@ SET(PicathoGui_SRCS
     ui_checklist.cc
     ui_defgroup.cc
     ui_paint_widget.cc
+    ui_paint_toolbar.cc
     ui_defects_widget.cc
     ui_layer_widget.cc
     ui_fileproject_widget.cc
     ui_fileproject_model.cc
     ui_frame.cc
+    ui_measurepoint.cc
     ui_menu_widget.cc
     ui_rtsconfig_dialog.cc
     ui_choosefile_dialog.cc
@@ -40,12 +42,14 @@ SET(PicathoGui_HEADERS
     gearmanconnector.h
     ui_checklist.h
     ui_defgroup.h
+    ui_paint_toolbar.h
     ui_paint_widget.h
     ui_defects_widget.h
     ui_fileproject_widget.h
     ui_fileproject_model.h
     ui_layer_widget.h
     ui_frame.h
+    ui_measurepoint.h
     ui_menu_widget.h
     ui_rtsconfig_dialog.h
     ui_choosefile_dialog.h
@@ -72,6 +76,7 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     ui_choosefile_dialog.h
     ui_checklist.h
     ui_paint_widget.h
+    ui_paint_toolbar.h
     ui_fileproject_widget.h
     ui_fileproject_model.h
     ui_layer_widget.h
@@ -98,5 +103,5 @@ ADD_EXECUTABLE(PicathoGui
     ${PicathoGui_SRCS}
     ${PicathoGui_MOCS})
 
-TARGET_LINK_LIBRARIES(PicathoGui renderer oasis_api systemutil ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(PicathoGui renderer oasis_api sysutil ${QT_LIBRARIES})
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

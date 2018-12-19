@@ -668,9 +668,9 @@ QImage LayerWidget::setImage(layerStyle m_layer_style)
                 image.setPixel(QPoint(i, j), qRgb(fill_color.red(), fill_color.green(), fill_color.blue()));
             }
 #else
-            if (!(temp_color.red() == 0
-                    && temp_color.blue() == 0
-                    && temp_color.green() == 0))
+            if (!(temp_color.red() == 255
+                    && temp_color.blue() == 255
+                    && temp_color.green() == 255))
             {
                 image.setPixel(QPoint(i, j), qRgb(fill_color.red(), fill_color.green(), fill_color.blue()));
             }

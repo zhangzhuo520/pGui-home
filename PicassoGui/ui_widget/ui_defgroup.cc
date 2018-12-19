@@ -1,6 +1,7 @@
 #include "ui_defgroup.h"
 
 namespace ui {
+const int m_each_page_count = 10;
 DefGroup::DefGroup(QWidget *parent , QString Path, QModelIndex *defectGroupId, int job) :
     QWidget(parent),
     DbPath(Path),
@@ -61,15 +62,19 @@ void DefGroup::initOtherButton()
 //        descentButton->setChecked(false);
 //        ascentButton->setChecked(true);
 //    }
-    pervButton = new QPushButton("Perv Page" ,this);
-    nextButton = new QPushButton("Next Page", this);
+    pervButton = new QPushButton(this);
+    pervButton->setIcon(QIcon(":/dfjy/images/last_page.png"));
+    nextButton = new QPushButton(this);
+    nextButton->setIcon(QIcon(":/dfjy/images/next_page.png"));
     m_pagecount_label = new QLabel(this);
+    m_page_jump_edit = new PageJumpEdit(this);
 
 //    connect(descentButton, SIGNAL(clicked()), this, SLOT(slot_descentButtonCheck()));
 //    connect(ascentButton, SIGNAL(clicked()), this, SLOT(slot_ascentButtonCheck()));
 //    connect(sortCombox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
     connect(pervButton, SIGNAL(clicked()), this, SLOT(slot_pervPage()));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(slot_nextPage()));
+    connect(m_page_jump_edit, SIGNAL(signal_jump(QString)), this, SLOT(slot_jump_page(QString)));
 }
 
 void DefGroup::addLayout()
@@ -88,9 +93,15 @@ void DefGroup::addLayout()
 //    Vlayout->addWidget(Buttonbar);
     m_hlayout1 = new QHBoxLayout();
     m_hlayout1->addWidget(pervButton);
-    m_hlayout1->addWidget(nextButton);
     m_hlayout1->addWidget(m_pagecount_label);
+    m_hlayout1->addWidget(m_page_jump_edit);
+    m_hlayout1->addWidget(nextButton);
+
     m_hlayout1->setContentsMargins(0, 0, 0, 0);
+    m_hlayout1->setStretch(0, 1);
+    m_hlayout1->setStretch(1, 1);
+    m_hlayout1->setStretch(2, 1);
+    m_hlayout1->setStretch(3, 1);
     m_vlayout->addLayout(m_hlayout1);
     m_vlayout->setContentsMargins(2, 2, 2, 2);
     setLayout(m_vlayout);
@@ -123,6 +134,7 @@ void DefGroup::updataTable()
     DefGroupModel->setquery(DefectGroupQuery->outputSQL());
     DefGroupTable->setModel(DefGroupModel);
     sqlManager->closeDB();
+    update_page_number();
 }
 
 void DefGroup::openDB()
@@ -205,7 +217,7 @@ void DefGroup::updata_all_data(QModelIndex *index)
 void DefGroup::slot_pervPage()
 {
     nextButton->setEnabled(true);
-    if (DefectGroupData.limitIndex.toInt() - DefectGroupData.pageCount.toInt() <= 5)
+    if (DefectGroupData.limitIndex.toInt() - DefectGroupData.pageCount.toInt() < DefectGroupData.pageCount.toInt())
     {
         DefectGroupData.limitIndex = "0";
         pervButton->setEnabled(false);
@@ -217,7 +229,8 @@ void DefGroup::slot_pervPage()
     }
     if (DefectGroupData.limitIndex.toInt() <= 0)
         DefectGroupData.limitIndex = "0";
-    upDataPage();
+    CurrentPage = CurrentPage - 1;
+    update_page();
 }
 
 void DefGroup::slot_nextPage()
@@ -235,9 +248,14 @@ void DefGroup::slot_nextPage()
     {
         nextButton->setDisabled(false);
     }
-
+    CurrentPage = CurrentPage + 1;
     DefectGroupData.limitIndex = QString::number(currIndex);
-    upDataPage();
+    update_page();
+}
+
+void DefGroup::slot_jump_page(QString page_number)
+{
+    jump_page(page_number.toInt());
 }
 
 void DefGroup::slot_sort_by_column(int index, Qt::SortOrder sort_order)
@@ -290,19 +308,53 @@ void DefGroup::slot_sort_by_column(int index, Qt::SortOrder sort_order)
     setData();
 }
 
-void DefGroup::update_page()
+void DefGroup::update_page_number()
 {
-    QString str = QString::number(CurrentPage)  + "/" + DefectGroupData.pageCount;
+    QString str = QString::number(CurrentPage)  + "/" + QString::number(totalCount / m_each_page_count + 1);
     m_pagecount_label->setText(str);
+}
+
+void DefGroup::jump_page(int page_number)
+{
+    if (page_number < 1 ||
+            ((page_number > (totalCount / m_each_page_count + 1)) &&
+             (page_number * 10 != totalCount)))
+    {
+        return;
+    }
+
+    if (page_number == 1)
+    {
+        nextButton->setDisabled(false);
+        pervButton->setDisabled(true);
+    }
+    else if(page_number > 1 &&
+            ((page_number <  (totalCount / m_each_page_count + 1)) &&
+            (page_number * 10 != totalCount)))
+    {
+        nextButton->setDisabled(false);
+        pervButton->setDisabled(false);
+    }
+    else if((page_number ==  (totalCount / m_each_page_count + 1)) ||
+            (page_number * 10 == totalCount))
+    {
+        nextButton->setDisabled(true);
+        pervButton->setDisabled(false);
+    }
+
+    qlonglong currIndex = (page_number - 1) * 10;
+    DefectGroupData.limitIndex = QString::number(currIndex);
+    CurrentPage = page_number;
+    update_page();
 }
 
 void DefGroup::setData()
 {
     Q_UNUSED(groupId);
     DefectGroupData.table_id = QString::number(tableId);
-    DefectGroupData.pageCount = "10";
-    CurrentPage = 0;
-    DefectGroupData.limitIndex = QString::number(CurrentPage);
+    DefectGroupData.pageCount = QString::number(m_each_page_count);
+    CurrentPage = 1;
+    DefectGroupData.limitIndex = "0";
     updataTable();
 }
 
@@ -318,7 +370,7 @@ void DefGroup::setTotal()
     }
 }
 
-void DefGroup::upDataPage()
+void DefGroup::update_page()
 {
     openDB();
     setTotal();
@@ -331,6 +383,7 @@ void DefGroup::upDataPage()
     DefGroupTable->setColumnWidth(2, 150);
     DefGroupTable->setColumnWidth(3, 150);
     sqlManager->closeDB();
+    update_page_number();
 }
 
 void DefGroup::resizeColumns()

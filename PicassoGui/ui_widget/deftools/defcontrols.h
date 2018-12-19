@@ -259,25 +259,7 @@ protected:
  */
 class TabWidget :public QTabWidget
 {
-      Q_OBJECT
-public:
-    explicit TabWidget(QWidget *parent = 0);
-    ~TabWidget();
 
-signals:
-    void signal_mouseMove(const QPoint& p);
-
-public slots:
-    void slot_TabClose(int);
-
-private:
-    void mouseMoveEvent(QMouseEvent *e)
-    {
-        setCursor(Qt::ArrowCursor);
-        QWidget::mouseMoveEvent(e);
-    }
-
-    void remove_paint_tab(QString);
 
 
 };
@@ -315,8 +297,6 @@ public:
 private:
     QLineEdit* searchEdit;
     QPushButton *searchButton;
-
-
 };
 
 class TitleWidget : public QWidget
@@ -399,6 +379,21 @@ public:
 private:
     TitleWidget *tWidget;
     QVBoxLayout *Vlayout;
+};
+class PageJumpEdit :public QLineEdit
+{
+   Q_OBJECT
+public:
+    explicit PageJumpEdit(QWidget *parent = 0);
+
+public slots:
+    void slot_jump_action();
+
+signals:
+    void signal_jump(QString);
+
+private:
+    PushButton * m_jump_button;
 };
 }
 #endif // DEFCONTROLS_H

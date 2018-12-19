@@ -42,7 +42,6 @@ void FileProjectWidget::slot_DoubleClickItem(QModelIndex index)
 void FileProjectWidget::slot_ClickItem(QModelIndex modelIndex)
 {
     m_active_index = modelIndex.row();
-    emit signal_DoubleClickItem(modelIndex);
 }
 
 void FileProjectWidget::slot_context_menu(QPoint pos)

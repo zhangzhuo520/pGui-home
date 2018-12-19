@@ -55,10 +55,8 @@ void DockWidget::place(Qt::DockWidgetArea area, bool place)
  */
 TabWidget::TabWidget(QWidget *parent)
 {
-    setPalette(parent);
-    sizePolicy().setVerticalPolicy(QSizePolicy::Ignored);
-    setTabsClosable(true);
-    setMouseTracking(true);
+    Q_UNUSED(parent);
+
 }
 
 /**
@@ -190,16 +188,27 @@ void TabWidget::slot_TabClose(int index)
 {
     removeTab(index);
 }
-
-void TabWidget::remove_paint_tab(QString filename)
+PageJumpEdit::PageJumpEdit(QWidget *parent)
 {
-    for (int i = 0; i < count(); i ++)
-    {
-        if (filename == tabText(i))
-        {
-            removeTab(i);
-        }
-    }
+    setParent(parent);
+    m_jump_button = new PushButton("Go", this);
+    m_jump_button->setFixedSize(20, 19);
+   // m_jump_button->setFixedWidth(20);
+    setTextMargins(0, 0, m_jump_button->width(), 0);
+
+    QHBoxLayout *hlayout = new QHBoxLayout();
+    hlayout->setContentsMargins(0, 0, 0, 0);
+    hlayout->setSpacing(0);
+    hlayout->addWidget(m_jump_button, 0, Qt::AlignRight);
+    setLayout(hlayout);
+
+    connect(m_jump_button, SIGNAL(clicked()), this, SLOT(slot_jump_action()));
+}
+
+void PageJumpEdit::slot_jump_action()
+{
+    emit signal_jump(text());
 }
 
 }
+

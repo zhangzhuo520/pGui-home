@@ -64,5 +64,8 @@
         <file>images/snap.png</file>
         <file>images/zoomOut.png</file>
         <file>images/zoomIn.png</file>
+        <file>images/last_page.png</file>
+        <file>images/next_page.png</file>
+        <file>images/setpos.png</file>
     </qresource>
 </RCC>

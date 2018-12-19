@@ -35,11 +35,13 @@ void ScaleFrame::initRenderFrame()
     m_hlayout->addWidget(m_render_frame);
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), this, SLOT(slot_box_updated(double,double,double,double)));
     connect(m_render_frame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_pos_updated(double, double)));
+    connect(m_render_frame, SIGNAL(signal_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >)), m_paint_widget, SLOT(slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >)));
+    connect(m_render_frame, SIGNAL(signal_get_snap_pos(QPoint,double,double,int)), m_paint_widget, SLOT(slot_get_snap_pos(QPoint,double,double,int)));
     connect(m_paint_widget, SIGNAL(signal_updateDistance(double)), this, SLOT(slot_distance_updated(double)));
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
     connect(m_paint_widget, SIGNAL(signal_get_snap_pos(QPoint, int)), m_render_frame, SLOT(slot_get_snap_pos(QPoint, int)));
+    connect(m_paint_widget, SIGNAL(signal_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >)), m_render_frame, SLOT(slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >)));
     connect(this, SIGNAL(signal_refresh()), m_render_frame, SLOT(slot_refresh()));
-//    connect(m_paint_widget, SIGNAL(signal_repaint_ruler(QList<QPair<QPointF,QPointF> >)), m_render_frame, SLOT(slot_repaint_ruler(QList<QPair<QPointF, QPointF> >)));
     connect(this, SIGNAL(signal_zoom_in()), m_render_frame, SLOT(slot_zoom_in()));
     connect(this, SIGNAL(signal_zoom_out()), m_render_frame, SLOT(slot_zoom_out()));
     connect(this, SIGNAL(signal_box_updated()), m_render_frame, SLOT(slot_box_updated()));

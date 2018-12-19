@@ -72,6 +72,8 @@ private slots:
 
     void slot_CheckListContextMenu(const QPoint&);
 
+    void slot_update_current_index(QModelIndex);
+
     void slot_showDefGroup(QModelIndex);
 
     void slot_openLVCK(QString);
@@ -146,6 +148,8 @@ private:
 
     int m_width;
     int m_height;
+
+    int m_active_tree_index;
 };
 }
 #endif // CheckList_H

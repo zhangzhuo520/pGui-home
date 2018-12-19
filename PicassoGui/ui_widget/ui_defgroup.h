@@ -46,7 +46,7 @@ public:
 
     void setTotal();
 
-    void upDataPage();
+    void update_page();
 
     void showDefects(QModelIndex *);
 
@@ -76,9 +76,13 @@ public slots:
 
     void slot_nextPage();
 
+    void slot_jump_page(QString);
+
     void slot_sort_by_column(int, Qt::SortOrder);
 private:
-    void update_page();
+    void update_page_number();
+
+    void jump_page(int);
 
     QString DbPath;
 
@@ -87,6 +91,8 @@ private:
     QWidget *Buttonbar;
 
     QLabel *sortLable;
+
+    PageJumpEdit * m_page_jump_edit;
 
     QPushButton *pervButton;
 
@@ -125,6 +131,8 @@ private:
     int jobIndex;
 
     int CurrentPage;
+
+    int m_current_number;
 
     int tableId;
 

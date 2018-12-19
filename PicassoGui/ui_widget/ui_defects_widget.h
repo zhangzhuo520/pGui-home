@@ -46,7 +46,7 @@ public:
 
     void setTotal();
 
-    void upDataPage();
+    void update_page();
 
     void showDefects(QModelIndex *);
 
@@ -65,20 +65,26 @@ signals:
 public slots:
     void slot_showDefects(QModelIndex *);
 
-    void slot_defectsUpdata(QModelIndex *);
+//    void slot_defectsUpdata(QModelIndex *);
 
-    void slot_changSortQrder(QString);
+//    void slot_changSortQrder(QString);
 
-    void slot_m_descent_buttonCheck();
+//    void slot_m_descent_buttonCheck();
 
-    void slot_m_ascen_buttonCheck();
+//    void slot_m_ascen_buttonCheck();
 
     void slot_sort_by_column(int, Qt::SortOrder);
 
     void slot_pervPage();
 
     void slot_nextPage();
+
+    void slot_jump_click(QString);
 private:
+    void update_page_number();
+
+    void jump_page(int);
+
     QString m_db_path;
 
     QTableView *m_defects_table;
@@ -90,6 +96,8 @@ private:
     QPushButton *m_perv_button;
 
     QPushButton *m_next_button;
+
+    PageJumpEdit * m_page_jump_edit;
 
     QModelIndex *m_model_index;
 

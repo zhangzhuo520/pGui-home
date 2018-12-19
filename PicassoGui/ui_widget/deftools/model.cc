@@ -1,6 +1,8 @@
 #include "model.h"
 namespace ui {
-static int esption = 5;
+
+static const int epsilon = 5;
+
 SqlQueryModel::SqlQueryModel(QObject *parent)
 {
     setParent(parent);
@@ -23,7 +25,7 @@ QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
     if((Qt::DisplayRole == role))
     {
         if (value.toString().split('.').count() > 1 &&
-                value.toString().split('.').at(1).left(5).toInt() >= esption)
+                value.toString().split('.').at(1).left(5).toInt() >= epsilon)
         {
             return QString ::number(value.toDouble(), 'f', 4);
         }
@@ -55,6 +57,7 @@ TreeModel::TreeModel(QObject *parent)
 {
     setParent(parent);
 }
+
 
 QVariant TreeModel::data(const QModelIndex &item, int role) const
 {
