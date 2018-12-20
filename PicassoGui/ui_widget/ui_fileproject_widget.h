@@ -28,7 +28,7 @@ public:
 
 signals:
     void signal_DoubleClickItem(QModelIndex);
-    void close_currentFile(int);
+    void close_currentFile(QString);
     void signal_openFile();
 
 public slots:
@@ -41,7 +41,7 @@ public slots:
     void slot_OpenFile();
 
 private:
-
+    QString m_active_filename;
     int m_active_index;
     QTableView *m_project_table;
     FileProjectModel *m_project_tablemodel;

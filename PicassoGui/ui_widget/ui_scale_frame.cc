@@ -767,6 +767,7 @@ void ScaleFrame::slot_set_pen_color(const QColor& color)
 
 render::LayoutView ScaleFrame::load_file(const QString & filename, const QString &dirpath, bool add_layout_view)
 {
+    m_filename = filename;
     return m_render_frame->load_file(filename.toStdString(), dirpath.toStdString(), add_layout_view);
 }
 

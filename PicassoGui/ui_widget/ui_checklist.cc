@@ -187,8 +187,8 @@ void CheckList::read_database(QString DBname)
     m_detectorvector.clear();
     m_sqlmanager->setDatabaseName(DBname);
 
-    m_joblist.append(DBname);
-    m_jobindex = m_joblist.count();
+    m_jobpath_list.append(DBname);
+    m_jobindex = m_jobpath_list.count();
 
     if(m_sqlmanager->openDB())
     {
@@ -303,21 +303,29 @@ void CheckList::slot_append_job(QString dbName)
     updataTreeView();
 }
 
-void CheckList::slot_close_job(int index)
+void CheckList::slot_close_job(QString filename)
 {
-    romove_job(index);
+    if (filename)
 }
 
 void CheckList::romove_job(int index)
 {
+    emit signal_close_job(m_active_index_name);
+    emit signal_close_database_widget(m_jobindex);
     m_checklist_model->removeRow(index);
-    m_joblist.removeAt(index);
+    m_jobpath_list.removeAt(index);
 }
 
 QModelIndex CheckList::get_current_rootindex(QModelIndex index)
 {
     while (!index.parent().data().toString().isEmpty()){
       index = index.parent();
+    }
+    QStringList list = index.data().toString().split(':');
+    if (list.count() > 1)
+    {
+        m_active_index_name = list.at(1);
+        m_jobindex = list.at(0).right(list.at(0).size() - 3).toInt();
     }
     return index;
 }

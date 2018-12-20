@@ -36,6 +36,7 @@ void FileProjectWidget::init()
 void FileProjectWidget::slot_DoubleClickItem(QModelIndex index)
 {
     m_active_index = index.row();
+    m_active_filename = index.data().toString();
     emit signal_DoubleClickItem(index);
 }
 
@@ -78,7 +79,7 @@ void FileProjectWidget::slot_CloseItem()
         return;
     }
 
-    emit close_currentFile(m_active_index);
+    emit close_currentFile(m_active_filename);
     m_project_tablemodel->removeFile(m_active_index);
 }
 

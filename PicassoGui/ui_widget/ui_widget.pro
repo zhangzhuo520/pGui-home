@@ -35,7 +35,7 @@ SOURCES += main.cc\
     ui_measurepoint.cc \
     ui_paint_widget.cc \
     ui_paint_toolbar.cc \
-    ui_tab_paintwidget.cpp
+    ui_tab_paintwidget.cc
 
 HEADERS  += mainwindow.h \
     gearmanconnector.h \

@@ -67,6 +67,8 @@ signals:
 
     void signal_append_job(QString);
 
+    void signal_close_database_widget(int);
+
 private slots:    
     void slot_close_currentjob();
 
@@ -94,7 +96,7 @@ private slots:
 public slots:
     void slot_append_job(QString);
 
-    void slot_close_job(int);
+    void slot_close_job(QString);
 
 private:
     void romove_job(int);
@@ -124,7 +126,6 @@ private:
     QTreeView *m_checklist_tree;
     QStandardItemModel *m_checklist_model;
     SQLManager *m_sqlmanager;
-    QStringList m_joblist;
     QString m_jobdata;
     QString m_count;
     QString m_cond_count;
@@ -150,6 +151,9 @@ private:
     int m_height;
 
     int m_active_tree_index;
+    QString m_active_index_name;
+
+    QStringList m_jobpath_list;
 };
 }
 #endif // CheckList_H

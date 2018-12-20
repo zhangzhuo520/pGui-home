@@ -34,6 +34,10 @@ public:
     void calcu_defecttext_point();
     void draw_point_size();
     void draw_measure_point();
+    const QString &get_file_name() const
+    {
+        return m_filename;
+    }
 
     render::LayoutView load_file(const QString &, const QString &, bool);
     render::RenderFrame* getRenderFrame();
@@ -78,6 +82,7 @@ private:
     void darw_Y_axis(QPainter &);
     double toDouble_1(double);
 
+    QString m_filename;
     double m_xratio;
     double m_yratio;
 //    double m_xratio_prev;

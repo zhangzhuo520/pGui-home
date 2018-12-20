@@ -62,7 +62,7 @@ public:
 
     QImage setImage(layerStyle);
 
-    void getLayerData(render::RenderFrame* view, QString currentFile);
+    void getLayerData(render::RenderFrame * view, QString currentFile);
 
     void setLayerData(layerStyle);
 

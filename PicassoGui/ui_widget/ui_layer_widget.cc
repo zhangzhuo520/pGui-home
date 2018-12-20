@@ -102,7 +102,9 @@ void LayerWidget::slot_activedModelIndex(QModelIndex index)
     m_active_model_index =  index.row();
     m_active_model_rootIndex = index.parent().row();
 
-    m_view->set_current_layer(m_active_model_index);
+    TIME_DEBUG
+    qDebug() << m_active_model_index;
+  //  m_view->set_current_layer(m_active_model_index);
 }
 
 void LayerWidget::slot_treeItemChanged(QStandardItem *item)
@@ -578,7 +580,7 @@ void LayerWidget::getLayerData(render::RenderFrame* view, QString currentFile)
         rootItem_vector.clear();
         return;
     }
-    m_renderFrame = view;
+    m_view = view;
     rootFileItem = new TreeItem(currentFile);
     rootItem_vector.append(rootFileItem);
 
@@ -593,8 +595,6 @@ void LayerWidget::getLayerData(render::RenderFrame* view, QString currentFile)
     layerTreeModel->setItem(0, rootFileItem);
 
     TreeItem* pStandardItem = NULL;
-
-    m_view = view;
 
     for (uint i = 0; i < view->layers_size(); i++ )
     {
@@ -700,8 +700,8 @@ void LayerWidget::setLayerData(layerStyle layer_style)
     layerProperty.set_line_style(layer_style.line_style);
     layerProperty.set_pattern(layer_style.pattern_Id);
     layerProperty.set_visible(layer_style.isVisible);
-    m_renderFrame->set_current_layer(index);
-    m_renderFrame->set_properties(index, layerProperty);
+    m_view->set_current_layer(index);
+    m_view->set_properties(index, layerProperty);
 }
 
 void LayerWidget::setModelIdexImage(QImage image)

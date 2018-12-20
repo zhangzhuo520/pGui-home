@@ -94,7 +94,7 @@ private slots:
     void slot_undo();
 
     void slot_drawPoint(const QModelIndex &);
-    void slot_show_checklist(QString);
+    void slot_open_job(QString);
 
     void slot_addFile(QString);
     void slot_creat_canvas(QModelIndex);
@@ -114,6 +114,8 @@ private slots:
     void slot_showScaleAxis(bool);
     void slot_setPosAction();
     void slot_setPosButton();
+
+    void slot_close_database_widget(int);
 
 //    void slot_refreshAction();
 
@@ -141,7 +143,11 @@ private:
 
     void initConnection();
     void initStyle();
-    void open_database(QString);
+
+    void show_checklist(QString);
+    void close_checklist_job(QString);
+
+    bool tab_is_job_or_osa(QString);
 
     DockWidget *fileDockWidget;
     FileProjectWidget *fileWidget;
@@ -165,7 +171,7 @@ private:
 
     int m_current_tabid;
     QString m_current_filename;
-    QString DbPath;
+    QString m_database_path;
     QTreeView *layerTree;
 
     CheckList *checklistWidget;
@@ -189,7 +195,7 @@ private:
     QAction *rulerAction;
     QAction *mouseAction;
 
-    bool isShowAxis;
+    bool m_axis_show;
 
     QDialog *m_setpos_dialog;
     QLabel *m_pos_label;
@@ -204,8 +210,8 @@ private:
     QStringList historyFileList;
     QString m_prep_dir;
 
-    QStringList m_job_filename_list;
-    QStringList m_job_tempname_list;
+    QStringList m_tab_filename_list;
+    QStringList m_checklist_file_list;
 };
 }
 #endif // MAINWINDOW_H

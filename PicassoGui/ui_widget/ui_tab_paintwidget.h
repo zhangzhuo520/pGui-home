@@ -10,23 +10,33 @@ class TabPaintWidget:public QTabWidget
 {
     Q_OBJECT
 public:
-  explicit TabPaintWidget(QWidget *parent = 0);
-  ~TabPaintWidget();
+    explicit TabPaintWidget(QWidget *parent = 0);
+
+    ScaleFrame *get_scaleframe(int);
+
+    void append_canvas(QString);
+
+    ~TabPaintWidget();
 
 public slots:
   void slot_close_tab(QString);
 
-  void creat_canvas(QString);
+  void creat_canvas();
 
  render::LayoutView load_file(const QString &, const QString &, bool);
 
+signals:
+ void signal_close_tab(QString);
+
+
 private:
 
+ QString database_to_oas(QString);
   int string_to_index(QString);
 
-  QStringList m_filename_list;
+//  ScaleFrame *m_scaleframe;
 
-  ScaleFrame *scameframe;
+  QVector <ScaleFrame *> m_scaleframe_vector;
 
 };
 

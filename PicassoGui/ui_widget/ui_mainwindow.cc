@@ -257,7 +257,7 @@ void MainWindow::initToolbar()
     scaleAction->setCheckable(true);
     connect(scaleAction, SIGNAL(toggled(bool)), this, SLOT(slot_showScaleAxis(bool)));
     ScaleToolBar->addAction(scaleAction);
-    isShowAxis = false;
+    m_axis_show = false;
 
     QAction *setPosAction = new QAction(QIcon(":/dfjy/images/setpos.png"),"setPos", this);
     connect(setPosAction, SIGNAL(triggered()), this, SLOT(slot_setPosAction()));
@@ -304,6 +304,8 @@ void MainWindow::initCheckList()
     checklistWidget->setMinimumHeight(0);
     checkListDockWidget->resize(100, 300);
     checkListDockWidget->setWidget(checklistWidget);
+
+    connect(checklistWidget, SIGNAL(signal_close_database_widget(int)), this , SLOT(slot_close_database_widget(int)));
 }
 
 /**
@@ -316,7 +318,7 @@ void MainWindow::init_fileProject_widget()
     fileDockWidget->setWidget(fileWidget);
     connect(fileWidget, SIGNAL(signal_DoubleClickItem(QModelIndex)), this, SLOT(slot_creat_canvas(QModelIndex)));
     connect(this, SIGNAL(signal_addFile(QString)), fileWidget, SLOT(slot_addFile(QString)));
-    connect(fileWidget, SIGNAL(close_currentFile(int)), m_paint_tabwidget, SLOT(slot_TabClose(int)));
+    connect(fileWidget, SIGNAL(close_currentFile(QString)), m_paint_tabwidget, SLOT(slot_close_tab(QString)));
 }
 
 /**
@@ -343,8 +345,8 @@ void MainWindow::init_fileProject_workSpace()
 void MainWindow::initConnection()
 {
     connect(this, SIGNAL(singal_append_job(QString)), checklistWidget ,SLOT(slot_append_job(QString)));
-    connect(this, SIGNAL(signal_close_job(int)), checklistWidget, SLOT(slot_close_job(int)));
-    connect(checklistWidget, SIGNAL(signal_close_job(QString)), m_paint_tabwidget, SLOT(s(QString)));
+    connect(this, SIGNAL(signal_close_job(QString)), checklistWidget, SLOT(slot_close_job(QString)));
+    connect(checklistWidget, SIGNAL(signal_close_job(QString)), m_paint_tabwidget, SLOT(slot_close_tab(QString)));
 //    connect(checklistWidget, SIGNAL(signal_append_job(QString)), this, SLOT(slot_append_job(QString)));
     connect(checklistWidget, SIGNAL(signal_showDefGroup(QModelIndex, int)), this ,SLOT(slot_showDefGroup(QModelIndex, int)));
     connect(fileWidget, SIGNAL(signal_openFile()), this, SLOT(slot_openFile()));
@@ -508,7 +510,7 @@ void MainWindow::slot_AddonActions()
 
 void MainWindow::slot_showScaleAxis(bool isShow)
 {
-     isShowAxis = isShow;
+     m_axis_show = isShow;
 
      if (m_paint_tabwidget->count() == 0)
      {
@@ -557,7 +559,7 @@ void MainWindow::slot_setPosButton()
     {
         if ((m_current_tabid < m_paint_tabwidget->count()) && (m_paint_tabwidget->count() > 0))
         {
-            m_paint_tabwidget->at(m_current_tabid)->set_defect_point(list.at(0).toDouble(), list.at(1).toDouble());
+            m_paint_tabwidget->get_scaleframe(m_current_tabid)->set_defect_point(list.at(0).toDouble(), list.at(1).toDouble());
             m_setpos_dialog->close();
         }
         else
@@ -565,6 +567,20 @@ void MainWindow::slot_setPosButton()
             showWarning(this, "Waring", "Not Open The Canvas!");
         }
     }
+}
+
+void MainWindow::slot_close_database_widget(int job_number)
+{
+    QString defgroup = "Job" + QString::number(job_number) +"_defGroup";
+    QString defect = "Job" + QString::number(job_number) +"_defects";
+    if (findChild < QWidget * >(defgroup) == 0)
+    {
+        return;
+    }
+    DockWidget *defgroup_widget = findChild < DockWidget * >(defgroup);
+    DockWidget *defect_widget = findChild < DockWidget * >(defect);
+    defgroup_widget->close();
+    defect_widget->close();
 }
 
 void MainWindow::slot_currentTab_changed(int index)
@@ -578,17 +594,29 @@ void MainWindow::slot_currentTab_changed(int index)
     }
     else
     {
-        renderFrame = m_paint_tabwidget->widget(m_current_tabid)->getRenderFrame();
+        renderFrame = m_paint_tabwidget->get_scaleframe(m_current_tabid)->getRenderFrame();
     }
     layerwidget->getLayerData(renderFrame, m_current_filename);
 
+}
+
+/**
+ * @brief MainWindow::slot_closem_paint_tabwidget
+ * @param index
+ */
+void MainWindow::slot_close_paintwidget(int index)
+{
+    QString filename = m_paint_tabwidget->tabText(index);
+
+    m_paint_tabwidget->slot_close_tab(filename);
+    close_checklist_job(filename);
 }
 
 void MainWindow::slot_zoom_in()
 {
     if(m_paint_tabwidget->count() > 0)
     {
-        m_paint_tabwidget->at(m_current_tabid)->zoom_in();
+        m_paint_tabwidget->get_scaleframe(m_current_tabid)->zoom_in();
     }
 }
 
@@ -596,7 +624,7 @@ void MainWindow::slot_zoom_out()
 {
     if(m_paint_tabwidget->count() > 0)
     {
-        m_paint_tabwidget->at(m_current_tabid)->zoom_out();
+        m_paint_tabwidget->get_scaleframe(m_current_tabid)->zoom_out();
     }
 }
 
@@ -604,7 +632,7 @@ void MainWindow::slot_refresh()
 {
     if(m_paint_tabwidget->count() > 0)
     {
-        m_paint_tabwidget->at(m_current_tabid)->refresh();
+        m_paint_tabwidget->get_scaleframe(m_current_tabid)->refresh();
     }
 }
 
@@ -651,7 +679,7 @@ void MainWindow::slot_openREV()
     m_dir_dialog->setWindowTitle(tr("Open Layout File"));
     m_dir_dialog->setDirectory("/home/dfjy/workspace/job");
     m_dir_dialog->setNameFilter(tr("Directories"));
-    connect(m_dir_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_show_checklist(QString)), Qt::UniqueConnection);
+    connect(m_dir_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_open_job(QString)), Qt::UniqueConnection);
     m_dir_dialog->setFileMode(QFileDialog::Directory);
     m_dir_dialog->setViewMode(QFileDialog::List);
     m_dir_dialog->show();
@@ -672,20 +700,23 @@ void MainWindow::slot_drawPoint(const QModelIndex &index)
 
     for(int i = 0; i < m_paint_tabwidget->count(); i ++)
     {
-        m_paint_tabwidget->widget(i)->drawDefectPoint(point_x, point_y, Stringsize);
+        m_paint_tabwidget->get_scaleframe(i)->drawDefectPoint(point_x, point_y, Stringsize);
     }
 }
 
-/**
- * @brief MainWindow::slot_openDB
- * @param dirName
- */
-void MainWindow::open_database(QString dirName)
+void MainWindow::slot_open_job(QString dirName)
 {
+    dirName = dirName + "/DefectFile.oas";
+    for (int i = 0; i < m_job_filename_list; i ++)
+    {
+        if (dirName == m_job_filename_list.at(i))
+        {
+            showWarning(this, "Waring", "You open the same file!");
+            return;
+        }
+    }
+
     QDir dir(dirName);
-    bool isDbFile = false;
-    bool file_exist = false;
-    QString DBname = "";
     QFileInfoList flist = dir.entryInfoList();
     foreach(QFileInfo fileInfo, flist)
     {
@@ -693,43 +724,48 @@ void MainWindow::open_database(QString dirName)
             continue;
         if(fileInfo.suffix() == "db")
         {
-            isDbFile = true;
-            DBname = fileInfo.fileName();
+            m_database_path = dirName + "/" + fileInfo.fileName();
+            show_checklist(m_database_path);
         }
         if (fileInfo.fileName() == "DefectFile.oas")
         {
-            QString str = dirName + "/" + fileInfo.fileName();
-            for (int i = 0; i < m_job_filename_list.count(); i ++)
-            {
-                if (str == m_job_filename_list.at(i))
-                    file_exist = true;
-            }
-
-            //if fiel exist , don't need append file
-            if (!file_exist)
-            {
-                slot_addFile(str);
-                m_job_filename_list.append(str);
-            }
+            QString str = dirName + "/DefectFile.oas";
+            slot_addFile(str);
+            m_job_filename_list.append(str);
         }
     }
-    if (isDbFile)
-    {
-        DbPath = dirName + "/" + DBname;
-        emit singal_append_job(DbPath);
-        checkListDockWidget->show();
-    }
-    else
-    {
-        return;
-    }
-
 }
 
-void MainWindow::slot_show_checklist(QString dirName)
+void MainWindow::show_checklist(QString datapath)
 {
-    open_database(dirName);
+    emit singal_append_job(datapath);
+    checkListDockWidget->show();
 }
+
+void MainWindow::close_checklist_job(QString jobName)
+{
+    for (int i = 0; i < m_checklist_file_list.count(); i ++)
+    {
+        if (jobName == m_checklist_file_list.at(i))
+        {
+            emit signal_close_job(jobName);
+            m_checklist_file_list.removeAt(i);
+        }
+    }
+}
+
+bool MainWindow::tab_is_job_or_osa(QString filename)
+{
+    for (int i = 0; i < m_checklist_file_list; i ++)
+    {
+        if (filename == m_checklist_file_list.at(i))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 /**
  * @brief MainWindow::slot_addFile
@@ -753,24 +789,18 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
     m_current_tabid = index.row();
     if (!isCavseExist(m_current_tabid))
     {
+        m_paint_tabwidget->creat_canvas();
         std::vector<render::LayoutView>::iterator it = fileWidget->get_layout_view_iter(index.row());
-        m_paint_tabwidget->creat_canvas(m_current_filename);
         (*it) = m_paint_tabwidget->load_file(m_current_filename, m_prep_dir, false);
+        m_paint_tabwidget->append_canvas(m_current_filename);
 
-        centerWidget_boundingSignal(m_paint_tabwidget.count() - 1);
+        centerWidget_boundingSignal(m_paint_tabwidget->count() - 1);
 
-        //verify job name exit in fileList
-        for (int i = 0; i < m_job_filename_list.count(); i ++)
+        if (tab_is_job_or_osa(m_current_filename))
         {
-
-            if (m_current_filename == m_job_filename_list.at(i))
-            {
-                //get job path
-                QString path = m_current_filename.left(m_current_filename.size() - 15);
-                open_database(path);
-            }
+            QString path = m_current_filename.left(m_current_filename.size() - 15);
+            show_checklist(path);
         }
-        m_job_tempname_list.append(m_current_filename);
     }
     else
     {
@@ -779,23 +809,7 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
     showCoordinate();
 }
 
-/**
- * @brief MainWindow::slot_closem_paint_tabwidget
- * @param index
- */
-void MainWindow::slot_close_paintwidget(int index)
-{
-    QString jobname = m_paint_tabwidget->tabText(index);
-    m_paint_tabwidget->removeTab(index);
-    for (int i = 0; i < m_job_tempname_list.count(); i ++)
-    {
-        if (jobname == m_job_tempname_list.at(i))
-        {
-            emit signal_close_job(i);
-            m_job_tempname_list.removeAt(i);
-        }
-    }
-}
+
 
 void MainWindow::slot_updateXY(double x, double y)
 {
@@ -823,7 +837,7 @@ void MainWindow::slot_showDefGroup(QModelIndex index, int current_defgroup_index
         m_defgroupdockwidget_vector.append(defGroupDockWidget);
         addDockWidget(Qt::RightDockWidgetArea, defGroupDockWidget);
 
-        DefGroup *defgroup = new DefGroup(defGroupDockWidget, DbPath, &index, current_defgroup_index);
+        DefGroup *defgroup = new DefGroup(defGroupDockWidget, m_database_path, &index, current_defgroup_index);
         m_defgroup_vector.append(defgroup);
         defGroupDockWidget->setWidget(m_defgroup_vector.at(m_defgroup_vector.count() - 1));
         defgroup_count = current_defgroup_index;        //defgrout always is most large defgroup index
@@ -832,7 +846,6 @@ void MainWindow::slot_showDefGroup(QModelIndex index, int current_defgroup_index
     }
     else
     {
-
         if (m_defgroupdockwidget_vector.count() < 1 || current_defgroup_index < 1)
         {
             return;
@@ -855,7 +868,7 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
         DockWidget* defectsDockWidget = new DockWidget("Job" + QString::number(jobIndex) +"_defects", this, 0);
         addDockWidget(Qt::RightDockWidgetArea, defectsDockWidget);
         m_defectsdockwidget_vector.append(defectsDockWidget);
-        DefectsWidget *defectswidget = new DefectsWidget(defectsDockWidget, DbPath, &index, jobIndex);
+        DefectsWidget *defectswidget = new DefectsWidget(defectsDockWidget, m_database_path, &index, jobIndex);
         m_defectswidget_vector.append(defectswidget);
         defectsDockWidget->setWidget(m_defectswidget_vector.at(m_defectswidget_vector.count() - 1));
         oldJobIndex = jobIndex;
@@ -980,14 +993,13 @@ void MainWindow::addHistoryAction(QString filename)
 
 void MainWindow::centerWidget_boundingSignal(int index)
 {
-
-    connect(this, SIGNAL(signal_setPenWidth(QString)),   m_paint_tabwidget->widget(index), SLOT(slot_set_pen_width(QString)));
-    connect(this, SIGNAL(signal_setPenColor(const QColor&)), m_paint_tabwidget->widget(index), SLOT(slot_set_pen_color(const QColor&)));
-    connect(m_paint_tabwidget->widget(index), SIGNAL(signal_updateDistance(double)), this, SLOT(slot_updateDistance(double)));
-    connect(clearBtn, SIGNAL(clicked()), m_paint_tabwidget->widget(index), SLOT(slot_clear_measure_point()));
-    connect(m_paint_tabwidget->widget(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
-    connect(m_paint_toolbar, SIGNAL(signal_setSnapFlag(Global::SnapFLag)), m_paint_tabwidget->widget(index), SLOT(slot_set_snapfalg(Global::SnapFLag)));
-    connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_paint_tabwidget->widget(index), SLOT(slot_set_painter_style(Global::PaintTool)));
+    connect(this, SIGNAL(signal_setPenWidth(QString)),   m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_pen_width(QString)));
+    connect(this, SIGNAL(signal_setPenColor(const QColor&)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_pen_color(const QColor&)));
+    connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_updateDistance(double)), this, SLOT(slot_updateDistance(double)));
+    connect(clearBtn, SIGNAL(clicked()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_measure_point()));
+    connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
+    connect(m_paint_toolbar, SIGNAL(signal_setSnapFlag(Global::SnapFLag)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_snapfalg(Global::SnapFLag)));
+    connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_painter_style(Global::PaintTool)));
     emit signal_setPenWidth(penWidthCombox->currentText());
 }
 
@@ -1005,13 +1017,13 @@ bool MainWindow::isCavseExist(int index)
 
 void MainWindow::showCoordinate()
 {
-    if (isShowAxis)
+    if (m_axis_show)
     {
-        m_paint_tabwidget->widget(m_current_tabid)->layout()->setContentsMargins(20, 20, 0, 0);
+        m_paint_tabwidget->get_scaleframe(m_current_tabid)->layout()->setContentsMargins(20, 20, 0, 0);
     }
     else
     {
-        m_paint_tabwidget->widget(m_current_tabid)->layout()->setContentsMargins(0, 0, 0, 0);
+        m_paint_tabwidget->get_scaleframe(m_current_tabid)->layout()->setContentsMargins(0, 0, 0, 0);
     }
 }
 
