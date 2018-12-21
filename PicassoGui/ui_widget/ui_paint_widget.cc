@@ -71,23 +71,30 @@ void PaintWidget::setPaintStyle(Global::PaintTool paintstyle)
     m_select_mode = paintstyle;
 }
 
-void PaintWidget::slot_get_snap_pos(QPoint pos, double x, double y, int mode)
+void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, int mode)
 {
     if(mode == 1)
     {
-        m_start_pos =  QPointF(x,y);
-        m_ruler_first_point = pos;
+        if(find)
+        {
+            m_start_pos =  micron_p;
+            m_ruler_first_point = pix_p;
+        }
     }
     else if(mode == 2)
     {
-        m_end_pos = QPointF(x, y);
-        m_ruler_last_point = pos;
-        double dx = m_end_pos.x() - m_start_pos.x();
-        double dy = m_end_pos.y() - m_start_pos.y();
-        m_distance = sqrt( dx * dx + dy * dy);
-        emit signal_updateDistance(m_distance);
-        drawMeasureLine();
-        merge_image();
+        if(find)
+        {
+            m_end_pos = micron_p;
+            m_ruler_last_point = pix_p;
+
+            double dx = m_end_pos.x() - m_start_pos.x();
+            double dy = m_end_pos.y() - m_start_pos.y();
+            m_distance = sqrt( dx * dx + dy * dy);
+            emit signal_updateDistance(m_distance);
+            drawMeasureLine();
+            merge_image();
+        }
     }
 }
 
@@ -143,7 +150,22 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
         }
         else if (m_select_mode == Global::MarkCross)
         {
+            //do nothing...
         }
+        else if (m_select_mode == Global::RemoveLine)
+        {
+//            if(m_mouse_clicks == LineStart)
+//            {
+//                m_mouse_clicks = LineEnd;
+//                drawMeasureLine();
+//                merge_image();
+//            }
+
+            QPointF pos = calcu_physical_point(m_current_mousepos);
+            m_measure_point.removeLineData(pos);
+
+        }
+
         break;
     }
     case Qt::RightButton:
@@ -212,6 +234,11 @@ void PaintWidget::mouseMoveEvent (QMouseEvent *e)
                 emit signal_updateDistance(m_distance);
             }
         }
+        break;
+    }
+    case Global::RemoveLine:
+    {
+
         break;
     }
     default:

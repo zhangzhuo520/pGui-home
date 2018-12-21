@@ -78,7 +78,7 @@ public slots:
     void setStyle (int);
     void setWidth (QString);
     void setColor (QColor);
-    void slot_get_snap_pos(QPoint, double, double, int);
+    void slot_get_snap_pos(bool, QPoint, QPointF,int);
     void clear();
     void slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> > result);
 private:

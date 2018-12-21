@@ -23,6 +23,7 @@ public:
     bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
     void removeFile(int row);
+    bool find_file(QString);
 
     std::vector<render::LayoutView>::iterator get_layout_view_iter(int index)
     {

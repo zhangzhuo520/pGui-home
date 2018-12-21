@@ -33,6 +33,11 @@ void FileProjectWidget::init()
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_context_menu(QPoint)));
 }
 
+bool FileProjectWidget::is_file_exist(QString filename)
+{
+    return m_project_tablemodel->find_file(filename);
+}
+
 void FileProjectWidget::slot_DoubleClickItem(QModelIndex index)
 {
     m_active_index = index.row();
@@ -42,6 +47,7 @@ void FileProjectWidget::slot_DoubleClickItem(QModelIndex index)
 
 void FileProjectWidget::slot_ClickItem(QModelIndex modelIndex)
 {
+    m_active_filename = modelIndex.data().toString();
     m_active_index = modelIndex.row();
 }
 

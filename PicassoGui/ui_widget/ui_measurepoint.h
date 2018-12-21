@@ -1,9 +1,13 @@
 #ifndef UI_MEASUREPOINT_H
 #define UI_MEASUREPOINT_H
+#define PI 3.1415927
 
 #include <QObject>
 #include <QPoint>
 #include <QList>
+
+namespace ui
+{
 
 class LineData{
 public:
@@ -16,7 +20,7 @@ class MeasureLine
 {
 public:
     explicit MeasureLine();
-    
+
     inline void appendLineData(const LineData &linedata)
     {
         m_linedata_list.append(linedata);
@@ -31,8 +35,15 @@ public:
     {
         m_linedata_list.clear();
     }
+
+    void removeLineData(QPointF p);
+
+    static double range;
 private:
     QList <LineData> m_linedata_list;
+    bool point_at_edge(QPointF, LineData);
 };
+
+}
 
 #endif // UI_MEASUREPOINT_H

@@ -13,6 +13,7 @@ SET(PicathoGui_SRCS
     ui_checklist.cc
     ui_defgroup.cc
     ui_paint_widget.cc
+    ui_tab_paintwidget.cc
     ui_paint_toolbar.cc
     ui_defects_widget.cc
     ui_layer_widget.cc
@@ -44,6 +45,7 @@ SET(PicathoGui_HEADERS
     ui_defgroup.h
     ui_paint_toolbar.h
     ui_paint_widget.h
+    ui_tab_paintwidget.h
     ui_defects_widget.h
     ui_fileproject_widget.h
     ui_fileproject_model.h
@@ -71,6 +73,7 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     ui_mainwindow.h
     ui_rtsconfig_dialog.h
     ui_scale_frame.h
+    ui_tab_paintwidget.h
     ui_semimage_dialog.h
     ui_chipedit_dialog.h
     ui_choosefile_dialog.h

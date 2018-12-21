@@ -36,7 +36,7 @@ QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
     }
     else if (role == Qt::TextAlignmentRole)
     {
-        return int(Qt::AlignHCenter | Qt::AlignVCenter);
+        return int(Qt::AlignLeft | Qt::AlignVCenter);
     }
     else if (role == Qt::BackgroundRole)
     {

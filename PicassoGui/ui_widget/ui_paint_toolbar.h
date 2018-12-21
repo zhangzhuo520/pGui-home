@@ -45,6 +45,8 @@ public slots:
 
     void slot_snap_click(bool);
 
+    void slot_eraser_click(bool);
+
 private:
     Global::PaintStyle m_paint_style;
     PushButton *m_normal_button;
@@ -52,6 +54,7 @@ private:
     PushButton *m_measure_line_button;
     PushButton *m_measure_angle_button;
     PushButton *m_snap_button;
+    PushButton *m_eraser_button;
 };
 }
 #endif // UI_PAINT_TOOLBAR_H

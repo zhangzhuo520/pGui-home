@@ -37,7 +37,8 @@ public:
         Nothing,
         MeasureLine,
         MeasureAngle,
-        MarkCross
+        MarkCross,
+        RemoveLine
     };
 
     enum SnapFLag

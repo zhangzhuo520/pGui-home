@@ -4,18 +4,16 @@
 
 namespace render{
 
-const Oasis::int64 dbu = 10000;
-
 class Viewport
 {
 public:
     Viewport();
 
-    Viewport(unsigned int width, unsigned int height, const Oasis::OasisBox& target);
+    Viewport(unsigned int width, unsigned int height, const Oasis::OasisBoxF& target);
 
     void set_size(unsigned int width, unsigned int height);
 
-    void set_box(const Oasis::OasisBox& target);
+    void set_box(const Oasis::OasisBoxF& target);
 
     void set_trans(const Oasis::OasisTrans& trans);
 
@@ -34,9 +32,9 @@ public:
         return m_trans;
     }
 
-    Oasis::OasisBox box() const;
+    Oasis::OasisBoxF box() const;
 
-    Oasis::OasisBox target_box() const
+    Oasis::OasisBoxF target_box() const
     {
         return m_target_box;
     }
@@ -44,7 +42,7 @@ public:
 private:
     unsigned int m_width, m_height;
     Oasis::OasisTrans m_trans;
-    Oasis::OasisBox m_target_box;
+    Oasis::OasisBoxF m_target_box;
 };
 
 }

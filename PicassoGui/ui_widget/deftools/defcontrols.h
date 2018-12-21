@@ -126,12 +126,12 @@ public:
                       "QPushButton::pressed{"\
                       "background-color: rgba(150, 150, 150);}"
 
-                      "QPushButton#markButton,QPushButton#measureLineButton,QPushButton#measureAngleButton,QPushButton#snapButton{"\
+                      "QPushButton#markButton,QPushButton#measureLineButton,QPushButton#measureAngleButton,QPushButton#snapButton,QPushButton#measureEraserButton{"\
                       "border:0px;}"
-                      "QPushButton#markButton::hover,QPushButton#measureLineButton::hover,QPushButton#measureAngleButton::hover,QPushButton#snapButton::hover{"\
+                      "QPushButton#markButton::hover,QPushButton#measureLineButton::hover,QPushButton#measureAngleButton::hover,QPushButton#snapButton::hover,QPushButton#measureEraserButton::hover{"\
                       "border:0px;"
                       "background-color: rgba(180, 180, 180);}"
-                      "QPushButton#markButton::checked,QPushButton#measureLineButton::checked,QPushButton#measureAngleButton::checked,QPushButton#snapButton::checked{"\
+                      "QPushButton#markButton::checked,QPushButton#measureLineButton::checked,QPushButton#measureAngleButton::checked,QPushButton#snapButton::checked,QPushButton#measureEraserButton::checked{"\
                       "border:0px;"
                       "background-color: rgba(100, 100, 100);}");\
 
@@ -259,7 +259,23 @@ protected:
  */
 class TabWidget :public QTabWidget
 {
+      Q_OBJECT
+public:
+    explicit TabWidget(QWidget *parent = 0);
+    ~TabWidget();
 
+signals:
+    void signal_mouseMove(const QPoint& p);
+
+public slots:
+    void slot_TabClose(int);
+
+private:
+    void mouseMoveEvent(QMouseEvent *e)
+    {
+        setCursor(Qt::ArrowCursor);
+        QWidget::mouseMoveEvent(e);
+    }
 
 
 };

@@ -62,7 +62,7 @@ public:
     void writeSettingConfig();
     void addHistoryAction(QString);
     void centerWidget_boundingSignal(int);
-    bool isCavseExist(int);
+    bool isCavseExist(QString);
     void showCoordinate();
     void DefectReview();
     void RTSSetup();
@@ -83,13 +83,13 @@ signals:
     void signal_setPenColor(const QColor &);
     void signal_setPaintStyle(Global::PaintStyle);
     void signal_getLayerData(render::RenderFrame*, QString);
-    void signal_close_job(int);
+    void signal_close_job(QString);
 
 private slots:
     //Menu Action
     void slot_openFile();
     void slot_saveFile();
-    void slot_closeFile();
+    void slot_closeFile(QString);
     void slot_openREV();
     void slot_undo();
 
@@ -123,7 +123,7 @@ private slots:
     void slot_zoom_in();
     void slot_zoom_out();
     void slot_refresh();
-
+    void slot_zoom_fit();
 private:
     void initTitleBar();
     void initMenubar();
@@ -146,6 +146,7 @@ private:
 
     void show_checklist(QString);
     void close_checklist_job(QString);
+    void delete_checklist_job(QString);
 
     bool tab_is_job_or_osa(QString);
 
@@ -210,7 +211,6 @@ private:
     QStringList historyFileList;
     QString m_prep_dir;
 
-    QStringList m_tab_filename_list;
     QStringList m_checklist_file_list;
 };
 }

@@ -305,10 +305,19 @@ void CheckList::slot_append_job(QString dbName)
 
 void CheckList::slot_close_job(QString filename)
 {
-    if (filename)
+    QString m_filename = filename.left(filename.size() - 15);
+    QString m_jobpath = "";
+    for (int i = 0; i < m_jobpath_list.count(); i ++)
+    {
+        m_jobpath = m_jobpath_list.at(i).left(m_jobpath_list.at(i).count() - 10);
+        if (m_jobpath == m_filename)
+        {
+            remove_job(i);
+        }
+    }
 }
 
-void CheckList::romove_job(int index)
+void CheckList::remove_job(int index)
 {
     emit signal_close_job(m_active_index_name);
     emit signal_close_database_widget(m_jobindex);
@@ -511,6 +520,6 @@ void CheckList::slot_RenameOk()
 
 void CheckList::slot_close_currentjob()
 {
-    romove_job(m_active_tree_index);
+    remove_job(m_active_tree_index);
 }
 }

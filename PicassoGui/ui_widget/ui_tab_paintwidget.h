@@ -16,6 +16,8 @@ public:
 
     void append_canvas(QString);
 
+    void set_active_widget(QString);
+
     ~TabPaintWidget();
 
 public slots:

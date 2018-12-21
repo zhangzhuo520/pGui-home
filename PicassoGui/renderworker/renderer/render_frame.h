@@ -6,6 +6,8 @@
 #include <QMutex>
 #include <QColor>
 
+#include "oasis_types.h"
+
 #include "render_view_object.h"
 #include "render_viewport.h"
 #include "render_bitmap.h"
@@ -14,6 +16,8 @@
 #include "render_line_style.h"
 #include "render_layer_properties.h"
 #include "render_layout_view.h"
+
+#include <QDebug>
 
 class QImage;
 class QPixmap;
@@ -28,9 +32,6 @@ class QMouseEvent;
 namespace Oasis
 {
     class OasisLayout;
-
-    class OasisBox;
-
 }
 
 namespace render{
@@ -102,7 +103,7 @@ public:
 
     void set_cursor_widget(QWidget *);
 
-    Oasis::OasisBox get_box() const;
+    Oasis::OasisBoxF get_box() const;
 
     const Oasis::OasisTrans& get_trans() const
     {
@@ -110,13 +111,13 @@ public:
     }
 
 
-    std::pair<QPoint, std::pair<double,double> > get_snap_point(QPoint p);
+    std::pair<bool, std::pair<QPoint, QPointF> > get_snap_point(QPoint p);
 
     void set_defect_point(double x, double y);
 
     void center_at_point(double x, double y);
 
-    void zoom_center(int x, int y);
+    void zoom_center(double x, double y);
 
     void add_layout_view(LayoutView& );
 
@@ -133,7 +134,8 @@ signals:
     void signal_right_key_pressed();
     void signal_pos_updated(double x, double y);
     void signal_box_updated(double left, double bot, double right, double top);
-    void signal_get_snap_pos(QPoint p, double, double, int mode);
+    void signal_get_snap_pos(bool, QPoint, QPointF, int mode);
+    void signal_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >);
 
 public slots:
     void slot_down_shift();
@@ -144,6 +146,9 @@ public slots:
     void slot_box_updated();
     void slot_zoom_in();
     void slot_zoom_out();
+    void slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >);
+    void slot_refresh();
+    void slot_zoom_fit();
 
 protected:
     virtual void mouseMoveEvent(QMouseEvent* e);
@@ -157,7 +162,7 @@ private:
 
     void prepare_drawing();
 
-    void zoom_box(const Oasis::OasisBox& box);
+    void zoom_box(const Oasis::OasisBoxF& box);
 
     void init_viewport();
 
@@ -185,6 +190,7 @@ private:
 
     unsigned int m_current_layer;
 
+    QColor m_background_color;
 };
 
 }

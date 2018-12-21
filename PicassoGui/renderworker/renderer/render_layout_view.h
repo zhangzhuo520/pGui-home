@@ -62,6 +62,24 @@ public:
         m_file_name = file_name;
     }
 
+    Oasis::float64 get_dbu() const
+    {
+        Oasis::OasisLayout* p = m_layout.get();
+        if(p)
+        {
+            return p->get_dbu();
+        }
+        else
+        {
+            return 0.0001;
+        }
+    }
+
+    int get_count() const
+    {
+        return m_layout.use_count();
+    }
+
 private:
     friend class RenderFrame;
 

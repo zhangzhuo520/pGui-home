@@ -43,8 +43,9 @@ public:
     render::RenderFrame* getRenderFrame();
 
     void zoom_in();
-
     void zoom_out();
+    void refresh();
+    void zoom_fit();
 
 signals:
     void signal_pos_updated(double, double);
@@ -53,6 +54,7 @@ signals:
     void signal_zoom_in();
     void signal_zoom_out();
     void signal_refresh();
+    void signal_zoom_fit();
 
 public slots:
     void slot_box_updated(double,double,double,double);
@@ -64,7 +66,6 @@ public slots:
     void slot_move_point_center();
     void slot_clear_measure_point();
     void slot_set_snapfalg(Global::SnapFLag);
-    void refresh();
 
 protected:
     void paintEvent(QPaintEvent *);

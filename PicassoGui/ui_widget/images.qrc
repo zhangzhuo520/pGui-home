@@ -5,7 +5,7 @@
         <file>images/error.png</file>
         <file>images/fontawesome-webfont.ttf</file>
         <file>images/Font Awesome Cheatsheet.png</file>
-        <file>images/fullScren.png</file>
+        <file>images/fit.png</file>
         <file>images/info.png</file>
         <file>images/lineWidth.png</file>
         <file>images/left.png</file>
@@ -67,5 +67,6 @@
         <file>images/last_page.png</file>
         <file>images/next_page.png</file>
         <file>images/setpos.png</file>
+        <file>images/eraser.png</file>
     </qresource>
 </RCC>

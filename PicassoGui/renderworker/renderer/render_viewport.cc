@@ -8,7 +8,7 @@ Viewport::Viewport():m_width(0), m_height(0)
 
 }
 
-Viewport::Viewport(unsigned int width, unsigned int height, const Oasis::OasisBox &target)
+Viewport::Viewport(unsigned int width, unsigned int height, const Oasis::OasisBoxF &target)
 {
     m_width = width;
     m_height = height;
@@ -25,12 +25,12 @@ void Viewport::set_size(unsigned int width, unsigned int height)
 void Viewport::set_trans(const Oasis::OasisTrans& transform)
 {
     m_trans = transform;
-    Oasis::OasisPoint p1 = transform.trans(Oasis::OasisPoint(0, 0));
-    Oasis::OasisPoint p2 = transform.trans(Oasis::OasisPoint(width(), height()));
-    m_target_box = Oasis::OasisBox(p1.x(), p1.y(), p2.x(), p2.y());
+    Oasis::OasisPointF p1 = transform.transF(Oasis::OasisPointF(0, 0));
+    Oasis::OasisPointF p2 = transform.transF(Oasis::OasisPointF(width(), height()));
+    m_target_box = Oasis::OasisBoxF(p1.x(), p1.y(), p2.x(), p2.y());
 }
 
-void Viewport::set_box(const Oasis::OasisBox& box)
+void Viewport::set_box(const Oasis::OasisBoxF& box)
 {
     m_target_box = box;
 
@@ -55,11 +55,11 @@ void Viewport::set_box(const Oasis::OasisBox& box)
     m_trans =  Oasis::OasisTrans(false, 0.0, (Oasis::float64)1.0 / ratio, Oasis::OasisPointF(-dx, -dy));
 }
 
-Oasis::OasisBox Viewport::box() const
+Oasis::OasisBoxF Viewport::box() const
 {
-    Oasis::OasisPoint p1 = trans().inverted().trans(Oasis::OasisPoint(0, 0));
-    Oasis::OasisPoint p2 = trans().inverted().trans(Oasis::OasisPoint(width(), height()));
-    return Oasis::OasisBox(p1.x(), p1.y(), p2.x(), p2.y());
+    Oasis::OasisPointF p1 = trans().inverted().transF(Oasis::OasisPointF(0, 0));
+    Oasis::OasisPointF p2 = trans().inverted().transF(Oasis::OasisPointF(width(), height()));
+    return Oasis::OasisBoxF(p1.x(), p1.y(), p2.x(), p2.y());
 
 }
 

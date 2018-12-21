@@ -29,6 +29,8 @@ void DefGroup::initDefGroupTable()
 //    DefGroupTable->horizontalHeader()->setClickable(false);
     DefGroupTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     DefGroupTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    DefGroupTable->horizontalHeader()->setHighlightSections(false);
+    DefGroupTable->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
     DefGroupTable->verticalHeader()->setDefaultSectionSize(20);
     DefGroupTable->verticalHeader()->setMinimumSectionSize(20);
     DefGroupTable->verticalHeader()->hide();
@@ -298,8 +300,6 @@ void DefGroup::slot_sort_by_column(int index, Qt::SortOrder sort_order)
         {
             DefectGroupData.order = "desc";
         }
-        break;
-
         break;
     }
     default:

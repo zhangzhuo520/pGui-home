@@ -34,8 +34,10 @@ void DefectsWidget::init_defects_table()
     m_defects_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_defects_table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     m_defects_table->horizontalHeader()->setSortIndicator(-1, Qt::AscendingOrder);
-//    DefGroupTable->horizontalHeader()->setSortIndicator(2, Qt::AscendingOrder);
-//    DefGroupTable->horizontalHeader()->setSortIndicator(3, Qt::AscendingOrder);
+    //    DefGroupTable->horizontalHeader()->setSortIndicator(2, Qt::AscendingOrder);
+    //    DefGroupTable->horizontalHeader()->setSortIndicator(3, Qt::AscendingOrder);
+    m_defects_table->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+    m_defects_table->horizontalHeader()->setHighlightSections(false);
     m_defects_table->horizontalHeader()->setSortIndicatorShown(true);
     m_defects_table->horizontalHeader()->setClickable(true);
     connect(m_defects_table->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT (slot_sort_by_column(int, Qt::SortOrder)));

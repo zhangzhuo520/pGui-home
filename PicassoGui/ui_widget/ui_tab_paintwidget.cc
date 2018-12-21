@@ -47,6 +47,12 @@ void TabPaintWidget::append_canvas(QString fileName)
     setCurrentIndex(count() - 1);
 }
 
+void TabPaintWidget::set_active_widget(QString filename)
+{
+    int index = string_to_index(filename);
+    setCurrentIndex(index);
+}
+
 render::LayoutView TabPaintWidget::load_file(const QString & filename, const QString &dirpath, bool add_layout_view)
 {
     if (m_scaleframe_vector.isEmpty())

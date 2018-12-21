@@ -99,7 +99,7 @@ public slots:
     void slot_close_job(QString);
 
 private:
-    void romove_job(int);
+    void remove_job(int);
 
     QModelIndex get_current_rootindex(QModelIndex);
 

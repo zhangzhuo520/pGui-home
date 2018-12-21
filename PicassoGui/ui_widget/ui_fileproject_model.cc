@@ -113,4 +113,16 @@ void FileProjectModel::removeFile(int row)
     removeRow(row);
 }
 
+bool FileProjectModel::find_file(QString filename)
+{
+    for (uint i = 0; i < m_layout_views.size(); i ++)
+    {
+        if (filename == QString::fromStdString(m_layout_views.at(i).file_name()))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 }

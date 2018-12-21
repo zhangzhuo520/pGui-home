@@ -101,9 +101,6 @@ void LayerWidget::slot_activedModelIndex(QModelIndex index)
 {
     m_active_model_index =  index.row();
     m_active_model_rootIndex = index.parent().row();
-
-    TIME_DEBUG
-    qDebug() << m_active_model_index;
   //  m_view->set_current_layer(m_active_model_index);
 }
 
