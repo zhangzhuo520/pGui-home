@@ -35,7 +35,8 @@ SOURCES += main.cc\
     ui_measurepoint.cc \
     ui_paint_widget.cc \
     ui_paint_toolbar.cc \
-    ui_tab_paintwidget.cc
+    ui_tab_paintwidget.cc \
+    drawimage_thread.cc
 
 HEADERS  += mainwindow.h \
     gearmanconnector.h \
@@ -55,7 +56,8 @@ HEADERS  += mainwindow.h \
     ui_measurepoint.h \
     ui_paint_widget.h \
     ui_paint_toolbar.h \
-    ui_tab_paintwidget.h
+    ui_tab_paintwidget.h \
+    drawimage_thread.h
 
 FORMS    +=
 
