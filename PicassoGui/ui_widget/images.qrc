@@ -68,5 +68,6 @@
         <file>images/next_page.png</file>
         <file>images/setpos.png</file>
         <file>images/eraser.png</file>
+        <file>images/clean.png</file>
     </qresource>
 </RCC>

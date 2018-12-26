@@ -29,8 +29,8 @@ public:
     
 signals:
     void signal_setPaintStyle(Global::PaintTool);
-
     void signal_setSnapFlag(Global::SnapFLag);
+    void signal_clear();
     
 public slots:
     void slot_setPaintStyle(Global::PaintStyle);
@@ -47,6 +47,8 @@ public slots:
 
     void slot_eraser_click(bool);
 
+    void slot_clear_click();
+
 private:
     Global::PaintStyle m_paint_style;
     PushButton *m_normal_button;
@@ -55,6 +57,9 @@ private:
     PushButton *m_measure_angle_button;
     PushButton *m_snap_button;
     PushButton *m_eraser_button;
+    PushButton *m_clear_button;
+    QFrame *m_line_a;
+    QFrame *m_line_b;
 };
 }
 #endif // UI_PAINT_TOOLBAR_H

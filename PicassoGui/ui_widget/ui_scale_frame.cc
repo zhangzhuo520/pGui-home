@@ -30,7 +30,6 @@ ScaleFrame::ScaleFrame(QWidget *parent) :
 void ScaleFrame::initRenderFrame()
 {
     m_render_frame = new render::RenderFrame(this);
-    qDebug() << m_render_frame;
     m_paint_widget = new PaintWidget(m_render_frame);
     m_render_frame->set_cursor_widget(m_paint_widget);
     m_hlayout->addWidget(m_render_frame);
@@ -54,14 +53,14 @@ void ScaleFrame::slot_move_point_center()
     m_render_frame->center_at_point(m_current_posX, m_current_posY);
 }
 
-void ScaleFrame::slot_clear_measure_point()
-{
-    m_paint_widget->clear();
-}
-
 void ScaleFrame::slot_set_snapfalg(Global::SnapFLag snapflag)
 {
     m_paint_widget->set_snap_flag(snapflag);
+}
+
+void ScaleFrame::slot_clear_measureline()
+{
+    m_paint_widget->slot_clear();
 }
 
 void ScaleFrame::set_defect_point(double x, double y)

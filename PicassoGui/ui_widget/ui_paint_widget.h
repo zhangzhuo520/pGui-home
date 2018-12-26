@@ -79,8 +79,9 @@ public slots:
     void setWidth (QString);
     void setColor (QColor);
     void slot_get_snap_pos(bool, QPoint, QPointF,int);
-    void clear();
-    void slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> > result);
+    void slot_clear();
+//    void slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> > result);
+
 private:
     void use_angle();
     QPointF calcu_physical_point(QPointF);
@@ -89,7 +90,7 @@ private:
     void draw_dotted_box();
     void drawMeasureLine();
 
-    void repaint_snap_ruler();
+//    void repaint_snap_ruler();
     void repaint_normal_ruler(double, double, double, double);
 
     QImage merge_two_images(const QImage&, const QImage&);
@@ -135,6 +136,8 @@ private:
     QString y;
 
     double m_distance;
+
+    bool m_first_point_find;
 };
 }
 #endif // DRAWWIDGET_H

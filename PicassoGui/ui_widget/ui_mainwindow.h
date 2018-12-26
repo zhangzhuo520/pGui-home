@@ -117,8 +117,6 @@ private slots:
 
     void slot_close_database_widget(int);
 
-//    void slot_refreshAction();
-
     void slot_currentTab_changed(int);
     void slot_zoom_in();
     void slot_zoom_out();

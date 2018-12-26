@@ -1016,12 +1016,13 @@ void MainWindow::addHistoryAction(QString filename)
 
 void MainWindow::centerWidget_boundingSignal(int index)
 {
-    connect(this, SIGNAL(signal_setPenWidth(QString)),   m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_pen_width(QString)));
+    connect(this, SIGNAL(signal_setPenWidth(QString)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_pen_width(QString)));
     connect(this, SIGNAL(signal_setPenColor(const QColor&)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_pen_color(const QColor&)));
     connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_updateDistance(double)), this, SLOT(slot_updateDistance(double)));
     connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
     connect(m_paint_toolbar, SIGNAL(signal_setSnapFlag(Global::SnapFLag)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_snapfalg(Global::SnapFLag)));
     connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_painter_style(Global::PaintTool)));
+    connect(m_paint_toolbar, SIGNAL(signal_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_measureline()));
     emit signal_setPenWidth(penWidthCombox->currentText());
 }
 

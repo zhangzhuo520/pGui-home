@@ -5,15 +5,38 @@
 #include <QObject>
 #include <QPoint>
 #include <QList>
+#include <QColor>
+#include <QDebug>
 
 namespace ui
 {
 
 class LineData{
 public:
+    LineData();
+    LineData(QPointF p_start, QPointF p_end)
+    {
+        m_first_point = p_start;
+        m_last_point = p_end;
+    }
+    ~LineData(){}
+
+    LineData& operator=(const LineData&);
+    bool operator!=(const LineData&);
+    bool operator==(const LineData&);
+
+    inline void set_line_width(const int &width)
+    {
+         m_line_width = width;
+    }
+
     QPointF m_first_point;
     QPointF m_last_point;
+
     double m_distance;
+
+    int m_line_width;
+    QColor m_line_color;
 };
 
 class MeasureLine
@@ -26,7 +49,7 @@ public:
         m_linedata_list.append(linedata);
     }
 
-    inline QList <LineData> get_point_list()
+    inline QList <LineData> & get_point_list()
     {
         return m_linedata_list;
     }
@@ -36,12 +59,28 @@ public:
         m_linedata_list.clear();
     }
 
-    void removeLineData(QPointF p);
+    bool removeLineData(QPointF p);
 
-    static double range;
+    LineData get_select_linedata(const QPointF& p);
+
+    int get_select_lineindex(const QPointF& p);
+
+    static double h_range;
+    static double x_y_rang;
 private:
-    QList <LineData> m_linedata_list;
+    inline const double max(const double a, const double b)
+    {
+        return a > b ? a : b;
+    }
+
+    inline const double min(const double a, const double b)
+    {
+        return a < b ? a : b;
+    }
+
+
     bool point_at_edge(QPointF, LineData);
+    QList <LineData> m_linedata_list;
 };
 
 }

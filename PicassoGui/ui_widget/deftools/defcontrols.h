@@ -138,7 +138,7 @@ public:
     }
   explicit PushButton(const QString &text, QWidget *parent=0)
     {
-        Q_UNUSED(parent);
+        setParent(parent);
         setStyleSheet("QPushButton{"\
                       "border:0px;"
                       "background-color: rgba(0, 0, 0, 0);}"\

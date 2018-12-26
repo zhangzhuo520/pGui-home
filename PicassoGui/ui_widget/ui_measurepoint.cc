@@ -2,14 +2,16 @@
 
 namespace ui
 {
+double MeasureLine::h_range = sin(5.0 / 180 * PI);
+double MeasureLine::x_y_rang = 5;
 MeasureLine::MeasureLine()
 {
 }
 
-double MeasureLine::range = sin(5.0 / 180 * PI);
+
 
 bool MeasureLine::point_at_edge(QPointF p, LineData line)
-{
+{    
     double a_x = line.m_first_point.x();
     double a_y = line.m_first_point.y();
 
@@ -31,7 +33,21 @@ bool MeasureLine::point_at_edge(QPointF p, LineData line)
     double product = vec_ab_x * vec_ac_y - vec_ab_y * vec_ac_x;
     double angle = product / length_ab / length_ac;
 
-    if(fabs(angle) < range)
+    double x_max = max(c_x,a_x);
+    double x_min = min(c_x, a_x);
+    double y_max = max(c_y, a_y);
+    double y_min = min(a_y, c_y);
+
+    if(((b_x -  x_max) > 5) ||
+            (( b_x - x_min) < -5) ||
+                 (( b_y - y_max) > 5) ||
+                          ((b_y - y_min) < -5))
+    {
+          return false;
+    }
+
+
+    if(fabs(angle) < h_range)
     {
         return true;
     }
@@ -42,19 +58,85 @@ bool MeasureLine::point_at_edge(QPointF p, LineData line)
 
 }
 
-void MeasureLine::removeLineData(QPointF p)
+bool MeasureLine::removeLineData(QPointF p)
 {
-    int result = -1;
     for(int i = 0 ; i < m_linedata_list.size(); i++)
     {
         if( point_at_edge(p, m_linedata_list[i]))
         {
-             m_linedata_list.removeAt(result);
-             break;
+             m_linedata_list.removeAt(i);
+             return true;
         }
+    }
+    return false;
+}
+
+LineData::LineData()
+{
+}
+
+LineData& LineData::operator=(const LineData &lineData)
+{
+    if (this != &lineData)
+    {
+        m_distance = lineData.m_distance;
+        m_first_point = lineData.m_first_point;
+        m_last_point = lineData.m_last_point;
+    }
+    return *this;
+}
+
+bool LineData::operator!=(const LineData &lineData)
+{
+    if (m_distance != lineData.m_distance &&
+        m_first_point != lineData.m_first_point &&
+        m_last_point != lineData.m_last_point)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
+bool LineData::operator==(const LineData &lineData)
+{
+    if (m_distance == lineData.m_distance &&
+        m_first_point == lineData.m_first_point &&
+        m_last_point == lineData.m_last_point)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+LineData MeasureLine::get_select_linedata(const QPointF &p)
+{
+    for(int i = 0 ; i < m_linedata_list.size(); i++)
+    {
+        if( point_at_edge(p, m_linedata_list[i]))
+        {
+            return m_linedata_list.at(i);
+        }
+    }
+    return LineData(QPointF(0, 0), QPointF(0, 0));
+}
+
+int MeasureLine::get_select_lineindex(const QPointF &p)
+{
+    for(int i = 0 ; i < m_linedata_list.size(); i++)
+    {
+        if( point_at_edge(p, m_linedata_list[i]))
+        {
+            return i;
+        }
+    }
+    return -1;
+}
 }
 
 

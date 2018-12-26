@@ -64,8 +64,8 @@ public slots:
     void slot_set_pen_width(QString);
     void slot_set_pen_color(const QColor&);
     void slot_move_point_center();
-    void slot_clear_measure_point();
     void slot_set_snapfalg(Global::SnapFLag);
+    void slot_clear_measureline();
 
 protected:
     void paintEvent(QPaintEvent *);

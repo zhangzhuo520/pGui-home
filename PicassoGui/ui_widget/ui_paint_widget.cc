@@ -2,7 +2,8 @@
 namespace ui {
 PaintWidget::PaintWidget(QWidget *parent):
     weight(5),
-    style(1)
+    style(1),
+    m_first_point_find(false)
 {
     setParent(parent);
     setObjectName("PaintWidget");
@@ -71,33 +72,6 @@ void PaintWidget::setPaintStyle(Global::PaintTool paintstyle)
     m_select_mode = paintstyle;
 }
 
-void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, int mode)
-{
-    if(mode == 1)
-    {
-        if(find)
-        {
-            m_start_pos =  micron_p;
-            m_ruler_first_point = pix_p;
-        }
-    }
-    else if(mode == 2)
-    {
-        if(find)
-        {
-            m_end_pos = micron_p;
-            m_ruler_last_point = pix_p;
-
-            double dx = m_end_pos.x() - m_start_pos.x();
-            double dy = m_end_pos.y() - m_start_pos.y();
-            m_distance = sqrt( dx * dx + dy * dy);
-            emit signal_updateDistance(m_distance);
-            drawMeasureLine();
-            merge_image();
-        }
-    }
-}
-
 QPointF PaintWidget::calcu_physical_point(QPointF pos)
 {
     QPointF tempPoint;
@@ -154,18 +128,12 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
         }
         else if (m_select_mode == Global::RemoveLine)
         {
-//            if(m_mouse_clicks == LineStart)
-//            {
-//                m_mouse_clicks = LineEnd;
-//                drawMeasureLine();
-//                merge_image();
-//            }
-
             QPointF pos = calcu_physical_point(m_current_mousepos);
-            m_measure_point.removeLineData(pos);
-
+            if (m_measure_point.removeLineData(pos))
+            {
+                repaintRuler(m_scale_xstart, m_scale_xend, m_scale_ystart, m_scale_yend);
+            }
         }
-
         break;
     }
     case Qt::RightButton:
@@ -238,8 +206,27 @@ void PaintWidget::mouseMoveEvent (QMouseEvent *e)
     }
     case Global::RemoveLine:
     {
+        QPointF pos = calcu_physical_point(m_current_mousepos);
+        int index =  m_measure_point.get_select_lineindex(pos);
 
-        break;
+        if (index != -1)
+        {
+            for (int j = 0; j < m_measure_point.get_point_list().count(); j ++)
+            {
+                if (j == index)
+                {
+                    m_measure_point.get_point_list()[j].set_line_width(3);
+                }
+                else
+                {
+                    m_measure_point.get_point_list()[j].set_line_width(1);
+                }
+            }
+
+            repaint_normal_ruler(m_scale_xstart, m_scale_xend, m_scale_ystart, m_scale_yend);
+        }
+
+
     }
     default:
         break;
@@ -268,7 +255,7 @@ void PaintWidget::resizeEvent (QResizeEvent *event)
     QWidget::resizeEvent (event);
 }
 
-void PaintWidget::clear ()
+void PaintWidget::slot_clear ()
 {
     m_ruler_image.fill(Qt::transparent);
     m_measure_point.clear_all_data();
@@ -368,57 +355,58 @@ void PaintWidget::drawMeasureLine()
         tempLine.m_first_point = m_start_pos;
         tempLine.m_last_point = m_end_pos;
         tempLine.m_distance = m_distance;
+        tempLine.m_line_width = 1;
         m_measure_point.appendLineData(tempLine);
     }
 }
 
-void PaintWidget::repaint_snap_ruler()
-{
-    QList <LineData> listLine = m_measure_point.get_point_list();
-    QList <QPair<QPointF, QPointF> >result;
-    for(int i = 0; i < listLine.count(); i++)
-    {
-        QPointF p1 = listLine.at(i).m_first_point;
-        QPointF p2 = listLine.at(i).m_last_point;
-        result.append(QPair<QPointF, QPointF>(p1, p2));
-    }
-    emit signal_repaint_snap_ruler(result);
-}
+//void PaintWidget::repaint_snap_ruler()
+//{
+//    QList <LineData> listLine = m_measure_point.get_point_list();
+//    QList <QPair<QPointF, QPointF> >result;
+//    for(int i = 0; i < listLine.count(); i++)
+//    {
+//        QPointF p1 = listLine.at(i).m_first_point;
+//        QPointF p2 = listLine.at(i).m_last_point;
+//        result.append(QPair<QPointF, QPointF>(p1, p2));
+//    }
+//    emit signal_repaint_snap_ruler(result);
+//}
 
-void PaintWidget::slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> > result)
-{
-    for(int i = 0; i < result.count(); i++)
-    {
-        m_ruler_first_point = result[i].first;
-        m_ruler_last_point = result[i].second;
-        m_distance = m_measure_point.get_point_list().at(i).m_distance;
+//void PaintWidget::slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> > result)
+//{
+//    for(int i = 0; i < result.count(); i++)
+//    {
+//        m_ruler_first_point = result[i].first;
+//        m_ruler_last_point = result[i].second;
+//        m_distance = m_measure_point.get_point_list().at(i).m_distance;
 
-        double arrow_lenght_ = 13;
-        double arrow_degrees_ = 0.6;
+//        double arrow_lenght_ = 13;
+//        double arrow_degrees_ = 0.6;
 
-        double angle = atan2(m_ruler_last_point.y() - m_ruler_first_point.y(), m_ruler_last_point.x() - m_ruler_first_point.x()) + 3.1415926;//
+//        double angle = atan2(m_ruler_last_point.y() - m_ruler_first_point.y(), m_ruler_last_point.x() - m_ruler_first_point.x()) + 3.1415926;//
 
-        QPointF rightArrowPoint;
-        QPointF leftArrowPoint;
+//        QPointF rightArrowPoint;
+//        QPointF leftArrowPoint;
 
-        rightArrowPoint.setX(m_ruler_last_point.x() + arrow_lenght_ * cos(angle - arrow_degrees_));
-        rightArrowPoint.setY(m_ruler_last_point.y() + arrow_lenght_ * qSin(angle - arrow_degrees_));
-        leftArrowPoint.setX(m_ruler_last_point.x() + arrow_lenght_ * qCos(angle + arrow_degrees_));
-        leftArrowPoint.setY(m_ruler_last_point.y() + arrow_lenght_ * qSin(angle + arrow_degrees_));
-        QPen pen;
-        pen.setStyle ((Qt::PenStyle)style);
-        pen.setWidth (weight);
-        pen.setColor (color);
-        QPainter tempPainter(&m_ruler_image);
-        tempPainter.setRenderHint(QPainter::Antialiasing, true);
-        tempPainter.setPen(pen);
-        tempPainter.drawText(QPoint(m_ruler_last_point.x() - 10, m_ruler_last_point.y() - 5), QString::number(m_distance,'f', 6));
-        tempPainter.drawLine(m_ruler_first_point, m_ruler_last_point);
-        tempPainter.drawLine(m_ruler_last_point, rightArrowPoint);
-        tempPainter.drawLine(m_ruler_last_point, leftArrowPoint);
-    }
-    merge_image();
-}
+//        rightArrowPoint.setX(m_ruler_last_point.x() + arrow_lenght_ * cos(angle - arrow_degrees_));
+//        rightArrowPoint.setY(m_ruler_last_point.y() + arrow_lenght_ * qSin(angle - arrow_degrees_));
+//        leftArrowPoint.setX(m_ruler_last_point.x() + arrow_lenght_ * qCos(angle + arrow_degrees_));
+//        leftArrowPoint.setY(m_ruler_last_point.y() + arrow_lenght_ * qSin(angle + arrow_degrees_));
+//        QPen pen;
+//        pen.setStyle ((Qt::PenStyle)style);
+//        pen.setWidth (weight);
+//        pen.setColor (color);
+//        QPainter tempPainter(&m_ruler_image);
+//        tempPainter.setRenderHint(QPainter::Antialiasing, true);
+//        tempPainter.setPen(pen);
+//        tempPainter.drawText(QPoint(m_ruler_last_point.x() - 10, m_ruler_last_point.y() - 5), QString::number(m_distance,'f', 6));
+//        tempPainter.drawLine(m_ruler_first_point, m_ruler_last_point);
+//        tempPainter.drawLine(m_ruler_last_point, rightArrowPoint);
+//        tempPainter.drawLine(m_ruler_last_point, leftArrowPoint);
+//    }
+//    merge_image();
+//}
 
 void PaintWidget::repaint_normal_ruler(double m_xstart, double m_xend, double m_ystart, double m_yend)
 {
@@ -489,7 +477,7 @@ void PaintWidget::repaint_normal_ruler(double m_xstart, double m_xend, double m_
             leftArrowPoint.setY(m_ruler_last_point.y() + arrow_lenght_ * qSin(angle + arrow_degrees_));
             QPen pen;
             pen.setStyle ((Qt::PenStyle)style);
-            pen.setWidth (weight);
+            pen.setWidth (listLine.at(i).m_line_width);
             pen.setColor (color);
             QPainter tempPainter(&m_ruler_image);
             tempPainter.setRenderHint(QPainter::Antialiasing, true);
@@ -510,17 +498,47 @@ void PaintWidget::repaintRuler(double m_xstart, double m_xend, double m_ystart, 
     m_scale_xend = m_xend;
     m_scale_ystart = m_ystart;
     m_scale_yend = m_yend;
-/*    if (m_snap_flag == Global::SnapOpen)
+
+    repaint_normal_ruler(m_xstart, m_xend, m_ystart, m_yend);
+}
+
+void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, int mode)
+{
+    if(mode == 1)
     {
-        //repaint_snap_ruler();
-        repaint_normal_ruler(m_xstart, m_xend, m_ystart, m_yend);
+        if(find)
+        {
+            m_start_pos =  micron_p;
+            m_ruler_first_point = pix_p;
+            m_first_point_find = true;
+        }
+        else
+        {
+           m_ruler_first_point = m_current_mousepos;
+            m_first_point_find = false;
+        }
     }
-    else if (m_snap_flag == Global::SnapClose)
+    else if(mode == 2)
     {
-        repaint_normal_ruler(m_xstart, m_xend, m_ystart, m_yend);
+        if(find)
+        {
+            m_end_pos = micron_p;
+            m_ruler_last_point = pix_p;
+            double dx = m_end_pos.x() - m_start_pos.x();
+            double dy = m_end_pos.y() - m_start_pos.y();
+            m_distance = sqrt( dx * dx + dy * dy);
+            emit signal_updateDistance(m_distance);
+        }
+        else
+        {
+            m_ruler_last_point = m_current_mousepos;
+        }
+        if (m_first_point_find)
+        {
+            drawMeasureLine();
+            merge_image();
+        }
     }
-*/
-    repaint_normal_ruler(m_xstart,m_xend, m_ystart, m_yend);
 }
 
 QImage PaintWidget::merge_two_images(const QImage& baseImage, const QImage& overlayImage)
@@ -555,6 +573,7 @@ void PaintWidget::merge_image()
         break;
     }
     case Global::MeasureAngle:
+    case Global::RemoveLine:
     case Global::MeasureLine:
     {
         if (m_mouse_clicks == LineStart)
