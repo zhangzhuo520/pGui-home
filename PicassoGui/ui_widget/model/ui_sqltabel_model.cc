@@ -1,4 +1,5 @@
-#include "model.h"
+#include "ui_sqltabel_model.h"
+
 namespace ui {
 
 static const int epsilon = 5;
@@ -52,40 +53,4 @@ QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
     else
         return value;
 }
-
-TreeModel::TreeModel(QObject *parent)
-{
-    setParent(parent);
-}
-
-
-QVariant TreeModel::data(const QModelIndex &item, int role) const
-{
-    if (!item.isValid())
-    {
-        return QVariant();
-    }
-    QVariant value = QStandardItemModel::data(item, role);
-    switch (role) {
-    case Qt::DisplayRole:
-        return value;
-    case Qt::TextAlignmentRole:
-        return int(Qt::AlignLeft | Qt::AlignVCenter);
-    case Qt::BackgroundColorRole :
-        if (item.row() % 2)
-        {
-            return QColor(Qt::lightGray);
-        }
-        else
-        {
-            return QColor(Qt::white);
-        }
-    case Qt::SizeHintRole:
-        return QSize(32, 16);
-    default:
-        return value;
-    }
-    return QVariant();
-}
-
 }

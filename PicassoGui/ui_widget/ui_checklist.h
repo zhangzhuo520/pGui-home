@@ -21,6 +21,7 @@
 #include "db/sqlmanager.h"
 #include "deftools/framelesshelper.h"
 #include "deftools/defcontrols.h"
+#include "model/ui_checklist_model.h"
 
 namespace ui {
 
@@ -124,7 +125,7 @@ private:
 
     Toolbar *m_checklist_toolbar;
     QTreeView *m_checklist_tree;
-    QStandardItemModel *m_checklist_model;
+    TreeModel *m_checklist_model;
     SQLManager *m_sqlmanager;
     QString m_jobdata;
     QString m_count;

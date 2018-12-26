@@ -4,7 +4,7 @@
 #include <QAbstractTableModel>
 
 #include "render_layout_view.h"
-#include "deftools/global.h"
+#include "../deftools/global.h"
 
 namespace ui
 {

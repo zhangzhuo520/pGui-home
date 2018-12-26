@@ -346,7 +346,6 @@ void MainWindow::initConnection()
     connect(this, SIGNAL(singal_append_job(QString)), checklistWidget ,SLOT(slot_append_job(QString)));
     connect(this, SIGNAL(signal_close_job(QString)), checklistWidget, SLOT(slot_close_job(QString)));
     connect(checklistWidget, SIGNAL(signal_close_job(QString)), m_paint_tabwidget, SLOT(slot_close_tab(QString)));
-//    connect(checklistWidget, SIGNAL(signal_append_job(QString)), this, SLOT(slot_append_job(QString)));
     connect(checklistWidget, SIGNAL(signal_showDefGroup(QModelIndex, int)), this ,SLOT(slot_showDefGroup(QModelIndex, int)));
     connect(fileWidget, SIGNAL(signal_openFile()), this, SLOT(slot_openFile()));
 }
@@ -1022,6 +1021,7 @@ void MainWindow::centerWidget_boundingSignal(int index)
     connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
     connect(m_paint_toolbar, SIGNAL(signal_setSnapFlag(Global::SnapFLag)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_snapfalg(Global::SnapFLag)));
     connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_painter_style(Global::PaintTool)));
+    connect(m_paint_toolbar, SIGNAL(signal_measure_table_click()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_show_measure_table()));
     connect(m_paint_toolbar, SIGNAL(signal_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_measureline()));
     emit signal_setPenWidth(penWidthCombox->currentText());
 }

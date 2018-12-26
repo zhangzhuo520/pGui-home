@@ -15,7 +15,7 @@
 #include <QtSql/QSqlQueryModel>
 #include <QToolBar>
 #include <QSizePolicy>
-#include "deftools/model.h"
+#include "model/ui_sqltabel_model.h"
 
 namespace ui {
 class DefectsWidget : public QWidget

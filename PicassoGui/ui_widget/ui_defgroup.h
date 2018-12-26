@@ -8,13 +8,15 @@
 #include <QModelIndex>
 #include <QLayout>
 #include <QLabel>
+#include <QtSql/QSqlQueryModel>
+#include <QToolBar>
 #include <QRadioButton>
+
 #include "deftools/defcontrols.h"
 #include "db/sqlquery.h"
 #include "db/sqlmanager.h"
-#include "deftools/model.h"
-#include <QtSql/QSqlQueryModel>
-#include <QToolBar>
+#include "model/ui_sqltabel_model.h"
+
 
 namespace ui {
 class DefGroup : public QWidget

@@ -50,12 +50,11 @@ public:
     explicit PaintWidget(QWidget *parent = 0);
 
     void draw_defect_point_text(double, double, QString);
-
     void repaintRuler(double, double, double, double);
-
     void setPaintStyle(Global::PaintTool);
-
     void set_snap_flag(Global::SnapFLag);
+    const QList <LineData>& get_measure_line_list();
+
 protected:
     virtual void mousePressEvent (QMouseEvent *);
     virtual void mouseReleaseEvent (QMouseEvent *);
@@ -65,13 +64,9 @@ protected:
 
 signals:
     void signal_mouseMove(const QPoint&);
-
     void signal_updateDistance(double);
-
     void signal_moveCenter();
-
     void signal_get_snap_pos(QPoint, int);
-
     void signal_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >);
 
 public slots:

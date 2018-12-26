@@ -2,13 +2,12 @@
 
 namespace ui
 {
+
 double MeasureLine::h_range = sin(5.0 / 180 * PI);
 double MeasureLine::x_y_rang = 5;
 MeasureLine::MeasureLine()
 {
 }
-
-
 
 bool MeasureLine::point_at_edge(QPointF p, LineData line)
 {    

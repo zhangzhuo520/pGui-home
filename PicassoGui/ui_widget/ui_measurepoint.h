@@ -7,7 +7,7 @@
 #include <QList>
 #include <QColor>
 #include <QDebug>
-
+#include <math.h>
 namespace ui
 {
 
@@ -68,12 +68,12 @@ public:
     static double h_range;
     static double x_y_rang;
 private:
-    inline const double max(const double a, const double b)
+    inline const double& max(const double& a, const double& b)
     {
         return a > b ? a : b;
     }
 
-    inline const double min(const double a, const double b)
+    inline const double& min(const double& a, const double& b)
     {
         return a < b ? a : b;
     }

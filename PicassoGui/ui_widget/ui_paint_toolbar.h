@@ -31,22 +31,17 @@ signals:
     void signal_setPaintStyle(Global::PaintTool);
     void signal_setSnapFlag(Global::SnapFLag);
     void signal_clear();
+    void signal_measure_table_click();
     
 public slots:
     void slot_setPaintStyle(Global::PaintStyle);
-
     void slot_normal_click(bool);
-
     void slot_mark_point_click(bool);
-
     void slot_measure_line_click(bool);
-
     void slot_measure_angle_click(bool);
-
     void slot_snap_click(bool);
-
     void slot_eraser_click(bool);
-
+    void slot_table_click();
     void slot_clear_click();
 
 private:
@@ -58,6 +53,8 @@ private:
     PushButton *m_snap_button;
     PushButton *m_eraser_button;
     PushButton *m_clear_button;
+    PushButton *m_table_button;
+
     QFrame *m_line_a;
     QFrame *m_line_b;
 };

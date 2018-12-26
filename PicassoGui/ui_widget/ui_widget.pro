@@ -14,7 +14,7 @@ TEMPLATE = app
 
 include(deftools/deftools.pri)
 include(db/db.pri)
-
+include(model/model.pri)
 
 SOURCES += main.cc\
     ui_mainwindow.cc \
@@ -36,7 +36,9 @@ SOURCES += main.cc\
     ui_paint_widget.cc \
     ui_paint_toolbar.cc \
     ui_tab_paintwidget.cc \
-    drawimage_thread.cc
+    drawimage_thread.cc \
+    ui_measure_table.cc
+
 
 HEADERS  += mainwindow.h \
     gearmanconnector.h \
@@ -57,7 +59,8 @@ HEADERS  += mainwindow.h \
     ui_paint_widget.h \
     ui_paint_toolbar.h \
     ui_tab_paintwidget.h \
-    drawimage_thread.h
+    drawimage_thread.h \
+    ui_measure_table.h
 
 FORMS    +=
 

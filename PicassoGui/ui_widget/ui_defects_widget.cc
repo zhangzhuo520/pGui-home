@@ -75,8 +75,8 @@ void DefectsWidget::initOtherButton()
     m_pagecount_label = new QLabel(this);
     m_page_jump_edit = new PageJumpEdit(this);
 //    connect(m_descent_button, SIGNAL(clicked()), this, SLOT(slot_m_descent_buttonCheck()));
-//    connect(m_ascen_button, SIGNAL(clicked()), this, SLOT(slot_m_ascen_buttonCheck()));
-//    connect(m_sort_commbox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
+    //    connect(m_ascen_button, SIGNAL(clicked()), this, SLOT(slot_m_ascen_buttonCheck()));
+    //    connect(m_sort_commbox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
     connect(m_perv_button, SIGNAL(clicked()), this, SLOT(slot_pervPage()));
     connect(m_next_button, SIGNAL(clicked()), this, SLOT(slot_nextPage()));
     connect(m_page_jump_edit, SIGNAL(signal_jump(QString)), this, SLOT(slot_jump_click(QString)));

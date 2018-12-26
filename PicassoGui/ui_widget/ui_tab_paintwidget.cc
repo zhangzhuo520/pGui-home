@@ -7,6 +7,7 @@ TabPaintWidget::TabPaintWidget(QWidget *parent)
     sizePolicy().setVerticalPolicy(QSizePolicy::Ignored);
     setTabsClosable(true);
     setMouseTracking(true);
+    m_measure_table = NULL;
 }
 
 ScaleFrame *TabPaintWidget::get_scaleframe(int index)
@@ -35,6 +36,18 @@ void TabPaintWidget::creat_canvas()
 {
     ScaleFrame* scaleframe = new ScaleFrame(this);
     m_scaleframe_vector.append(scaleframe);
+}
+
+void TabPaintWidget::slot_show_measure_table()
+{
+    QList <LineData> line_list = m_scaleframe_vector[currentIndex()]->m_paint_widget->get_measure_line_list();
+    QMainWindow *mainwindow = static_cast <QMainWindow *> parent();
+    if (m_measure_table == NULL)
+    {
+        m_measure_table = new MeasureTable(mainwindow);
+        m_measure_table->set_line_list(line_list);
+    }
+
 }
 
 void TabPaintWidget::append_canvas(QString fileName)

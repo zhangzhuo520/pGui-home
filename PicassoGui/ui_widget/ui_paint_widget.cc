@@ -42,6 +42,11 @@ void PaintWidget::set_snap_flag(Global::SnapFLag snapflag)
     m_snap_flag = snapflag;
 }
 
+const QList<LineData> &PaintWidget::get_measure_line_list()
+{
+    return m_measure_point.get_point_list();
+}
+
 void PaintWidget::use_angle()
 {
     if (m_select_mode == Global::MeasureAngle)

@@ -66,12 +66,20 @@ void PaintToolbar::init_button()
     m_eraser_button->setCheckable(true);
     m_eraser_button->setGeometry(98, 2, 18, 18);
 
+    m_table_button = new PushButton(this);
+    m_table_button->setObjectName("tableButton");
+    m_table_button->setToolTip("Table");
+    m_table_button->setIcon(QIcon(":/dfjy/images/eraser.png"));
+    m_table_button->setCheckable(true);
+    m_table_button->setGeometry(130, 2, 18, 18);
+
     m_snap_button->hide();
     m_mark_point_button->hide();
     m_measure_line_button->hide();
     m_measure_angle_button->hide();
     m_clear_button->hide();
     m_eraser_button->hide();
+    m_table_button->hide();
     m_line_a->hide();
     m_line_b->hide();
 }
@@ -85,6 +93,7 @@ void PaintToolbar::init_connection()
     connect(m_snap_button, SIGNAL(clicked(bool)), this, SLOT(slot_snap_click(bool)));
     connect(m_clear_button, SIGNAL(clicked()), this, SLOT(slot_clear_click()));
     connect(m_eraser_button, SIGNAL(clicked(bool)), this, SLOT(slot_eraser_click(bool)));
+    connect(m_table_button, SIGNAL(clicked()), this, SLOT(slot_table_click(bool)));
     m_measure_line_button->setChecked(true);
 }
 
@@ -174,6 +183,11 @@ void PaintToolbar::slot_eraser_click(bool flag)
     }
 }
 
+void PaintToolbar::slot_table_click()
+{
+    emit signal_measure_table_click();
+}
+
 void PaintToolbar::slot_clear_click()
 {
     emit signal_clear();
@@ -192,6 +206,7 @@ void PaintToolbar::updata_toolbar()
         m_clear_button->hide();
         m_snap_button->hide();
         m_eraser_button->hide();
+        m_table_button->hide();
     }
     else if(m_paint_style == Global::Mark)
     {
@@ -203,6 +218,7 @@ void PaintToolbar::updata_toolbar()
         m_clear_button->hide();
         m_snap_button->hide();
         m_eraser_button->hide();
+        m_table_button->hide();
     }
     else if(m_paint_style == Global::Measrue)
     {
@@ -213,6 +229,7 @@ void PaintToolbar::updata_toolbar()
         m_clear_button->show();
         m_line_a->show();
         m_line_b->show();
+        m_table_button->show();
         m_mark_point_button->hide();
     }
 }

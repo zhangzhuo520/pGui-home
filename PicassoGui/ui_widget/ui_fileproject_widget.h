@@ -10,7 +10,7 @@
 #include <QAction>
 #include "deftools/global.h"
 #include "deftools/cmessagebox.h"
-#include "ui_fileproject_model.h"
+#include "model/ui_fileproject_model.h"
 
 namespace ui{
 class FileProjectWidget : public QWidget
