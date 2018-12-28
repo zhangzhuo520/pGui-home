@@ -56,8 +56,6 @@ QVariant MeasureTableModel::data(const QModelIndex &item, int role) const
     {
         return QVariant();
     }
-
-    //QVariant value = QAbstractTableModel::data(item, role);
     role = (role == Qt::EditRole) ? Qt::DisplayRole : role;
 
     if((Qt::DisplayRole == role))
@@ -130,6 +128,10 @@ QVariant MeasureTableModel::data(const QModelIndex &item, int role) const
         }
     }
     else
+    {
+        return QVariant();
+    }
+
     return QVariant();
 }
 
@@ -157,5 +159,5 @@ QVariant MeasureTableModel::headerData(int section, Qt::Orientation orientation,
     }
     return QVariant();
 }
-
 }
+

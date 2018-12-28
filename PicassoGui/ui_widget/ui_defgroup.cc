@@ -131,6 +131,11 @@ void DefGroup::updataTable()
         pervButton->setEnabled(true);
     }
 
+    if (CurrentPage == 1)
+    {
+        pervButton->setEnabled(false);
+    }
+
     DefectGroupQuery->setData(DefectGroupData);
 
     DefGroupModel->setquery(DefectGroupQuery->outputSQL());
@@ -310,8 +315,16 @@ void DefGroup::slot_sort_by_column(int index, Qt::SortOrder sort_order)
 
 void DefGroup::update_page_number()
 {
-    QString str = QString::number(CurrentPage)  + "/" + QString::number(totalCount / m_each_page_count + 1);
-    m_pagecount_label->setText(str);
+    if (totalCount % m_each_page_count == 0)
+    {
+        QString str = QString::number(CurrentPage)  + "/" + QString::number(totalCount / m_each_page_count);
+        m_pagecount_label->setText(str);
+    }
+    else
+    {
+        QString str = QString::number(CurrentPage)  + "/" + QString::number(totalCount / m_each_page_count + 1);
+        m_pagecount_label->setText(str);
+    }
 }
 
 void DefGroup::jump_page(int page_number)

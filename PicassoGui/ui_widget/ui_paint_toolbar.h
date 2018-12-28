@@ -30,13 +30,15 @@ public:
 signals:
     void signal_setPaintStyle(Global::PaintTool);
     void signal_setSnapFlag(Global::SnapFLag);
-    void signal_clear();
+    void signal_measure_clear();
+    void signal_mark_clear();
     void signal_measure_table_click();
     
 public slots:
     void slot_setPaintStyle(Global::PaintStyle);
     void slot_normal_click(bool);
     void slot_mark_point_click(bool);
+    void slot_mark_clear_click();
     void slot_measure_line_click(bool);
     void slot_measure_angle_click(bool);
     void slot_snap_click(bool);
@@ -48,6 +50,7 @@ private:
     Global::PaintStyle m_paint_style;
     PushButton *m_normal_button;
     PushButton *m_mark_point_button;
+    PushButton *m_mark_clear_button;
     PushButton *m_measure_line_button;
     PushButton *m_measure_angle_button;
     PushButton *m_snap_button;

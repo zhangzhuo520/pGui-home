@@ -138,6 +138,7 @@ void MainWindow::initDockWidget()
         { "Workspace", 0, Qt::BottomDockWidgetArea },
         { "ChickList", 0, Qt::BottomDockWidgetArea },
         { "Log", 0, Qt::BottomDockWidgetArea },
+        { "voxelMap", 0, Qt::RightDockWidgetArea },
         { "Broser", 0, Qt::RightDockWidgetArea }
     };
 
@@ -149,6 +150,8 @@ void MainWindow::initDockWidget()
     //addDockWidget(sets[2].area, workspaceDockWidget);
     checkListDockWidget = new DockWidget(sets[3].name, this, Qt::WindowFlags(sets[3].flags));
     addDockWidget(sets[3].area, checkListDockWidget);
+
+    m_voxelmap_dockwidget = new DockWidget(sets[5].name, this, Qt::WindowFlags(sets[5].flags));
     //logDockWidget = new DockWidget(sets[4].name, this, Qt::WindowFlags(sets[4].flags));
     //addDockWidget(sets[4].area, logDockWidget);
     //broserDockWidget = new DockWidget(sets[5].name, this, Qt::WindowFlags(sets[5].flags));
@@ -263,6 +266,11 @@ void MainWindow::initToolbar()
     ScaleToolBar->addAction(setPosAction);
 }
 
+void MainWindow::initVoxelMap()
+{
+    m_voxelmap_dockwidget
+}
+
 /**
  * @brief MainWindow::initm_paint_tabwidget
  */
@@ -292,6 +300,7 @@ void MainWindow::initPaintTab()
     connect(m_paint_tabwidget, SIGNAL(tabCloseRequested(int)), this, SLOT(slot_close_paintwidget(int)));
     connect(m_paint_tabwidget, SIGNAL(currentChanged(int)), this, SLOT(slot_currentTab_changed(int)));
     connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), m_paint_toolbar, SLOT(slot_setPaintStyle(Global::PaintStyle)));
+    connect(m_paint_toolbar, SIGNAL(signal_measure_table_click()), m_paint_tabwidget, SLOT(slot_show_measure_table()));
 }
 
 /**
@@ -1021,8 +1030,8 @@ void MainWindow::centerWidget_boundingSignal(int index)
     connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
     connect(m_paint_toolbar, SIGNAL(signal_setSnapFlag(Global::SnapFLag)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_snapfalg(Global::SnapFLag)));
     connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_painter_style(Global::PaintTool)));
-    connect(m_paint_toolbar, SIGNAL(signal_measure_table_click()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_show_measure_table()));
-    connect(m_paint_toolbar, SIGNAL(signal_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_measureline()));
+    connect(m_paint_toolbar, SIGNAL(signal_measure_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_measureline()));
+    connect(m_paint_toolbar, SIGNAL(signal_mark_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_mark_point()));
     emit signal_setPenWidth(penWidthCombox->currentText());
 }
 

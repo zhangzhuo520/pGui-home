@@ -21,6 +21,12 @@ void PaintToolbar::init_button()
     m_mark_point_button->setGeometry(2, 2, 18, 18);
     m_mark_point_button->setIcon(QIcon(":/dfjy/images/cross.png"));
 
+    m_mark_clear_button = new PushButton(this);
+    m_mark_clear_button->setObjectName("mark_clear_button");
+    m_mark_clear_button->setToolTip("delete all");
+    m_mark_clear_button->setIcon(QIcon(":/dfjy/images/clean.png"));
+    m_mark_clear_button->setGeometry(30, 2, 18, 18);
+
 
     m_snap_button = new PushButton(this);
     m_snap_button->setObjectName("snapButton");
@@ -69,12 +75,13 @@ void PaintToolbar::init_button()
     m_table_button = new PushButton(this);
     m_table_button->setObjectName("tableButton");
     m_table_button->setToolTip("Table");
-    m_table_button->setIcon(QIcon(":/dfjy/images/eraser.png"));
+    m_table_button->setIcon(QIcon(":/dfjy/images/measure_table.png"));
     m_table_button->setCheckable(true);
     m_table_button->setGeometry(130, 2, 18, 18);
 
     m_snap_button->hide();
     m_mark_point_button->hide();
+    m_mark_clear_button->hide();
     m_measure_line_button->hide();
     m_measure_angle_button->hide();
     m_clear_button->hide();
@@ -88,12 +95,13 @@ void PaintToolbar::init_connection()
 {
     //connect(m_normal_button, SIGNAL(clicked(bool)), this, SLOT(slot_normal_click(bool)));
     connect(m_mark_point_button, SIGNAL(clicked(bool)), this, SLOT(slot_mark_point_click(bool)));
+    connect(m_mark_clear_button, SIGNAL(clicked()), this, SLOT(slot_mark_clear_click()));
     connect(m_measure_line_button, SIGNAL(clicked(bool)), this, SLOT(slot_measure_line_click(bool)));
     connect(m_measure_angle_button, SIGNAL(clicked(bool)), this, SLOT(slot_measure_angle_click(bool)));
     connect(m_snap_button, SIGNAL(clicked(bool)), this, SLOT(slot_snap_click(bool)));
     connect(m_clear_button, SIGNAL(clicked()), this, SLOT(slot_clear_click()));
     connect(m_eraser_button, SIGNAL(clicked(bool)), this, SLOT(slot_eraser_click(bool)));
-    connect(m_table_button, SIGNAL(clicked()), this, SLOT(slot_table_click(bool)));
+    connect(m_table_button, SIGNAL(clicked()), this, SLOT(slot_table_click()));
     m_measure_line_button->setChecked(true);
 }
 
@@ -119,6 +127,11 @@ void PaintToolbar::slot_mark_point_click(bool flag)
         emit signal_setPaintStyle(Global::MarkCross);
     }
 
+}
+
+void PaintToolbar::slot_mark_clear_click()
+{
+    emit signal_mark_clear();
 }
 
 void PaintToolbar::slot_measure_line_click(bool flag)
@@ -190,15 +203,15 @@ void PaintToolbar::slot_table_click()
 
 void PaintToolbar::slot_clear_click()
 {
-    emit signal_clear();
+    emit signal_measure_clear();
 }
 
 void PaintToolbar::updata_toolbar()
 {
     if(m_paint_style == Global::Normal)
     {
-        emit signal_setPaintStyle(Global::Nothing);
         m_mark_point_button->hide();
+        m_mark_clear_button->hide();
         m_measure_line_button->hide();
         m_measure_angle_button->hide();
         m_line_a->hide();
@@ -207,18 +220,22 @@ void PaintToolbar::updata_toolbar()
         m_snap_button->hide();
         m_eraser_button->hide();
         m_table_button->hide();
+        emit signal_setPaintStyle(Global::Nothing);
     }
     else if(m_paint_style == Global::Mark)
     {
         m_mark_point_button->show();
+        m_line_a->show();
+        m_mark_clear_button->show();
         m_measure_line_button->hide();
         m_measure_angle_button->hide();
-        m_line_a->hide();
         m_line_b->hide();
         m_clear_button->hide();
         m_snap_button->hide();
         m_eraser_button->hide();
         m_table_button->hide();
+        emit signal_setPaintStyle(Global::Nothing);
+
     }
     else if(m_paint_style == Global::Measrue)
     {
@@ -231,6 +248,8 @@ void PaintToolbar::updata_toolbar()
         m_line_b->show();
         m_table_button->show();
         m_mark_point_button->hide();
+        m_mark_clear_button->hide();
+        emit signal_setPaintStyle(Global::MeasureLine);
     }
 }
 

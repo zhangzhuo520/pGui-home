@@ -33,7 +33,7 @@ public:
     void drawDefectPoint(double, double, QString);
     void calcu_defecttext_point();
     void draw_point_size();
-    void draw_measure_point();
+    void repaint_image();
     const QString &get_file_name() const
     {
         return m_filename;
@@ -41,6 +41,8 @@ public:
 
     render::LayoutView load_file(const QString &, const QString &, bool);
     render::RenderFrame* getRenderFrame();
+    const QList<LineData> & get_measure_line_list();
+    void set_measure_line_list(const QList<LineData> &);
 
     void zoom_in();
     void zoom_out();
@@ -66,6 +68,7 @@ public slots:
     void slot_move_point_center();
     void slot_set_snapfalg(Global::SnapFLag);
     void slot_clear_measureline();
+    void slot_clear_mark_point();
 
 protected:
     void paintEvent(QPaintEvent *);

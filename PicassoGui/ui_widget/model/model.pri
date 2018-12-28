@@ -9,3 +9,4 @@ SOURCES += \
     model/ui_checklist_model.cc \
     model/ui_measuretable_model.cc \
     model/ui_fileproject_model.cc
+

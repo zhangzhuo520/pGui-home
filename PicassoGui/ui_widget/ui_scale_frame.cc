@@ -60,7 +60,12 @@ void ScaleFrame::slot_set_snapfalg(Global::SnapFLag snapflag)
 
 void ScaleFrame::slot_clear_measureline()
 {
-    m_paint_widget->slot_clear();
+    m_paint_widget->slot_measure_clear();
+}
+
+void ScaleFrame::slot_clear_mark_point()
+{
+    m_paint_widget->slot_mark_point();
 }
 
 void ScaleFrame::set_defect_point(double x, double y)
@@ -748,12 +753,12 @@ void ScaleFrame::draw_point_size()
 //            (m_yratio_prev != m_yratio))
 //    {
         m_paint_widget->draw_defect_point_text(m_xratio, m_yratio, m_size_text);
-//    }
+        //    }
 }
 
-void ScaleFrame::draw_measure_point()
+void ScaleFrame::repaint_image()
 {
-      m_paint_widget->repaintRuler(m_xstart, m_xend, m_ystart, m_yend);
+    m_paint_widget->repaint_image(m_xstart, m_xend, m_ystart, m_yend);
 }
 
 void ScaleFrame::slot_set_pen_width(QString width)
@@ -775,6 +780,16 @@ render::LayoutView ScaleFrame::load_file(const QString & filename, const QString
 render::RenderFrame *ScaleFrame::getRenderFrame()
 {
     return m_render_frame;
+}
+
+const QList<LineData> & ScaleFrame::get_measure_line_list()
+{
+    return m_paint_widget->get_measure_line_list();
+}
+
+void ScaleFrame::set_measure_line_list(const QList<LineData> & line_list)
+{
+    m_paint_widget->set_measure_line_list(line_list);
 }
 
 void ScaleFrame::setImageSize(QSize size)
@@ -812,7 +827,7 @@ void ScaleFrame::slot_box_updated(double left, double bot, double right, double 
     m_yend = top;
     paintImage();
     draw_point_size();
-    draw_measure_point();
+    repaint_image();
     update();
 }
 

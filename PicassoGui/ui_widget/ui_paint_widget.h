@@ -50,10 +50,14 @@ public:
     explicit PaintWidget(QWidget *parent = 0);
 
     void draw_defect_point_text(double, double, QString);
-    void repaintRuler(double, double, double, double);
     void setPaintStyle(Global::PaintTool);
     void set_snap_flag(Global::SnapFLag);
+
+    void set_measure_line_list(const QList <LineData>&);
     const QList <LineData>& get_measure_line_list();
+
+    void repaint_image(double, double, double, double);
+
 
 protected:
     virtual void mousePressEvent (QMouseEvent *);
@@ -74,22 +78,26 @@ public slots:
     void setWidth (QString);
     void setColor (QColor);
     void slot_get_snap_pos(bool, QPoint, QPointF,int);
-    void slot_clear();
+    void slot_measure_clear();
+    void slot_mark_point();
 //    void slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> > result);
 
 private:
-    void use_angle();
     QPointF calcu_physical_point(QPointF);
+    QPointF calcu_pixel_point(QPointF);
 
+    void use_angle();
     void draw_cross_line(const QPoint&);
     void draw_dotted_box();
-    void drawMeasureLine();
+    void draw_measure_line();
+    void draw_mark_cross();
 
 //    void repaint_snap_ruler();
-    void repaint_normal_ruler(double, double, double, double);
-
     QImage merge_two_images(const QImage&, const QImage&);
     void merge_image();
+
+    void repaint_normal_ruler();
+    void repaint_mark_cross();
 
     Global::PaintTool m_select_mode;
     LineClicks m_mouse_clicks;
@@ -103,6 +111,7 @@ private:
     QImage m_cross_line_image;
     QImage m_dotted_box_image;
     QImage m_defectpoint_size_image;
+    QImage m_mark_cross_image;
 
     QImage m_paint_image;
 
@@ -133,6 +142,8 @@ private:
     double m_distance;
 
     bool m_first_point_find;
+
+    QList <QPointF> m_mark_cross_list;
 };
 }
 #endif // DRAWWIDGET_H

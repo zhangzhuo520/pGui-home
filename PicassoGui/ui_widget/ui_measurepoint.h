@@ -39,6 +39,8 @@ public:
     QColor m_line_color;
 };
 
+//qRegisterMetaType("LineData");
+
 class MeasureLine
 {
 public:
@@ -49,6 +51,7 @@ public:
         m_linedata_list.append(linedata);
     }
 
+    void set_point_list(const QList <LineData> &);
     inline QList <LineData> & get_point_list()
     {
         return m_linedata_list;

@@ -9,6 +9,11 @@ MeasureLine::MeasureLine()
 {
 }
 
+void MeasureLine::set_point_list(const QList<LineData> & line_list)
+{
+    m_linedata_list = line_list;
+}
+
 bool MeasureLine::point_at_edge(QPointF p, LineData line)
 {    
     double a_x = line.m_first_point.x();

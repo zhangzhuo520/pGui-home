@@ -128,6 +128,7 @@ private:
     void initStatebar();
     void initDockWidget();
     void initToolbar();
+    void initVoxelMap();
     void initPaintTab();
     void initCheckList();
     void initDefGroup();
@@ -154,6 +155,7 @@ private:
     LayerWidget *layerwidget;
     DockWidget *workspaceDockWidget;
     DockWidget *checkListDockWidget;
+    DockWidget *m_voxelmap_dockwidget;
     DockWidget *logDockWidget;
     DockWidget *broserDockWidget;
     QVector <DockWidget *> m_defgroupdockwidget_vector;

@@ -75,8 +75,8 @@ void DefectsWidget::initOtherButton()
     m_pagecount_label = new QLabel(this);
     m_page_jump_edit = new PageJumpEdit(this);
 //    connect(m_descent_button, SIGNAL(clicked()), this, SLOT(slot_m_descent_buttonCheck()));
-    //    connect(m_ascen_button, SIGNAL(clicked()), this, SLOT(slot_m_ascen_buttonCheck()));
-    //    connect(m_sort_commbox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
+//    connect(m_ascen_button, SIGNAL(clicked()), this, SLOT(slot_m_ascen_buttonCheck()));
+//    connect(m_sort_commbox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
     connect(m_perv_button, SIGNAL(clicked()), this, SLOT(slot_pervPage()));
     connect(m_next_button, SIGNAL(clicked()), this, SLOT(slot_nextPage()));
     connect(m_page_jump_edit, SIGNAL(signal_jump(QString)), this, SLOT(slot_jump_click(QString)));
@@ -137,6 +137,11 @@ void DefectsWidget::updataTable()
     {
         m_next_button->setEnabled(true);
         m_perv_button->setEnabled(true);
+    }
+
+    if (m_current_page == 1)
+    {
+        m_perv_button->setEnabled(false);
     }
 
     m_defects_query->setData(m_defect_data);
@@ -270,8 +275,16 @@ void DefectsWidget::update_page()
 
 void DefectsWidget::update_page_number()
 {
-    QString str = QString::number(m_current_page)  + "/" + QString::number(m_total_count / m_each_page_count + 1);
-    m_pagecount_label->setText(str);
+    if (m_total_count % m_each_page_count == 0)
+    {
+        QString str = QString::number(m_current_page)  + "/" + QString::number(m_total_count / m_each_page_count);
+        m_pagecount_label->setText(str);
+    }
+    else
+    {
+        QString str = QString::number(m_current_page)  + "/" + QString::number(m_total_count / m_each_page_count + 1);
+        m_pagecount_label->setText(str);
+    }
 }
 
 void DefectsWidget::showDefects(QModelIndex *index)
@@ -285,7 +298,7 @@ void DefectsWidget::showDefects(QModelIndex *index)
 
 void DefectsWidget::update_all_data(QModelIndex * index)
 {
-       showDefects(index);
+    showDefects(index);
 }
 
 QTableView *DefectsWidget::getTableView()

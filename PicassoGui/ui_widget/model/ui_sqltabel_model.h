@@ -1,6 +1,10 @@
 #ifndef UI_SQLTABEL_MODEL_H
 #define UI_SQLTABEL_MODEL_H
 #include <QSqlQueryModel>
+#include <QStringList>
+#include <qnamespace.h>
+#include <QColor>
+#include <QBrush>
 
 namespace ui {
 class SqlQueryModel : public QSqlQueryModel

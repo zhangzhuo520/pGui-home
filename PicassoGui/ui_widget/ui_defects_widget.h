@@ -52,7 +52,8 @@ public:
 
     void update_all_data(QModelIndex *);
 
-     QTableView * getTableView();
+    QTableView * getTableView();
+
 protected:
     void closeEvent(QCloseEvent *e)
     {

@@ -69,5 +69,6 @@
         <file>images/setpos.png</file>
         <file>images/eraser.png</file>
         <file>images/clean.png</file>
+        <file>images/measure_table.png</file>
     </qresource>
 </RCC>

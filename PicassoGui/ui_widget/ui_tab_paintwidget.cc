@@ -3,11 +3,11 @@ namespace ui {
 
 TabPaintWidget::TabPaintWidget(QWidget *parent)
 {
-    setParent(parent);
+    m_mainwindow = parent;
     sizePolicy().setVerticalPolicy(QSizePolicy::Ignored);
     setTabsClosable(true);
     setMouseTracking(true);
-    m_measure_table = NULL;
+    init_measure_table();
 }
 
 ScaleFrame *TabPaintWidget::get_scaleframe(int index)
@@ -40,14 +40,23 @@ void TabPaintWidget::creat_canvas()
 
 void TabPaintWidget::slot_show_measure_table()
 {
-    QList <LineData> line_list = m_scaleframe_vector[currentIndex()]->m_paint_widget->get_measure_line_list();
-    QMainWindow *mainwindow = static_cast <QMainWindow *> parent();
-    if (m_measure_table == NULL)
+    if (m_scaleframe_vector.isEmpty())
     {
-        m_measure_table = new MeasureTable(mainwindow);
-        m_measure_table->set_line_list(line_list);
+        return;
     }
+    QList <LineData> line_list = m_scaleframe_vector[currentIndex()]->get_measure_line_list();
 
+    if (line_list.isEmpty())
+    {
+        return;
+    }
+    m_measure_table->set_line_list(line_list);
+    m_measure_dockwidget->show();
+}
+
+void TabPaintWidget::slot_set_line_list(const QList<LineData> & line_list)
+{
+    m_scaleframe_vector[currentIndex()]->set_measure_line_list(line_list);
 }
 
 void TabPaintWidget::append_canvas(QString fileName)
@@ -95,6 +104,17 @@ QString TabPaintWidget::database_to_oas(QString m_filename)
         m_filename =  m_filename + "DefectFile.oas";
     }
     return m_filename;
+}
+
+void TabPaintWidget::init_measure_table()
+{
+    m_measure_dockwidget = new DockWidget("Measure Table", m_mainwindow, Qt::WindowFlags(Qt::RightDockWidgetArea));
+    m_measure_table = new MeasureTable(m_mainwindow);
+    m_measure_dockwidget->setWidget(m_measure_table);
+    m_measure_dockwidget->setFloating(true);
+    m_measure_dockwidget->move(m_mainwindow->width()/ 2, m_mainwindow->height() / 2);
+    m_measure_dockwidget->hide();
+    connect(m_measure_table, SIGNAL(singal_set_line_list(const QList <LineData>&)), this, SLOT(slot_set_line_list(const QList <LineData>&)));
 }
 
 }

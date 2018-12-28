@@ -6,14 +6,15 @@
 #include <QProxyStyle>
 #include <QDockWidget>
 #include <QPainter>
+#include <QSize>
 
-#include "ui_measuretable_model.h"
+#include "model/ui_measuretable_model.h"
 #include "ui_measurepoint.h"
 #include "deftools/defcontrols.h"
 
 namespace ui {
 
-class MeasureTable : public DockWidget
+class MeasureTable : public QWidget
 {
     Q_OBJECT
 public:
@@ -22,16 +23,30 @@ public:
     void init();
 
     void set_line_list(QList <LineData>);
+
+    virtual QSize sizeHint() const
+    {
+        return QSize(250, 60);
+    }
     
 signals:
-    
-public slots:
+    void singal_set_line_list(const QList <LineData>&);
 
+public slots:
+    void slot_context_menu(QPoint);
+
+    void slot_delete_row();
+
+    void slot_delete_all();
+
+    void slot_update_index(QModelIndex);
 private:
     QTableView *m_table_view;
     MeasureTableModel *m_table_model;
     QList <LineData> m_linedata_list;
     MeasureTable* m_measure_table;
+
+    int m_active_index;
 };
 }
 #endif // UI_MEASURE_TABLE_H

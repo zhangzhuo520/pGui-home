@@ -12,9 +12,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = PicassoGui
 TEMPLATE = app
 
-include(deftools/deftools.pri)
 include(db/db.pri)
 include(model/model.pri)
+include(painter/painter.pri)
+include(deftools/deftools.pri)
 
 SOURCES += main.cc\
     ui_mainwindow.cc \
