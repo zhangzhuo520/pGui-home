@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     init_fileProject_layerTree();
 
+    init_voxelmap();
+
     initConnection();
 
     initPointer();
@@ -268,7 +270,7 @@ void MainWindow::initToolbar()
 
 void MainWindow::initVoxelMap()
 {
-    m_voxelmap_dockwidget
+//    m_voxelmap_dockwidget
 }
 
 /**
@@ -314,6 +316,10 @@ void MainWindow::initCheckList()
     checkListDockWidget->setWidget(checklistWidget);
 
     connect(checklistWidget, SIGNAL(signal_close_database_widget(int)), this , SLOT(slot_close_database_widget(int)));
+}
+
+void MainWindow::init_voxelmap()
+{
 }
 
 /**

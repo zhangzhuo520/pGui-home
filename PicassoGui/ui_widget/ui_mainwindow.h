@@ -131,6 +131,7 @@ private:
     void initVoxelMap();
     void initPaintTab();
     void initCheckList();
+    void init_voxelmap();
     void initDefGroup();
     void initConfigDir();
     void initPointer();

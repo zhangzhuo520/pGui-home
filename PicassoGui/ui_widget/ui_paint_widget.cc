@@ -56,7 +56,7 @@ void PaintWidget::set_measure_line_list(const QList<LineData> & m_line_list)
 
 void PaintWidget::use_angle()
 {
-    if (m_select_mode == Global::MeasureAngle)
+    if (m_select_mode == Global::MeasureAngle && m_snap_flag == Global::SnapClose)
     {
         double angle_range = (m_ruler_last_point.y() - m_ruler_first_point.y()) / (m_ruler_last_point.x() - m_ruler_first_point.x());
         if (-0.2 <= angle_range && angle_range < 0.2)
@@ -120,7 +120,7 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
                 m_mouse_clicks = LineEnd;
                 if (m_snap_flag == Global::SnapOpen)
                 {
-                    emit signal_get_snap_pos(m_current_mousepos, 2);
+                    emit signal_get_snap_pos(m_ruler_last_point.toPoint(), 2);
                 }
                 else
                 {
@@ -209,7 +209,29 @@ void PaintWidget::mouseMoveEvent (QMouseEvent *e)
         {
             if (m_snap_flag == Global::SnapOpen)
             {
-                emit signal_get_snap_pos(e->pos(), 2);
+                if (m_select_mode == Global::MeasureAngle)
+                {
+                    m_ruler_last_point = m_current_mousepos;
+                    double angle_range = (m_ruler_last_point.y() - m_ruler_first_point.y()) / (m_ruler_last_point.x() - m_ruler_first_point.x());
+                    if (-0.2 <= angle_range && angle_range < 0.2)
+                    {
+                        m_ruler_last_point.setY(m_ruler_first_point.y());
+                    }
+                    else if (0.2 <= angle_range && angle_range < 3)
+                    {
+                        m_ruler_last_point.setY(m_ruler_first_point.y() + m_ruler_last_point.x() - m_ruler_first_point.x());
+                    }
+                    else if (-3 <=angle_range &&  angle_range< -0.2)
+                    {
+                        m_ruler_last_point.setY(m_ruler_first_point.y() - m_ruler_last_point.x() + m_ruler_first_point.x());
+                    }
+                    else if (3 <= angle_range || angle_range < -3)
+                    {
+                        m_ruler_last_point.setX(m_ruler_first_point.x());
+                    }
+                    m_current_mousepos = m_ruler_last_point.toPoint();
+                }
+                emit signal_get_snap_pos(m_current_mousepos, 2);
             }
             else
             {
@@ -596,15 +618,22 @@ void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, i
             double dy = m_end_pos.y() - m_start_pos.y();
             m_distance = sqrt( dx * dx + dy * dy);
             emit signal_updateDistance(m_distance);
+            if (m_first_point_find)
+            {
+                draw_measure_line();
+                merge_image();
+            }
         }
         else
         {
             m_ruler_last_point = m_current_mousepos;
-        }
-        if (m_first_point_find)
-        {
-            draw_measure_line();
-            merge_image();
+            m_mouse_clicks = LineStart;
+            if (m_first_point_find)
+            {
+                draw_measure_line();
+                merge_image();
+            }
+
         }
     }
 }
