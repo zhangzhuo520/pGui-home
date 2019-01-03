@@ -1,6 +1,7 @@
 #ifndef UI_CHECKLIST_MODEL_H
 #define UI_CHECKLIST_MODEL_H
 #include <QStandardItemModel>
+
 namespace ui {
 class TreeItem : public QStandardItem
 {
@@ -31,6 +32,7 @@ public:
 
 class TreeModel :public QStandardItemModel
 {
+    Q_OBJECT
 public:
        explicit TreeModel(QObject *parent = 0);
 

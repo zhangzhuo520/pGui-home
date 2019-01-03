@@ -6,14 +6,14 @@
 namespace render
 {
 RenderWorker::RenderWorker(
-    Oasis::OasisLayout* layout,
-    Oasis::int64 infoindex,
-    Oasis::OasisBox& q_box,
-    Oasis::OasisTrans& trans,
-    const Oasis::LDType& ld,
-    Oasis::uint32 width,
-    Oasis::uint32 height,
-    Oasis::float64 resolution,
+    oasis::OasisLayout* layout,
+    oasis::int64 infoindex,
+    oasis::Box& q_box,
+    oasis::OasisTrans& trans,
+    const oasis::LDType& ld,
+    oasis::uint32 width,
+    oasis::uint32 height,
+    oasis::float64 resolution,
     Bitmap* contour,
     Bitmap* fill,
     Bitmap* vertex)
@@ -40,7 +40,7 @@ RenderWorker::~RenderWorker()
 
 void RenderWorker::run()
 {
-    m_layout->DrawBitmap(m_infoindex, m_q_box, m_trans, m_ld, m_width, m_height, m_resolution, m_contour, m_fill, m_vertex);
+    m_layout->draw_bitmap(m_infoindex, m_q_box, m_trans, m_ld, m_width, m_height, m_resolution, m_contour, m_fill, m_vertex);
 }
 
 }

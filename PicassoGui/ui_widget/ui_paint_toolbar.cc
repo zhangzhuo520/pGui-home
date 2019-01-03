@@ -126,6 +126,10 @@ void PaintToolbar::slot_mark_point_click(bool flag)
         m_mark_point_button->setChecked(true);
         emit signal_setPaintStyle(Global::MarkCross);
     }
+    else
+    {
+        emit signal_setPaintStyle(Global::Nothing);
+    }
 
 }
 
@@ -138,14 +142,13 @@ void PaintToolbar::slot_measure_line_click(bool flag)
 {
     if (flag)
     {
-        m_measure_line_button->setChecked(true);
         m_measure_angle_button->setChecked(false);
         m_eraser_button->setChecked(false);
         emit signal_setPaintStyle(Global::MeasureLine);
     }
     else
     {
-        m_measure_line_button->setChecked(false);
+        emit signal_setPaintStyle(Global::Nothing);
     }
 }
 
@@ -154,13 +157,12 @@ void PaintToolbar::slot_measure_angle_click(bool flag)
     if (flag)
     {
         m_measure_line_button->setChecked(false);
-        m_measure_angle_button->setChecked(true);
         m_eraser_button->setChecked(false);
         emit signal_setPaintStyle(Global::MeasureAngle);
     }
     else
     {
-        m_measure_angle_button->setChecked(false);
+        emit signal_setPaintStyle(Global::Nothing);
     }
 }
 
@@ -170,13 +172,11 @@ void PaintToolbar::slot_snap_click(bool flag)
     {
 //        m_measure_line_button->setChecked(false);
 //        m_measure_angle_button->setChecked(false);
-        m_snap_button->setChecked(true);
         m_eraser_button->setChecked(false);
         emit signal_setSnapFlag(Global::SnapOpen);
     }
     else
     {
-        m_snap_button->setChecked(false);
         emit signal_setSnapFlag(Global::SnapClose);
     }
 }
@@ -187,12 +187,11 @@ void PaintToolbar::slot_eraser_click(bool flag)
     {
         m_measure_line_button->setChecked(false);
         m_measure_angle_button->setChecked(false);
-        m_eraser_button->setChecked(true);
         emit signal_setPaintStyle(Global::RemoveLine);
     }
     else
     {
-        m_eraser_button->setChecked(false);
+        emit signal_setPaintStyle(Global::Nothing);
     }
 }
 

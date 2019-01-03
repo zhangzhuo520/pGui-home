@@ -114,6 +114,8 @@ private slots:
     void slot_showScaleAxis(bool);
     void slot_setPosAction();
     void slot_setPosButton();
+    void slot_setWindowMaxSizeAction();
+    void slot_setWindowMaxSizeButton();
 
     void slot_close_database_widget(int);
 
@@ -128,10 +130,8 @@ private:
     void initStatebar();
     void initDockWidget();
     void initToolbar();
-    void initVoxelMap();
     void initPaintTab();
     void initCheckList();
-    void init_voxelmap();
     void initDefGroup();
     void initConfigDir();
     void initPointer();
@@ -156,7 +156,6 @@ private:
     LayerWidget *layerwidget;
     DockWidget *workspaceDockWidget;
     DockWidget *checkListDockWidget;
-    DockWidget *m_voxelmap_dockwidget;
     DockWidget *logDockWidget;
     DockWidget *broserDockWidget;
     QVector <DockWidget *> m_defgroupdockwidget_vector;
@@ -167,6 +166,7 @@ private:
     TabPaintWidget *m_paint_tabwidget;
     PaintToolbar *m_paint_toolbar;
     QWidget * m_center_widget;
+    QScrollArea *m_scrollarea_bar;
 
     QVector <DefGroup *> m_defgroup_vector;
     QVector <DefectsWidget *> m_defectswidget_vector;
@@ -204,8 +204,16 @@ private:
     QLabel *m_pos_unit_label;
     QLineEdit *m_pos_lineeidt;
 
+    QDialog *m_setwindow_dialog;
+    QLabel *m_window_label;
+    QLabel *m_window_unit_label;
+    QLineEdit *m_window_lineedit;
+
     QPushButton *m_setpos_okbutton;
     QPushButton *m_setpos_cancelbutton;
+
+    QPushButton *m_setwindow_okbutton;
+    QPushButton *m_setwindow_cancelbutton;
 
     QMenu *rencentOpen_menu;
     QString configFile_path;

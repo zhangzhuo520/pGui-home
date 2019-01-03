@@ -26,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     init_fileProject_layerTree();
 
-    init_voxelmap();
-
     initConnection();
 
     initPointer();
@@ -140,7 +138,6 @@ void MainWindow::initDockWidget()
         { "Workspace", 0, Qt::BottomDockWidgetArea },
         { "ChickList", 0, Qt::BottomDockWidgetArea },
         { "Log", 0, Qt::BottomDockWidgetArea },
-        { "voxelMap", 0, Qt::RightDockWidgetArea },
         { "Broser", 0, Qt::RightDockWidgetArea }
     };
 
@@ -152,8 +149,6 @@ void MainWindow::initDockWidget()
     //addDockWidget(sets[2].area, workspaceDockWidget);
     checkListDockWidget = new DockWidget(sets[3].name, this, Qt::WindowFlags(sets[3].flags));
     addDockWidget(sets[3].area, checkListDockWidget);
-
-    m_voxelmap_dockwidget = new DockWidget(sets[5].name, this, Qt::WindowFlags(sets[5].flags));
     //logDockWidget = new DockWidget(sets[4].name, this, Qt::WindowFlags(sets[4].flags));
     //addDockWidget(sets[4].area, logDockWidget);
     //broserDockWidget = new DockWidget(sets[5].name, this, Qt::WindowFlags(sets[5].flags));
@@ -263,14 +258,13 @@ void MainWindow::initToolbar()
     ScaleToolBar->addAction(scaleAction);
     m_axis_show = false;
 
-    QAction *setPosAction = new QAction(QIcon(":/dfjy/images/setpos.png"),"setPos", this);
+    QAction *setPosAction = new QAction(QIcon(":/dfjy/images/setpos.png"),"Set Position", this);
     connect(setPosAction, SIGNAL(triggered()), this, SLOT(slot_setPosAction()));
     ScaleToolBar->addAction(setPosAction);
-}
 
-void MainWindow::initVoxelMap()
-{
-//    m_voxelmap_dockwidget
+    QAction *setWindowMaxSizeAction = new QAction(QIcon(":/dfjy/images/setwindowsize.png"), "setWindowMaxSize", this);
+    connect(setWindowMaxSizeAction, SIGNAL(triggered()), this, SLOT(slot_setWindowMaxSizeAction()));
+    ScaleToolBar->addAction(setWindowMaxSizeAction);
 }
 
 /**
@@ -279,12 +273,15 @@ void MainWindow::initVoxelMap()
 void MainWindow::initPaintTab()
 {
     m_current_tabid = 0;
+//    m_scrollarea_bar = new QScrollArea(this);
+//    setCentralWidget(m_scrollarea_bar);
     m_center_widget = new QWidget(this);
+//    m_center_widget->setGeometry(0, 0, centralWidget()->width(), centralWidget()->height());
     m_paint_tabwidget = new TabPaintWidget(this);
     m_paint_toolbar = new PaintToolbar(centralWidget());
 
-    m_paint_tabwidget->setObjectName("m_paint_tabwidget");
     setCentralWidget(m_center_widget);
+    m_paint_tabwidget->setObjectName("m_paint_tabwidget");
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
@@ -316,10 +313,6 @@ void MainWindow::initCheckList()
     checkListDockWidget->setWidget(checklistWidget);
 
     connect(checklistWidget, SIGNAL(signal_close_database_widget(int)), this , SLOT(slot_close_database_widget(int)));
-}
-
-void MainWindow::init_voxelmap()
-{
 }
 
 /**
@@ -546,6 +539,7 @@ void MainWindow::slot_setPosAction()
     m_pos_label = new QLabel("Pos(x, y):", m_setpos_dialog);
     m_pos_label->setGeometry(30, 30, 65, 25);
     m_pos_lineeidt = new QLineEdit(m_setpos_dialog);
+    m_pos_lineeidt->setToolTip("Enter a position as (x, y) in unit um");
     m_pos_lineeidt-> setGeometry(100, 30, 150, 25);
     m_pos_lineeidt->setText(",");
     m_pos_lineeidt->setCursorPosition(0);
@@ -553,13 +547,40 @@ void MainWindow::slot_setPosAction()
     m_pos_unit_label->setGeometry(255, 30, 30, 25);
 
     m_setpos_okbutton = new QPushButton("Ok", m_setpos_dialog);
-    m_setpos_okbutton->setGeometry(50, 90, 60, 30);
+    m_setpos_okbutton->setGeometry(150, 90, 60, 30);
     connect(m_setpos_okbutton, SIGNAL(clicked()), this, SLOT(slot_setPosButton()));
     m_setpos_cancelbutton = new QPushButton("Cancel", m_setpos_dialog);
-    m_setpos_cancelbutton->setGeometry(200, 90, 60, 30);
+    m_setpos_cancelbutton->setGeometry(220, 90, 60, 30);
     connect(m_setpos_cancelbutton, SIGNAL(clicked()), m_setpos_dialog, SLOT(close()));
     m_setpos_dialog->show();
 }
+
+void MainWindow::slot_setWindowMaxSizeAction()
+{
+    if(m_setwindow_dialog == NULL)
+    {
+        m_setwindow_dialog = new QDialog(this);
+    }
+
+    m_setwindow_dialog->setGeometry(width() / 2 - 150, height() / 2 - 150, 300, 140);
+    m_window_label = new QLabel("Size:", m_setwindow_dialog);
+    m_window_label->setGeometry(30, 30, 70, 25);
+    m_window_lineedit = new QLineEdit(m_setwindow_dialog);
+    m_window_lineedit->setGeometry(100, 30, 150, 25);
+    m_window_lineedit->setText("120.0");
+    m_window_lineedit->setCursorPosition(0);
+    m_window_unit_label = new QLabel("um", m_setwindow_dialog);
+    m_window_unit_label->setGeometry(255, 30, 30, 25);
+
+    m_setwindow_okbutton = new QPushButton("Ok", m_setwindow_dialog);
+    m_setwindow_okbutton->setGeometry(150, 90, 60, 30);
+    connect(m_setwindow_okbutton, SIGNAL(clicked()), this, SLOT(slot_setWindowMaxSizeButton()));
+    m_setwindow_cancelbutton = new QPushButton("Cancel", m_setwindow_dialog);
+    m_setwindow_cancelbutton->setGeometry(220, 90, 60, 30);
+    connect(m_setwindow_cancelbutton, SIGNAL(clicked()), m_setwindow_dialog, SLOT(close()));
+    m_setwindow_dialog->show();
+}
+
 
 void MainWindow::slot_setPosButton()
 {
@@ -577,8 +598,23 @@ void MainWindow::slot_setPosButton()
         }
         else
         {
-            showWarning(this, "Waring", "Not Open The Canvas!");
+            showWarning(this, "Warning", "Not open the canvas!");
         }
+    }
+}
+
+void MainWindow::slot_setWindowMaxSizeButton()
+{
+    double limit = m_window_lineedit->text().toDouble();
+
+    if((m_current_tabid < m_paint_tabwidget->count()) && (m_paint_tabwidget->count() > 0))
+    {
+        m_paint_tabwidget->get_scaleframe(m_current_tabid)->set_window_max_size(limit);
+        m_setwindow_dialog->close();
+    }
+    else
+    {
+        showWarning(this, "Warning", "Not open the canvas!");
     }
 }
 
@@ -735,8 +771,17 @@ void MainWindow::slot_open_job(QString dirName)
     {
         if (temp_str == m_checklist_file_list.at(i))
         {
-            showWarning(this, "Waring", "You open the same file!");
-            return;
+            if (showWarning(this, "Waring", "GDS/Job already opened. Do you want to \nre-open it?", QMessageBox::StandardButtons(QMessageBox::No | QMessageBox::Ok))
+                    == QMessageBox::Ok )
+            {
+                fileWidget->delete_file(temp_str);
+                slot_closeFile(temp_str);
+                break;
+            }
+            else
+            {
+                return;
+            }
         }
     }
     QDir dir(dirName);
@@ -808,9 +853,17 @@ void MainWindow::slot_addFile(QString filePath)
 {
     if (fileWidget->is_file_exist(filePath))
     {
-        showWarning(this, "Waring", "You open the same file!");
-        return;
+        if (showWarning(this, "Waring", "GDS/Job already opened. Do you want to \nre-open it?", QMessageBox::StandardButtons(QMessageBox::No | QMessageBox::Ok))
+                == QMessageBox::Ok )
+        {
+            fileWidget->delete_file(filePath);
+        }
+        else
+        {
+            return;
+        }
     }
+
     emit signal_addFile(filePath);
 
     saveOpenHistory(filePath);
@@ -845,8 +898,6 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
     }
     showCoordinate();
 }
-
-
 
 void MainWindow::slot_updateXY(double x, double y)
 {
@@ -936,8 +987,9 @@ void MainWindow::initConfigDir()
 void MainWindow::initPointer()
 {
     m_file_dialog = NULL;
-    m_setpos_dialog = NULL;
     m_dir_dialog = NULL;
+    m_setpos_dialog = NULL;
+    m_setwindow_dialog = NULL;
 }
 
 void MainWindow::initPrepDir()

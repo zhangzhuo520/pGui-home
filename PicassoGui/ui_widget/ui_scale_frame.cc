@@ -35,7 +35,7 @@ void ScaleFrame::initRenderFrame()
     m_hlayout->addWidget(m_render_frame);
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), this, SLOT(slot_box_updated(double,double,double,double)));
     connect(m_render_frame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_pos_updated(double, double)));
-    connect(m_render_frame, SIGNAL(signal_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >)), m_paint_widget, SLOT(slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >)));
+   // connect(m_render_frame, SIGNAL(signal_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >)), m_paint_widget, SLOT(slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >)));
     connect(m_render_frame, SIGNAL(signal_get_snap_pos(bool, QPoint, QPointF, int)), m_paint_widget, SLOT(slot_get_snap_pos(bool, QPoint, QPointF, int)));
     connect(m_paint_widget, SIGNAL(signal_updateDistance(double)), this, SLOT(slot_distance_updated(double)));
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
@@ -895,6 +895,11 @@ void ScaleFrame::refresh()
 void ScaleFrame::zoom_fit()
 {
     emit signal_zoom_fit();
+}
+
+void ScaleFrame::set_window_max_size(double limit)
+{
+    m_render_frame->set_window_max_size(limit);
 }
 
 }

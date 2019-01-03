@@ -14,16 +14,16 @@ public:
 
     LayoutView();
 
-    LayoutView(int index, Oasis::OasisLayout* layout, RenderFrame* widget);
+    LayoutView(int index, oasis::OasisLayout* layout, RenderFrame* widget);
 
     LayoutView& operator= (const LayoutView& );
 
-    Oasis::OasisLayout* get_layout() const
+    oasis::OasisLayout* get_layout() const
     {
         return m_layout.get();
     }
 
-    void set_layout(Oasis::OasisLayout* layout)
+    void set_layout(oasis::OasisLayout* layout)
     {
         m_layout.reset(layout);
     }
@@ -62,9 +62,9 @@ public:
         m_file_name = file_name;
     }
 
-    Oasis::float64 get_dbu() const
+    oasis::float64 get_dbu() const
     {
-        Oasis::OasisLayout* p = m_layout.get();
+        oasis::OasisLayout* p = m_layout.get();
         if(p)
         {
             return p->get_dbu();
@@ -84,7 +84,7 @@ private:
     friend class RenderFrame;
 
     RenderFrame* m_widget;
-    std::shared_ptr<Oasis::OasisLayout> m_layout;
+    std::shared_ptr<oasis::OasisLayout> m_layout;
     int m_index;
 
     std::string m_file_name;

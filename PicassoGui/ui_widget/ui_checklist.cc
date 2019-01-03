@@ -142,35 +142,45 @@ void CheckList::updataTreeView()
 
     for (int i = 0; i < m_maskvector.count(); i ++ )
     {
-        pStandardItem = new TreeItem(m_maskvector.at(i).value("mask_desc"));
-        rootFileItem->appendRow(pStandardItem);
-        rootFileItem->setChild(pStandardItem->row(), m_headerlist.indexOf("Defect No") ,new TreeItem(m_count));
+        if (!m_maskvector.at(i).value("mask_desc").isEmpty())
+        {
+            pStandardItem = new TreeItem(m_maskvector.at(i).value("mask_desc"));
+            rootFileItem->appendRow(pStandardItem);
+            rootFileItem->setChild(i, m_headerlist.indexOf("Defect No") ,new TreeItem(m_count));
+        }
+        else
+        {
+            pStandardItem = new TreeItem("Mask Id :" + m_maskvector.at(i).value("mask_id"));
+            rootFileItem->appendRow(pStandardItem);
+            rootFileItem->setChild(i, m_headerlist.indexOf("Defect No") ,new TreeItem(m_count));
+        }
 
         for (int j = 0; j < m_pw_conditionvector.count(); j ++)
         {
             pStandardChildItem = new TreeItem(m_pw_conditionvector.at(j).value("cond_name"));
-            pStandardItem->appendRow(pStandardChildItem);
+            pStandardItem->setChild(j,m_headerlist.indexOf("Name"), pStandardChildItem);
             pStandardItem->setChild(j, m_headerlist.indexOf("Defect No") ,new TreeItem(m_pw_conditionvector.at(j).value("Count")));
             pStandardItem->setChild(j, m_headerlist.indexOf("Delta-Focus") ,new TreeItem(m_pw_conditionvector.at(j).value("defocus")));
             pStandardItem->setChild(j, m_headerlist.indexOf("Delta-Dose") ,new TreeItem(m_pw_conditionvector.at(j).value("dedose")));
             pStandardItem->setChild(j, m_headerlist.indexOf("Bias") ,new TreeItem(m_pw_conditionvector.at(j).value("bias")));
-
+            int pStandardChildItem_row = 0;
             for (int k = 0; k < m_detectorvector.count(); k ++)
             {
-                pStandardGrandsonItem = new TreeItem(m_detectorvector.at(k).value("d_name"));
                 if (m_detectorvector.at(k).value("cond1_id") == m_pw_conditionvector.at(j).value("cond_id"))
                 {
-                    pStandardChildItem->appendRow(pStandardGrandsonItem);
-                    pStandardChildItem->setChild(k, 0 ,pStandardGrandsonItem);
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Detector_table_id") ,new TreeItem(m_detectorvector.at(k).value("detector_table_id")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Type") ,new TreeItem(m_detectorvector.at(k).value("d_type")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Defect No") ,new TreeItem(m_detectorvector.at(k).value("defect_number")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Group No") ,new TreeItem(m_detectorvector.at(k).value("group_num")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Size_range") ,new TreeItem(m_detectorvector.at(k).value("defrange")));
-                    pStandardChildItem->setChild(k, m_headerlist.indexOf("Unit") ,new TreeItem(m_detectorvector.at(k).value("unit")));
+                    pStandardGrandsonItem = new TreeItem(m_detectorvector.at(k).value("d_name"));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Name"), pStandardGrandsonItem);
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Detector_table_id") ,new TreeItem(m_detectorvector.at(k).value("detector_table_id")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Type") ,new TreeItem(m_detectorvector.at(k).value("d_type")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Defect No") ,new TreeItem(m_detectorvector.at(k).value("defect_number")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Group No") ,new TreeItem(m_detectorvector.at(k).value("group_num")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Size_range") ,new TreeItem(m_detectorvector.at(k).value("defrange")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Unit") ,new TreeItem(m_detectorvector.at(k).value("unit")));
+                    pStandardChildItem_row ++;
                 }
             }
         }
+        break;
     }
 }
 

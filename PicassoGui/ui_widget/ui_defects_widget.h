@@ -28,6 +28,8 @@ public:
 
     void initOtherButton();
 
+    void initContextMenu();
+
     void addLayout();
 
     void initSql();
@@ -52,8 +54,7 @@ public:
 
     void update_all_data(QModelIndex *);
 
-    QTableView * getTableView();
-
+     QTableView * getTableView();
 protected:
     void closeEvent(QCloseEvent *e)
     {
@@ -66,6 +67,9 @@ signals:
 public slots:
     void slot_showDefects(QModelIndex *);
 
+    void slot_custom_contextmenu(QPoint);
+
+    void slot_set_page_count();
 //    void slot_defectsUpdata(QModelIndex *);
 
 //    void slot_changSortQrder(QString);
@@ -143,6 +147,8 @@ private:
     int m_group_id;
 
     QStringList m_header_list;
+
+    int m_each_page_count;
 };
 }
 #endif // DefectsWidget_H

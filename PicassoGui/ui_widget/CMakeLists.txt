@@ -18,9 +18,9 @@ SET(PicathoGui_SRCS
     ui_defects_widget.cc
     ui_layer_widget.cc
     ui_fileproject_widget.cc
-    ui_fileproject_model.cc
     ui_frame.cc
     ui_measurepoint.cc
+    ui_measure_table.cc
     ui_menu_widget.cc
     ui_rtsconfig_dialog.cc
     ui_choosefile_dialog.cc
@@ -36,10 +36,10 @@ SET(PicathoGui_SRCS
     deftools/delegate.cc
     db/sqlquery.cc
     db/sqlmanager.cc
-    model/ui_fileproject_model.cc
     model/ui_checklist_model.cc
     model/ui_measuretable_model.cc
-    model/ui_sqltabel_model.cc)
+    model/ui_sqltabel_model.cc
+    model/ui_fileproject_model.cc)
 
 SET(PicathoGui_HEADERS
     ui_mainwindow.h
@@ -54,6 +54,7 @@ SET(PicathoGui_HEADERS
     ui_layer_widget.h
     ui_frame.h
     ui_measurepoint.h
+    ui_measure_table.h
     ui_menu_widget.h
     ui_rtsconfig_dialog.h
     ui_choosefile_dialog.h
@@ -69,16 +70,17 @@ SET(PicathoGui_HEADERS
     deftools/global.h
     db/sqlquery.h
     db/sqlmanager.h
-    model/ui_fileproject_model.h
     model/ui_checklist_model.h
     model/ui_measuretable_model.h
-    model/ui_sqltabel_model.h)
+    model/ui_sqltabel_model.h
+    model/ui_fileproject_model.h)
 
 QT4_WRAP_CPP(PicathoGui_MOCS
     ui_mainwindow.h
     ui_rtsconfig_dialog.h
     ui_scale_frame.h
     ui_tab_paintwidget.h
+    ui_measure_table.h
     ui_semimage_dialog.h
     ui_chipedit_dialog.h
     ui_choosefile_dialog.h
@@ -86,7 +88,6 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     ui_paint_widget.h
     ui_paint_toolbar.h
     ui_fileproject_widget.h
-    ui_fileproject_model.h
     ui_layer_widget.h
     ui_defgroup.h
     ui_frame.h
@@ -99,9 +100,9 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     deftools/iconhelper.h
     deftools/delegate.h
     db/sqlmanager.h
-    model/ui_fileproject_model.h
-    model/ui_checklist_model.h
     model/ui_measuretable_model.h
+    model/ui_checklist_model.h
+    model/ui_fileproject_model.h
     model/ui_sqltabel_model.h)
 
 QT4_ADD_RESOURCES(PicathoGui_RESOURCES_RCC ${PicathoGui_RESOURCES})

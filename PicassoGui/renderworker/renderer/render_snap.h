@@ -8,9 +8,9 @@ namespace render
 
 class RenderFrame;
 
-std::pair<bool,Oasis::OasisPointF> snap_point(RenderFrame* frame, Oasis::OasisPointF p1, Oasis::float64 snap_range);
+std::pair<bool,oasis::PointF> snap_point(RenderFrame* frame, oasis::PointF p1, oasis::float64 snap_range);
 
-std::pair<bool,Oasis::OasisEdgeF> snap_edge(RenderFrame* frame, Oasis::OasisPointF p1, Oasis::float64 snap_range);
+std::pair<bool,oasis::EdgeF> snap_edge(RenderFrame* frame, oasis::PointF p1, oasis::float64 snap_range);
 }
 
 

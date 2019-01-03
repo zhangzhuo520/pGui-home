@@ -52,7 +52,7 @@ CMessageBox::CMessageBox(QWidget *parent,
 
     QHBoxLayout *hLayout  = new QHBoxLayout();
     m_lIconMain->setFixedSize(QSize(40, 40));
-    m_lText->setFixedHeight(40);
+    m_lText->adjustSize();
     hLayout->addWidget(m_lIconMain);
     hLayout->addWidget(m_lText);
     hLayout->addStretch(1);
@@ -80,7 +80,6 @@ CMessageBox::CMessageBox(QWidget *parent,
             pushButton->setText(tr("Cancel"));
         }
     }
-
 
     m_lTitle->setText(title);
     m_lText->setText(text);

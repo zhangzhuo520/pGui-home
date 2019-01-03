@@ -32,7 +32,7 @@
 
 namespace render{
 
-static const Oasis::float64 m_shift_unit = 0.1;
+static const oasis::float64 m_shift_unit = 0.1;
 
 RenderFrame::RenderFrame(QWidget *parent):
     RenderObjectWidget(parent),
@@ -41,7 +41,8 @@ RenderFrame::RenderFrame(QWidget *parent):
     m_resolution(1.0),
     m_background(0),
     m_redraw_required(false),
-    m_update_image(false)
+    m_update_image(false),
+    m_window_max_size(120.0)
 {
     setBackgroundRole(QPalette::NoRole);
     setAttribute(Qt::WA_NoSystemBackground);
@@ -134,8 +135,8 @@ void RenderFrame::start_render()
     pool.setMaxThreadCount(layers);
 
     m_vp.set_size(width(), height());
-    Oasis::OasisBoxF micron_box_f = m_vp.box();
-    Oasis::OasisTrans vp_trans = m_vp.trans();
+    oasis::BoxF micron_box_f = m_vp.box();
+    oasis::OasisTrans vp_trans = m_vp.trans();
     unsigned int i = 0;
     for(size_t j = 0 ; j < m_layout_views.size(); j++)
     {
@@ -143,23 +144,21 @@ void RenderFrame::start_render()
         {
             if((*it)->visible())
             {
-                Oasis::float64 dbu = m_layout_views[j].get_dbu();
+                oasis::float64 dbu = m_layout_views[j].get_dbu();
 
-                Oasis::OasisTrans dbu_trans(false, 0.0, dbu, Oasis::OasisPointF(0.0, 0.0));
-                Oasis::OasisBoxF dbu_box_f = micron_box_f.transed(dbu_trans.inverted());
+                oasis::OasisTrans dbu_trans(false, 0.0, dbu, oasis::PointF(0.0, 0.0));
+                oasis::BoxF dbu_box_f = micron_box_f.transed(dbu_trans.inverted());
 
-                Oasis::OasisBox box(rint(dbu_box_f.left()),
+                oasis::Box box(rint(dbu_box_f.left()),
                                     rint(dbu_box_f.bottom()),
                                     rint(dbu_box_f.right()),
                                     rint(dbu_box_f.top()));
 
-                Oasis::OasisTrans trans = vp_trans * dbu_trans;
+                oasis::OasisTrans trans = vp_trans * dbu_trans;
 
                 render::LayerMetaData l = (*it)->metadata();
-                Oasis::LDType ld(l.get_layer_num(), l.get_data_type());
+                oasis::LDType ld(l.get_layer_num(), l.get_data_type());
                 render::LayoutView lv = m_layout_views[(*it)->view_index()];
-
-//                render::RenderWorker* worker = new render::RenderWorker(lv.get_layout(), -1, box, vp_trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
                 render::RenderWorker* worker = new render::RenderWorker(lv.get_layout(), -1, box, trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
 
                 pool.start(worker);
@@ -268,8 +267,8 @@ void RenderFrame::paintEvent(QPaintEvent * e )
 
 void RenderFrame::wheelEvent(QWheelEvent * e)
 {
-    Oasis::OasisPointF p = m_vp.trans().inverted().transF(Oasis::OasisPointF((Oasis::float64)e->pos().x(), (Oasis::float64)m_vp.height() - 1 - e->pos().y()));
-    Oasis::OasisBoxF vp_box = m_vp.box();
+    oasis::PointF p = m_vp.trans().inverted().transF(oasis::PointF((oasis::float64)e->pos().x(), (oasis::float64)m_vp.height() - 1 - e->pos().y()));
+    oasis::BoxF vp_box = m_vp.box();
     int delta = e->delta();
     double step = 0.25;
     double f = 1;
@@ -282,12 +281,16 @@ void RenderFrame::wheelEvent(QWheelEvent * e)
         f = 1.0 + step * (-delta / 120.0);
     }
     
-    zoom_box(Oasis::OasisBoxF((p.x() - ((p.x() - vp_box.left()) * f)),
-                              (p.y() - ((p.y() - vp_box.bottom()) * f)),
-                              (p.x() - ((p.x() - vp_box.right()) * f)),
-                              (p.y() - ((p.y() - vp_box.top()) * f))
-                            ));
 
+    oasis::BoxF fbox((p.x() - ((p.x() - vp_box.left()) * f)),
+                     (p.y() - ((p.y() - vp_box.bottom()) * f)),
+                     (p.x() - ((p.x() - vp_box.right()) * f)),
+                     (p.y() - ((p.y() - vp_box.top()) * f)));
+
+    if(std::min(fbox.width(), fbox.height()) < m_window_max_size)
+    {
+        zoom_box(fbox);
+    }
 
     e->ignore();
 }
@@ -319,9 +322,9 @@ void RenderFrame::keyPressEvent(QKeyEvent * e)
 void RenderFrame::mouseMoveEvent(QMouseEvent* e)
 {
     QPoint p1 = e->pos();
-    Oasis::float64 x= p1.x();
-    Oasis::float64 y = m_vp.height() - 1 - p1.y();
-    Oasis::OasisPointF physics_p = m_vp.trans().inverted().transF(Oasis::OasisPointF(x, y));
+    oasis::float64 x= p1.x();
+    oasis::float64 y = m_vp.height() - 1 - p1.y();
+    oasis::PointF physics_p = m_vp.trans().inverted().transF(oasis::PointF(x, y));
     emit signal_pos_updated(physics_p.x(), physics_p.y());
     QWidget::mouseMoveEvent(e);
     e->ignore();
@@ -337,7 +340,7 @@ void RenderFrame::resizeEvent(QResizeEvent * e)
 void RenderFrame::init_viewport()
 {
     m_vp.set_size(100, 100);
-    m_vp.set_box((Oasis::OasisBoxF(0.0, 0.0, 10.0, 10.0)));
+    m_vp.set_box((oasis::BoxF(0.0, 0.0, 10.0, 10.0)));
 }
 
 
@@ -368,19 +371,18 @@ void RenderFrame::set_properties(unsigned int index, const LayerProperties& lp)
 }
 
 
-Oasis::OasisBoxF RenderFrame::get_box() const
+oasis::BoxF RenderFrame::get_box() const
 {
     return m_vp.box();
 }
 
 
-void RenderFrame::zoom_box(const Oasis::OasisBoxF& box)
+void RenderFrame::zoom_box(const oasis::BoxF& box)
 {
     m_vp.set_box(box);
     m_redraw_required = true;
 
     slot_box_updated();
-
     update();
 }
 
@@ -439,37 +441,45 @@ void RenderFrame::slot_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >lines)
     {
         QPointF start = lines.at(i).first;
         QPointF end = lines.at(i).second;
-        Oasis::OasisPointF pixel_p = m_vp.trans().transF(Oasis::OasisPointF(start.x(), start.y()));
+        oasis::PointF pixel_p = m_vp.trans().transF(oasis::PointF(start.x(), start.y()));
         QPointF p1_new(pixel_p.x(), m_vp.height() - 1 - pixel_p.y());
-        pixel_p = m_vp.trans().transF(Oasis::OasisPointF(end.x(), end.y()));
+        pixel_p = m_vp.trans().transF(oasis::PointF(end.x(), end.y()));
         QPointF p2_new(pixel_p.x(), m_vp.height() - 1 - pixel_p.y());
         result.append(QPair<QPointF,QPointF>(p1_new, p2_new));
     }
     emit signal_repaint_snap_ruler(result);
 }
 
-void RenderFrame::shift_view(Oasis::float64 scale, Oasis::float64 dx, Oasis::float64 dy)
+void RenderFrame::shift_view(oasis::float64 scale, oasis::float64 dx, oasis::float64 dy)
 {
-    Oasis::OasisBoxF box = m_vp.box();
-    Oasis::OasisPointF center((box.right() - box.left()) / 2 + box.left(), (box.top() - box.bottom()) / 2 + box.bottom());
+    oasis::BoxF box = m_vp.box();
+    oasis::PointF center((box.right() - box.left()) / 2 + box.left(), (box.top() - box.bottom()) / 2 + box.bottom());
 
-    Oasis::OasisPointF new_center = center + Oasis::OasisPointF(dx * box.width(), dy * box.height());
+    oasis::PointF new_center = center + oasis::PointF(dx * box.width(), dy * box.height());
 
-    Oasis::float64 width = box.width() * scale;
-    Oasis::float64 height = box.height() * scale;
+    oasis::float64 width = box.width() * scale;
+    oasis::float64 height = box.height() * scale;
 
-    Oasis::OasisPointF p1(new_center.x() - 0.5 * width, new_center.y() - 0.5 * height);
-    Oasis::OasisPointF p2(new_center.x() + 0.5 * width, new_center.y() + 0.5 * height);
-    zoom_box(Oasis::OasisBoxF(p1.x(), p1.y(), p2.x(), p2.y()));
+    oasis::PointF p1(new_center.x() - 0.5 * width, new_center.y() - 0.5 * height);
+    oasis::PointF p2(new_center.x() + 0.5 * width, new_center.y() + 0.5 * height);
+
+    if(std::min(width, height) < m_window_max_size)
+    {
+        zoom_box(oasis::BoxF(p1.x(), p1.y(), p2.x(), p2.y()));
+    }
+    else
+    {
+        qDebug() << "zooming out exceeds the maximum limitation.";
+    }
 
 }
 
-static Oasis::OasisBoxF calculate_box(double x, double y, const Oasis::OasisBoxF& box)
+static oasis::BoxF calculate_box(double x, double y, const oasis::BoxF& box)
 {
-    Oasis::OasisPointF center(x,y);
-    Oasis::float64 half_width = box.width() * 0.5;
-    Oasis::float64 half_height = box.height() * 0.5;
-    Oasis::OasisBoxF new_box(center.x() - half_width, center.y() - half_height, center.x() + half_width, center.y() + half_height);
+    oasis::PointF center(x,y);
+    oasis::float64 half_width = box.width() * 0.5;
+    oasis::float64 half_height = box.height() * 0.5;
+    oasis::BoxF new_box(center.x() - half_width, center.y() - half_height, center.x() + half_width, center.y() + half_height);
     return new_box;
 }
 
@@ -493,7 +503,7 @@ void RenderFrame::set_defect_point(double x, double y)
 
 void RenderFrame::center_at_point(double x, double y)
 {
-    Oasis::OasisBoxF box = m_vp.box();
+    oasis::BoxF box = m_vp.box();
     zoom_box(calculate_box(x, y, box));
 }
 
@@ -502,7 +512,7 @@ void RenderFrame::zoom_center(double x, double y)
 {
     if( x < width() && x > 0 && y < height() && y > 0)
     {
-        Oasis::OasisPointF point = m_vp.trans().inverted().transF(Oasis::OasisPointF(x, m_vp.height() - 1 - y));
+        oasis::PointF point = m_vp.trans().inverted().transF(oasis::PointF(x, m_vp.height() - 1 - y));
         center_at_point(point.x(), point.y());
     }
 }
@@ -522,7 +532,7 @@ void RenderFrame::detach_layout_view(LayoutView& view)
 render::LayoutView RenderFrame::load_file(std::string file_name, std::string prep_dir, bool add_layout_view)
 {
 
-    Oasis::OasisLayout* layout = new Oasis::OasisLayout(file_name);
+    oasis::OasisLayout* layout = new oasis::OasisLayout(file_name);
 
     render::LayoutView lv;
     lv.set_layout(layout);
@@ -530,15 +540,15 @@ render::LayoutView RenderFrame::load_file(std::string file_name, std::string pre
 
     try
     {
-        Oasis::OasisParser parser;
-        parser.ImportFile(layout);
+        oasis::OasisParser parser;
+        parser.import_file(layout);
     }
-    catch (Oasis::OasisException& e)
+    catch (oasis::OasisException& e)
     {
-        std::string prep_file_name = Oasis::preprocessLayout(file_name, prep_dir, false, Oasis::prep_options());
-        layout = new Oasis::OasisLayout(prep_file_name);
-        Oasis::OasisParser parser;
-        parser.ImportFile(layout);
+        std::string prep_file_name = oasis::preprocessLayout(file_name, prep_dir, false, oasis::prep_options());
+        layout = new oasis::OasisLayout(prep_file_name);
+        oasis::OasisParser parser;
+        parser.import_file(layout);
         lv.set_layout(layout);
     }
 
@@ -551,16 +561,19 @@ render::LayoutView RenderFrame::load_file(std::string file_name, std::string pre
     set_layout_view(lv, lv_index);
 
     std::set<std::pair<int, int> >layers;
-    layout->getLayers(layers);
+    layout->get_layers(layers);
 
     create_and_initial_layer_properties(lv_index, layers);
-    Oasis::OasisBox box = layout->get_bbox();
-    Oasis::float64 dbu = layout->get_dbu();
+    oasis::Box box = layout->get_bbox();
+    oasis::float64 dbu = layout->get_dbu();
 
-    Oasis::OasisBoxF new_box(box.left() * dbu,
-                             box.bottom() * dbu,
-                             box.right() * dbu,
-                             box.top() * dbu);
+    oasis::float64 view_range = 50.0;
+    oasis::PointF center(box.left() + box.width() / 2 , box.bottom() + box.height() / 2);
+
+    oasis::BoxF new_box(center.x() * dbu - view_range,
+                        center.y() * dbu - view_range,
+                        center.x() * dbu + view_range,
+                        center.y() * dbu + view_range);
     m_vp.set_size(width(), height());
     m_vp.set_box(new_box);
 
@@ -588,8 +601,8 @@ void RenderFrame::load_layout_view(render::LayoutView& lv, bool add_layout_view)
     }
 
     std::set<std::pair<int,int> > layers;
-    Oasis::OasisLayout* layout = lv.get_layout();
-    layout->getLayers(layers);
+    oasis::OasisLayout* layout = lv.get_layout();
+    layout->get_layers(layers);
 
     create_and_initial_layer_properties(lv_index, layers);
 
@@ -625,16 +638,17 @@ void RenderFrame::create_and_initial_layer_properties(int lv_index, std::set<std
     {
         int layer_num = it->first;
         int data_type = it->second;
-        Oasis::OasisLayout* layout = m_layout_views[lv_index].get_layout();
+        oasis::OasisLayout* layout = m_layout_views[lv_index].get_layout();
         m_layers_properties.push_back(new render::LayerProperties());
         m_layers_properties.back()->set_view_index(lv_index);
         m_layers_properties.back()->set_view(this);
-        m_layers_properties.back()->set_metadata(layout->getLayerName(layer_num, data_type), layer_num, data_type);
+        m_layers_properties.back()->set_metadata(layout->get_layer_name(layer_num, data_type), layer_num, data_type);
         m_layers_properties.back()->set_layer_index(std::distance(layers.begin(), it));
         m_layers_properties.back()->set_fill_color(render::color_table[i]);
         m_layers_properties.back()->set_frame_color(render::color_table[i]);
         m_layers_properties.back()->set_pattern(1);
         m_layers_properties.back()->set_line_width(1);
+        m_layers_properties.back()->set_line_style(0);
         if(i == render::color_table_size - 1)
         {
             i = -1;
@@ -692,7 +706,7 @@ void RenderFrame::delete_layer(int index)
 
 void RenderFrame::slot_box_updated()
 {
-    Oasis::OasisBoxF physical_box(m_vp.box());
+    oasis::BoxF physical_box(m_vp.box());
     emit signal_box_updated(physical_box.left(),
                             physical_box.bottom(),
                             physical_box.right(),
@@ -701,15 +715,14 @@ void RenderFrame::slot_box_updated()
 
 std::pair<bool, std::pair<QPoint, QPointF> >RenderFrame::get_snap_point(QPoint p1)
 {
-    Oasis::OasisPointF p = get_trans().inverted().transF(Oasis::OasisPointF(p1.x(), m_vp.height() - 1- p1.y()));
-    Oasis::float64 snap_range = 0.01;
-//    int snap_range = 10;
-    std::pair<bool,Oasis::OasisPointF> result = snap_point(this, p, snap_range);
+    oasis::PointF p = get_trans().inverted().transF(oasis::PointF(p1.x(), m_vp.height() - 1- p1.y()));
+    oasis::float64 snap_range = 0.01;
+    std::pair<bool,oasis::PointF> result = snap_point(this, p, snap_range);
     if(result.first)
     {
-        Oasis::OasisPointF snap_micron_p = result.second;
-        Oasis::OasisPointF snap_bitmap_p = get_trans().transF(snap_micron_p);
-        Oasis::OasisPoint snap_bitmap_p_int(snap_bitmap_p);
+        oasis::PointF snap_micron_p = result.second;
+        oasis::PointF snap_bitmap_p = get_trans().transF(snap_micron_p);
+        oasis::Point snap_bitmap_p_int(snap_bitmap_p);
 
         QPoint snap_pix_q(snap_bitmap_p_int.x(), m_vp.height() - 1 - snap_bitmap_p_int.y());
         QPointF snap_micron_q(snap_micron_p.x(), snap_micron_p.y());
@@ -728,13 +741,13 @@ void RenderFrame::slot_refresh()
 
 void RenderFrame::slot_zoom_fit()
 {
-    Oasis::OasisBoxF result;
+    oasis::BoxF result;
     for(size_t i = 0; i < m_layout_views.size(); i++)
     {
-        Oasis::OasisLayout * layout = m_layout_views[i].get_layout();
-        Oasis::OasisBox box = layout->get_bbox();
-        Oasis::float64 dbu = layout->get_dbu();
-        Oasis::OasisBoxF box_f(box.left() * dbu,
+        oasis::OasisLayout * layout = m_layout_views[i].get_layout();
+        oasis::Box box = layout->get_bbox();
+        oasis::float64 dbu = layout->get_dbu();
+        oasis::BoxF box_f(box.left() * dbu,
                                box.bottom() * dbu,
                                box.right() * dbu,
                                box.top() * dbu);
@@ -742,5 +755,19 @@ void RenderFrame::slot_zoom_fit()
     }
     zoom_box(result);
 }
+
+void RenderFrame::set_window_max_size(double view_range)
+{
+    m_window_max_size = view_range;
+    oasis::BoxF box = m_vp.box();
+    oasis::PointF center(box.left() + box.width() / 2 , box.bottom() + box.height() / 2);
+
+    oasis::BoxF new_box(center.x() - view_range / 2,
+                        center.y() - view_range / 2,
+                        center.x() + view_range / 2,
+                        center.y() + view_range / 2);
+    zoom_box(new_box);
+}
+
 
 }

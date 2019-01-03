@@ -1,4 +1,4 @@
-#ifndef DEFCONTROLS_H
+﻿#ifndef DEFCONTROLS_H
 #define DEFCONTROLS_H
 
 #include <QWidget>
@@ -138,7 +138,7 @@ public:
     }
   explicit PushButton(const QString &text, QWidget *parent=0)
     {
-        setParent(parent);
+        Q_UNUSED(parent);
         setStyleSheet("QPushButton{"\
                       "border:0px;"
                       "background-color: rgba(0, 0, 0, 0);}"\
@@ -288,8 +288,6 @@ public:
     ~Commbox();
 };
 
-
-
 class SearchBox :public QFrame
 {
 public:
@@ -396,6 +394,7 @@ private:
     TitleWidget *tWidget;
     QVBoxLayout *Vlayout;
 };
+
 class PageJumpEdit :public QLineEdit
 {
    Q_OBJECT
@@ -411,5 +410,32 @@ signals:
 private:
     PushButton * m_jump_button;
 };
+
+class SettingDialog : public QDialog
+{
+    Q_OBJECT
+public:
+    explicit SettingDialog(QWidget *parent = 0, const QString&, const QString&);
+    ~SettingDialog();
+public:
+    const QString& get_input_data();
+
+    bool handle_control();
+
+public slots:
+    void slot_button_flag();
+
+private:
+    QLabel *m_describe_label;
+    QLabel *m_unit_label;
+    QLineEdit *m_input_edit;
+
+    QPushButton *m_ok_button;
+    QPushButton *m_cancel_button;
+
+    bool m_button_flag;
+};
+
+bool show_input_dialog(QWidget *parent = 0, const QString&, const QString&);
 }
 #endif // DEFCONTROLS_H

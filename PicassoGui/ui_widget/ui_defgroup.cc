@@ -1,13 +1,14 @@
 #include "ui_defgroup.h"
 
 namespace ui {
-const int m_each_page_count = 10;
+
 DefGroup::DefGroup(QWidget *parent , QString Path, QModelIndex *defectGroupId, int job) :
     QWidget(parent),
     DbPath(Path),
     index(defectGroupId),
     totalCount(0),
-    jobIndex(job)
+    jobIndex(job),
+    m_each_page_count(10)
 {
     setWindowTitle("Job" + QString::number(jobIndex) + "_defects");
     setObjectName("Job" + QString::number(jobIndex) + "_defects");

@@ -9,7 +9,7 @@ LayoutView::LayoutView():m_widget(0), m_index(-1),m_file_name("")
 
 }
 
-LayoutView::LayoutView(int index, Oasis::OasisLayout *layout, render::RenderFrame* widget):m_widget(widget),m_layout(layout),m_index(index),m_file_name("")
+LayoutView::LayoutView(int index, oasis::OasisLayout *layout, render::RenderFrame* widget):m_widget(widget),m_layout(layout),m_index(index),m_file_name("")
 {
 
 }

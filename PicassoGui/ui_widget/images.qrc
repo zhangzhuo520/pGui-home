@@ -70,5 +70,6 @@
         <file>images/eraser.png</file>
         <file>images/clean.png</file>
         <file>images/measure_table.png</file>
+	<file>images/setwindowsize.png</file>
     </qresource>
 </RCC>

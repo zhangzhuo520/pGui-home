@@ -141,7 +141,106 @@ render_scanline_edge(
     }
 }
 
+static void render_scanline_line_width(
+    const uint32_t* pattern,
+    unsigned int stride,
+    const render::Bitmap* bitmap,
+    unsigned int y,
+    unsigned int width,
+    unsigned int height,
+    uint32_t* buffer_ptr,
+    unsigned int line_width)
+{
+    if(line_width < 1)
+    {
+        return;
+    }
 
+    if(line_width > 15)
+    {
+        line_width = 15;
+    }
+
+    const uint32_t* pattern_ptr = pattern;
+    unsigned int prev_line_width =  (line_width - 1) / 2;
+    unsigned int lat_line_width = line_width - 1 - prev_line_width;
+
+    const uint32_t* buffer[16];
+
+    for(unsigned int i = 0; i < line_width; i++)
+    {
+        if( y + i < prev_line_width)
+        {
+            buffer[i] =  bitmap->scanline(0);
+        }
+        else if( y + i - prev_line_width >= height)
+        {
+            buffer[i] = bitmap->scanline(height - 1);
+        }
+        else
+        {
+            buffer[i] = bitmap->scanline(y + i - prev_line_width);
+        }
+    }
+
+    uint32_t prev = 0;
+    uint32_t current = 0;
+    uint32_t next = 0;
+
+    //vertical_direction
+    for(unsigned int i = 0; i < line_width; i++)
+    {
+        next |= *buffer[i];
+        buffer[i] += 1;
+    }
+
+    while(true)
+    {
+        current = next;
+        next = 0;
+
+        if( width >= render::wordlen)
+        {
+            for(unsigned int i = 0; i < line_width; i++)
+            {
+                next |=  *buffer[i];
+                buffer[i] ++;
+            }
+        }
+
+        uint32_t original  = current;
+
+        for(unsigned int i = 1; i <= prev_line_width; i++)
+        {
+            current |= (original >> i);
+            current |= (next << (32 - i));
+        }
+
+        for(unsigned int i = 1; i <= lat_line_width; i++)
+        {
+            current |= (original << i);
+            current |= (prev >> (32 - i));
+        }
+
+        *buffer_ptr++ = current & *pattern_ptr ++;
+        if(pattern_ptr == pattern + stride)
+        {
+            pattern_ptr = pattern;
+        }
+
+        prev = original;
+
+        if( width >= render::wordlen)
+        {
+            width-= render::wordlen;
+        }
+        else{
+            break;
+        }
+
+    }
+
+}
 
 static void 
 bitmaps_to_image_rgb(
@@ -249,6 +348,13 @@ bitmaps_to_image_rgb(
                         else
                         {
                             render_scanline_default(pattern, stride, bitmaps[i], y, width, height, buffer_p);
+                        }
+                    }
+                    else  if(op.width() > 1)
+                    {
+                        if(op.shape() == render::ViewOp::Rect)
+                        {
+                            render_scanline_line_width(pattern,stride, bitmaps[i], y, width, height, buffer_p, op.width());
                         }
                     }
                     buffer_p += nwords;

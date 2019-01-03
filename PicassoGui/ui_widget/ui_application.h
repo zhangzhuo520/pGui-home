@@ -5,6 +5,8 @@
 
 namespace ui{
 
+void outputMessage(QtMsgType type, const char* msg);
+
 class GuiApplication: public QApplication
 {
 public:

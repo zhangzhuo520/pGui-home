@@ -50,11 +50,11 @@ bool defectSQL::isValidData()
         return true;
 }
 
-QSqlQuery defectSQL::outputSQL()
+QString defectSQL::outputSQL()
 {
     if (isValidData())
     {
-        return QSqlQuery(sqlstr);
+        return sqlstr;
     }
         else
             return NULL;

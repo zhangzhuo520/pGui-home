@@ -6,9 +6,12 @@
 #include <QColor>
 #include <QBrush>
 
+#include "../deftools/global.h"
+
 namespace ui {
 class SqlQueryModel : public QSqlQueryModel
 {
+    Q_OBJECT
 public:
     explicit SqlQueryModel(QObject *parent = 0);
 

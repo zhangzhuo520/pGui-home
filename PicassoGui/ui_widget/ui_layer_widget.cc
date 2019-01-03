@@ -407,7 +407,7 @@ void LayerWidget::slot_showLayerControlWidget(bool ischeck)
 
         QSplitter*splitter = new QSplitter(LayerControlWidget);
         splitter->setOrientation(Qt::Vertical);
-        splitter->addWidget(ButtonBar);
+//        splitter->addWidget(ButtonBar);
         splitter->addWidget(ColorTable);
         splitter->addWidget(styleTable);
 

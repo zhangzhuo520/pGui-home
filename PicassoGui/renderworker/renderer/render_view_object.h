@@ -52,6 +52,7 @@ private:
 class RenderObjectWidget :public QWidget
 {
 public:
+
     typedef std::vector<RenderObject*>::iterator object_iter;
 
     RenderObjectWidget(QWidget * parent);

@@ -12,7 +12,6 @@ class FileProjectModel:public QAbstractTableModel
 {
 Q_OBJECT
 public:
-
     FileProjectModel(QObject* parent = 0);
 
     int rowCount(const QModelIndex& parent) const;
@@ -23,6 +22,7 @@ public:
     bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
     void removeFile(int row);
+    void delete_File(QString);
     bool find_file(QString);
 
     std::vector<render::LayoutView>::iterator get_layout_view_iter(int index)

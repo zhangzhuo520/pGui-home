@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <QDebug>
 #include "../deftools/datastruct.h"
+#include "../deftools/global.h"
 namespace ui {
 
 class defectSQL
@@ -18,7 +19,7 @@ public:
     void setData(DefectSqlData);
     bool isValidData();
 
-    QSqlQuery outputSQL();
+    QString outputSQL();
 
 private:
     QString sqlstr;

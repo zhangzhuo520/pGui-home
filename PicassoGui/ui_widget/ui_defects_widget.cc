@@ -1,13 +1,13 @@
 #include "ui_defects_widget.h"
 
 namespace ui {
-const int m_each_page_count = 10;
 DefectsWidget::DefectsWidget(QWidget *parent , QString Path, QModelIndex *defectm_group_id, int job) :
     QWidget(parent),
     m_db_path(Path),
     m_model_index(defectm_group_id),
     m_total_count(0),
-    m_jobindex(job)
+    m_jobindex(job),
+    m_each_page_count(10)
 {
     setWindowTitle("Job" + QString::number(m_jobindex) + "_defects");
     setObjectName("Job" + QString::number(m_jobindex) + "_defects");
@@ -16,6 +16,7 @@ DefectsWidget::DefectsWidget(QWidget *parent , QString Path, QModelIndex *defect
     init_defects_table();
     showDefects(m_model_index);
     addLayout();
+    initContextMenu();
 }
 
 void DefectsWidget::init_defects_table()
@@ -82,6 +83,12 @@ void DefectsWidget::initOtherButton()
     connect(m_page_jump_edit, SIGNAL(signal_jump(QString)), this, SLOT(slot_jump_click(QString)));
 }
 
+void DefectsWidget::initContextMenu()
+{
+    setContextMenuPolicy(Qt::ContextMenuPolicy);
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_custom_contextmenu(QPoint)));
+}
+
 void DefectsWidget::addLayout()
 {
     m_vlayout = new QVBoxLayout(this);
@@ -143,10 +150,7 @@ void DefectsWidget::updataTable()
     {
         m_perv_button->setEnabled(false);
     }
-
     m_defects_query->setData(m_defect_data);
-
-
     m_defects_model->setQuery(m_defects_query->outputSQL());
     m_defects_table->setModel(m_defects_model);
     m_defects_table->setColumnWidth(0, 150);
@@ -193,16 +197,7 @@ void DefectsWidget::setData()
     m_defect_data.table_id = QString::number(m_table_id);
     m_defect_data.detdefgroup_id = QString::number(m_group_id);
     m_defect_data.pageCount = QString::number(m_each_page_count);
-//    m_defect_data.orderBy = m_sort_commbox->currentText();
     m_current_page = 1;
-//    if(m_descent_button->isChecked())
-//    {
-//        m_defect_data.order = "desc";
-//    }
-//    else
-//    {
-//        m_defect_data.order = "asc";
-//    }
     m_defect_data.limitIndex = "0";
     updataTable();
 }
@@ -243,6 +238,7 @@ void DefectsWidget::jump_page(int page_number)
 
 void DefectsWidget::setTotal()
 {
+
     m_countdefect_data.tableName = "defect";
     m_countdefect_data.table_id = QString::number(m_table_id);
     m_countdefect_data.defGroup_id = QString::number(m_group_id);
@@ -259,7 +255,6 @@ void DefectsWidget::update_page()
     openDB();
     setTotal();
     m_defects_query->setData(m_defect_data);
-
     m_defects_model->setQuery(m_defects_query->outputSQL());
     m_defects_table->setModel(m_defects_model);
     m_defects_table->setColumnWidth(0, 150);
@@ -462,6 +457,21 @@ void DefectsWidget::slot_jump_click(QString page_number)
 void DefectsWidget::slot_showDefects(QModelIndex *index)
 {
     emit signal_showDefects(index);
+}
+
+void DefectsWidget::slot_custom_contextmenu(QPoint point)
+{
+   QMenu menu;
+
+   QAction *each_page_count = new QAction("set count each page", menu);
+   menu.addAction(each_page_count);
+   connect(each_page_count, SIGNAL(triggered()), this, SLOT(slot_set_page_count()));
+   menu.exec(point);
+}
+
+void DefectsWidget::slot_set_page_count()
+{
+
 }
 }
 

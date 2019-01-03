@@ -9,11 +9,11 @@ PaintWidget::PaintWidget(QWidget *parent):
     setObjectName("PaintWidget");
     setAttribute(Qt::WA_PaintOutsidePaintEvent);
     setAutoFillBackground (true);
+    setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
     m_empty_image = new QImage(size(), QImage::Format_ARGB32);
     m_empty_image->fill(Qt::transparent);
     m_mouse_clicks = LineEnd;
-    m_mouse_state = release;
     setColor(Qt::black);
     m_ruler_image = *m_empty_image;
     m_defectpoint_size_image = *m_empty_image;
@@ -82,6 +82,7 @@ void PaintWidget::use_angle()
 void PaintWidget::setPaintStyle(Global::PaintTool paintstyle)
 {
     m_select_mode = paintstyle;
+    m_mouse_clicks = LineEnd;
 }
 
 QPointF PaintWidget::calcu_physical_point(QPointF pos)
@@ -104,7 +105,6 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
 {
     m_current_mousepos = e->pos();
     m_dotted_box_end = m_dotted_box_start = e->pos();
-    m_mouse_state = Press;
 
     switch (e->button()) {
     case Qt::LeftButton:
@@ -159,6 +159,7 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
     }
     case Qt::RightButton:
     {
+         m_mouse_clicks = LineEnd;
         break;
     }
     default:
@@ -169,7 +170,6 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
 
 void PaintWidget::mouseReleaseEvent(QMouseEvent *e)
 {
-    m_mouse_state = release;
     if (e->button() == Qt::RightButton)
     {
         m_dotted_box_end = e->pos();
@@ -187,15 +187,8 @@ void PaintWidget::mouseMoveEvent (QMouseEvent *e)
     switch (m_select_mode) {
     case Global::Nothing:
     {
-        if (m_mouse_state == Press)
-        {
-          //  draw_dotted_box();
-        }
-        else
-        {
-            draw_cross_line(m_current_mousepos);
-            merge_image();
-        }
+        draw_cross_line(m_current_mousepos);
+        merge_image();
         break;
     }
     case Global::MarkCross:
@@ -297,6 +290,15 @@ void PaintWidget::resizeEvent (QResizeEvent *event)
         m_mark_cross_image = m_mark_cross_image.scaled(size());
     }
     QWidget::resizeEvent (event);
+}
+
+void PaintWidget::keyPressEvent(QKeyEvent *e)
+{
+    if (e->key() == Qt::Key_Escape)
+    {
+         m_mouse_clicks = LineEnd;
+         merge_image();
+    }
 }
 
 void PaintWidget::slot_measure_clear ()
@@ -489,14 +491,6 @@ void PaintWidget::repaint_normal_ruler()
     {
         m_ruler_first_point = calcu_pixel_point(m_start_pos);
         m_ruler_last_point = calcu_pixel_point(m_end_pos);
-//        double m_xratio_start = (m_start_pos.x() - m_xstart) / (m_xend - m_xstart);
-//        double m_yratio_start = (m_yend - m_start_pos.y()) / (m_yend - m_ystart);
-
-//        double m_xratio_end = (m_end_pos.x() - m_xstart) / (m_xend - m_xstart);
-//        double m_yratio_end = (m_yend - m_end_pos.y()) / (m_yend - m_ystart);
-
-//        m_ruler_first_point = QPointF (m_xratio_start * width(), m_yratio_start * height());
-//        m_ruler_last_point = QPointF (m_xratio_end * width(), m_yratio_end * height());
 
         double arrow_lenght_ = 13;
         double arrow_degrees_ = 0.6;
@@ -610,14 +604,16 @@ void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, i
     }
     else if(mode == 2)
     {
+        qDebug() << "!111111111111111111111111" <<micron_p;
+        m_end_pos = micron_p;
+        m_ruler_last_point = pix_p;
+        double dx = m_end_pos.x() - m_start_pos.x();
+        double dy = m_end_pos.y() - m_start_pos.y();
+        m_distance = sqrt( dx * dx + dy * dy);
+        emit signal_updateDistance(m_distance);
+
         if(find)
         {
-            m_end_pos = micron_p;
-            m_ruler_last_point = pix_p;
-            double dx = m_end_pos.x() - m_start_pos.x();
-            double dy = m_end_pos.y() - m_start_pos.y();
-            m_distance = sqrt( dx * dx + dy * dy);
-            emit signal_updateDistance(m_distance);
             if (m_first_point_find)
             {
                 draw_measure_line();
@@ -633,7 +629,6 @@ void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, i
                 draw_measure_line();
                 merge_image();
             }
-
         }
     }
 }
@@ -694,7 +689,4 @@ void PaintWidget::merge_image()
         }
     update();
 }
-
-
-
 }

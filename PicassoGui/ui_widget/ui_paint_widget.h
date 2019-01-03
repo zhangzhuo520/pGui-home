@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QPaintEvent>
 #include <QResizeEvent>
 #include <QColor>
@@ -41,11 +42,6 @@ class PaintWidget : public QWidget
         LineEnd
     };
 
-    enum MouseState{
-        Press,
-        release
-    };
-
 public:
     explicit PaintWidget(QWidget *parent = 0);
 
@@ -65,6 +61,7 @@ protected:
     virtual void mouseMoveEvent (QMouseEvent *);
     virtual void paintEvent (QPaintEvent *);
     virtual void resizeEvent (QResizeEvent *);
+    virtual void keyPressEvent(QKeyEvent *);
 
 signals:
     void signal_mouseMove(const QPoint&);
@@ -101,7 +98,6 @@ private:
 
     Global::PaintTool m_select_mode;
     LineClicks m_mouse_clicks;
-    MouseState m_mouse_state;
     Global::SnapFLag m_snap_flag;
 
     QImage *m_empty_image;

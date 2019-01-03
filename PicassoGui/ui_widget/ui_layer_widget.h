@@ -23,7 +23,7 @@
 #include "../renderer/render_layer_properties.h"
 #include "../renderer/render_pattern.h"
 #include "./deftools/cmessagebox.h"
-#include "./model/ui_fileproject_model.h"
+#include "./model/ui_checklist_model.h"
 #include "./deftools/delegate.h"
 
 namespace ui{

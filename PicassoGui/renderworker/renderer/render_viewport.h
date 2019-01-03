@@ -9,13 +9,13 @@ class Viewport
 public:
     Viewport();
 
-    Viewport(unsigned int width, unsigned int height, const Oasis::OasisBoxF& target);
+    Viewport(unsigned int width, unsigned int height, const oasis::BoxF& target);
 
     void set_size(unsigned int width, unsigned int height);
 
-    void set_box(const Oasis::OasisBoxF& target);
+    void set_box(const oasis::BoxF& target);
 
-    void set_trans(const Oasis::OasisTrans& trans);
+    void set_trans(const oasis::OasisTrans& trans);
 
     unsigned int width() const
     {
@@ -27,22 +27,22 @@ public:
         return m_height;
     }
 
-    const Oasis::OasisTrans& trans() const
+    const oasis::OasisTrans& trans() const
     {
         return m_trans;
     }
 
-    Oasis::OasisBoxF box() const;
+    oasis::BoxF box() const;
 
-    Oasis::OasisBoxF target_box() const
+    oasis::BoxF target_box() const
     {
         return m_target_box;
     }
 
 private:
     unsigned int m_width, m_height;
-    Oasis::OasisTrans m_trans;
-    Oasis::OasisBoxF m_target_box;
+    oasis::OasisTrans m_trans;
+    oasis::BoxF m_target_box;
 };
 
 }

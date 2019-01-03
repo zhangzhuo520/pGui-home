@@ -29,7 +29,7 @@ class QPaintEvent;
 class QResizeEvent;
 class QMouseEvent;
 
-namespace Oasis
+namespace oasis
 {
     class OasisLayout;
 }
@@ -52,7 +52,7 @@ public:
 
     const render::Pattern& pattern() const { return m_pattern; }
 
-    Oasis::OasisLayout*  load_file(std::string file_name, std::string prep_dir);
+    oasis::OasisLayout*  load_file(std::string file_name, std::string prep_dir);
 
     render::LayoutView load_file(std::string file_name, std::string prep_dir, bool add_layout_view);
 
@@ -103,9 +103,9 @@ public:
 
     void set_cursor_widget(QWidget *);
 
-    Oasis::OasisBoxF get_box() const;
+    oasis::BoxF get_box() const;
 
-    const Oasis::OasisTrans& get_trans() const
+    const oasis::OasisTrans& get_trans() const
     {
         return m_vp.trans();
     }
@@ -122,6 +122,8 @@ public:
     void add_layout_view(LayoutView& );
 
     void detach_layout_view(LayoutView& );
+
+    void set_window_max_size(double limit);
 
     virtual void paintEvent(QPaintEvent *);
 
@@ -162,7 +164,7 @@ private:
 
     void prepare_drawing();
 
-    void zoom_box(const Oasis::OasisBoxF& box);
+    void zoom_box(const oasis::BoxF& box);
 
     void init_viewport();
 
@@ -191,6 +193,8 @@ private:
     unsigned int m_current_layer;
 
     QColor m_background_color;
+
+    double m_window_max_size;
 };
 
 }

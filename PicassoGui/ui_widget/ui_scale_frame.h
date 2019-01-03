@@ -49,6 +49,8 @@ public:
     void refresh();
     void zoom_fit();
 
+    void set_window_max_size(double);
+
 signals:
     void signal_pos_updated(double, double);
     void signal_updateDistance(double);

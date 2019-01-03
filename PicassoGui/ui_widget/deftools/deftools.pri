@@ -5,13 +5,15 @@ HEADERS += \
     deftools/datastruct.h \
     deftools/iconhelper.h\
     deftools/global.h\
-    deftools/framelesshelper.h
+    deftools/framelesshelper.h \
+    deftools/model.h
 
 SOURCES += \
     $$PWD/defcontrols.cc \
     $$PWD/cmessagebox.cc \
     deftools/iconhelper.cc \
     deftools/global.cc\
-    deftools/framelesshelper.cc
+    deftools/framelesshelper.cc \
+    deftools/model.cc
 
 FORMS +=

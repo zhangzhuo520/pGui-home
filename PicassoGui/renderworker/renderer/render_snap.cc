@@ -6,12 +6,12 @@ namespace render
 class SnapSearcher
 {
 public:
-    SnapSearcher(Oasis::OasisPointF p1):m_p1(p1),m_found(false)
+    SnapSearcher(oasis::PointF p1):m_p1(p1),m_found(false)
     {
 
     }
 
-    void find(RenderFrame* frame, Oasis::float64 snap_range)
+    void find(RenderFrame* frame, oasis::float64 snap_range)
     {
         if(!frame)
         {
@@ -22,10 +22,6 @@ public:
         m_box.set_bottom(m_p1.y() - snap_range);
         m_box.set_right(m_p1.x() + snap_range);
         m_box.set_top(m_p1.y() + snap_range);
-        qDebug() << "left:" << m_box.left();
-        qDebug() << "bottom:" << m_box.bottom();
-        qDebug() << "right"<<m_box.right();
-        qDebug() << "top"<< m_box.top();
         double distance = std::numeric_limits<double>::max();
         for(size_t i = 0; i < frame->layers_size(); i ++)
         {
@@ -33,24 +29,24 @@ public:
             if(lp->visible())
             {
                 LayoutView lv = frame->get_layout_view(lp->view_index());
-                Oasis::OasisLayout* layout = lv.get_layout();
-                Oasis::float64 dbu = layout->get_dbu();
-                Oasis::OasisBox box(rint(m_box.left() / dbu),
+                oasis::OasisLayout* layout = lv.get_layout();
+                oasis::float64 dbu = layout->get_dbu();
+                oasis::Box box(rint(m_box.left() / dbu),
                                     rint(m_box.bottom() / dbu),
                                     rint(m_box.right() / dbu),
                                     rint(m_box.top() / dbu));
-                Oasis::LDType ld(lp->metadata().get_layer_num(), lp->metadata().get_data_type());
-                layout->SnapEdge(-1, box, Oasis::OasisTrans(), ld, m_p1, m_box, &m_snap_p, &m_snap_edge, &distance, &m_found);
+                oasis::LDType ld(lp->metadata().get_layer_num(), lp->metadata().get_data_type());
+                layout->snapping_edge(-1, box, oasis::OasisTrans(), ld, m_p1, m_box, &m_snap_p, &m_snap_edge, &distance, &m_found);
             }
         }
     }
 
-    Oasis::OasisEdgeF get_snapped_edge()
+    oasis::EdgeF get_snapped_edge()
     {
         return m_snap_edge;
     }
 
-    Oasis::OasisPointF get_snapped_point()
+    oasis::PointF get_snapped_point()
     {
         return m_snap_p;
     }
@@ -61,45 +57,44 @@ public:
     }
 
 public:
-    Oasis::OasisEdgeF m_snap_edge;
-    Oasis::OasisPointF m_snap_p;
-    Oasis::OasisPointF m_p1;
-    Oasis::OasisBoxF m_box;
+    oasis::EdgeF m_snap_edge;
+    oasis::PointF m_snap_p;
+    oasis::PointF m_p1;
+    oasis::BoxF m_box;
     bool m_found;
 };
 
 class PolygonSearcher
 {
 public:
-    PolygonSearcher(Oasis::OasisPoint p1): m_p1(p1), m_priority(-1)
+    PolygonSearcher(oasis::Point p1): m_p1(p1), m_priority(-1)
     {
 
     }
 
 
-    void find(RenderFrame* frame, Oasis::float64 snap_range)
+    void find(RenderFrame* frame, oasis::float64 snap_range)
     {
         if(!frame)
         {
             return;
         }
 
-        Oasis::OasisTrans trans = frame->get_trans();
-        Oasis::OasisPoint p1 = trans.inverted().trans(Oasis::OasisPoint(0, 0));
-        Oasis::OasisPoint p2 = trans.inverted().trans(Oasis::OasisPoint(snap_range, 0));
-        Oasis::int64 box_width = (Oasis::int64) std::max(fabs(p2.x() - p1.x()), fabs(p2.y() - p1.y()));
-        Oasis::OasisBox box(m_p1.x() - box_width, m_p1.y() - box_width, m_p1.x() + box_width, m_p1.y() + box_width);
-        qDebug() << box.left() << box.right() << box.top() <<box.bottom();
+        oasis::OasisTrans trans = frame->get_trans();
+        oasis::Point p1 = trans.inverted().trans(oasis::Point(0, 0));
+        oasis::Point p2 = trans.inverted().trans(oasis::Point(snap_range, 0));
+        oasis::int64 box_width = (oasis::int64) std::max(fabs(p2.x() - p1.x()), fabs(p2.y() - p1.y()));
+        oasis::Box box(m_p1.x() - box_width, m_p1.y() - box_width, m_p1.x() + box_width, m_p1.y() + box_width);
         for(size_t i = 0; i < frame->layers_size(); i ++)
         {
             const LayerProperties* lp = frame->get_properties(i);
             if(lp->visible())
             {
-                std::vector<Oasis::OasisPolygon> results;
+                std::vector<oasis::Polygon> results;
                 LayoutView lv = frame->get_layout_view(lp->view_index());
-                Oasis::OasisLayout* layout = lv.get_layout();
-                Oasis::LDType ld(lp->metadata().get_layer_num(), lp->metadata().get_data_type());
-                layout->GetPolygons(-1, box, Oasis::OasisTrans(), ld, results);
+                oasis::OasisLayout* layout = lv.get_layout();
+                oasis::LDType ld(lp->metadata().get_layer_num(), lp->metadata().get_data_type());
+                layout->get_polygons(-1, box, oasis::OasisTrans(), ld, results);
                 if(!results.empty())
                 {
                     if((int)i > m_priority)
@@ -119,20 +114,20 @@ public:
         return m_found;
     }
 
-    Oasis::OasisPolygon get_polygon()
+    oasis::Polygon get_polygon()
     {
         return m_polygon;
     }
 
 private:
     bool m_found;
-    Oasis::OasisPoint m_p1;
-    Oasis::OasisPolygon m_polygon;
+    oasis::Point m_p1;
+    oasis::Polygon m_polygon;
     int m_priority;
 
 };
 
-std::pair<bool,Oasis::OasisPointF> snap_point(RenderFrame *frame, Oasis::OasisPointF p1, Oasis::float64 snap_range)
+std::pair<bool,oasis::PointF> snap_point(RenderFrame *frame, oasis::PointF p1, oasis::float64 snap_range)
 {
 
     SnapSearcher searcher(p1);
@@ -147,7 +142,7 @@ std::pair<bool,Oasis::OasisPointF> snap_point(RenderFrame *frame, Oasis::OasisPo
 
 }
 
-std::pair<bool, Oasis::OasisEdgeF> snap_edge(RenderFrame *frame, Oasis::OasisPointF p1, Oasis::float64 snap_range)
+std::pair<bool, oasis::EdgeF> snap_edge(RenderFrame *frame, oasis::PointF p1, oasis::float64 snap_range)
 {
 
     SnapSearcher searcher(p1);
@@ -157,12 +152,12 @@ std::pair<bool, Oasis::OasisEdgeF> snap_edge(RenderFrame *frame, Oasis::OasisPoi
         return std::make_pair(true, searcher.get_snapped_edge());
     }
     else{
-        return std::make_pair(false, Oasis::OasisEdgeF());
+        return std::make_pair(false, oasis::EdgeF());
     }
 
 }
 
-std::pair<bool, Oasis::OasisPolygon> collect_polygon(RenderFrame *frame, Oasis::OasisPoint p1, Oasis::float64 snap_range)
+std::pair<bool, oasis::Polygon> collect_polygon(RenderFrame *frame, oasis::Point p1, oasis::float64 snap_range)
 {
     PolygonSearcher searcher(p1);
     searcher.find(frame, snap_range);
@@ -171,7 +166,7 @@ std::pair<bool, Oasis::OasisPolygon> collect_polygon(RenderFrame *frame, Oasis::
         return std::make_pair(true, searcher.get_polygon());
     }
     else{
-        return std::make_pair(false, Oasis::OasisPolygon());
+        return std::make_pair(false, oasis::Polygon());
     }
 
 }

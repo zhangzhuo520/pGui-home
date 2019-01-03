@@ -141,6 +141,8 @@ private:
     int groupId;
 
     QStringList headerList;
+
+    int m_each_page_count;
 };
 }
 #endif // DefGroup_H

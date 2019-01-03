@@ -12,14 +12,14 @@ class RenderWorker: public QRunnable
 {
 public:
     RenderWorker(
-        Oasis::OasisLayout* layout,
-        Oasis::int64 infoindex,
-        Oasis::OasisBox& q_box,
-        Oasis::OasisTrans& trans,
-        const Oasis::LDType& ld,
-        Oasis::uint32 width,
-        Oasis::uint32 height,
-        Oasis::float64 resolution,
+        oasis::OasisLayout* layout,
+        oasis::int64 infoindex,
+        oasis::Box& q_box,
+        oasis::OasisTrans& trans,
+        const oasis::LDType& ld,
+        oasis::uint32 width,
+        oasis::uint32 height,
+        oasis::float64 resolution,
         Bitmap* contour,
         Bitmap* fill,
         Bitmap* vertex);
@@ -28,14 +28,14 @@ public:
     void run();
 
 private:
-    Oasis::OasisLayout * m_layout;
-    Oasis::int64 m_infoindex;
-    Oasis::OasisBox m_q_box;
-    Oasis::OasisTrans m_trans;
-    Oasis::LDType m_ld;
-    Oasis::uint32 m_width;
-    Oasis::uint32 m_height;
-    Oasis::float64 m_resolution;
+    oasis::OasisLayout * m_layout;
+    oasis::int64 m_infoindex;
+    oasis::Box m_q_box;
+    oasis::OasisTrans m_trans;
+    oasis::LDType m_ld;
+    oasis::uint32 m_width;
+    oasis::uint32 m_height;
+    oasis::float64 m_resolution;
     Bitmap* m_contour;
     Bitmap* m_fill;
     Bitmap* m_vertex;

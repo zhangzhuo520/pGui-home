@@ -66,10 +66,10 @@ void DefectPoint::set_point(double x, double y)
 
 void DefectPoint::render(const Viewport &vp, RenderObjectWidget *widget)
 {
-    Oasis::OasisTrans m_trans = vp.trans();
-    Oasis::OasisPointF defect_point(m_x, m_y);
-    Oasis::OasisPointF center = defect_point;
-    Oasis::OasisPointF point = m_trans.trans(center);
+    oasis::OasisTrans m_trans = vp.trans();
+    oasis::PointF defect_point(m_x, m_y);
+    oasis::PointF center = defect_point;
+    oasis::PointF point = m_trans.trans(center);
 
     render::RenderEdge left_edge(point.x() - 3, point.y() -3, point.x() - 3, point.y() + 3);
     render::RenderEdge top_edge(point.x() - 3, point.y() + 3, point.x() + 3, point.y() + 3);

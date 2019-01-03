@@ -26,6 +26,8 @@ public:
         return m_project_tablemodel->get_layout_view_iter(index);
     }    
     bool is_file_exist(QString);
+
+    void delete_file(QString);
 signals:
     void signal_DoubleClickItem(QModelIndex);
     void close_currentFile(QString);

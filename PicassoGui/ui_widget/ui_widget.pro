@@ -16,6 +16,7 @@ include(db/db.pri)
 include(model/model.pri)
 include(painter/painter.pri)
 include(deftools/deftools.pri)
+include(log4qt/log4qt.pri)
 
 SOURCES += main.cc\
     ui_mainwindow.cc \

@@ -109,9 +109,9 @@ QString TabPaintWidget::database_to_oas(QString m_filename)
 void TabPaintWidget::init_measure_table()
 {
     m_measure_dockwidget = new DockWidget("Measure Table", m_mainwindow, Qt::WindowFlags(Qt::LeftDockWidgetArea));
+    m_measure_dockwidget->setFloating(true);
     m_measure_table = new MeasureTable(m_mainwindow);
     m_measure_dockwidget->setWidget(m_measure_table);
-//    m_measure_dockwidget->hide();
     connect(m_measure_table, SIGNAL(singal_set_line_list(const QList <LineData>&)), this, SLOT(slot_set_line_list(const QList <LineData>&)));
 }
 

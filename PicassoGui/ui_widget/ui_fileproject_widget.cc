@@ -38,6 +38,11 @@ bool FileProjectWidget::is_file_exist(QString filename)
     return m_project_tablemodel->find_file(filename);
 }
 
+void FileProjectWidget::delete_file(QString filename)
+{
+    m_project_tablemodel->delete_File(filename);
+}
+
 void FileProjectWidget::slot_DoubleClickItem(QModelIndex index)
 {
     m_active_index = index.row();
