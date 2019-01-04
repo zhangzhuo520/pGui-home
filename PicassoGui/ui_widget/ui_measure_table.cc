@@ -59,7 +59,7 @@ void MeasureTable::slot_delete_row()
     {
         m_linedata_list.removeAt(m_active_index);
         m_table_model->set_line_list(m_linedata_list);
-        emit singal_set_line_list(m_linedata_list);
+        emit signal_set_line_list(m_linedata_list);
     }
 }
 
@@ -67,11 +67,17 @@ void MeasureTable::slot_delete_all()
 {
     m_linedata_list.clear();
     m_table_model->set_line_list(m_linedata_list);
-    emit singal_set_line_list(m_linedata_list);
+    emit signal_set_line_list(m_linedata_list);
 }
 
 void MeasureTable::slot_update_index(QModelIndex index)
 {
     m_active_index = index.row();
 }
+
+void MeasureTable::slot_set_line_list(const QList<LineData> &m_linedata_list)
+{
+    m_table_model->set_line_list(m_linedata_list);
+}
+
 }

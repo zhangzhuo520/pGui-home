@@ -40,6 +40,7 @@ bool FileProjectWidget::is_file_exist(QString filename)
 
 void FileProjectWidget::delete_file(QString filename)
 {
+    emit signal_close_currentFile(m_active_filename);
     m_project_tablemodel->delete_File(filename);
 }
 
@@ -90,7 +91,7 @@ void FileProjectWidget::slot_CloseItem()
         return;
     }
 
-    emit close_currentFile(m_active_filename);
+    emit signal_close_currentFile(m_active_filename);
     m_project_tablemodel->removeFile(m_active_index);
 }
 

@@ -10,7 +10,7 @@
 int main(int argc, char *argv[])
 {
 
-    qInstallMsgHandler(ui::outputMessage);
+//    qInstallMsgHandler(ui::outputMessage);
     ui::GuiApplication a(argc, argv);
 #if 1
     qApp->setStyle(new ui::ProxyStyle);

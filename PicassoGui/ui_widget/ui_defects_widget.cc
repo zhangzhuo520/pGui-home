@@ -85,8 +85,8 @@ void DefectsWidget::initOtherButton()
 
 void DefectsWidget::initContextMenu()
 {
-    setContextMenuPolicy(Qt::ContextMenuPolicy);
-    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_custom_contextmenu(QPoint)));
+    m_defects_table->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_defects_table, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_custom_contextmenu(QPoint)));
 }
 
 void DefectsWidget::addLayout()
@@ -461,17 +461,26 @@ void DefectsWidget::slot_showDefects(QModelIndex *index)
 
 void DefectsWidget::slot_custom_contextmenu(QPoint point)
 {
-   QMenu menu;
-
-   QAction *each_page_count = new QAction("set count each page", menu);
-   menu.addAction(each_page_count);
-   connect(each_page_count, SIGNAL(triggered()), this, SLOT(slot_set_page_count()));
-   menu.exec(point);
+    QMenu *menu = new QMenu(this);
+    QAction *each_page_count_action = new QAction("set count each page", menu);
+    menu->addAction(each_page_count_action);
+    connect(each_page_count_action, SIGNAL(triggered()), this, SLOT(slot_set_page_count()));
+    menu->exec(m_defects_table->mapToGlobal(point));
 }
 
 void DefectsWidget::slot_set_page_count()
 {
-
+    SettingDialog setDialog(this, "Number:", "");
+    if (setDialog.exec())
+    {
+     qDebug() << setDialog.get_input_data();
+    }
+    else
+    {
+        return;
+    }
 }
+
+
 }
 

@@ -152,14 +152,16 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
             QPointF pos = calcu_physical_point(m_current_mousepos);
             if (m_measure_point.removeLineData(pos))
             {
+                emit signal_measure_line_list();
                 repaint_normal_ruler();
+
             }
         }
         break;
     }
     case Qt::RightButton:
     {
-         m_mouse_clicks = LineEnd;
+        m_mouse_clicks = LineEnd;
         break;
     }
     default:
@@ -430,6 +432,7 @@ void PaintWidget::draw_measure_line()
         tempLine.m_distance = m_distance;
         tempLine.m_line_width = 1;
         m_measure_point.appendLineData(tempLine);
+        emit signal_measure_line_list();
     }
 }
 
@@ -604,7 +607,6 @@ void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, i
     }
     else if(mode == 2)
     {
-        qDebug() << "!111111111111111111111111" <<micron_p;
         m_end_pos = micron_p;
         m_ruler_last_point = pix_p;
         double dx = m_end_pos.x() - m_start_pos.x();

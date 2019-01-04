@@ -212,7 +212,8 @@ void PageJumpEdit::slot_jump_action()
     emit signal_jump(text());
 }
 
-SettingDialog::SettingDialog(QWidget *parent, const QString& label_text, const QString& unit_text)
+SettingDialog::SettingDialog(QWidget *parent, const QString& label_text, const QString& unit_text):
+    QDialog(parent)
 {
     m_describe_label = new QLabel(label_text, this);
     m_describe_label->setGeometry(30, 30, 65, 25);
@@ -222,18 +223,22 @@ SettingDialog::SettingDialog(QWidget *parent, const QString& label_text, const Q
     m_unit_label = new QLabel(unit_text, this);
     m_unit_label->setGeometry(255, 30, 30, 25);
 
-    m_ok_button = new QPushButton("Ok", m_setpos_dialog);
+    m_ok_button = new QPushButton("Ok", this);
     m_ok_button->setGeometry(150, 90, 60, 30);
     connect(m_ok_button, SIGNAL(clicked()), this, SLOT(slot_button_flag()));
 
-    m_cancel_button = new QPushButton("Cancel", m_setpos_dialog);
+    m_cancel_button = new QPushButton("Cancel", this);
     m_cancel_button->setGeometry(220, 90, 60, 30);
     connect(m_cancel_button, SIGNAL(clicked()), this, SLOT(slot_button_flag()));
 }
 
-const QString &SettingDialog::get_input_data()
+SettingDialog::~SettingDialog()
 {
-    return m_input_edit->text();
+}
+
+QString SettingDialog::get_input_data()
+{
+   return  m_input_edit->text();
 }
 
 void SettingDialog::slot_button_flag()
@@ -241,21 +246,13 @@ void SettingDialog::slot_button_flag()
     if (sender()->objectName() == "Ok")
     {
         m_button_flag = true;
+        done(1);
     }
     else
     {
          m_button_flag = false;
+         done(-1);
     }
-}
-
-bool show_input_dialog(QWidget *parent, const QString& label_text, const QString& unit_text)
-{
-    SettingDialog setDialog(parent, label_text, unit_text);
-    if (setDialog.exec() == -1)
-    {
-        return false;
-    }
-    return true;
 }
 
 }

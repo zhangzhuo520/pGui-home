@@ -81,8 +81,10 @@ CMessageBox::CMessageBox(QWidget *parent,
         }
     }
 
+
     m_lTitle->setText(title);
     m_lText->setText(text);
+
 
     connect(m_pButtonBox, SIGNAL(clicked(QAbstractButton*)), this,
             SLOT(slot_onButtonClicked(QAbstractButton*)));

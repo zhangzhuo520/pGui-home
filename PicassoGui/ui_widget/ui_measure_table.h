@@ -30,7 +30,8 @@ public:
     }
     
 signals:
-    void singal_set_line_list(const QList <LineData>&);
+    void signal_set_line_list(const QList <LineData>&);
+
 
 public slots:
     void slot_context_menu(QPoint);
@@ -40,6 +41,8 @@ public slots:
     void slot_delete_all();
 
     void slot_update_index(QModelIndex);
+
+    void slot_set_line_list(const QList <LineData>&);
 private:
     QTableView *m_table_view;
     MeasureTableModel *m_table_model;

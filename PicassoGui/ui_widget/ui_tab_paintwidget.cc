@@ -19,7 +19,6 @@ TabPaintWidget::~TabPaintWidget()
 {
 }
 
-
 void TabPaintWidget::slot_close_tab(QString fileName)
 {
     fileName = database_to_oas(fileName);
@@ -36,6 +35,7 @@ void TabPaintWidget::creat_canvas()
 {
     ScaleFrame* scaleframe = new ScaleFrame(this);
     m_scaleframe_vector.append(scaleframe);
+    init_connection();
 }
 
 void TabPaintWidget::slot_show_measure_table()
@@ -112,7 +112,13 @@ void TabPaintWidget::init_measure_table()
     m_measure_dockwidget->setFloating(true);
     m_measure_table = new MeasureTable(m_mainwindow);
     m_measure_dockwidget->setWidget(m_measure_table);
-    connect(m_measure_table, SIGNAL(singal_set_line_list(const QList <LineData>&)), this, SLOT(slot_set_line_list(const QList <LineData>&)));
+    connect(m_measure_table, SIGNAL(signal_set_line_list(const QList <LineData>&)), this, SLOT(slot_set_line_list(const QList <LineData>&)));
+    connect(this, SIGNAL(signal_set_line_list(const QList <LineData>&)), m_measure_table, SLOT(slot_set_line_list(const QList <LineData>&)));
+}
+
+void TabPaintWidget::init_connection()
+{
+    connect(m_scaleframe_vector.at(m_scaleframe_vector.count() - 1), SIGNAL(signal_update_measuretable()), this, SLOT(slot_show_measure_table()));
 }
 
 }

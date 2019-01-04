@@ -35,8 +35,13 @@ public slots:
 signals:
     void signal_close_tab(QString);
 
+    void signal_set_line_list(const QList<LineData> &);
+
 private:
     void init_measure_table();
+
+    void init_connection();
+
     QString database_to_oas(QString);
     int string_to_index(QString);
 

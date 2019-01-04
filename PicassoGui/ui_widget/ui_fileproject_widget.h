@@ -30,7 +30,7 @@ public:
     void delete_file(QString);
 signals:
     void signal_DoubleClickItem(QModelIndex);
-    void close_currentFile(QString);
+    void signal_close_currentFile(QString);
     void signal_openFile();
 
 public slots:

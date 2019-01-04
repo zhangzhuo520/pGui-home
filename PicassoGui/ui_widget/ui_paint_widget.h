@@ -69,6 +69,7 @@ signals:
     void signal_moveCenter();
     void signal_get_snap_pos(QPoint, int);
     void signal_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >);
+    void signal_measure_line_list();
 
 public slots:
     void setStyle (int);

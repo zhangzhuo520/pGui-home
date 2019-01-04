@@ -41,6 +41,7 @@ void ScaleFrame::initRenderFrame()
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
     connect(m_paint_widget, SIGNAL(signal_get_snap_pos(QPoint, int)), m_render_frame, SLOT(slot_get_snap_pos(QPoint, int)));
     connect(m_paint_widget, SIGNAL(signal_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >)), m_render_frame, SLOT(slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >)));
+    connect(m_paint_widget, SIGNAL(signal_measure_line_list()), this, SLOT(slot_update_mesuretable()));
     connect(this, SIGNAL(signal_refresh()), m_render_frame, SLOT(slot_refresh()));
     connect(this, SIGNAL(signal_zoom_in()), m_render_frame, SLOT(slot_zoom_in()));
     connect(this, SIGNAL(signal_zoom_out()), m_render_frame, SLOT(slot_zoom_out()));
@@ -66,6 +67,12 @@ void ScaleFrame::slot_clear_measureline()
 void ScaleFrame::slot_clear_mark_point()
 {
     m_paint_widget->slot_mark_point();
+}
+
+void ScaleFrame::slot_update_mesuretable()
+{
+    emit signal_update_measuretable();
+
 }
 
 void ScaleFrame::set_defect_point(double x, double y)

@@ -59,6 +59,7 @@ signals:
     void signal_zoom_out();
     void signal_refresh();
     void signal_zoom_fit();
+    void signal_update_measuretable();
 
 public slots:
     void slot_box_updated(double,double,double,double);
@@ -71,6 +72,7 @@ public slots:
     void slot_set_snapfalg(Global::SnapFLag);
     void slot_clear_measureline();
     void slot_clear_mark_point();
+    void slot_update_mesuretable();
 
 protected:
     void paintEvent(QPaintEvent *);

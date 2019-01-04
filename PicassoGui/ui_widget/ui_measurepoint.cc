@@ -86,6 +86,8 @@ LineData& LineData::operator=(const LineData &lineData)
         m_distance = lineData.m_distance;
         m_first_point = lineData.m_first_point;
         m_last_point = lineData.m_last_point;
+        m_line_color = lineData.m_line_color;
+        m_line_width = lineData.m_line_width;
     }
     return *this;
 }
@@ -93,8 +95,10 @@ LineData& LineData::operator=(const LineData &lineData)
 bool LineData::operator!=(const LineData &lineData)
 {
     if (m_distance != lineData.m_distance &&
-        m_first_point != lineData.m_first_point &&
-        m_last_point != lineData.m_last_point)
+            m_first_point != lineData.m_first_point &&
+            m_last_point != lineData.m_last_point&&
+            m_line_color != lineData.m_line_color&&
+            m_line_width != lineData.m_line_width)
     {
         return true;
     }
@@ -107,8 +111,10 @@ bool LineData::operator!=(const LineData &lineData)
 bool LineData::operator==(const LineData &lineData)
 {
     if (m_distance == lineData.m_distance &&
-        m_first_point == lineData.m_first_point &&
-        m_last_point == lineData.m_last_point)
+            m_first_point == lineData.m_first_point &&
+            m_last_point == lineData.m_last_point&&
+            m_line_color == lineData.m_line_color&&
+            m_line_width == lineData.m_line_width)
     {
         return true;
     }

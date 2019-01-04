@@ -415,10 +415,10 @@ class SettingDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SettingDialog(QWidget *parent = 0, const QString&, const QString&);
+    explicit SettingDialog(QWidget *parent, const QString&, const QString&);
     ~SettingDialog();
 public:
-    const QString& get_input_data();
+    QString get_input_data();
 
     bool handle_control();
 
@@ -435,7 +435,5 @@ private:
 
     bool m_button_flag;
 };
-
-bool show_input_dialog(QWidget *parent = 0, const QString&, const QString&);
 }
 #endif // DEFCONTROLS_H

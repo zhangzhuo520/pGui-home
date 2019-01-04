@@ -295,7 +295,6 @@ void MainWindow::initPaintTab()
     hLayout->setContentsMargins(0, 0, 0, 0);
     m_paint_tabwidget->setLayout(hLayout);
 
-
     connect(m_paint_tabwidget, SIGNAL(tabCloseRequested(int)), this, SLOT(slot_close_paintwidget(int)));
     connect(m_paint_tabwidget, SIGNAL(currentChanged(int)), this, SLOT(slot_currentTab_changed(int)));
     connect(this, SIGNAL(signal_setPaintStyle(Global::PaintStyle)), m_paint_toolbar, SLOT(slot_setPaintStyle(Global::PaintStyle)));
@@ -325,7 +324,7 @@ void MainWindow::init_fileProject_widget()
     fileDockWidget->setWidget(fileWidget);
     connect(fileWidget, SIGNAL(signal_DoubleClickItem(QModelIndex)), this, SLOT(slot_creat_canvas(QModelIndex)));
     connect(this, SIGNAL(signal_addFile(QString)), fileWidget, SLOT(slot_addFile(QString)));
-    connect(fileWidget, SIGNAL(close_currentFile(QString)), this, SLOT(slot_closeFile(QString)));
+    connect(fileWidget, SIGNAL(signal_close_currentFile(QString)), this, SLOT(slot_closeFile(QString)));
 }
 
 /**
@@ -351,7 +350,7 @@ void MainWindow::init_fileProject_workSpace()
  */
 void MainWindow::initConnection()
 {
-    connect(this, SIGNAL(singal_append_job(QString)), checklistWidget ,SLOT(slot_append_job(QString)));
+    connect(this, SIGNAL(singal_append_job(QString)), checklistWidget, SLOT(slot_append_job(QString)));
     connect(this, SIGNAL(signal_close_job(QString)), checklistWidget, SLOT(slot_close_job(QString)));
     connect(checklistWidget, SIGNAL(signal_close_job(QString)), m_paint_tabwidget, SLOT(slot_close_tab(QString)));
     connect(checklistWidget, SIGNAL(signal_showDefGroup(QModelIndex, int)), this ,SLOT(slot_showDefGroup(QModelIndex, int)));
@@ -535,6 +534,8 @@ void MainWindow::slot_setPosAction()
     {
         m_setpos_dialog = new QDialog(this);
     }
+
+    m_setpos_dialog->setWindowTitle("Set Position");
     m_setpos_dialog->setGeometry(width() / 2 - 150, height() / 2 - 150 , 300, 140);
     m_pos_label = new QLabel("Pos(x, y):", m_setpos_dialog);
     m_pos_label->setGeometry(30, 30, 65, 25);
@@ -561,7 +562,7 @@ void MainWindow::slot_setWindowMaxSizeAction()
     {
         m_setwindow_dialog = new QDialog(this);
     }
-
+    m_setwindow_dialog->setWindowTitle("set WindowMaxSize");
     m_setwindow_dialog->setGeometry(width() / 2 - 150, height() / 2 - 150, 300, 140);
     m_window_label = new QLabel("Size:", m_setwindow_dialog);
     m_window_label->setGeometry(30, 30, 70, 25);
@@ -580,7 +581,6 @@ void MainWindow::slot_setWindowMaxSizeAction()
     connect(m_setwindow_cancelbutton, SIGNAL(clicked()), m_setwindow_dialog, SLOT(close()));
     m_setwindow_dialog->show();
 }
-
 
 void MainWindow::slot_setPosButton()
 {
@@ -863,7 +863,6 @@ void MainWindow::slot_addFile(QString filePath)
             return;
         }
     }
-
     emit signal_addFile(filePath);
 
     saveOpenHistory(filePath);
@@ -893,7 +892,6 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
     }
     else
     {
-
         m_paint_tabwidget->set_active_widget(m_current_filename);
     }
     showCoordinate();
@@ -1102,7 +1100,6 @@ bool MainWindow::isCavseExist(QString filename)
             return true;
         }
     }
-
     return false;
 }
 
