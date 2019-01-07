@@ -9,6 +9,7 @@
 #include <QScrollBar>
 #include <QMouseEvent>
 #include <QLabel>
+#include <QGraphicsDropShadowEffect>
 #include <QLineEdit>
 #include "cmessagebox.h"
 
@@ -231,13 +232,13 @@ public:
     explicit DockWidget(const QString &title, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
     ~DockWidget();
-
 private:
     void allow(Qt::DockWidgetArea area, bool allow);
 
     void place(Qt::DockWidgetArea area, bool place);
 
     DockTitleBar * TitleBar;
+    QGraphicsDropShadowEffect *effect;
 
 protected:
     void paintEvent(QPaintEvent *event)
@@ -415,15 +416,17 @@ class SettingDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SettingDialog(QWidget *parent, const QString&, const QString&);
+    explicit SettingDialog(QWidget *parent, const QString&, const QString&, const QString&);
     ~SettingDialog();
 public:
     QString get_input_data();
 
-    bool handle_control();
+    bool get_button_flag();
 
 public slots:
-    void slot_button_flag();
+    void slot_cancel_button();
+
+    void slot_ok_button();
 
 private:
     QLabel *m_describe_label;

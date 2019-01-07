@@ -646,7 +646,6 @@ void MainWindow::slot_currentTab_changed(int index)
         renderFrame = m_paint_tabwidget->get_scaleframe(m_current_tabid)->getRenderFrame();
     }
     layerwidget->getLayerData(renderFrame, m_current_filename);
-
 }
 
 /**

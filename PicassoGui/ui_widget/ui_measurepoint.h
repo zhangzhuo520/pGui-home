@@ -13,15 +13,7 @@ namespace ui
 
 class LineData{
 public:
-    LineData();
-    LineData(QPointF p_start, QPointF p_end, double distance):
-        m_first_point(p_start),
-        m_last_point(p_end),
-        m_distance(distance),
-        m_line_width(1),
-        m_line_color(Qt::black)
-    {
-    }
+    LineData(QPointF, QPointF, double);
     ~LineData(){}
 
     LineData& operator=(const LineData&);
@@ -38,14 +30,9 @@ public:
          m_line_color = color;
     }
 
-    inline void set_line_distance(const double &distance)
-    {
-         m_distance = distance;
-    }
 
     QPointF m_first_point;
     QPointF m_last_point;
-
     double m_distance;
 
     int m_line_width;
@@ -93,6 +80,7 @@ private:
     {
         return a < b ? a : b;
     }
+
 
     bool point_at_edge(QPointF, LineData);
     QList <LineData> m_linedata_list;

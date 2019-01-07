@@ -465,15 +465,26 @@ void DefectsWidget::slot_custom_contextmenu(QPoint point)
     QAction *each_page_count_action = new QAction("set count each page", menu);
     menu->addAction(each_page_count_action);
     connect(each_page_count_action, SIGNAL(triggered()), this, SLOT(slot_set_page_count()));
+    point.setY(point.y() + 20);  //acction position is too up
     menu->exec(m_defects_table->mapToGlobal(point));
 }
 
 void DefectsWidget::slot_set_page_count()
 {
-    SettingDialog setDialog(this, "Number:", "");
+    SettingDialog setDialog(this, "Number:", "", QString::number(m_each_page_count, 'f', 0));
+    setDialog.setWindowTitle("Set each page number");
     if (setDialog.exec())
     {
-     qDebug() << setDialog.get_input_data();
+        if (setDialog.get_input_data().toInt() <= 0||setDialog.get_input_data().toInt() >= 200)
+        {
+            showWarning(this, "Waring", "Set range overrun!");
+            return;
+        }
+        if (setDialog.get_button_flag())
+        {
+            m_each_page_count = setDialog.get_input_data().toInt();
+            setData();
+        }
     }
     else
     {

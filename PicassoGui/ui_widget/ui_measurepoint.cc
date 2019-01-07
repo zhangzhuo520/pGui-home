@@ -42,10 +42,10 @@ bool MeasureLine::point_at_edge(QPointF p, LineData line)
     double y_max = max(c_y, a_y);
     double y_min = min(a_y, c_y);
 
-    if(((b_x -  x_max) > 5) ||
-            (( b_x - x_min) < -5) ||
-                 (( b_y - y_max) > 5) ||
-                          ((b_y - y_min) < -5))
+    if(((b_x -  x_max) > 0.5) ||
+            (( b_x - x_min) < -0.5) ||
+                 (( b_y - y_max) > 0.5) ||
+                          ((b_y - y_min) < -0.5))
     {
           return false;
     }
@@ -75,7 +75,12 @@ bool MeasureLine::removeLineData(QPointF p)
     return false;
 }
 
-LineData::LineData()
+LineData::LineData(QPointF p_start, QPointF p_end, double distance):
+    m_first_point(p_start),
+    m_last_point(p_end),
+    m_distance(distance),
+    m_line_width(1),
+    m_line_color(Qt::black)
 {
 }
 
@@ -86,8 +91,6 @@ LineData& LineData::operator=(const LineData &lineData)
         m_distance = lineData.m_distance;
         m_first_point = lineData.m_first_point;
         m_last_point = lineData.m_last_point;
-        m_line_color = lineData.m_line_color;
-        m_line_width = lineData.m_line_width;
     }
     return *this;
 }
@@ -95,10 +98,8 @@ LineData& LineData::operator=(const LineData &lineData)
 bool LineData::operator!=(const LineData &lineData)
 {
     if (m_distance != lineData.m_distance &&
-            m_first_point != lineData.m_first_point &&
-            m_last_point != lineData.m_last_point&&
-            m_line_color != lineData.m_line_color&&
-            m_line_width != lineData.m_line_width)
+        m_first_point != lineData.m_first_point &&
+        m_last_point != lineData.m_last_point)
     {
         return true;
     }
@@ -111,10 +112,8 @@ bool LineData::operator!=(const LineData &lineData)
 bool LineData::operator==(const LineData &lineData)
 {
     if (m_distance == lineData.m_distance &&
-            m_first_point == lineData.m_first_point &&
-            m_last_point == lineData.m_last_point&&
-            m_line_color == lineData.m_line_color&&
-            m_line_width == lineData.m_line_width)
+        m_first_point == lineData.m_first_point &&
+        m_last_point == lineData.m_last_point)
     {
         return true;
     }
@@ -133,7 +132,7 @@ LineData MeasureLine::get_select_linedata(const QPointF &p)
             return m_linedata_list.at(i);
         }
     }
-    return LineData(QPointF(0, 0), QPointF(0, 0));
+    return LineData(QPointF(0, 0), QPointF(0, 0), 0);
 }
 
 int MeasureLine::get_select_lineindex(const QPointF &p)

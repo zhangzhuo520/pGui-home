@@ -46,11 +46,7 @@ void TabPaintWidget::slot_show_measure_table()
     }
     QList <LineData> line_list = m_scaleframe_vector[currentIndex()]->get_measure_line_list();
 
-    if (line_list.isEmpty())
-    {
-        return;
-    }
-    m_measure_table->set_line_list(line_list);
+    m_measure_table->slot_set_line_list(line_list);
     m_measure_dockwidget->show();
 }
 

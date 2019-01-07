@@ -199,7 +199,7 @@ private:
 
     bool m_axis_show;
 
-    QDialog *m_setpos_dialog;
+    SettingDialog *m_setpos_dialog;
     QLabel *m_pos_label;
     QLabel *m_pos_unit_label;
     QLineEdit *m_pos_lineeidt;

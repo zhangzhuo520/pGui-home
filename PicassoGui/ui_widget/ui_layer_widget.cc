@@ -565,7 +565,6 @@ void LayerWidget::setItemChecked(bool check)
     layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
     m_layerstyle.isVisible = check;
     m_layer_style_vector[m_active_model_index] = m_layerstyle;
-
     setLayerData(m_layerstyle);
 }
 

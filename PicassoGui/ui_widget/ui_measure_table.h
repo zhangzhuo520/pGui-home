@@ -22,8 +22,6 @@ public:
 
     void init();
 
-    void set_line_list(QList <LineData>);
-
     virtual QSize sizeHint() const
     {
         return QSize(250, 60);
@@ -42,8 +40,12 @@ public slots:
 
     void slot_update_index(QModelIndex);
 
+    void slot_checked_line(QModelIndex);
+
     void slot_set_line_list(const QList <LineData>&);
 private:
+    void clear_select_color();
+
     QTableView *m_table_view;
     MeasureTableModel *m_table_model;
     QList <LineData> m_linedata_list;

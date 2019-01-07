@@ -23,7 +23,6 @@ void MeasureTableModel::delete_line(const int & row)
 
 void MeasureTableModel::set_line_list(const QList<LineData> & line_list)
 {
-    qDebug() << line_list.count();
     m_linedata_list = line_list;
     reset();
 }

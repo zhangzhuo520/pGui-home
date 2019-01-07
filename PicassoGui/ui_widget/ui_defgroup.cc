@@ -17,6 +17,7 @@ DefGroup::DefGroup(QWidget *parent , QString Path, QModelIndex *defectGroupId, i
     initDefGroupTable();
     showDefects(index);
     addLayout();
+    initContextMenu();
 }
 
 void DefGroup::initDefGroupTable()
@@ -314,6 +315,39 @@ void DefGroup::slot_sort_by_column(int index, Qt::SortOrder sort_order)
     setData();
 }
 
+void DefGroup::slot_custom_contextmenu(QPoint point)
+{
+    QMenu *menu = new QMenu(this);
+    QAction *each_page_count_action = new QAction("set count each page", menu);
+    menu->addAction(each_page_count_action);
+    connect(each_page_count_action, SIGNAL(triggered()), this, SLOT(slot_set_page_count()));
+    point.setY(point.y() + 20);  //acction position is too up
+    menu->exec(DefGroupTable->mapToGlobal(point));
+}
+
+void DefGroup::slot_set_page_count()
+{
+    SettingDialog setDialog(this, "Number:", "", QString::number(m_each_page_count, 'f', 0));
+    setDialog.setWindowTitle("Set each page number");
+    if (setDialog.exec())
+    {
+        if (setDialog.get_button_flag())
+        {
+            if (setDialog.get_input_data().toInt() <= 0||setDialog.get_input_data().toInt() >= 200)
+            {
+                showWarning(this, "Waring", "Set range overrun!");
+                return;
+            }
+            m_each_page_count = setDialog.get_input_data().toInt();
+            setData();
+        }
+    }
+    else
+    {
+        return;
+    }
+}
+
 void DefGroup::update_page_number()
 {
     if (totalCount % m_each_page_count == 0)
@@ -404,8 +438,14 @@ void DefGroup::resizeColumns()
 {
     for(int i = 0; i < headerList.count(); i ++)
     {
-           DefGroupTable->resizeColumnToContents(i);
+        DefGroupTable->resizeColumnToContents(i);
     }
+}
+
+void DefGroup::initContextMenu()
+{
+    DefGroupTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(DefGroupTable, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_custom_contextmenu(QPoint)));
 }
 
 void DefGroup::slot_showDefects(QModelIndex index)

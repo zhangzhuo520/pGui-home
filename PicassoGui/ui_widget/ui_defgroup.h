@@ -26,17 +26,6 @@ public:
     explicit DefGroup(QWidget *parent = 0, QString DbPath = "", QModelIndex* modelIndex = 0, int jobIndex = 0);
     ~DefGroup(){}
 
-    void initDefGroupTable();
-
-    void initOtherButton();
-
-    void addLayout();
-
-    void initSql();
-
-    void updataTable();
-
-    void openDB();
 
 //    void changeSortKey();
 
@@ -66,14 +55,6 @@ signals:
 public slots:
     void slot_showDefects(QModelIndex);
 
-//    void slot_DefGroupUpdata(QModelIndex *);
-
-//    void slot_changSortQrder(QString);
-
-//    void slot_descentButtonCheck();
-
-//    void slot_ascentButtonCheck();
-
     void slot_pervPage();
 
     void slot_nextPage();
@@ -81,10 +62,28 @@ public slots:
     void slot_jump_page(QString);
 
     void slot_sort_by_column(int, Qt::SortOrder);
+
+    void slot_custom_contextmenu(QPoint);
+
+    void slot_set_page_count();
 private:
     void update_page_number();
 
     void jump_page(int);
+
+    void initDefGroupTable();
+
+    void initOtherButton();
+
+    void initContextMenu();
+
+    void addLayout();
+
+    void initSql();
+
+    void updataTable();
+
+    void openDB();
 
     QString DbPath;
 
