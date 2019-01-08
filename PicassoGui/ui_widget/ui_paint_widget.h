@@ -68,7 +68,6 @@ signals:
     void signal_updateDistance(double);
     void signal_moveCenter();
     void signal_get_snap_pos(QPoint, int);
-    void signal_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >);
     void signal_measure_line_list();
 
 public slots:
@@ -78,7 +77,7 @@ public slots:
     void slot_get_snap_pos(bool, QPoint, QPointF,int);
     void slot_measure_clear();
     void slot_mark_point();
-//    void slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> > result);
+    void slot_box_updated(double, double, double, double);
 
 private:
     QPointF calcu_physical_point(QPointF);
@@ -90,12 +89,12 @@ private:
     void draw_measure_line();
     void draw_mark_cross();
 
-//    void repaint_snap_ruler();
     QImage merge_two_images(const QImage&, const QImage&);
     void merge_image();
 
     void repaint_normal_ruler();
     void repaint_mark_cross();
+    void repaint_defect_point();
 
     Global::PaintTool m_select_mode;
     LineClicks m_mouse_clicks;
@@ -132,9 +131,10 @@ private:
     int style;
     QColor color;
 
-    QString Stringsize;
-    QString x;
-    QString y;
+    bool m_isdraw_defect_points;
+    QString m_defect_size;
+    double m_defect_x;
+    double m_defect_y;
 
     double m_distance;
 

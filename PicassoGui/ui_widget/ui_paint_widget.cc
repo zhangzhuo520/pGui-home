@@ -19,6 +19,7 @@ PaintWidget::PaintWidget(QWidget *parent):
     m_defectpoint_size_image = *m_empty_image;
     m_dotted_box_image = *m_empty_image;
     m_mark_cross_image = *m_empty_image;
+    m_cross_line_image = *m_empty_image;
     m_select_mode = Global::Nothing;
     m_snap_flag = Global::SnapClose;
 }
@@ -97,7 +98,6 @@ QPointF PaintWidget::calcu_pixel_point(QPointF pos)
 {
     double m_xratio = (pos.x() - m_scale_xstart) / (m_scale_xend - m_scale_xstart);
     double m_yratio = (m_scale_yend - pos.y()) / (m_scale_yend - m_scale_ystart);
-
     return QPointF (m_xratio * width(), m_yratio * height());
 }
 
@@ -111,7 +111,6 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
     {
         if (m_select_mode == Global::Nothing)
         {
-            m_mouse_clicks = LineEnd;
             draw_cross_line(m_current_mousepos);
         }
         else if (m_select_mode == Global::MeasureLine || m_select_mode == Global::MeasureAngle)
@@ -129,18 +128,17 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
                     merge_image();
                 }
             }
-            else if(m_mouse_clicks == LineEnd)
+            else
             {
                 m_mouse_clicks = LineStart;
                 if (m_snap_flag == Global::SnapOpen)
                 {
-                    m_ruler_first_point = m_current_mousepos;
-                    emit signal_get_snap_pos(m_ruler_first_point.toPoint(), 1);
+                    emit signal_get_snap_pos(m_current_mousepos, 1);
                 }
                 else
                 {
                     m_ruler_first_point = m_current_mousepos;
-                    m_start_pos =  calcu_physical_point(m_ruler_first_point);
+                    m_start_pos =  calcu_physical_point(m_current_mousepos);
                 }
             }
         }
@@ -226,12 +224,9 @@ void PaintWidget::mouseMoveEvent (QMouseEvent *e)
                     {
                         m_ruler_last_point.setX(m_ruler_first_point.x());
                     }
+                    m_current_mousepos = m_ruler_last_point.toPoint();
                 }
-                else if(m_select_mode == Global::MeasureLine)
-                {
-                    m_ruler_last_point = m_current_mousepos;
-                }
-                emit signal_get_snap_pos(m_ruler_last_point.toPoint(), 2);
+                emit signal_get_snap_pos(m_current_mousepos, 2);
             }
             else
             {
@@ -293,12 +288,19 @@ void PaintWidget::paintEvent (QPaintEvent *e)
 
 void PaintWidget::resizeEvent (QResizeEvent *event)
 {
-        *m_empty_image =  (*m_empty_image).scaled(size());
-        m_defectpoint_size_image = m_defectpoint_size_image.scaled(size());
-        m_ruler_image = m_ruler_image.scaled(size());
-        m_mark_cross_image = m_mark_cross_image.scaled(size());
-//        repaint_normal_ruler();
+    *m_empty_image =  (*m_empty_image).scaled(size());
+    m_defectpoint_size_image = m_defectpoint_size_image.scaled(size());
+    m_ruler_image = m_ruler_image.scaled(size());
+    m_mark_cross_image = m_mark_cross_image.scaled(size());
+    m_cross_line_image = m_cross_line_image.scaled(size());
+
+    m_defectpoint_size_image.fill(0);
+    m_ruler_image.fill(0);
+    m_mark_cross_image.fill(0);
+    m_cross_line_image.fill(0);
+
     QWidget::resizeEvent (event);
+    event->ignore();
 }
 
 void PaintWidget::keyPressEvent(QKeyEvent *e)
@@ -308,6 +310,8 @@ void PaintWidget::keyPressEvent(QKeyEvent *e)
          m_mouse_clicks = LineEnd;
          merge_image();
     }
+    QWidget::keyPressEvent(e);
+    e->ignore();
 }
 
 void PaintWidget::slot_measure_clear ()
@@ -325,12 +329,18 @@ void PaintWidget::slot_mark_point()
     merge_image();
 }
 
+void PaintWidget::slot_box_updated(double left, double bot, double right, double top)
+{
+    repaint_image(left, right, bot, top);
+}
+
 void PaintWidget::draw_defect_point_text(double x, double y, QString s_size)
 {
     if (s_size.isEmpty())
     {
         return;
     }
+    m_isdraw_defect_points = true;
     QPen pen;
     m_defectpoint_size_image = *m_empty_image;
     QPainter painter(&m_defectpoint_size_image);
@@ -338,8 +348,11 @@ void PaintWidget::draw_defect_point_text(double x, double y, QString s_size)
     pen.setWidth (weight);
     pen.setColor (color);
     painter.setPen(pen);
-    QString string_size = "size: " +  s_size;
-    painter.drawText(x * width(), y * height() - 10, string_size);
+    m_defect_size = "size: " + s_size;
+    m_defect_x = x;
+    m_defect_y = y;
+    QPointF p = calcu_pixel_point(QPointF(m_defect_x, m_defect_y));
+    painter.drawText(p.x(), p.y() - 10, m_defect_size);
     merge_image();
 }
 
@@ -449,12 +462,8 @@ void PaintWidget::repaint_normal_ruler()
     if (m_mouse_clicks == LineStart)
     {
         m_ruler_first_point = calcu_pixel_point(m_start_pos);
-        if (m_snap_flag == Global::SnapClose)
-        {
-            m_ruler_last_point = calcu_pixel_point(m_end_pos);
+        m_ruler_last_point = calcu_pixel_point(m_end_pos);
 
-            use_angle();
-        }
         double arrow_lenght_ = 13;
         double arrow_degrees_ = 0.6;
 
@@ -538,6 +547,24 @@ void PaintWidget::repaint_mark_cross()
     merge_image();
 }
 
+void PaintWidget::repaint_defect_point()
+{
+    if(m_isdraw_defect_points)
+    {
+        QPen pen;
+        m_defectpoint_size_image = *m_empty_image;
+        QPainter painter(&m_defectpoint_size_image);
+        pen.setStyle ((Qt::PenStyle)style);
+        pen.setWidth (weight);
+        pen.setColor (color);
+        painter.setPen(pen);
+        QPointF p = calcu_pixel_point(QPointF(m_defect_x, m_defect_y));
+        painter.drawText(p.x(), p.y() - 10, m_defect_size);
+        merge_image();
+    }
+
+}
+
 void PaintWidget::repaint_image(double m_xstart, double m_xend, double m_ystart, double m_yend)
 {
     m_scale_xstart = m_xstart;
@@ -547,6 +574,7 @@ void PaintWidget::repaint_image(double m_xstart, double m_xend, double m_ystart,
 
     repaint_normal_ruler();
     repaint_mark_cross();
+    repaint_defect_point();
 }
 
 void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, int mode)
@@ -561,13 +589,14 @@ void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, i
         }
         else
         {
-            m_ruler_first_point = m_current_mousepos;
+           m_ruler_first_point = m_current_mousepos;
             m_first_point_find = false;
         }
     }
     else if(mode == 2)
     {
         m_end_pos = micron_p;
+        m_ruler_last_point = pix_p;
         double dx = m_end_pos.x() - m_start_pos.x();
         double dy = m_end_pos.y() - m_start_pos.y();
         m_distance = sqrt( dx * dx + dy * dy);
@@ -577,13 +606,13 @@ void PaintWidget::slot_get_snap_pos(bool find, QPoint pix_p, QPointF micron_p, i
         {
             if (m_first_point_find)
             {
-                m_ruler_last_point = pix_p;
                 draw_measure_line();
                 merge_image();
             }
         }
         else
         {
+            m_ruler_last_point = m_current_mousepos;
             m_mouse_clicks = LineStart;
             if (m_first_point_find)
             {

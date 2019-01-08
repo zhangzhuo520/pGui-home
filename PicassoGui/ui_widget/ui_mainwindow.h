@@ -29,6 +29,9 @@
 #include <QStringList>
 #include <QCloseEvent>
 
+#include <string>
+#include <sstream>
+
 #include "deftools/defcontrols.h"
 #include "deftools/cmessagebox.h"
 #include "deftools/iconhelper.h"
@@ -199,7 +202,7 @@ private:
 
     bool m_axis_show;
 
-    SettingDialog *m_setpos_dialog;
+    QDialog *m_setpos_dialog;
     QLabel *m_pos_label;
     QLabel *m_pos_unit_label;
     QLineEdit *m_pos_lineeidt;

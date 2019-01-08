@@ -91,7 +91,6 @@ void LayerWidget::initTree()
     layerTree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(layerTree, SIGNAL(customContextMenuRequested(const QPoint& )), this, SLOT(slot_layerContextMenu(const QPoint&)));
     connect(layerTreeModel ,SIGNAL(itemChanged(QStandardItem*)), this , SLOT(slot_treeItemChanged(QStandardItem*)));
-    connect(layerTreeModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slot_itemChecked(QStandardItem*)));
     connect(layerTree ,SIGNAL(doubleClicked(QModelIndex)), this , SLOT(slot_treeDoubleClick(QModelIndex)));
     connect(layerTree, SIGNAL(pressed(QModelIndex)), this, SLOT(slot_activedModelIndex(QModelIndex)));
     layerTree->setModel(layerTreeModel);
@@ -111,13 +110,13 @@ void LayerWidget::slot_treeItemChanged(QStandardItem *item)
     if (item -> isCheckable ())
     {
         Qt::CheckState state = item->checkState ();
-        if (state != Qt :: PartiallyChecked )
+        if (item->hasChildren())
         {
             treeItem_checkAllChild (item, state == Qt :: Checked ? true : false );
         }
         else
         {
-            treeItem_CheckChildChanged (item);
+            item_checked(item);
         }
     }
 }
@@ -138,88 +137,12 @@ void LayerWidget::treeItem_checkAllChild(QStandardItem * item, bool check)
     for(int i=0;i<rowCount;++i)
     {
         QStandardItem* childItems = item->child(i);
-        treeItem_checkAllChild_recursion(childItems,check);
+        if(childItems->isCheckable())
+        {
+            childItems->setCheckState(check ? Qt::Checked : Qt::Unchecked);
+            item_checked(childItems);
+        }
     }
-
-    if(item->isCheckable())
-        item->setCheckState(check ? Qt::Checked : Qt::Unchecked);
-}
-
-void LayerWidget::treeItem_CheckChildChanged(QStandardItem *item)
-{
-    if(NULL == item)
-        return;
-
-    Qt::CheckState siblingState = checkSibling(item);
-    QStandardItem * parentItem = item->parent();
-
-    if(NULL == parentItem)
-        return;
-    if(Qt::PartiallyChecked == siblingState)
-    {
-        if(parentItem->isCheckable() && parentItem->isTristate())
-            parentItem->setCheckState(Qt::PartiallyChecked);
-    }
-    else if(Qt::Checked == siblingState)
-    {
-        if(parentItem->isCheckable())
-            parentItem->setCheckState(Qt::Checked);
-    }
-    else
-    {
-        if(parentItem->isCheckable())
-            parentItem->setCheckState(Qt::Unchecked);
-    }
-
-    treeItem_CheckChildChanged(parentItem);
-}
-
-Qt::CheckState LayerWidget::checkSibling(QStandardItem *item)
-{
-    QStandardItem * parent = item->parent();
-    if(NULL == parent)
-        return item->checkState();
-
-    int brotherCount = parent->rowCount();
-
-    int checkedCount(0),unCheckedCount(0);
-
-    Qt::CheckState state;
-    for(int i=0;i<brotherCount;++i)
-    {
-        QStandardItem* siblingItem = parent->child(i);
-        state = siblingItem->checkState();
-        if(Qt::PartiallyChecked == state)
-            return Qt::PartiallyChecked;
-        else if(Qt::Unchecked == state)
-            ++ unCheckedCount;
-        else
-            ++ checkedCount;
-
-        if(checkedCount > 0 && unCheckedCount > 0)
-            return Qt::PartiallyChecked;
-    }
-
-    if(unCheckedCount > 0)
-        return Qt::Unchecked;
-    return Qt::Checked;
-}
-
-void LayerWidget::treeItem_checkAllChild_recursion(QStandardItem * item,bool check)
-{
-    if(item == NULL)
-        return;
-
-    int rowCount = item->rowCount();
-
-    for(int i=0;i<rowCount;++i)
-    {
-        QStandardItem* childItems = item->child(i);
-        treeItem_checkAllChild_recursion(childItems,check);
-    }
-
-    if(item->isCheckable())
-        item->setCheckState(check ? Qt::Checked : Qt::Unchecked);
 }
 
 void LayerWidget::slot_layerContextMenu(const QPoint &pos)
@@ -509,14 +432,17 @@ void LayerWidget::slot_setTextColor(QColor color)
     Q_UNUSED(color);
 }
 
-void LayerWidget::slot_itemChecked(QStandardItem* index)
+void LayerWidget::item_checked(QStandardItem* index)
 {
     m_active_model_index = index->row();
     if(index->parent())
     {
         m_active_model_rootIndex = index->parent()->row();
     }
-
+    else
+    {
+        m_active_model_rootIndex = 0;
+    }
     if(index->isCheckable())
     {
         if (index->checkState() == Qt::Unchecked)
@@ -576,9 +502,11 @@ void LayerWidget::getLayerData(render::RenderFrame* view, QString currentFile)
         rootItem_vector.clear();
         return;
     }
+    m_layer_style_vector.clear();
     m_view = view;
     rootFileItem = new TreeItem(currentFile);
     rootItem_vector.append(rootFileItem);
+    rootFileItem->setCheckState(Qt::Checked);
 
     rootFileItem->setCheckable(true);
     rootFileItem->setEditable(false);
@@ -597,6 +525,12 @@ void LayerWidget::getLayerData(render::RenderFrame* view, QString currentFile)
         QString layerName = QString::fromStdString(view->get_properties(i)->metadata().get_layer_name());
         QString dataType = QString::number(view->get_properties(i)->metadata().get_data_type());
         QString layerNum = QString::number(view->get_properties(i)->metadata().get_layer_num());
+
+        pStandardItem = new TreeItem(layerNum + "/" + dataType);
+
+        pStandardItem->setCheckable(true);
+        pStandardItem->setEditable(false);
+
         layerStyle m_layer_style;
         m_layer_style.frame_color = view->get_properties(i)->frame_color();
         m_layer_style.fill_color = view->get_properties(i)->fill_color();
@@ -607,29 +541,28 @@ void LayerWidget::getLayerData(render::RenderFrame* view, QString currentFile)
         m_layer_style_vector.append(m_layer_style);
         QImage image = setImage(m_layer_style);
 
-        pStandardItem = new TreeItem(layerNum + "/" + dataType);
-        pStandardItem->setCheckable(true);
-        pStandardItem->setEditable(false);
         if(m_layer_style.isVisible)
         {
             pStandardItem->setCheckState(Qt::Checked);
-            rootFileItem->setCheckState(Qt::Checked);
         }
         else
         {
+            rootFileItem->setCheckState(Qt::Unchecked);
             pStandardItem->setCheckState(Qt::Unchecked);
         }
 
         rootFileItem->appendRow(pStandardItem);
-
         TreeItem *childItem2 = new TreeItem(layerName);
+        childItem2->setCheckable(false);
         childItem2->setEditable(false);
         rootFileItem->setChild(pStandardItem->row(), 2, childItem2);
         TreeItem *childItem1 = new TreeItem();
+        childItem1->setCheckable(false);
         childItem1->setEditable(false);
         childItem1->setData(image, Qt::DecorationRole);
         rootFileItem->setChild(pStandardItem->row(), 1, childItem1);
     }
+
     layerTree->setColumnWidth(1, 40);
 }
 

@@ -50,7 +50,7 @@ public:
     void zoom_fit();
 
     void set_window_max_size(double);
-
+    double get_window_max_size();
 signals:
     void signal_pos_updated(double, double);
     void signal_updateDistance(double);
@@ -95,9 +95,9 @@ private:
     double m_yratio;
 //    double m_xratio_prev;
 //    double m_yratio_prev;
-    double m_point_x;
-    double m_point_y;
-    QString m_size_text;
+//    double m_point_x;
+//    double m_point_y;
+//    QString m_size_text;
     bool m_isdraw_pointtext;
     QImage *m_image;
     QPixmap m_cursor_pixmap;

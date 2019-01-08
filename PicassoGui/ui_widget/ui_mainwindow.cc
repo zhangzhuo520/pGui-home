@@ -568,11 +568,22 @@ void MainWindow::slot_setWindowMaxSizeAction()
     m_window_label->setGeometry(30, 30, 70, 25);
     m_window_lineedit = new QLineEdit(m_setwindow_dialog);
     m_window_lineedit->setGeometry(100, 30, 150, 25);
-    m_window_lineedit->setText("120.0");
+
+    if ((m_current_tabid < m_paint_tabwidget->count()) && (m_paint_tabwidget->count() > 0))
+    {
+        double limit = m_paint_tabwidget->get_scaleframe(m_current_tabid)->get_window_max_size();
+        std::ostringstream ss;
+        ss << limit;
+        m_window_lineedit->setText(QString::fromStdString(ss.str()));
+    }
+    else
+    {
+        m_window_lineedit->setText("120.0");
+    }
+
     m_window_lineedit->setCursorPosition(0);
     m_window_unit_label = new QLabel("um", m_setwindow_dialog);
     m_window_unit_label->setGeometry(255, 30, 30, 25);
-
     m_setwindow_okbutton = new QPushButton("Ok", m_setwindow_dialog);
     m_setwindow_okbutton->setGeometry(150, 90, 60, 30);
     connect(m_setwindow_okbutton, SIGNAL(clicked()), this, SLOT(slot_setWindowMaxSizeButton()));
@@ -644,8 +655,10 @@ void MainWindow::slot_currentTab_changed(int index)
     else
     {
         renderFrame = m_paint_tabwidget->get_scaleframe(m_current_tabid)->getRenderFrame();
+        m_current_filename = QString::fromStdString(renderFrame->get_layout_view(index).file_name());
     }
     layerwidget->getLayerData(renderFrame, m_current_filename);
+
 }
 
 /**
@@ -658,6 +671,14 @@ void MainWindow::slot_close_paintwidget(int index)
     m_paint_tabwidget->slot_close_tab(filename);
     close_checklist_job(filename);
 }
+
+//void MainWindow::slot_disable_draw_defects()
+//{
+//    for(int i = 0; i < m_paint_tabwidget->count(); i ++)
+//    {
+//        m_paint_tabwidget->get_scaleframe(i)->disableDrawDefects();
+//    }
+//}
 
 void MainWindow::slot_zoom_in()
 {
@@ -958,6 +979,7 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
         defectsDockWidget->setWidget(m_defectswidget_vector.at(m_defectswidget_vector.count() - 1));
         oldJobIndex = jobIndex;
         connect(defectswidget->getTableView(), SIGNAL(clicked(const QModelIndex&)), this,  SLOT(slot_drawPoint(const QModelIndex &)));
+//        connect(defectswidget, SIGNAL(signal_disable_draw_defects()), this, SLOT(slot_disable_draw_defects()));
     }
     else
     {

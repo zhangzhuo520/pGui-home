@@ -492,6 +492,11 @@ void DefectsWidget::slot_set_page_count()
     }
 }
 
+//void DefectsWidget::closeEvent(QCloseEvent *e)
+//{
+//    emit signal_disable_draw_defects();
+//    QWidget::closeEvent(e);
+//}
 
 }
 

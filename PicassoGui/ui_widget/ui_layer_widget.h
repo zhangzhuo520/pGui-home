@@ -48,13 +48,7 @@ public:
 
     void initTree();
 
-    void treeItem_checkAllChild_recursion(QStandardItem * item,bool check);
-
     void treeItem_checkAllChild(QStandardItem * item, bool check);
-
-    void treeItem_CheckChildChanged(QStandardItem * item);
-
-    Qt::CheckState checkSibling(QStandardItem *item);
 
     QColor uint_to_color(uint color);
 
@@ -69,6 +63,8 @@ public:
     void setModelIdexImage(QImage);
 
     void setItemChecked(bool);
+
+    void item_checked(QStandardItem*);
     
 signals:
     void signal_setLayerData(render::LayerProperties&, int);
@@ -95,8 +91,6 @@ public slots:
     void slot_setTextColor(QColor);
 
     void slot_LineWidth_action();
-
-    void slot_itemChecked(QStandardItem*);
 
     void slot_setLineWidth(int line_width);
 

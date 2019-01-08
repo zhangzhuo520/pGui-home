@@ -63,6 +63,7 @@ protected:
 
 signals:
     void signal_showDefects(QModelIndex *);
+    void signal_disable_draw_defects();
 
 public slots:
     void slot_showDefects(QModelIndex *);

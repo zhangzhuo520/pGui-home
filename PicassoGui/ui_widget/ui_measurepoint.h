@@ -70,6 +70,7 @@ public:
 
     static double h_range;
     static double x_y_rang;
+
 private:
     inline const double& max(const double& a, const double& b)
     {

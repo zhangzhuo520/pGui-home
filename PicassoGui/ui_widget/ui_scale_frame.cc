@@ -5,9 +5,9 @@ namespace ui
 
 ScaleFrame::ScaleFrame(QWidget *parent) :
     QFrame(parent),
-    m_xratio(0),
-    m_yratio(0),
-    m_size_text(""),
+//    m_xratio(0),
+//    m_yratio(0),
+//    m_size_text(""),
     m_isdraw_pointtext(false),
     m_xstart(0),
     m_xend(0),
@@ -35,12 +35,12 @@ void ScaleFrame::initRenderFrame()
     m_hlayout->addWidget(m_render_frame);
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), this, SLOT(slot_box_updated(double,double,double,double)));
     connect(m_render_frame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_pos_updated(double, double)));
-   // connect(m_render_frame, SIGNAL(signal_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >)), m_paint_widget, SLOT(slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >)));
     connect(m_render_frame, SIGNAL(signal_get_snap_pos(bool, QPoint, QPointF, int)), m_paint_widget, SLOT(slot_get_snap_pos(bool, QPoint, QPointF, int)));
+
+    connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), m_paint_widget, SLOT(slot_box_updated(double,double,double, double)));
     connect(m_paint_widget, SIGNAL(signal_updateDistance(double)), this, SLOT(slot_distance_updated(double)));
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
     connect(m_paint_widget, SIGNAL(signal_get_snap_pos(QPoint, int)), m_render_frame, SLOT(slot_get_snap_pos(QPoint, int)));
-    connect(m_paint_widget, SIGNAL(signal_repaint_snap_ruler(QList<QPair<QPointF,QPointF> >)), m_render_frame, SLOT(slot_repaint_snap_ruler(QList<QPair<QPointF, QPointF> >)));
     connect(m_paint_widget, SIGNAL(signal_measure_line_list()), this, SLOT(slot_update_mesuretable()));
     connect(this, SIGNAL(signal_refresh()), m_render_frame, SLOT(slot_refresh()));
     connect(this, SIGNAL(signal_zoom_in()), m_render_frame, SLOT(slot_zoom_in()));
@@ -737,30 +737,7 @@ void ScaleFrame::drawDefectPoint(double x, double y, QString Stringsize)
 {
     m_isdraw_pointtext = true;
     m_render_frame->set_defect_point(x, y);
-    m_size_text = Stringsize;
-    m_point_x = x;
-    m_point_y = y;
-
-    draw_point_size();
-}
-
-void ScaleFrame::calcu_defecttext_point()
-{
-//    m_xratio_prev = m_xratio;
-//    m_yratio_prev = m_yratio;
-    m_xratio = (m_point_x - m_xstart) / (m_xend - m_xstart);
-    m_yratio = (m_yend - m_point_y) / (m_yend - m_ystart);
-}
-
-void ScaleFrame::draw_point_size()
-{
-     calcu_defecttext_point();
-//    if((m_isdraw_pointtext == true) &&
-//            (m_xratio_prev != m_xratio) &&
-//            (m_yratio_prev != m_yratio))
-//    {
-        m_paint_widget->draw_defect_point_text(m_xratio, m_yratio, m_size_text);
-        //    }
+    m_paint_widget->draw_defect_point_text(x, y, Stringsize);
 }
 
 void ScaleFrame::repaint_image()
@@ -833,8 +810,6 @@ void ScaleFrame::slot_box_updated(double left, double bot, double right, double 
     m_ystart = bot;
     m_yend = top;
     paintImage();
-    draw_point_size();
-    repaint_image();
     update();
 }
 
@@ -869,6 +844,7 @@ void ScaleFrame::resizeEvent(QResizeEvent *e)
     initImage();
     paintImage();
     update();
+    e->ignore();
 }
 
 void ScaleFrame::mouseMoveEvent(QMouseEvent *e)
@@ -908,6 +884,16 @@ void ScaleFrame::set_window_max_size(double limit)
 {
     m_render_frame->set_window_max_size(limit);
 }
+
+double ScaleFrame::get_window_max_size()
+{
+    return m_render_frame->get_window_max_size();
+}
+
+//void ScaleFrame::disable_draw_defects()
+//{
+//    m_paint_widget->disable_draw_defects();
+//}
 
 }
 
