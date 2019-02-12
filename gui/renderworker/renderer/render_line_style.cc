@@ -10,36 +10,35 @@ static const char* style_strings[]={
     // 0: solid
     "solid",
     "",
-
-    // 1: dotted
-    "dotted",
-    "*.",
-
+   
+    // 1: long dashed
+    "long dashed",
+    "*****..*****",
+   
     // 2: dashed
     "dashed",
     "**..**..**",
+	
+	// 3: short dash-dotted
+    "short dash-dotted",
+    "**.*.*",
+	
+    // 4: dotted
+    "dotted",
+    "*.",
 
-    // 3: dash-dotted 
+    // 5: dash-dotted 
     "dash-dotted",
     "***..**..***",
 
-    // 4: short dashed
+    // 6: short dashed
     "short dashed",
     "*..*",
-    
-    // 5: short dash-dotted
-    "short dash-dotted",
-    "**.*.*",
-    
-    // 6: long dashed
-    "long dashed",
-    "*****..*****",
 
     // 7: dash-double-dotted
     "dash-double-dotted",
     "***..*.*..**"
 };
-
 
 LineStyleInfo::LineStyleInfo() : m_width(0), m_order_index(0)
 {
@@ -230,7 +229,7 @@ LineStyleInfo::to_string()  const
     std::string res;
     for(unsigned int i = 0; i < m_width; i++)
     {
-        if( (m_pattern[0] & (1<<i)) !=0)
+        if( (m_pattern[0] & (1 << i)) !=0)
         {
             res += "*";
         }
@@ -392,7 +391,17 @@ void LineStyle::reorder()
     
 }
 
-
+QBitmap LineStyle::get_bitmap(unsigned int i, int width, int height) const
+{
+    if(i < count())
+    {
+        return m_style[i].get_bitmap(width, height);
+    }
+    else
+    {
+        return m_style[1].get_bitmap(width, height);
+    }
+}
 
 const LineStyle& LineStyle::default_style() 
 {

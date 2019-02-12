@@ -1,0 +1,125 @@
+SET(QTLOGGER_HEADERS 
+    log4qt/appender.h 
+    log4qt/appenderskeleton.h 
+    log4qt/basicconfigurator.h 
+    log4qt/consoleappender.h 
+    log4qt/dailyrollingfileappender.h 
+    log4qt/fileappender.h 
+    log4qt/helpers/classlogger.h 
+    log4qt/helpers/configuratorhelper.h 
+    log4qt/helpers/datetime.h 
+    log4qt/helpers/factory.h 
+    log4qt/helpers/initialisationhelper.h 
+    log4qt/helpers/logerror.h 
+    log4qt/helpers/logobject.h 
+    log4qt/helpers/logobjectptr.h 
+    log4qt/helpers/optionconverter.h 
+    log4qt/helpers/patternformatter.h 
+    log4qt/helpers/properties.h 
+    log4qt/hierarchy.h 
+    log4qt/layout.h 
+    log4qt/level.h 
+    log4qt/log4qt.h 
+    log4qt/logger.h 
+    log4qt/loggerrepository.h 
+    log4qt/loggingevent.h 
+    log4qt/logmanager.h 
+    log4qt/mdc.h 
+    log4qt/ndc.h 
+    log4qt/patternlayout.h 
+    log4qt/propertyconfigurator.h 
+    log4qt/rollingfileappender.h 
+    log4qt/simplelayout.h 
+    log4qt/spi/filter.h 
+    log4qt/ttcclayout.h 
+    log4qt/writerappender.h 
+    log4qt/varia/debugappender.h 
+    log4qt/varia/denyallfilter.h 
+    log4qt/varia/nullappender.h 
+    log4qt/varia/levelmatchfilter.h 
+    log4qt/varia/levelrangefilter.h 
+    log4qt/varia/listappender.h 
+    log4qt/varia/stringmatchfilter.h
+    qtlogger.h
+    pgui_log_global.h
+)
+
+SET(SOURCE_FILES 
+    log4qt/appenderskeleton.cc 
+    log4qt/basicconfigurator.cc 
+    log4qt/consoleappender.cc 
+    log4qt/dailyrollingfileappender.cc 
+    log4qt/fileappender.cc 
+    log4qt/helpers/classlogger.cc 
+    log4qt/helpers/configuratorhelper.cc 
+    log4qt/helpers/datetime.cc 
+    log4qt/helpers/factory.cc 
+    log4qt/helpers/initialisationhelper.cc 
+    log4qt/helpers/logerror.cc 
+    log4qt/helpers/logobject.cc 
+    log4qt/helpers/logobjectptr.cc 
+    log4qt/helpers/optionconverter.cc 
+    log4qt/helpers/patternformatter.cc 
+    log4qt/helpers/properties.cc 
+    log4qt/hierarchy.cc     
+    log4qt/layout.cc 
+    log4qt/level.cc 
+    log4qt/log4qt.cc 
+    log4qt/logger.cc 
+    log4qt/loggerrepository.cc 
+    log4qt/loggingevent.cc 
+    log4qt/logmanager.cc 
+    log4qt/mdc.cc 
+    log4qt/ndc.cc 
+    log4qt/patternlayout.cc 
+    log4qt/propertyconfigurator.cc 
+    log4qt/rollingfileappender.cc 
+    log4qt/simplelayout.cc 
+    log4qt/spi/filter.cc 
+    log4qt/ttcclayout.cc     
+    log4qt/writerappender.cc 
+    log4qt/varia/debugappender.cc 
+    log4qt/varia/denyallfilter.cc 
+    log4qt/varia/nullappender.cc 
+    log4qt/varia/levelmatchfilter.cc 
+    log4qt/varia/levelrangefilter.cc 
+    log4qt/varia/listappender.cc 
+    log4qt/varia/stringmatchfilter.cc
+    qtlogger.cc
+    pgui_log_global.cc
+)
+
+QT4_WRAP_CPP(RENDERER_MOCS 
+    log4qt/appender.h 
+    log4qt/appenderskeleton.h 
+    log4qt/basicconfigurator.h 
+    log4qt/consoleappender.h 
+    log4qt/dailyrollingfileappender.h 
+    log4qt/fileappender.h 
+    log4qt/helpers/configuratorhelper.h 
+    log4qt/helpers/initialisationhelper.h 
+    log4qt/helpers/logobject.h 
+    log4qt/layout.h 
+    log4qt/log4qt.h 
+    log4qt/logger.h 
+    log4qt/patternlayout.h 
+    log4qt/rollingfileappender.h 
+    log4qt/simplelayout.h 
+    log4qt/spi/filter.h 
+    log4qt/ttcclayout.h 
+    log4qt/writerappender.h 
+    log4qt/varia/debugappender.h 
+    log4qt/varia/denyallfilter.h 
+    log4qt/varia/nullappender.h 
+    log4qt/varia/levelmatchfilter.h 
+    log4qt/varia/levelrangefilter.h 
+    log4qt/varia/listappender.h 
+    log4qt/varia/stringmatchfilter.h
+    qtlogger.h
+    pgui_log_global.h
+)
+
+ADD_DEFINITIONS(${QT_DEFINITIONS})
+ADD_LIBRARY(qt_logger ${QTLOGGER_HEADERS} ${RENDERER_MOCS} ${SOURCE_FILES})
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+TARGET_LINK_LIBRARIES(qt_logger ${QT_LIBRARIES})

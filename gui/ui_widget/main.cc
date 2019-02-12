@@ -1,21 +1,30 @@
 #include <QApplication>
-#include "frame.h"
 #include <QFont>
+#include "ui_application.h"
+#include "ui_frame.h"
 #include "deftools/defcontrols.h"
 #include "deftools/datastruct.h"
 
+#include "ui_mainwindow.h"
+#include "ui_rtsreview_widget.h"
+#include "ui_rtscurve.h"
 // Only rigister Class,can use sigal and slot
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    qApp->setStyle(new ProxyStyle);
+
+//    qInstallMsgHandler(ui::outputMessage);
+    ui::GuiApplication a(argc, argv);
+#if 1
+    qApp->setStyle(new ui::ProxyStyle);
     QFont font;
     font.setFamily("Sans Serif");
-    font.setPointSize (10);
+    font.setPointSize (9);
     a.setFont(font);
-    Frame w;
-    w.resize(1200, 800);
-    w.show();    
+    ui::MainWindow w;
+#else
+    ui::FlexWidget w;
+#endif
+    w.show();
     return a.exec();
 }

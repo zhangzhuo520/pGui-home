@@ -3,9 +3,10 @@
 
 #include <QtGui>
 #include <QBitmap>
-//#include <QSize>
 #include <QPainter>
 #include "global.h"
+
+namespace ui {
 class WidgetData;
 class LinuxRubberBand : public QRubberBand
 {
@@ -28,12 +29,11 @@ protected:
 
         QPen pen;
         pen.setStyle(Qt::DashLine);
-        pen.setWidth(1);
+        pen.setWidth(2);
         pen.setColor(QColor(Qt::red));
         painter.setPen(pen);
         painter.drawControl(QStyle::CE_FocusFrame, option);
     }
-
 };
 /*****
  * FramelessHelperPrivate
@@ -159,5 +159,5 @@ protected:
 private:
     FramelessHelperPrivate *d;
 };
-
+}
 #endif // FRAMELESSHELPER_H

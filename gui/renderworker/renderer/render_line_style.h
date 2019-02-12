@@ -116,6 +116,8 @@ public:
 
     const LineStyleInfo &style (unsigned int style) const;
 
+    QBitmap get_bitmap(unsigned int i, int width = -1,  int height = -1) const;
+
     void replace_style( unsigned int i, const LineStyleInfo &li);
 
     void reorder();

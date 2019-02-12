@@ -1,5 +1,5 @@
 #include "sqlmanager.h"
-
+namespace ui {
 SQLManager::SQLManager(QObject *parent) :
     QObject(parent)
 {
@@ -46,4 +46,5 @@ QSqlDatabase SQLManager::getDatabase()
 QString SQLManager::getDatabaseName()
 {
     return db.databaseName();
+}
 }

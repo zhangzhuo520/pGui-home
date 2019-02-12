@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QStringList>
 #include <QtSql/QSqlRecord>
-
+namespace ui {
 class SQLManager : public QObject
 {
     Q_OBJECT
@@ -29,5 +29,5 @@ private:
     QSqlDatabase db;
     
 };
-
+}
 #endif // SQLMANAGER_H

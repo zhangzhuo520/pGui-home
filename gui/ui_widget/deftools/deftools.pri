@@ -6,7 +6,9 @@ HEADERS += \
     deftools/iconhelper.h\
     deftools/global.h\
     deftools/framelesshelper.h \
-    deftools/model.h
+    deftools/model.h \
+    deftools/showcpumemory.h \
+    deftools/ui_data_table.h
 
 SOURCES += \
     $$PWD/defcontrols.cc \
@@ -14,6 +16,8 @@ SOURCES += \
     deftools/iconhelper.cc \
     deftools/global.cc\
     deftools/framelesshelper.cc \
-    deftools/model.cc
+    deftools/model.cc \
+    deftools/showcpumemory.cc \
+    deftools/ui_data_table.cc
 
 FORMS +=

@@ -42,7 +42,347 @@ static const char *pattern_strings[] = {
     "....*...\n"
     ".....*..\n"
     "......*.\n"
-    ".......*"
+    ".......*",
+	
+// 6: strongly left-hatched dense
+  "strongly left-hatched dense",
+  "**..\n"
+  ".**.\n"
+  "..**\n"
+  "*..*",
+
+  // 7: strongly left-hatched sparse
+  "strongly left-hatched sparse",
+  "**......\n"
+  ".**.....\n"
+  "..**....\n"
+  "...**...\n"
+  "....**..\n"
+  ".....**.\n"
+  "......**\n"
+  "*......*",
+
+  // 8: right-hatched
+  "right-hatched",
+  "*...\n"
+  "...*\n"
+  "..*.\n"
+  ".*..",
+
+  // 9: lightly right-hatched
+  "lightly right-hatched",
+  "*.......\n"
+  ".......*\n"
+  "......*.\n"
+  ".....*..\n"
+  "....*...\n"
+  "...*....\n"
+  "..*.....\n"
+  ".*......",
+
+  // 10: strongly right-hatched dense
+  "strongly right-hatched dense",
+  "**..\n"
+  "*..*\n"
+  "..**\n"
+  ".**.",
+
+  // 11: strongly right-hatched sparse
+  "strongly right-hatched sparse",
+  "**......\n"
+  "*......*\n"
+  "......**\n"
+  ".....**.\n"
+  "....**..\n"
+  "...**...\n"
+  "..**....\n"
+  ".**.....",
+
+  // 12: cross-hatched
+  "cross-hatched",
+  "*...\n"
+  ".*.*\n"
+  "..*.\n"
+  ".*.*",
+
+  // 13: lightly cross-hatched
+  "lightly cross-hatched",
+  "*.......\n"
+  ".*.....*\n"
+  "..*...*.\n"
+  "...*.*..\n"
+  "....*...\n"
+  "...*.*..\n"
+  "..*...*.\n"
+  ".*.....*",
+
+  // 14: checkerboard 2px
+  "checkerboard 2px",
+  "**..\n"
+  "**..\n"
+  "..**\n"
+  "..**",
+
+  // 15: strongly cross-hatched sparse
+  "strongly cross-hatched sparse",
+  "**......\n"
+  "***....*\n"
+  "..**..**\n"
+  "...****.\n"
+  "....**..\n"
+  "...****.\n"
+  "..**..**\n"
+  "***....*",
+
+  // 16: heavy checkerboard
+  "heavy checkerboard",
+  "****....\n"
+  "****....\n"
+  "****....\n"
+  "****....\n"
+  "....****\n"
+  "....****\n"
+  "....****\n"
+  "....****",
+
+  // 17: hollow bubbles
+  "hollow bubbles",
+  ".*...*..\n"
+  "*.*.....\n"
+  ".*...*..\n"
+  "....*.*.\n"
+  ".*...*..\n"
+  "*.*.....\n"
+  ".*...*..\n"
+  "....*.*.",
+
+  // 18: solid bubbles
+  "solid bubbles",
+  ".*...*..\n"
+  "***.....\n"
+  ".*...*..\n"
+  "....***.\n"
+  ".*...*..\n"
+  "***.....\n"
+  ".*...*..\n"
+  "....***.",
+
+  // 19: pyramids
+  "pyramids",
+  ".*......\n"
+  "*.*.....\n"
+  "****...*\n"
+  "........\n"
+  "....*...\n"
+  "...*.*..\n"
+  "..*****.\n"
+  "........",
+
+  // 20: turned pyramids
+  "turned pyramids",
+  "****...*\n"
+  "*.*.....\n"
+  ".*......\n"
+  "........\n"
+  "..*****.\n"
+  "...*.*..\n"
+  "....*...\n"
+  "........",
+
+  // 21: plus
+  "plus",
+  "..*...*.\n"
+  "..*.....\n"
+  "*****...\n"
+  "..*.....\n"
+  "..*...*.\n"
+  "......*.\n"
+  "*...****\n"
+  "......*.",
+
+  // 22: minus
+  "minus",
+  "........\n"
+  "........\n"
+  "*****...\n"
+  "........\n"
+  "........\n"
+  "........\n"
+  "*...****\n"
+  "........",
+
+  // 23: 22.5 degree down
+  "22.5 degree down",
+  "*......*\n"
+  ".**.....\n"
+  "...**...\n"
+  ".....**.\n"
+  "*......*\n"
+  ".**.....\n"
+  "...**...\n"
+  ".....**.",
+
+  // 24: 22.5 degree up
+  "22.5 degree up",
+  "*......*\n"
+  ".....**.\n"
+  "...**...\n"
+  ".**.....\n"
+  "*......*\n"
+  ".....**.\n"
+  "...**...\n"
+  ".**.....",
+
+  // 25: 67.5 degree down
+  "67.5 degree down",
+  "*...*...\n"
+  ".*...*..\n"
+  ".*...*..\n"
+  "..*...*.\n"
+  "..*...*.\n"
+  "...*...*\n"
+  "...*...*\n"
+  "*...*...",
+
+  // 26: 67.5 degree up
+  "67.5 degree up",
+  "...*...*\n"
+  "..*...*.\n"
+  "..*...*.\n"
+  ".*...*..\n"
+  ".*...*..\n"
+  "*...*...\n"
+  "*...*...\n"
+  "...*...*",
+
+  // 27: 22.5 cross hatched
+  "22.5 degree cross hatched",
+  "*......*\n"
+  ".**..**.\n"
+  "...**...\n"
+  ".**..**.\n"
+  "*......*\n"
+  ".**..**.\n"
+  "...**...\n"
+  ".**..**.",
+
+  // 28: zig zag
+  "zig zag",
+  "..*...*.\n"
+  ".*.*.*.*\n"
+  "*...*...\n"
+  "........\n"
+  "..*...*.\n"
+  ".*.*.*.*\n"
+  "*...*...\n"
+  "........",
+
+  // 29: sine 
+  "sine",
+  "..***...\n"
+  ".*...*..\n"
+  "*.....**\n"
+  "........\n"
+  "..***...\n"
+  ".*...*..\n"
+  "*.....**\n"
+  "........",
+
+  // 30: special pattern for light heavy dithering
+  "heavy unordered",
+  "****.*.*\n"
+  "**.****.\n"
+  "*.**.***\n"
+  "*****.*.\n"
+  ".**.****\n"
+  "**.***.*\n"
+  ".****.**\n"
+  "*.*.****",
+
+  // 31: special pattern for light frame dithering
+  "light unordered",
+  "....*.*.\n"
+  "..*....*\n"
+  ".*..*...\n"
+  ".....*.*\n"
+  "*..*....\n"
+  "..*...*.\n"
+  "*....*..\n"
+  ".*.*....",
+
+  // 32: vertical dense
+  "vertical dense",
+  "*.\n"
+  "*.\n",
+
+  // 33: vertical 
+  "vertical",
+  ".*..\n"
+  ".*..\n"
+  ".*..\n"
+  ".*..\n",
+
+  // 34: vertical thick
+  "vertical thick",
+  ".**.\n"
+  ".**.\n"
+  ".**.\n"
+  ".**.\n",
+
+  // 35: vertical sparse
+  "vertical sparse",
+  "...*....\n"
+  "...*....\n"
+  "...*....\n"
+  "...*....\n",
+
+  // 36: vertical sparse, thick
+  "vertical sparse, thick",
+  "...**...\n"
+  "...**...\n"
+  "...**...\n"
+  "...**...\n",
+
+  // 37: horizontal dense
+  "horizontal dense",
+  "**\n"
+  "..\n",
+
+  // 38: horizontal 
+  "horizontal",
+  "....\n"
+  "****\n"
+  "....\n"
+  "....\n",
+
+  // 39: horizontal thick
+  "horizontal thick",
+  "....\n"
+  "****\n"
+  "****\n"
+  "....\n",
+
+  // 40: horizontal 
+  "horizontal sparse",
+  "........\n"
+  "........\n"
+  "........\n"
+  "********\n"
+  "........\n"
+  "........\n"
+  "........\n"
+  "........\n",
+
+  // 41: horizontal 
+  "horizontal sparse, thick",
+  "........\n"
+  "........\n"
+  "........\n"
+  "********\n"
+  "********\n"
+  "........\n"
+  "........\n"
+  "........\n"
 
 };
 
@@ -167,23 +507,23 @@ QBitmap PatternInfo::get_bitmap(int width, int height) const
     unsigned int segs = (width + 7)/8;
     unsigned char * data = new unsigned char[segs * height];
     memset(data, 0, size_t (segs * height));
-        
-    for(unsigned int i = 1; i < (unsigned int) (height - 1); i++)
+
+    for(unsigned int i = 0; i< (unsigned int) (height - 1); i++)
     {
-        for(unsigned int j = 0; j < segs ; j++)
+        for(unsigned int j = 0; j< segs; j++)
         {
             data[i * segs + j] = 0xff;
         }
     }
-    
-    for(unsigned int i = 0; i < (unsigned int) (height - 4);++i)
+
+    for(unsigned int i = 0; i< (unsigned int) (height - 1); i++)
     {
-        uint32_t w = *( p[(height - 5 - i) % m_height]);
-        for(unsigned int j = 0 ; j < (unsigned int) (width - 2); ++j)
+        uint32_t w = *(p[(height - 1 - i) % m_height]);
+        for(unsigned int j = 0; j <(unsigned int) (segs * 8) ;j++)
         {
             if(!(w &(1 << (j % m_width))))
             {
-                 data[segs *(i + 2) + (j + 1) / 8] &= ~(1<< ((j + 1) % 8));
+                data[segs * i + j / 8] &= ~(1 << (j % 8));
             }
         }
     }

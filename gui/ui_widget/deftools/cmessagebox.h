@@ -11,7 +11,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QMouseEvent>
-
+namespace ui {
 class CMessageBox : public QDialog
 {
     Q_OBJECT
@@ -68,5 +68,5 @@ QMessageBox::StandardButton showWarning(QWidget *parent = 0,
                                         const QString &text = "",
                                         QMessageBox::StandardButtons buttons = QMessageBox::Ok,
                                         QMessageBox::StandardButton defaultButton = QMessageBox::Ok);
-
+}
 #endif // CMESSAGEBOX_H

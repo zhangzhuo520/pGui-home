@@ -2,6 +2,8 @@
 #define DATASTRUCT_H
 #include <QString>
 
+#define SYS_TIPBOX 1
+
 #ifndef MyDebug
 #define MyDebug  qDebug()<<"[FILE:"<<__FILE__<<",LINE"<<__LINE__<<",FUNC"<<__FUNCTION__<<"]";
 #endif

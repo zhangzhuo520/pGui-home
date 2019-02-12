@@ -10,6 +10,7 @@
 #include <QFontDatabase>
 #include <QApplication>
 #include <QFile>
+namespace ui {
 class IconHelper : public QObject
 {
     Q_OBJECT
@@ -33,6 +34,7 @@ public:
 
     void setIcon(QLabel *, QChar);
     void setIcon(QPushButton *, QChar);
+
     void setStyle(const QString &);
 signals:
     
@@ -42,5 +44,5 @@ private:
     static IconHelper * _instance;
     QFont iconFont;
 };
-
+}
 #endif // ICONHELPER_H

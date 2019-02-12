@@ -1,13 +1,11 @@
 <RCC>
     <qresource prefix="/dfjy">
-        <file>images/CPE.png</file>
         <file>images/delete.png</file>
         <file>images/dfjy.png</file>
         <file>images/error.png</file>
         <file>images/fontawesome-webfont.ttf</file>
         <file>images/Font Awesome Cheatsheet.png</file>
-        <file>images/fullScren.png</file>
-        <file>images/GCK.png</file>
+        <file>images/fit.png</file>
         <file>images/info.png</file>
         <file>images/lineWidth.png</file>
         <file>images/left.png</file>
@@ -17,16 +15,10 @@
         <file>images/pen.png</file>
         <file>images/question.png</file>
         <file>images/refresh.png</file>
-        <file>images/zoomout.png</file>
-        <file>images/zoomIn.png</file>
         <file>images/waring.png</file>
-        <file>images/SEM.png</file>
         <file>images/save.png</file>
-        <file>images/SET.png</file>
         <file>images/ruler.png</file>
-        <file>images/RTS.png</file>
         <file>images/right.png</file>
-        <file>images/REV.png</file>
         <file>images/rename.png</file>
         <file>images/colorButton.png</file>
         <file>images/colorIcon.png</file>
@@ -56,5 +48,35 @@
         <file>images/normal.png</file>
         <file>images/float.png</file>
         <file>images/dockclose.png</file>
+        <file>images/found.png</file>
+        <file>images/right-trangle .png</file>
+        <file>images/left-trangle.png</file>
+        <file>images/down-trangle.png</file>
+        <file>images/up-trangle.png</file>
+        <file>images/scale.png</file>
+        <file>images/style.qss</file>
+        <file>images/waring_title.png</file>
+        <file>images/rev.png</file>
+        <file>images/cross.png</file>
+        <file>images/45du.png</file>
+        <file>images/measure_line.png</file>
+        <file>images/tool.png</file>
+        <file>images/snap.png</file>
+        <file>images/zoomOut.png</file>
+        <file>images/zoomIn.png</file>
+        <file>images/last_page.png</file>
+        <file>images/next_page.png</file>
+        <file>images/setpos.png</file>
+        <file>images/eraser.png</file>
+        <file>images/clean.png</file>
+        <file>images/measure_table.png</file>
+        <file>images/setwindowsize.png</file>
+        <file>images/rts.png</file>
+        <file>images/run.png</file>
+        <file>images/gauge_text.png</file>
+        <file>images/rts_home.png</file>
+        <file>images/rts_left.png</file>
+        <file>images/rts_right.png</file>
+        <file>images/rts_find.png</file>
     </qresource>
 </RCC>

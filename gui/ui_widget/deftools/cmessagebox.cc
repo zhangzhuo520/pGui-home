@@ -1,5 +1,6 @@
 #include "cmessagebox.h"
 #include "QDebug"
+namespace ui {
 CMessageBox::CMessageBox(QWidget *parent,
                          const QString &title,
                          const QString &text,
@@ -8,9 +9,15 @@ CMessageBox::CMessageBox(QWidget *parent,
                          ) :
     QDialog(parent)
 {
-    setStyleSheet("QDialog{border:2px solid rgb(150,150,150) ;}"\
-                  /*   "QPushButton{border:2px solid rgb(176,181,185);"\
-                                            "border-radius:1px;}"*/);\
+    setStyleSheet("QDialog{border:1px solid rgb(20,20,20);}"\
+                  "QPushButton{"
+                               "background: rgb(200, 200, 200);"
+                               "border-style: outset;"
+                               "border:2px solid rgb(166,166,166);}"
+                  "QPushButton:pressed{"
+                               "background: rgb(200, 200, 200);"
+                               "border-style: inset"
+                               "border:2px solid rgb(166,166,166);}");
 
     m_lIconTitle = new QLabel(this);
     m_lTitle = new QLabel(this);
@@ -30,8 +37,8 @@ CMessageBox::CMessageBox(QWidget *parent,
     titleLayout->addWidget(m_lIconTitle);
     titleLayout->addWidget(m_lTitle);
     titleLayout->addStretch(1);
-    m_lIconTitle->setFixedSize(60, 45);
-    m_lIconTitle->setPixmap(QPixmap(":/new/prefix1/images/dfjy.png"));
+    m_lIconTitle->setFixedSize(20,20);
+    m_lIconTitle->setPixmap(QPixmap(":/dfjy/images/waring_title.png"));
     m_lIconTitle->setScaledContents(true);
     m_lTitle->setFixedHeight(32);
     m_layout->addLayout(titleLayout);
@@ -45,7 +52,7 @@ CMessageBox::CMessageBox(QWidget *parent,
 
     QHBoxLayout *hLayout  = new QHBoxLayout();
     m_lIconMain->setFixedSize(QSize(40, 40));
-    m_lText->setFixedHeight(40);
+    m_lText->adjustSize();
     hLayout->addWidget(m_lIconMain);
     hLayout->addWidget(m_lText);
     hLayout->addStretch(1);
@@ -62,8 +69,22 @@ CMessageBox::CMessageBox(QWidget *parent,
     m_pButtonBox->setStandardButtons(QDialogButtonBox::StandardButtons((int)standButtons));
     setDefaultButton(defaultButton);
 
+    QList<QAbstractButton *> buttons =  m_pButtonBox->buttons();
+    for(int i = 0; i < buttons.size(); i++) {
+        QDialogButtonBox::StandardButton button = m_pButtonBox->standardButton(buttons.at(i));
+        QPushButton *pushButton = m_pButtonBox->button(button);
+        pushButton->setFixedSize(QSize(80, 30));
+        if(button == QDialogButtonBox::Ok || button == QDialogButtonBox::Yes) {
+            pushButton->setText(tr("OK"));
+        } else {
+            pushButton->setText(tr("Cancel"));
+        }
+    }
+
+
     m_lTitle->setText(title);
     m_lText->setText(text);
+
 
     connect(m_pButtonBox, SIGNAL(clicked(QAbstractButton*)), this,
             SLOT(slot_onButtonClicked(QAbstractButton*)));
@@ -123,7 +144,7 @@ QMessageBox::StandardButton showError(QWidget *parent,
                                       QMessageBox::StandardButton defaultButton)
 {
     CMessageBox msgBox(parent, title, text, buttons, defaultButton);
-    msgBox.setIcon(":/new/prefix1/images/error.png");
+    msgBox.setIcon(":/dfjy/images/error.png");
     if (msgBox.exec() == -1)
         return QMessageBox::Cancel;
     return msgBox.standardButton(msgBox.clickedButton());
@@ -136,7 +157,7 @@ QMessageBox::StandardButton showSuccess(QWidget *parent,
                                         QMessageBox::StandardButton defaultButton)
 {
     CMessageBox msgBox(parent, title, text, buttons, defaultButton);
-    msgBox.setIcon(":/new/prefix1/images/info.png");
+    msgBox.setIcon(":/dfjy/images/info.png");
     if (msgBox.exec() == -1)
         return QMessageBox::Cancel;
     return msgBox.standardButton(msgBox.clickedButton());
@@ -149,7 +170,7 @@ QMessageBox::StandardButton showQuestion(QWidget *parent,
                                          QMessageBox::StandardButton defaultButton)
 {
     CMessageBox msgBox(parent, title, text, buttons, defaultButton);
-    msgBox.setIcon(":/new/prefix1/images/question.png");
+    msgBox.setIcon(":/dfjy/images/question.png");
     if (msgBox.exec() == -1)
         return QMessageBox::Cancel;
     return msgBox.standardButton(msgBox.clickedButton());
@@ -162,8 +183,9 @@ QMessageBox::StandardButton showWarning(QWidget *parent,
                                         QMessageBox::StandardButton defaultButton)
 {
     CMessageBox msgBox(parent, title, text, buttons, defaultButton);
-    msgBox.setIcon(":/new/prefix1/images/waring.png");
+    msgBox.setIcon(":/dfjy/images/waring.png");
     if (msgBox.exec() == -1)
         return QMessageBox::Cancel;
     return msgBox.standardButton(msgBox.clickedButton());
+}
 }

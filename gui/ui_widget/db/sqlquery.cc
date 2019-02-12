@@ -1,4 +1,5 @@
 #include "sqlquery.h"
+namespace ui {
 //defectSQL
 defectSQL::defectSQL()
 {
@@ -49,11 +50,11 @@ bool defectSQL::isValidData()
         return true;
 }
 
-QSqlQuery defectSQL::outputSQL()
+QString defectSQL::outputSQL()
 {
     if (isValidData())
     {
-        return QSqlQuery(sqlstr);
+        return sqlstr;
     }
         else
             return NULL;
@@ -226,4 +227,5 @@ QSqlQuery CountDefectSQL::outputSQL()
     }
     else
         return NULL;
+}
 }
