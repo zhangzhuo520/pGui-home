@@ -493,22 +493,22 @@ void LayerWidget::getLayerData(render::RenderFrame* view)
     rootItem_vector.append(rootFileItem);
     
     bool all_checked = true;
-
+ 
     for(uint i = 0; i < view->layers_size(); ++i)
     {
         if(!view->get_properties(i)->visible())
-        {
+	{
             all_checked = false;
-            break;
+            break;    
         }
-    }
+    }   
 
     if(all_checked)
     {
         rootFileItem->setCheckState(Qt::Checked);
     }
     else
-    {
+    { 
         rootFileItem->setCheckState(Qt::Unchecked);
     }
     
@@ -551,6 +551,7 @@ void LayerWidget::getLayerData(render::RenderFrame* view)
         }
         else
         {
+//            rootFileItem->setCheckState(Qt::Unchecked);
             pStandardItem->setCheckState(Qt::Unchecked);
         }
 

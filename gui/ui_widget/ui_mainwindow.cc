@@ -1496,7 +1496,8 @@ void MainWindow::centerWidget_boundingSignal(int index)
     connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
     connect(m_paint_toolbar, SIGNAL(signal_setSnapFlag(Global::SnapFLag)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_snapfalg(Global::SnapFLag)));
     connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_painter_style(Global::PaintTool)));
-    connect(m_paint_toolbar, SIGNAL(signal_measure_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_measureline()));
+    connect(m_paint_toolbar, SIGNAL(signal_all_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_all()));
+    connect(m_paint_toolbar, SIGNAL(siganl_measure_line_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_measureline()));
     connect(m_paint_toolbar, SIGNAL(signal_mark_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_mark_point()));
     emit signal_setPenWidth(penWidthCombox->currentText());
 }

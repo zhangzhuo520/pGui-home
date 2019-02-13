@@ -70,12 +70,18 @@ void PaintToolbar::init_button()
     m_eraser_button->setCheckable(true);
     m_eraser_button->setGeometry(78, 2, 18, 18);
 
+    m_measure_clear_button = new PushButton(this);
+    m_measure_clear_button->setObjectName("measureClearButton");
+    m_measure_clear_button->setToolTip("Delete");
+    m_measure_clear_button->setIcon(QIcon(":/dfjy/images/clean.png"));
+    m_measure_clear_button->setGeometry(98, 2, 18, 18);
+
     m_table_button = new PushButton(this);
     m_table_button->setObjectName("tableButton");
     m_table_button->setToolTip("Table");
     m_table_button->setIcon(QIcon(":/dfjy/images/measure_table.png"));
     m_table_button->setCheckable(true);
-    m_table_button->setGeometry(108, 2, 18, 18);
+    m_table_button->setGeometry(128, 2, 18, 18);
 
     m_snap_button->hide();
     m_mark_point_button->hide();
@@ -85,6 +91,7 @@ void PaintToolbar::init_button()
     m_clear_button->show();
     m_eraser_button->hide();
     m_table_button->hide();
+    m_measure_clear_button->hide();
     m_line_a->hide();
     m_line_b->hide();
 }
@@ -99,6 +106,7 @@ void PaintToolbar::init_connection()
     connect(m_clear_button, SIGNAL(clicked()), this, SLOT(slot_clear_click()));
     connect(m_eraser_button, SIGNAL(clicked(bool)), this, SLOT(slot_eraser_click(bool)));
     connect(m_table_button, SIGNAL(clicked()), this, SLOT(slot_table_click()));
+    connect(m_measure_clear_button, SIGNAL(clicked()), this, SLOT(slot_measure_line_clear()));
 }
 
 void PaintToolbar::slot_set_paint_tool(ui::Global::PaintStyle paint_style)
@@ -202,7 +210,12 @@ void PaintToolbar::slot_table_click()
 
 void PaintToolbar::slot_clear_click()
 {
-    emit signal_measure_clear();
+    emit signal_all_clear();
+}
+
+void PaintToolbar::slot_measure_line_clear()
+{
+    emit siganl_measure_line_clear();
 }
 
 void PaintToolbar::updata_toolbar()
@@ -218,6 +231,7 @@ void PaintToolbar::updata_toolbar()
         m_line_b->hide();
         m_snap_button->hide();
         m_eraser_button->hide();
+        m_measure_clear_button->hide();
         m_table_button->hide();
         emit signal_setPaintStyle(Global::Nothing);
     }
@@ -232,6 +246,7 @@ void PaintToolbar::updata_toolbar()
         m_clear_button->hide();
         m_snap_button->hide();
         m_eraser_button->hide();
+        m_measure_clear_button->hide();
         m_table_button->hide();
         emit signal_setPaintStyle(Global::Nothing);
 
@@ -242,6 +257,7 @@ void PaintToolbar::updata_toolbar()
         m_measure_angle_button->show();
         m_snap_button->show();
         m_eraser_button->show();
+        m_measure_clear_button->show();
         m_clear_button->hide();
         m_line_a->show();
         m_line_b->show();

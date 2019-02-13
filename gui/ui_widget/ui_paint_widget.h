@@ -78,7 +78,8 @@ public slots:
     void setWidth (QString);
     void setColor (QColor);
     void slot_get_snap_pos(bool, QPointF, QPointF, int);
-    void slot_measure_clear();
+    void slot_clear_all();
+    void slot_measure_line_clear();
     void slot_mark_point();
     void slot_box_updated(double, double, double, double);
 

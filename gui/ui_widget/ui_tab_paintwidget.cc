@@ -29,6 +29,8 @@ void TabPaintWidget::slot_close_tab(QString fileName)
     }
 
     removeTab(index);
+    delete m_scaleframe_vector.at(index);
+    m_scaleframe_vector[index] = NULL;
     m_scaleframe_vector.remove(index);
 }
 

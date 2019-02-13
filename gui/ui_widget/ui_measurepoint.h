@@ -39,8 +39,6 @@ public:
     QColor m_line_color;
 };
 
-//qRegisterMetaType("LineData");
-
 class MeasureLine
 {
 public:

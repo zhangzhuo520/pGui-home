@@ -184,27 +184,30 @@ void RtsConfigDialog::initConnecttion()
     connect(m_model_button, SIGNAL(clicked()), this, SLOT(slot_model_browser()));
 }
 
+void RtsConfigDialog::initRtsTab(const QStringList & TabList)
+{
+    m_mask_tab->init_tab(TabList);
+}
+
 void RtsConfigDialog::read_yaml(QString yamlPath)
 {
     YamlParsing yamlParser;
     yamlParser.read_yaml(yamlPath);
-//    std::ifstream fin(yamlPath.toStdString());
-//    YAML::Parser parser(fin);
-//    YAML::Node doc = YAML::load(yamlPath.toStdString());
-//    std::string s;
-//    doc >> s;
-//    qDebug() << QString::fromStdString(s);
+    QStringList LayerNameList = yamlParser.get_layername_list();
+    initRtsTab(LayerNameList);
 }
 
 void RtsConfigDialog::slotAddRts()
 {
     initRtsWidget();
+    initConnecttion();
     QString tabTitle = "rts_" + QString::number(m_rts_tab->count() + 1);
     m_rts_tab->addTab(m_rts_widget, tabTitle);
 }
 
 void RtsConfigDialog::slotDeleteRts()
 {
+    delete m_rts_tab->widget(m_rts_tab->count() - 1);
     m_rts_tab->removeTab(m_rts_tab->count() - 1);
 }
 

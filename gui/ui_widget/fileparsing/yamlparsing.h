@@ -19,9 +19,11 @@ class YamlParsing
 public:
     YamlParsing();
 
-    bool read_yaml(const QString&);
+    void read_yaml(const QString&);
 
-    void nodePrint(const YAML::Node&);
+    void read_layername(const YAML::Node&);
+
+    QStringList get_layername_list();
 
 private:
     QStringList m_layername_list;

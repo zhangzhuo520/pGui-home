@@ -2,7 +2,7 @@
 
 namespace ui
 {
-
+const double esp = 0.0000001;
 double MeasureLine::h_range = sin(5.0 / 180 * PI);
 double MeasureLine::x_y_rang = 5;
 MeasureLine::MeasureLine()
@@ -42,19 +42,24 @@ bool MeasureLine::point_at_edge(QPointF p, LineData line)
     double y_max = max(c_y, a_y);
     double y_min = min(a_y, c_y);	
 
-    if((((b_x -  x_max) > 0) ||
+    if(((b_x -  x_max) > 0) ||
             (( b_x - x_min) < 0) ||
                  (( b_y - y_max) > 0) ||
-                          ((b_y - y_min) < 0)) && (y_max != y_min) && (x_max != x_min))
+                          ((b_y - y_min) < 0))
     {
-          return false;
-	}
+        if ((fabs(y_max - y_min) > esp) && fabs(x_max - x_min) > esp)
+        {
+            return false;
+        }
+    }
 	
 	if (y_max == y_min )
 	{
-		if(((b_x - x_max) > 0) || ((b_x - x_min ) < 0))
-		return false;
-	}
+        if(((b_x - x_max) > 0) || ((b_x - x_min ) < 0))
+        {
+            return false;
+        }
+    }
 	
     if (x_max == x_min)
 	{

@@ -39,6 +39,8 @@ public:
 
     void initConnecttion();
 
+    void initRtsTab(const QStringList &);
+
     void read_yaml(QString);
     
 signals:

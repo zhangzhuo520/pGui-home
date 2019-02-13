@@ -423,7 +423,7 @@ void PaintWidget::keyPressEvent(QKeyEvent *e)
     e->ignore();
 }
 
-void PaintWidget::slot_measure_clear ()
+void PaintWidget::slot_clear_all ()
 {
     m_ruler_image.fill(Qt::transparent);
     m_gauge_image.fill(Qt::transparent);
@@ -431,6 +431,13 @@ void PaintWidget::slot_measure_clear ()
     m_mark_cross_list.clear();
     m_measure_point.clear_all_data();
     m_gauge_end = m_gauge_start = QPointF(0, 0);
+    merge_image();
+}
+
+void PaintWidget::slot_measure_line_clear()
+{
+    m_ruler_image.fill(Qt::transparent);
+    m_measure_point.clear_all_data();
     merge_image();
 }
 

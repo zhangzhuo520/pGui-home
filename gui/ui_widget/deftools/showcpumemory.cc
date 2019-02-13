@@ -61,7 +61,7 @@ QString ShowCPUMemory::GetCPU()
             total += lst.at(i).toDouble();
         if(total - m_cpu_total > 0)
         {
-            QString msg = QString("Cpu rate: : %1")
+            QString msg = QString("Cpu rate: : %1 %")
                     .arg((use - m_cpu_use) / (total - m_cpu_total) * 100.0);
             m_cpu_total = total;
             m_cpu_use = use;

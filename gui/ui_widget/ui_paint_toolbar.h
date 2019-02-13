@@ -30,7 +30,8 @@ public:
 signals:
     void signal_setPaintStyle(Global::PaintTool);
     void signal_setSnapFlag(Global::SnapFLag);
-    void signal_measure_clear();
+    void signal_all_clear();
+    void siganl_measure_line_clear();
     void signal_mark_clear();
     void signal_measure_table_click();
     
@@ -45,6 +46,7 @@ public slots:
     void slot_eraser_click(bool);
     void slot_table_click();
     void slot_clear_click();
+    void slot_measure_line_clear();
 
 private:
     Global::PaintStyle m_paint_style;
@@ -57,6 +59,7 @@ private:
     PushButton *m_eraser_button;
     PushButton *m_clear_button;
     PushButton *m_table_button;
+    PushButton *m_measure_clear_button;
 
     QFrame *m_line_a;
     QFrame *m_line_b;

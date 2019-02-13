@@ -61,9 +61,14 @@ void ScaleFrame::slot_set_snapfalg(Global::SnapFLag snapflag)
     m_paint_widget->set_snap_flag(snapflag);
 }
 
+void ScaleFrame::slot_clear_all()
+{
+    m_paint_widget->slot_clear_all();
+}
+
 void ScaleFrame::slot_clear_measureline()
 {
-    m_paint_widget->slot_measure_clear();
+    m_paint_widget->slot_measure_line_clear();
 }
 
 void ScaleFrame::slot_clear_mark_point()
