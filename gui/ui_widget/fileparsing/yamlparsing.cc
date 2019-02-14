@@ -10,7 +10,7 @@ void YamlParsing::read_yaml(const QString & yamlPath)
     YAML::Node config = YAML::LoadFile(yamlPath.toStdString());
     YAML::Node mask = config["mask"];
     YAML::Node layers = mask["layers"];
-    for (unsigned int i = 0; i < config.size(); i++)
+    for (unsigned int i = 0; i < layers.size(); i++)
     {
         read_layername(layers[i]);
     }

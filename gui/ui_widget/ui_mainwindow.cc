@@ -42,9 +42,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     readSettingConfig();
 
-    logger_widget("Software start");
-
     writeTestingConfig();
+
+    logger_widget("Software start");
 }
 
 MainWindow::~MainWindow()
@@ -301,7 +301,7 @@ void MainWindow::initPaintTab()
     m_paint_toolbar = new PaintToolbar(centralWidget());
 
     setCentralWidget(m_center_widget);
-    m_paint_tabwidget->setObjectName("m_paint_tabwidget");
+    m_paint_tabwidget->setObjectName("TabPaintWidget");
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
@@ -426,6 +426,8 @@ void MainWindow::RTSSetup()
 {
     RtsConfigDialog *RTSSetupDialog = new RtsConfigDialog(this);
     RTSSetupDialog->setGeometry(200, 200, 400, 600);
+    QStringList list = layerwidget->get_all_layername();
+    RTSSetupDialog->set_layername_list(list);
     RTSSetupDialog->show();
 }
 

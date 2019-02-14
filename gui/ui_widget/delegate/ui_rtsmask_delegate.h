@@ -1,14 +1,15 @@
-#ifndef DELEGATE_H
-#define DELEGATE_H
+#ifndef UI_RTSMASK_DELEGATE_H
+#define UI_RTSMASK_DELEGATE_H
 #include <QItemDelegate>
 #include <QComboBox>
 #include <QStringList>
-
-class Delegate : public QItemDelegate
+namespace ui {
+class RtsMaskDelegate : public QItemDelegate
 {
     Q_OBJECT
 public:
-    Delegate(QObject *parent = 0);
+    RtsMaskDelegate(QObject *parent = 0);
+    ~RtsMaskDelegate();
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
@@ -19,5 +20,6 @@ public:
 private:
     QStringList m_commbox_list;
 };
+}
 
-#endif // DELEGATE_H
+#endif // UI_RTSMASK_DELEGATE_H

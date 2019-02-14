@@ -41,6 +41,7 @@ SET(PicathoGui_SRCS
     deftools/iconhelper.cc
     deftools/delegate.cc
     deftools/showcpumemory.cc
+    delegate/ui_rtsmask_delegate.cc
     db/sqlquery.cc
     db/sqlmanager.cc
     fileparsing/yamlparsing.cc
@@ -48,6 +49,7 @@ SET(PicathoGui_SRCS
     model/ui_measuretable_model.cc
     model/ui_sqltabel_model.cc
     model/ui_gauge_model.cc  
+    model/ui_rtsmask_model.cc
     model/ui_fileproject_model.cc)
 
 
@@ -83,6 +85,7 @@ SET(PicathoGui_HEADERS
     deftools/delegate.h
     deftools/global.h
     deftools/showcpumemory.h
+    delegate/ui_rtsmask_delegate.h
     db/sqlquery.h
     db/sqlmanager.h
     fileparsing/yamlparsing.h
@@ -90,6 +93,7 @@ SET(PicathoGui_HEADERS
     model/ui_measuretable_model.h
     model/ui_gauge_model.h  
     model/ui_sqltabel_model.h
+    model/ui_rtsmask_model.h
     model/ui_fileproject_model.h)
 
 QT4_WRAP_CPP(PicathoGui_MOCS
@@ -122,11 +126,13 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     deftools/iconhelper.h
     deftools/showcpumemory.h
     deftools/delegate.h
+    delegate/ui_rtsmask_delegate.h
     db/sqlmanager.h
     model/ui_measuretable_model.h
     model/ui_checklist_model.h
     model/ui_gauge_model.h  
     model/ui_fileproject_model.h
+    model/ui_rtsmask_model.h
     model/ui_sqltabel_model.h)
 
 QT4_ADD_RESOURCES(PicathoGui_RESOURCES_RCC ${PicathoGui_RESOURCES})

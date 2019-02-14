@@ -42,8 +42,8 @@ public:
     void initRtsTab(const QStringList &);
 
     void read_yaml(QString);
-    
-signals:
+
+    void set_layername_list(const QStringList &);
     
 public slots:
     void slotAddRts();

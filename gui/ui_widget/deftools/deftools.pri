@@ -8,7 +8,7 @@ HEADERS += \
     deftools/framelesshelper.h \
     deftools/model.h \
     deftools/showcpumemory.h \
-    deftools/ui_data_table.h
+    deftools/delegate.h
 
 SOURCES += \
     $$PWD/defcontrols.cc \
@@ -18,6 +18,6 @@ SOURCES += \
     deftools/framelesshelper.cc \
     deftools/model.cc \
     deftools/showcpumemory.cc \
-    deftools/ui_data_table.cc
+    deftools/delegate.cc
 
 FORMS +=

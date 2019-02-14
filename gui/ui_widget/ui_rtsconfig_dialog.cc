@@ -10,7 +10,6 @@ RtsConfigDialog::RtsConfigDialog(QWidget *parent) :
     initBottomButton();
     initLayout();
     initConnecttion();
-
 }
 
 RtsConfigDialog::~RtsConfigDialog()
@@ -195,6 +194,11 @@ void RtsConfigDialog::read_yaml(QString yamlPath)
     yamlParser.read_yaml(yamlPath);
     QStringList LayerNameList = yamlParser.get_layername_list();
     initRtsTab(LayerNameList);
+}
+
+void RtsConfigDialog::set_layername_list(const QStringList &list)
+{
+    m_mask_tab->set_layername_list(list);
 }
 
 void RtsConfigDialog::slotAddRts()

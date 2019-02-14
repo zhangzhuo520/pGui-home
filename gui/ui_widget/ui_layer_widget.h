@@ -63,6 +63,8 @@ public:
     void setItemChecked(bool);
 
     void item_checked(QStandardItem*);
+
+    const QStringList& get_all_layername();
     
 signals:
     void signal_setLayerData(render::LayerProperties&, int);
@@ -153,6 +155,8 @@ private:
     QPixmap pixmap;
 
     render::RenderFrame* m_view;
+
+    QStringList m_all_layername_list;
 };
 }
 #endif // LayerWidget_H

@@ -430,6 +430,11 @@ void LayerWidget::item_checked(QStandardItem* index)
     }
 }
 
+const QStringList &LayerWidget::get_all_layername()
+{
+    return m_all_layername_list;
+}
+
 void LayerWidget::slot_setLineWidth(int line_width)
 {
     if (m_layer_style_vector.isEmpty())
@@ -477,6 +482,7 @@ void LayerWidget::getLayerData(render::RenderFrame* view)
         rootItem_vector.clear();
         return;
     }
+    m_all_layername_list.clear();
     m_layer_style_vector.clear();
     m_view = view;
 
@@ -565,6 +571,8 @@ void LayerWidget::getLayerData(render::RenderFrame* view)
         childItem1->setEditable(false);
         childItem1->setData(image, Qt::DecorationRole);
         rootFileItem->setChild(pStandardItem->row(), 1, childItem1);
+
+        m_all_layername_list.append(currentFile + " " + layerNum + "/" + dataType);
     }
     
     layerTree->setColumnWidth(1, 40);
