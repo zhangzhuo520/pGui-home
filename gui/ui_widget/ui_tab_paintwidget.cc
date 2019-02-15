@@ -34,12 +34,13 @@ void TabPaintWidget::slot_close_tab(QString fileName)
     m_scaleframe_vector.remove(index);
 }
 
-void TabPaintWidget::creat_canvas()
+ScaleFrame* TabPaintWidget::creat_canvas()
 {
     ScaleFrame* scaleframe = new ScaleFrame(this);
     m_scaleframe_vector.append(scaleframe);
     init_connection();
     connect_layer_widget();
+    return scaleframe;
 }
 
 void TabPaintWidget::slot_show_measure_table()
@@ -80,14 +81,6 @@ void TabPaintWidget::set_active_widget(QString filename)
     setCurrentIndex(index);
 }
 
-render::LayoutView TabPaintWidget::load_file(const QString & filename, const QString &dirpath, bool add_layout_view)
-{
-    if (m_scaleframe_vector.isEmpty())
-    {
-        return render::LayoutView();
-    }
-    return m_scaleframe_vector.at(m_scaleframe_vector.count() - 1)->load_file(filename, dirpath, add_layout_view);
-}
 
 int TabPaintWidget::string_to_index(QString fileName)
 {

@@ -13,6 +13,7 @@
 #include <QRect>
 #include <QPainter>
 #include <QHeaderView>
+#include <QVector>
 
 #include "model/ui_rtsmask_model.h"
 #include "delegate/ui_rtsmask_delegate.h"
@@ -77,12 +78,13 @@ class MaskWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MaskWidget(QWidget * parent = 0);
+    explicit MaskWidget(QWidget * parent = 0, const QStringList & list = QStringList());
     ~MaskWidget();
 
     void init_ui();
     void init_tabwidget();
     void init_connection();
+
     void set_layername_list(const QStringList &);
 
 public slots:
@@ -113,6 +115,7 @@ public:
 
 private:
     MaskWidget * m_mask_widget;
+    QVector <MaskWidget *> m_maskwidget_vector;
     QStringList m_layername_list;
 };
 

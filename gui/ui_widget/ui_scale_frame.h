@@ -8,6 +8,7 @@
 #include <QPoint>
 #include <QLayout>
 #include <QMouseEvent>
+#include <QCloseEvent>
 #include <QDebug>
 #include <math.h>
 
@@ -46,7 +47,8 @@ public:
         m_filename = file_name;
     }
 
-    render::LayoutView load_file(const QString &, const QString &, bool);
+
+
     render::RenderFrame* getRenderFrame();
     const QList<LineData> & get_measure_line_list();
     void set_measure_line_list(const QList<LineData> &);
@@ -90,6 +92,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *e);
 
+    void closeEvent(QCloseEvent* e);
 private:
     void initRenderFrame();
     void initImage();

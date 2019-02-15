@@ -50,11 +50,11 @@ public:
         m_widget = widget;
     }
 
-    void append(LayoutView* view);
+    void attach(render::RenderFrame* frame, std::string prep_dir, bool add_layout_view);
 
     void detach();
 
-    std::string file_name() const
+    const std::string& file_name() const
     {
         return m_file_name;
     }
@@ -82,6 +82,26 @@ public:
         return m_layout.use_count();
     }
 
+    bool valid() const
+    {
+        return m_valid;
+    }
+
+    void set_valid(bool valid)
+    {
+        m_valid = valid;
+    }
+
+    bool enable_attach() const
+    {
+        return m_enable_attach;
+    }
+
+    void set_enable_attach(bool attach)
+    {
+        m_enable_attach = attach;
+    }
+
 private:
     friend class RenderFrame;
 
@@ -91,6 +111,8 @@ private:
 
     std::string m_file_name;
 
+    bool m_valid;
+    bool m_enable_attach;
 };
 
 

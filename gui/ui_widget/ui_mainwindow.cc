@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initGaugeTable();
 
+    init_rtssetup_dialog();
+
     initConnection();
 
     init_cpu_memory();
@@ -353,8 +355,8 @@ void MainWindow::init_fileProject_widget()
     fileWidget->setMinimumHeight(0);
     fileDockWidget->setWidget(fileWidget);
     connect(this, SIGNAL(signal_addFile(QString, bool)), fileWidget, SLOT(slot_addFile(QString, bool)));
-    connect(fileWidget, SIGNAL(signal_creat_canves(QModelIndex)), this, SLOT(slot_creat_canvas(QModelIndex)));
-    connect(fileWidget, SIGNAL(signal_creat_overlay_canves(QModelIndex)), this, SLOT(slot_creat_overlay_canvas(QModelIndex)));
+    connect(fileWidget, SIGNAL(signal_create_canvas(QModelIndex)), this, SLOT(slot_create_canvas(QModelIndex)));
+    connect(fileWidget, SIGNAL(signal_create_overlay_canvas(QModelIndex)), this, SLOT(slot_create_overlay_canvas(QModelIndex)));
     connect(fileWidget, SIGNAL(signal_close_currentFile(QString)), this, SLOT(slot_closeFile(QString)));
 }
 
@@ -364,8 +366,8 @@ void MainWindow::init_fileProject_widget()
 void MainWindow::init_fileProject_layerTree()
 {
     layerwidget = new LayerWidget(this);
-    layerwidget->setMinimumHeight(0);
     layerDockWidget->setWidget(layerwidget);
+    connect(layerwidget, SIGNAL(signal_update_layername_list(QStringList)), this, SLOT(slot_update_layername_list(QStringList)));
 }
 
 /**
@@ -386,6 +388,13 @@ void MainWindow::init_log_widget()
 void MainWindow::init_cpu_memory()
 {
     m_show_cpumemory = new ShowCPUMemory(this);
+}
+
+void MainWindow::init_rtssetup_dialog()
+{
+    m_rtssetup_dialog = new RtsConfigDialog(this);
+    m_rtssetup_dialog->setGeometry(200, 200, 400, 600);
+    m_rtssetup_dialog->hide();
 }
 
 /**
@@ -424,11 +433,9 @@ void MainWindow::DefectReview()
 
 void MainWindow::RTSSetup()
 {
-    RtsConfigDialog *RTSSetupDialog = new RtsConfigDialog(this);
-    RTSSetupDialog->setGeometry(200, 200, 400, 600);
     QStringList list = layerwidget->get_all_layername();
-    RTSSetupDialog->set_layername_list(list);
-    RTSSetupDialog->show();
+    m_rtssetup_dialog->set_layername_list(list);
+    m_rtssetup_dialog->show();
 }
 
 void MainWindow::RunRTS()
@@ -752,7 +759,7 @@ void MainWindow::slot_currentTab_changed(int index)
     else
     {
         renderFrame = m_paint_tabwidget->get_scaleframe(m_current_tabid)->getRenderFrame();
-        m_current_filename = QString::fromStdString(renderFrame->get_layout_view(index).file_name());
+        m_current_filename = QString::fromStdString(renderFrame->get_layout_view(index)->file_name());
     }
 //    layerwidget->getLayerData(renderFrame, m_current_filename);
     layerwidget->getLayerData(renderFrame);
@@ -1037,6 +1044,8 @@ void MainWindow::slot_open_job(QString dirName)
             QString str = dirName + "/DefectFile.oas";
             add_file(str, false);
             m_checklist_file_list.append(str);
+            m_open_job_list.append(dirName);
+            update_rts_job_commbox(m_open_job_list);
         }
         if(fileInfo.suffix() == "db")
         {
@@ -1099,6 +1108,15 @@ void MainWindow::delete_checklist_job(QString jobName)
         if (jobName == m_checklist_file_list.at(i))
         {
             m_checklist_file_list.removeAt(i);
+            if (m_open_job_list.count() == m_checklist_file_list.count())
+            {
+                m_open_job_list.removeAt(i);
+                update_rts_job_commbox(m_open_job_list);
+            }
+            else
+            {
+                logger_console << "open job Number Error!";
+            }
         }
     }
 }
@@ -1143,7 +1161,7 @@ void MainWindow::add_file(QString filePath, bool isOverLay)
 {
     if (fileWidget->is_file_exist(filePath))
     {
-        if (showWarning(this, "Waring", "GDS/Job already opened. Do you want to \nre-open it?", QMessageBox::StandardButtons(QMessageBox::No | QMessageBox::Ok))
+        if (showWarning(this, "Warning", "GDS/Job already opened. Do you want to \nre-open it?", QMessageBox::StandardButtons(QMessageBox::No | QMessageBox::Ok))
                 == QMessageBox::Ok )
         {
             fileWidget->delete_file(filePath);
@@ -1163,6 +1181,11 @@ void MainWindow::add_file(QString filePath, bool isOverLay)
     addHistoryAction(filePath);
 }
 
+void MainWindow::update_rts_job_commbox(const QStringList & list)
+{
+    m_rtssetup_dialog->update_job_commbox(list);
+}
+
 
 /**
  * @brief MainWindow::slot_addFile
@@ -1174,21 +1197,24 @@ void MainWindow::slot_addFile(QString filePath)
 }
 
 /**
- * @brief MainWindow::slot_creat_canvas
+ * @brief MainWindow::slot_create_canvas
  * @param index
  */
-void MainWindow::slot_creat_canvas(QModelIndex index)
+void MainWindow::slot_create_canvas(QModelIndex index)
 {
     m_current_filename = index.data().toString();
     if (!isCavseExist(m_current_filename))
     {
-        m_paint_tabwidget->creat_canvas();
-        std::vector<render::LayoutView>::iterator it = fileWidget->get_layout_view_iter(index.row());
-        (*it) = m_paint_tabwidget->load_file(m_current_filename, m_prep_dir, false);
+        ScaleFrame* frame = m_paint_tabwidget->creat_canvas();
+        FileProjectWidget::layout_view_iter it = fileWidget->get_layout_view_iter(index.row());
+
+        std::string prep_dir = m_prep_dir.toStdString();
+        (*it)->attach(frame->getRenderFrame(), prep_dir, false);
+
         m_paint_tabwidget->append_canvas(m_current_filename);
         centerWidget_boundingSignal(m_paint_tabwidget->count() - 1);
 
-        if (tab_is_job_or_osa(m_current_filename))
+        if(tab_is_job_or_osa((m_current_filename)))
         {
             QString path = m_current_filename.left(m_current_filename.size() - 15) + "/defect.db";
             show_checklist(path);
@@ -1201,7 +1227,7 @@ void MainWindow::slot_creat_canvas(QModelIndex index)
     showCoordinate();
 }
 
-void MainWindow::slot_creat_overlay_canvas(QModelIndex index)
+void MainWindow::slot_create_overlay_canvas(QModelIndex index)
 {
 
     if (m_current_tabid == -1)
@@ -1210,16 +1236,18 @@ void MainWindow::slot_creat_overlay_canvas(QModelIndex index)
     }
 
     m_current_filename = index.data().toString();
-    std::vector<render::LayoutView>::iterator it = fileWidget->get_layout_view_iter(index.row());
+    FileProjectWidget::layout_view_iter it = fileWidget->get_layout_view_iter(index.row());
 
-    (*it) = m_paint_tabwidget->get_scaleframe(m_current_tabid)->load_file(m_current_filename, m_prep_dir, true);
+    (*it)->attach(m_paint_tabwidget->get_scaleframe(m_current_tabid)->getRenderFrame(), m_prep_dir.toStdString(), true);
 
     m_paint_tabwidget->setTabText(m_current_tabid, m_paint_tabwidget->get_scaleframe(m_current_tabid)->get_file_name());
+
     if (tab_is_job_or_osa(m_current_filename))
     {
         QString path = m_current_filename.left(m_current_filename.size() - 15) + "/defect.db";
         show_checklist(path);
     }
+
     layerwidget->getLayerData(m_paint_tabwidget->get_scaleframe(m_current_tabid)->getRenderFrame());
     showCoordinate();
 }
@@ -1240,10 +1268,10 @@ void MainWindow::slot_showDefGroup(QModelIndex index, int current_defgroup_index
      QString widget_title = "Job" + QString::number(current_defgroup_index) +"_defGroup";
      if (!tableIdIndex.isValid())
      {
-//         qDebug() << "DefGroup index error! ";
+         logger_file("DefGroup index error! ");
          return;
      }
-       logger_file(widget_title);
+     logger_file(widget_title);
      if(!tableIdIndex.data().toString().isEmpty() && (!defgroup_exist(widget_title)))
      {
          DockWidget *defGroupDockWidget = new DockWidget(widget_title, this, 0);
@@ -1517,7 +1545,7 @@ bool MainWindow::isCavseExist(QString filename)
         render::RenderFrame* frame = m_paint_tabwidget->get_scaleframe(i)->getRenderFrame();
         for(int i = 0; i < frame->layout_views_size(); i++)
         {
-            result.append(QString(frame->get_layout_view(i).file_name().c_str()));
+            result.append(QString(frame->get_layout_view(i)->file_name().c_str()));
         }
     }
 
@@ -1548,26 +1576,29 @@ void MainWindow::slot_layout_view_changed(render::RenderFrame* frame)
 {
     for(int i = 0; i < m_paint_tabwidget->count(); i++)
     {
-        if(m_paint_tabwidget->get_scaleframe(i)->getRenderFrame() == frame)
+        ScaleFrame* scale_frame = m_paint_tabwidget->get_scaleframe(i);
+        if(scale_frame->getRenderFrame() == frame)
         {
             if(i == m_current_tabid)
             {
                 layerwidget->getLayerData(frame);
             }
 
-            QString file_name = m_paint_tabwidget->get_scaleframe(i)->get_file_name();
-
-            if(frame->layout_views_size() == 1)
+            if(frame->layout_views_size() == 0)
             {
-                if(file_name.startsWith("Append"))
-                {
-                    m_paint_tabwidget->get_scaleframe(i)->set_file_name(frame->get_layout_view(0).file_name().c_str());
-                    m_paint_tabwidget->setTabText(i, m_paint_tabwidget->get_scaleframe(i)->get_file_name());
-                }
+                slot_closeFile(scale_frame->get_file_name());
             }
-
+            else
+            {
+                QString file_name = scale_frame->get_file_name();
+                m_paint_tabwidget->setTabText(i, file_name);
+            }
         }
-
     }
+}
+
+void MainWindow::slot_update_layername_list(const QStringList & list)
+{
+    m_rtssetup_dialog->set_layername_list(list);
 }
 }

@@ -1,6 +1,8 @@
 #include "ui_rtsmask_model.h"
 
-RtsMaskModel::RtsMaskModel(QObject *parent)
+namespace ui {
+RtsMaskModel::RtsMaskModel(QObject *parent):
+    QAbstractItemModel(parent)
 {
     m_alias_list << "a" << "b" << "c" << "d" << "e" << "f" << "g" << "h"
                  << "i" << "j" << "k" << "l" << "m" << "n" << "o" << "p"
@@ -47,7 +49,7 @@ QModelIndex RtsMaskModel::parent(const QModelIndex &child)const
 
 QModelIndex RtsMaskModel::index(int row, int column, const QModelIndex &parent) const
 {
-       return hasIndex(row, column, parent) ? createIndex(row, column, 0) : QModelIndex();
+    return hasIndex(row, column, parent) ? createIndex(row, column, 0) : QModelIndex();
 }
 
 int RtsMaskModel::rowCount(const QModelIndex &parent) const
@@ -93,6 +95,24 @@ QVariant RtsMaskModel::data(const QModelIndex &item, int role) const
     return QVariant();
 }
 
+bool RtsMaskModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+
+    role = (role == Qt::EditRole) ? Qt::DisplayRole : role;
+
+    if((Qt::DisplayRole == role))
+    {
+        if (index.column() == 1)
+        {
+            m_data_list[index.row()] = value.toString();
+            return true;
+        }
+
+    }
+
+    return true;
+}
+
 QVariant RtsMaskModel::headerData(int section, Qt::Orientation orientation, int role)const
 {
     if(role != Qt::DisplayRole)
@@ -112,7 +132,24 @@ QVariant RtsMaskModel::headerData(int section, Qt::Orientation orientation, int 
         }
     }
     else if(orientation == Qt::Horizontal)
+        return QVariant();
+
     return QVariant();
 }
 
+Qt::ItemFlags RtsMaskModel::flags(const QModelIndex &index) const
+{
+    if (index.column() == 0)
+    {
+         return Qt::ItemIsDropEnabled;
+    }
+    else if (index.column() == 1)
+    {
+        return Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    }
+
+    return Qt::NoItemFlags;
+}
+
+}
 

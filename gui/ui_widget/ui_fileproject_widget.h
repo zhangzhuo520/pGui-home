@@ -8,6 +8,10 @@
 #include <QLayout>
 #include <QMenu>
 #include <QAction>
+#include <QDialog>
+#include <QComboBox>
+#include <QLabel>
+#include <QPushButton>
 #include "deftools/global.h"
 #include "deftools/cmessagebox.h"
 #include "model/ui_fileproject_model.h"
@@ -18,11 +22,12 @@ class FileProjectWidget : public QWidget
 {
     Q_OBJECT
 public:
+    typedef FileProjectModel::layout_view_iter layout_view_iter;
     explicit FileProjectWidget(QWidget *parent = 0);
 
     void init();
 
-    std::vector<render::LayoutView>::iterator get_layout_view_iter(int index)
+    layout_view_iter get_layout_view_iter(int index)
     {
         return m_project_tablemodel->get_layout_view_iter(index);
     }    
@@ -32,8 +37,10 @@ public:
 signals:
     void signal_close_currentFile(QString);
     void signal_openFile();
-    void signal_creat_canves(QModelIndex);
-    void signal_creat_overlay_canves(QModelIndex);
+    void signal_create_canvas(QModelIndex);
+    void signal_create_overlay_canvas(QModelIndex);
+    void signal_close_tab(QString);
+    void signal_append_file(QModelIndex);
 
 public slots:
     void slot_DoubleClickItem(QModelIndex);
@@ -42,6 +49,9 @@ public slots:
     void slot_addFile(QString, bool);
     void slot_CloseItem();
     void slot_OpenFile();
+    void slot_AppendFile();
+    void slot_DetachFile();
+    void slot_SelectAppendFile();
 
 //protected:
 //    virtual void
@@ -51,6 +61,12 @@ private:
     int m_active_index;
     TableView *m_project_table;
     FileProjectModel *m_project_tablemodel;
+    QDialog* m_select_file_dialog;
+    QLabel* m_file_label;
+    QComboBox* m_file_box;
+    QPushButton* m_select_file_okbutton;
+    QPushButton* m_select_file_cancelbutton;
+
 };
 }
 #endif // FileProjectWidget_H

@@ -37,6 +37,8 @@ namespace oasis
 
 namespace render{
 
+
+
 #ifndef TIME_DEBUG
 #define TIME_DEBUG qDebug() << QDateTime::currentDateTime().toString("yyyy-MM-dd") +" "+QDateTime::currentDateTime().toString("hh:mm:ss.zzz") + "ms";
 #endif
@@ -57,19 +59,21 @@ public:
 
     const render::Pattern& pattern() const { return m_pattern; }
 
-    oasis::OasisLayout*  load_file(std::string file_name, std::string prep_dir);
+//    oasis::OasisLayout*  load_file(std::string file_name, std::string prep_dir);
 
-    render::LayoutView load_file(std::string file_name, std::string prep_dir, bool add_layout_view);
+//    render::LayoutView* load_file(std::string file_name, std::string prep_dir, bool add_layout_view);
 
-    render::LayoutView& load_layout_view(render::LayoutView& lv, bool add_layout_view);
+    render::LayoutView* load_layout_view(render::LayoutView* lv, std::string prep_dor, bool add_layout_view);
 
-    const LayoutView& get_layout_view(int index) const;
+    render::LayoutView* add_layout_view(render::LayoutView* lv, bool add_layout_view);
 
-    void set_layout_view(render::LayoutView& lv, int index);
+    LayoutView* get_layout_view(int index) const;
+
+    void set_layout_view(render::LayoutView* lv, int index);
 
     void create_and_initial_layer_properties(int lv_index, std::set<std::pair<int,int> >&layers);
 
-    void update_view();
+    void update_view_ops();
 
     void erase_layout_view(int index);
 
@@ -92,7 +96,7 @@ public:
         return m_layout_views.size();
     }
 
-    const std::vector<render::LayoutView>& get_layout_views_list() const
+    const std::vector<render::LayoutView*>& get_layout_views_list() const
     {
         return m_layout_views;
     }
@@ -103,6 +107,10 @@ public:
     {
         return m_layers_properties.size();
     }
+
+    int tree_to_list_index(int parent_index, int child_index);
+
+    void list_to_tree_index(int index, int& parent_index, int& child_index);
 
     void set_properties(unsigned int index , const render::LayerProperties& lp);
 
@@ -126,9 +134,9 @@ public:
 
     void zoom_center(double x, double y);
 
-    void add_layout_view(LayoutView& );
+    void add_layout_view(LayoutView* );
 
-    void detach_layout_view(LayoutView& );
+    void detach_layout_view(LayoutView* );
 
     void set_window_max_size(double limit);
 
@@ -138,7 +146,7 @@ public:
 
     virtual void wheelEvent(QWheelEvent *);
 
-    int index_of_layout_views(LayoutView& lv);
+    int index_of_layout_views(LayoutView* lv);
 
 signals:
     void signal_down_key_pressed();
@@ -198,7 +206,7 @@ private:
     bool m_redraw_required;
     bool m_update_image;
 
-    std::vector<render::LayoutView> m_layout_views;
+    std::vector<render::LayoutView*> m_layout_views;
 
     unsigned int m_current_layer;
 

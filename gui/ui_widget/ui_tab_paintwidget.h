@@ -24,13 +24,15 @@ public:
 public slots:
     void slot_close_tab(QString);
 
-    void creat_canvas();
+    ScaleFrame* creat_canvas();
 
     void slot_show_measure_table();
 
     void slot_set_line_list(const QList <LineData>&);
 
-    render::LayoutView load_file(const QString &, const QString &, bool);
+//    void load_layout_view(render::LayoutView*, const QString &, bool);
+
+//    void add_layout_view(render::LayoutView* lv, bool add_layout_view);
 
     void slot_layout_view_changed(render::RenderFrame* );
 

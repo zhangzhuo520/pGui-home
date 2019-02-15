@@ -29,8 +29,8 @@ public:
             const LayerProperties* lp = frame->get_properties(i);
             if(lp->visible())
             {
-                LayoutView lv = frame->get_layout_view(lp->view_index());
-                oasis::OasisLayout* layout = lv.get_layout();
+                LayoutView* lv = frame->get_layout_view(lp->view_index());
+                oasis::OasisLayout* layout = lv->get_layout();
                 oasis::float64 dbu = layout->get_dbu();
                 oasis::Box box(rint(m_box.left() / dbu),
                                     rint(m_box.bottom() / dbu),
@@ -92,8 +92,8 @@ public:
             if(lp->visible())
             {
                 std::vector<oasis::Polygon> results;
-                LayoutView lv = frame->get_layout_view(lp->view_index());
-                oasis::OasisLayout* layout = lv.get_layout();
+                LayoutView* lv = frame->get_layout_view(lp->view_index());
+                oasis::OasisLayout* layout = lv->get_layout();
                 oasis::LDType ld(lp->metadata().get_layer_num(), lp->metadata().get_data_type());
                 layout->get_polygons(-1, box, oasis::OasisTrans(), ld, results);
                 if(!results.empty())

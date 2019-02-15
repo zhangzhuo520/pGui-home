@@ -60,7 +60,6 @@ void LayerWidget::slot_activedModelIndex(QModelIndex index)
 {
     m_active_model_index =  index.row();
     m_active_model_rootIndex = index.parent().row();
-  //  m_view->set_current_layer(m_active_model_index);
 }
 
 void LayerWidget::slot_treeItemChanged(QStandardItem *item)
@@ -317,6 +316,7 @@ void LayerWidget::slot_showLayerControlWidget(bool ischeck)
     }
 }
 
+
 void LayerWidget::slot_setBackgroundColor(QColor color)
 {
     if (m_layer_style_vector.isEmpty())
@@ -330,9 +330,10 @@ void LayerWidget::slot_setBackgroundColor(QColor color)
         return;
     }
 
-    layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
+    int index = m_view->tree_to_list_index(m_active_model_rootIndex, m_active_model_index);
+    layerstyle m_layerstyle = m_layer_style_vector.at(index);
     m_layerstyle.fill_color = color_to_uint(color);
-    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    m_layer_style_vector[index] = m_layerstyle;
     QImage image = set_fill_image(m_layerstyle);
     setModelIdexImage(image);
     setLayerData(m_layerstyle);
@@ -350,9 +351,11 @@ void LayerWidget::slot_setLineColor(QColor color)
         showWarning(this, "Warning", "Not select Item !");
         return;
     }
-    layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
+
+    int index = m_view->tree_to_list_index(m_active_model_rootIndex, m_active_model_index);
+    layerstyle m_layerstyle = m_layer_style_vector.at(index);
     m_layerstyle.frame_color = color_to_uint(color);
-    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    m_layer_style_vector[index] = m_layerstyle;
     setModelIdexImage(set_fill_image(m_layerstyle));
     setLayerData(m_layerstyle);
 }
@@ -370,9 +373,10 @@ void LayerWidget::slot_setLineStyle(int line_style)
         return;
     }
 
-    layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
+    int index = m_view->tree_to_list_index(m_active_model_rootIndex, m_active_model_index);
+    layerstyle m_layerstyle = m_layer_style_vector.at(index);
     m_layerstyle.line_style = line_style;
-    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    m_layer_style_vector[index] = m_layerstyle;
     setLayerData(m_layerstyle);
 }
 
@@ -395,10 +399,12 @@ void LayerWidget::slot_setLayerStyle(int patternIdex)
         return;
     }
 
-    m_layer_style_vector[m_active_model_index].pattern_Id = patternIdex;
-    QImage image = set_fill_image(m_layer_style_vector[m_active_model_index]);
+    int index = m_view->tree_to_list_index(m_active_model_rootIndex, m_active_model_index);
+    layerstyle m_layerstyle = m_layer_style_vector.at(index);
+    m_layerstyle.pattern_Id = patternIdex;
+    QImage image = set_fill_image(m_layerstyle);
     setModelIdexImage(image);
-    setLayerData(m_layer_style_vector[m_active_model_index]);
+    setLayerData(m_layerstyle);
 }
 
 void LayerWidget::slot_setTextColor(QColor color)
@@ -448,9 +454,10 @@ void LayerWidget::slot_setLineWidth(int line_width)
         return;
     }
 
-    layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
+    int index = m_view->tree_to_list_index(m_active_model_rootIndex, m_active_model_index);
+    layerstyle m_layerstyle = m_layer_style_vector.at(index);
     m_layerstyle.line_width = line_width + 1;
-    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    m_layer_style_vector[index] = m_layerstyle;
     setLayerData(m_layerstyle);
 }
 
@@ -467,114 +474,104 @@ void LayerWidget::setItemChecked(bool check)
         return;
     }
 
-    layerstyle m_layerstyle = m_layer_style_vector.at(m_active_model_index);
+    int index = m_view->tree_to_list_index(m_active_model_rootIndex, m_active_model_index);
+    layerstyle m_layerstyle = m_layer_style_vector.at(index);
     m_layerstyle.isVisible = check;
-    m_layer_style_vector[m_active_model_index] = m_layerstyle;
+    m_layer_style_vector[index] = m_layerstyle;
     setLayerData(m_layerstyle);
 }
 
-//void LayerWidget::getLayerData(render::RenderFrame* view, QString currentFile)
 void LayerWidget::getLayerData(render::RenderFrame* view)
 {
-    if(NULL == view)
+    for(int i = 0; i < layerTreeModel->rowCount(); i++)
     {
         layerTreeModel->removeRow(0);
-        rootItem_vector.clear();
+    }
+    rootItem_vector.clear();
+    m_all_layername_list.clear();
+
+    if(NULL == view || view->layout_views_size() == 0)
+    {
         return;
     }
     m_all_layername_list.clear();
     m_layer_style_vector.clear();
     m_view = view;
 
-    QString currentFile;
-    if(view->layout_views_size() > 1)
+    for(int i = 0; i < view->layout_views_size(); i++)
     {
-        currentFile = "OverLay";
-    }
-    else
-    {
-        currentFile = view->get_layout_view(0).file_name().c_str();
-    }
-    rootFileItem = new TreeItem(currentFile);
-    rootItem_vector.append(rootFileItem);
-    
-    bool all_checked = true;
- 
-    for(uint i = 0; i < view->layers_size(); ++i)
-    {
-        if(!view->get_properties(i)->visible())
-	{
-            all_checked = false;
-            break;    
-        }
-    }   
+        QString currentFile = view->get_layout_view(i)->file_name().c_str();
+        TreeItem* fileItem = new TreeItem(currentFile);
+        rootItem_vector.append(fileItem);
+        bool all_checked = true;
 
-    if(all_checked)
-    {
-        rootFileItem->setCheckState(Qt::Checked);
-    }
-    else
-    { 
-        rootFileItem->setCheckState(Qt::Unchecked);
-    }
-    
-    rootFileItem->setCheckable(true);
-    rootFileItem->setEditable(false);
-
-    if(rootItem_vector.count() > 1)
-    {
-        rootItem_vector.remove(0);
-    }
-
-    layerTreeModel->setItem(0, rootFileItem);
-
-    TreeItem* pStandardItem = NULL;
-    
-    for (uint i = 0; i < view->layers_size(); i++ )
-    {
-        QString layerName = QString::fromStdString(view->get_properties(i)->metadata().get_layer_name());
-        QString dataType = QString::number(view->get_properties(i)->metadata().get_data_type());
-        QString layerNum = QString::number(view->get_properties(i)->metadata().get_layer_num());
-
-        pStandardItem = new TreeItem(layerName);
-
-        pStandardItem->setCheckable(true);
-        pStandardItem->setEditable(false);
-
-        layerStyle m_layer_style;
-        m_layer_style.frame_color = view->get_properties(i)->frame_color();
-        m_layer_style.fill_color = view->get_properties(i)->fill_color();
-        m_layer_style.pattern_Id = view->get_properties(i)->pattern();
-        m_layer_style.line_width = view->get_properties(i)->line_width();
-        m_layer_style.line_style = view->get_properties(i)->line_style();
-        m_layer_style.isVisible = view->get_properties(i)->visible();
-        m_layer_style_vector.append(m_layer_style);
-        QImage image = set_fill_image(m_layer_style);
-
-        if(m_layer_style.isVisible)
+        for(uint i = 0; i < view->layers_size(); i++)
         {
-            pStandardItem->setCheckState(Qt::Checked);
+            if(!view->get_properties(i)->visible())
+            {
+                all_checked = false;
+                break;
+            }
         }
-        else
+
+        fileItem->setCheckState(all_checked ? Qt::Checked: Qt::Unchecked);
+        fileItem->setCheckable(true);
+        fileItem->setEditable(false);
+
+        layerTreeModel->setItem(i, fileItem);
+
+        TreeItem* pStandardItem = NULL;
+
+        for (uint j = 0; j < view->layers_size(); j++)
         {
-//            rootFileItem->setCheckState(Qt::Unchecked);
-            pStandardItem->setCheckState(Qt::Unchecked);
+            if(view->get_properties(j)->view_index() == i)
+            {
+                QString layerName = QString::fromStdString(view->get_properties(j)->metadata().get_layer_name());
+                QString dataType = QString::number(view->get_properties(j)->metadata().get_data_type());
+                QString layerNum = QString::number(view->get_properties(j)->metadata().get_layer_num());
+
+                pStandardItem = new TreeItem(layerNum + "/" + dataType);
+                pStandardItem->setCheckable(true);
+                pStandardItem->setEditable(false);
+
+                layerStyle m_layer_style;
+                m_layer_style.frame_color = view->get_properties(j)->frame_color();
+                m_layer_style.fill_color = view->get_properties(j)->fill_color();
+                m_layer_style.pattern_Id = view->get_properties(j)->pattern();
+                m_layer_style.line_width = view->get_properties(j)->line_width();
+                m_layer_style.line_style = view->get_properties(j)->line_style();
+                m_layer_style.isVisible = view->get_properties(j)->visible();
+
+                m_layer_style_vector.append(m_layer_style);
+                QImage image = set_fill_image(m_layer_style);
+
+                if(m_layer_style.isVisible)
+                {
+                    pStandardItem->setCheckState(Qt::Checked);
+                }
+                else
+                {
+                    pStandardItem->setCheckState(Qt::Unchecked);
+                }
+
+                fileItem->appendRow(pStandardItem);
+                TreeItem *childItem2 = new TreeItem(layerName);
+                childItem2->setCheckable(false);
+                childItem2->setEditable(false);
+                fileItem->setChild(pStandardItem->row(), 2, childItem2);
+                TreeItem *childItem1 = new TreeItem();
+                childItem1->setCheckable(false);
+                childItem1->setEditable(false);
+                childItem1->setData(image, Qt::DecorationRole);
+                fileItem->setChild(pStandardItem->row(), 1, childItem1);
+                m_all_layername_list.append(currentFile + " " + layerNum + "/" + dataType);
+            }
+
         }
 
-        rootFileItem->appendRow(pStandardItem);
-        TreeItem *childItem2 = new TreeItem(layerNum + "/" + dataType);
-        childItem2->setCheckable(false);
-        childItem2->setEditable(false);
-        rootFileItem->setChild(pStandardItem->row(), 2, childItem2);
-        TreeItem *childItem1 = new TreeItem();
-        childItem1->setCheckable(false);
-        childItem1->setEditable(false);
-        childItem1->setData(image, Qt::DecorationRole);
-        rootFileItem->setChild(pStandardItem->row(), 1, childItem1);
-
-        m_all_layername_list.append(currentFile + " " + layerNum + "/" + dataType);
+        emit signal_update_layername_list(m_all_layername_list);
     }
-    
+
     layerTree->setColumnWidth(1, 40);
 }
 
@@ -643,8 +640,8 @@ void LayerWidget::setLayerData(layerStyle layer_style)
     {
         return;
     }
-    int index = m_active_model_index;
-    m_view->set_current_layer(index);
+    int index = m_view->tree_to_list_index(m_active_model_rootIndex, m_active_model_index);
+
     render::LayerProperties layerProperty = *(m_view->get_properties(index));
     layerProperty.set_fill_color(layer_style.fill_color);
     layerProperty.set_frame_color(layer_style.frame_color);
@@ -652,8 +649,10 @@ void LayerWidget::setLayerData(layerStyle layer_style)
     layerProperty.set_visible(layer_style.isVisible);
     layerProperty.set_line_width(layer_style.line_width);
     layerProperty.set_line_style(layer_style.line_style);
+
     m_view->set_current_layer(index);
     m_view->set_properties(index, layerProperty);
+
 }
 
 void LayerWidget::setModelIdexImage(QImage image)

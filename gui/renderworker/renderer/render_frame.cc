@@ -77,13 +77,20 @@ RenderFrame::~RenderFrame()
         m_pixmap = 0;
     }
 
-    if(m_buffer.size() != 0)
+    for(size_t i = 0; i < m_buffer.size(); i++)
     {
-        for(size_t i = 0; i < m_buffer.size(); i++)
-        {
-            delete m_buffer[i];
-            m_buffer[i] = 0;
-        }
+        delete m_buffer[i];
+        m_buffer[i] = 0;
+    }
+
+    for(size_t i = 0; i < layers_size(); i++)
+    {
+        delete_layer(i);
+    }
+
+    for(int i = 0; i < layout_views_size(); i++)
+    {
+        m_layout_views[i]->set_widget(0);
     }
 }
 
@@ -143,8 +150,8 @@ void RenderFrame::start_render()
     {
         if((*it)->visible())
         {
-            render::LayoutView lv = m_layout_views[(*it)->view_index()];
-            oasis::float64 dbu = lv.get_dbu();
+            render::LayoutView* lv = m_layout_views[(*it)->view_index()];
+            oasis::float64 dbu = lv->get_dbu();
 
             oasis::OasisTrans dbu_trans(false, 0.0, dbu, oasis::PointF(0.0, 0.0));
             oasis::BoxF dbu_box_f = micron_box_f.transed(dbu_trans.inverted());
@@ -158,7 +165,7 @@ void RenderFrame::start_render()
 
             render::LayerMetaData l = (*it)->metadata();
             oasis::LDType ld(l.get_layer_num(), l.get_data_type());
-            render::RenderWorker* worker = new render::RenderWorker(lv.get_layout(), -1, box, trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
+            render::RenderWorker* worker = new render::RenderWorker(lv->get_layout(), -1, box, trans, ld, m_buffer[0]->width(), m_buffer[0]->height(), m_buffer[0]->resolution(), m_buffer[i * planes_per_layer], m_buffer[i * planes_per_layer + 1], m_buffer[i * planes_per_layer + 2]);
 
             pool.start(worker);
         }
@@ -553,29 +560,29 @@ void RenderFrame::zoom_center(double x, double y)
     }
 }
 
-void RenderFrame::add_layout_view(LayoutView &view)
+void RenderFrame::add_layout_view(LayoutView *view)
 {
-    load_layout_view(view, true);
+    add_layout_view(view, true);
 }
 
 
-
-void RenderFrame::detach_layout_view(LayoutView& view)
+void RenderFrame::detach_layout_view(LayoutView* lv)
 {
-
+    int index = index_of_layout_views(lv);
+    erase_layout_view(index);
 }
 
-render::LayoutView RenderFrame::load_file(std::string file_name, std::string prep_dir, bool add_layout_view)
+render::LayoutView* RenderFrame::load_layout_view(render::LayoutView* lv, std::string prep_dir, bool add_layout_view)
 {
     QTime t;
     t.start();
 
+    std::string file_name = lv->file_name();
+
     oasis::OasisLayout* layout = new oasis::OasisLayout(file_name);
 
-    render::LayoutView lv;
-    lv.set_layout(layout);
-    lv.set_widget(this);
-    lv.set_file_name(file_name);
+    lv->set_layout(layout);
+    lv->set_widget(this);
 
     try
     {
@@ -588,9 +595,10 @@ render::LayoutView RenderFrame::load_file(std::string file_name, std::string pre
         layout = new oasis::OasisLayout(prep_file_name);
         oasis::OasisParser parser;
         parser.import_file(layout);
-        lv.set_layout(layout);
+        lv->set_layout(layout);
     }
 
+    lv->set_valid(true);
 
     ui::logger_widget(QString("preprocess: %1 use time: %2 ms ").arg(file_name.c_str()).arg(t.elapsed()));
     logger_file(QString("preprocess: %1 use time: %2 ms ").arg(file_name.c_str()).arg(t.elapsed()));
@@ -607,47 +615,47 @@ render::LayoutView RenderFrame::load_file(std::string file_name, std::string pre
 
     create_and_initial_layer_properties(lv_index, layers);
 
-    double left = std::numeric_limits<double>::max();
-    double bottom = left;
-    double right = std::numeric_limits<double>::min();
-    double top = right;
-
-    for(int i = 0; i < layout_views_size(); i++)
+    if(!add_layout_view)
     {
-        render::LayoutView tmp = get_layout_view(i);
-        oasis::OasisLayout* layout = tmp.get_layout();
-        oasis::Box bound = layout->get_bbox();
-        oasis::float64 dbu = layout->get_dbu();
-        left = bound.left() * dbu< left ? bound.left() * dbu: left;
-        bottom = bound.bottom() * dbu < bottom ? bound.bottom() * dbu : bottom;
-        right = bound.right() * dbu > right ? bound.right() * dbu: right;
-        top = bound.top() * dbu > top ? bound.top() * dbu : top;
+        double left = std::numeric_limits<double>::max();
+        double bottom = left;
+        double right = std::numeric_limits<double>::min();
+        double top = right;
+
+        for(int i = 0; i < layout_views_size(); i++)
+        {
+            render::LayoutView* tmp = get_layout_view(i);
+            oasis::OasisLayout* layout = tmp->get_layout();
+            oasis::Box bound = layout->get_bbox();
+            oasis::float64 dbu = layout->get_dbu();
+            left = bound.left() * dbu< left ? bound.left() * dbu: left;
+            bottom = bound.bottom() * dbu < bottom ? bound.bottom() * dbu : bottom;
+            right = bound.right() * dbu > right ? bound.right() * dbu: right;
+            top = bound.top() * dbu > top ? bound.top() * dbu : top;
+        }
+
+        oasis::BoxF box(left, bottom, right, top);
+
+        oasis::float64 view_range = m_window_max_size / 2;
+        oasis::PointF center(box.left() + box.width() / 2 , box.bottom() + box.height() / 2);
+
+        oasis::BoxF new_box(center.x() - view_range,
+                            center.y() - view_range,
+                            center.x() + view_range,
+                            center.y() + view_range);
+
+        m_vp.set_size(width(), height());
+        m_vp.set_box(new_box);
     }
 
-    oasis::BoxF box(left, bottom, right, top);
-
-    oasis::float64 view_range = m_window_max_size / 2;
-    oasis::PointF center(box.left() + box.width() / 2 , box.bottom() + box.height() / 2);
-
-    oasis::BoxF new_box(center.x() - view_range,
-                        center.y() - view_range,
-                        center.x() + view_range,
-                        center.y() + view_range);
-
-//    oasis::BoxF new_box(center.x() * dbu - view_range,
-//                        center.y() * dbu - view_range,
-//                        center.x() * dbu + view_range,
-//                        center.y() * dbu + view_range);
-    m_vp.set_size(width(), height());
-    m_vp.set_box(new_box);
-
-    update_view();
+    update_view_ops();
+    emit signal_layout_view_changed(this);
     return lv;
 }
 
-render::LayoutView& RenderFrame::load_layout_view(render::LayoutView& lv, bool add_layout_view)
+render::LayoutView* RenderFrame::add_layout_view(render::LayoutView* lv, bool add_layout_view)
 {
-    lv.set_widget(this);
+    lv->set_widget(this);
 
     if(!add_layout_view)
     {
@@ -658,28 +666,50 @@ render::LayoutView& RenderFrame::load_layout_view(render::LayoutView& lv, bool a
     set_layout_view(lv, lv_index);
 
     std::set<std::pair<int, int> >layers;
-    oasis::OasisLayout* layout = lv.get_layout();
+    oasis::OasisLayout* layout = lv->get_layout();
     layout->get_layers(layers);
 
     create_and_initial_layer_properties(lv_index, layers);
-    oasis::Box box = layout->get_bbox();
-    oasis::float64 dbu = layout->get_dbu();
 
-    oasis::float64 view_range = m_window_max_size / 2;
-    oasis::PointF center(box.left() + box.width() / 2 , box.bottom() + box.height() / 2);
+    if(!add_layout_view)
+    {
+        double left = std::numeric_limits<double>::max();
+        double bottom = left;
+        double right = std::numeric_limits<double>::min();
+        double top = right;
 
-    oasis::BoxF new_box(center.x() * dbu - view_range,
-                        center.y() * dbu - view_range,
-                        center.x() * dbu + view_range,
-                        center.y() * dbu + view_range);
-    m_vp.set_size(width(), height());
-    m_vp.set_box(new_box);
+        for(int i = 0; i < layout_views_size(); i++)
+        {
+            render::LayoutView* tmp = get_layout_view(i);
+            oasis::OasisLayout* layout = tmp->get_layout();
+            oasis::Box bound = layout->get_bbox();
+            oasis::float64 dbu = layout->get_dbu();
+            left = bound.left() * dbu< left ? bound.left() * dbu: left;
+            bottom = bound.bottom() * dbu < bottom ? bound.bottom() * dbu : bottom;
+            right = bound.right() * dbu > right ? bound.right() * dbu: right;
+            top = bound.top() * dbu > top ? bound.top() * dbu : top;
+        }
 
-    update_view();
+        oasis::BoxF box(left, bottom, right, top);
+
+        oasis::float64 view_range = m_window_max_size / 2;
+        oasis::PointF center(box.left() + box.width() / 2 , box.bottom() + box.height() / 2);
+
+        oasis::BoxF new_box(center.x() - view_range,
+                            center.y() - view_range,
+                            center.x() + view_range,
+                            center.y() + view_range);
+
+        m_vp.set_size(width(), height());
+        m_vp.set_box(new_box);
+    }
+
+    update_view_ops();
+    emit signal_layout_view_changed(this);
     return lv;
 }
 
-const LayoutView& RenderFrame::get_layout_view(int index) const
+LayoutView* RenderFrame::get_layout_view(int index) const
 {
     if(index > 0 && index < layout_views_size())
     {
@@ -691,14 +721,13 @@ const LayoutView& RenderFrame::get_layout_view(int index) const
     }
 }
 
-void RenderFrame::set_layout_view(render::LayoutView& lv, int lv_index)
+void RenderFrame::set_layout_view(render::LayoutView* lv, int lv_index)
 {
     while(lv_index >= layout_views_size())
     {
-        m_layout_views.push_back(render::LayoutView());
+        m_layout_views.push_back((LayoutView*) 0);
     }
     m_layout_views[lv_index] = lv;
-//    m_layout_views[lv_index].set_index(lv_index);
 }
 
 void RenderFrame::create_and_initial_layer_properties(int lv_index, std::set<std::pair<int,int> >& layers)
@@ -708,7 +737,7 @@ void RenderFrame::create_and_initial_layer_properties(int lv_index, std::set<std
     {
         int layer_num = it->first;
         int data_type = it->second;
-        oasis::OasisLayout* layout = m_layout_views[lv_index].get_layout();
+        oasis::OasisLayout* layout = m_layout_views[lv_index]->get_layout();
         m_layers_properties.push_back(new render::LayerProperties());
         m_layers_properties.back()->set_view_index(lv_index);
         m_layers_properties.back()->set_view(this);
@@ -727,9 +756,10 @@ void RenderFrame::create_and_initial_layer_properties(int lv_index, std::set<std
     }
 }
 
-void RenderFrame::update_view()
+void RenderFrame::update_view_ops()
 {
     set_view_ops();
+    m_redraw_required = true;
 }
 
 
@@ -740,7 +770,8 @@ void RenderFrame::erase_layout_view(int index)
         return ;
     }
 
-    std::vector<render::LayoutView>::iterator it = m_layout_views.begin() + index;
+    std::vector<render::LayoutView*>::iterator it = m_layout_views.begin() + index;
+    (*it)->set_widget(0);
     m_layout_views.erase(it);
 
     for(size_t i = 0; i < layers_size(); i++)
@@ -757,8 +788,14 @@ void RenderFrame::erase_layout_view(int index)
             i--;
         }
     }
+
+    if(m_layout_views.size() == 1)
+    {
+        m_layout_views[0]->set_enable_attach(true);
+    }
+
     emit signal_layout_view_changed(this);
-    update_view();
+    update_view_ops();
     update();
 }
 
@@ -817,7 +854,7 @@ void RenderFrame::slot_zoom_fit()
     oasis::BoxF result;
     for(size_t i = 0; i < m_layout_views.size(); i++)
     {
-        oasis::OasisLayout * layout = m_layout_views[i].get_layout();
+        oasis::OasisLayout * layout = m_layout_views[i]->get_layout();
         oasis::Box box = layout->get_bbox();
         oasis::float64 dbu = layout->get_dbu();
         oasis::BoxF box_f(box.left() * dbu,
@@ -842,10 +879,10 @@ void RenderFrame::set_window_max_size(double view_range)
     zoom_box(new_box);
 }
 
-int RenderFrame::index_of_layout_views(LayoutView& lv)
+int RenderFrame::index_of_layout_views(LayoutView* lv)
 {
     int result = 0;
-    for (std::vector<LayoutView>::iterator it = m_layout_views.begin(); it != m_layout_views.end(); it++, result++)
+    for (std::vector<LayoutView*>::iterator it = m_layout_views.begin(); it != m_layout_views.end(); it++, result++)
     {
         if((*it) ==  lv)
         {
@@ -853,6 +890,41 @@ int RenderFrame::index_of_layout_views(LayoutView& lv)
         }
     }
     return -1;
+}
+
+int RenderFrame::tree_to_list_index(int parent_index, int child_index)
+{
+    if(parent_index == -1 || child_index == -1)
+    {
+        return -1;
+    }
+
+    int result = 0;
+    for(int i = 0; i < parent_index; i++)
+    {
+        LayoutView* lv = get_layout_view(i);
+        std::set<std::pair<int, int> >layers;
+        oasis::OasisLayout* layout = lv->get_layout();
+        layout->get_layers(layers);
+        int count = layers.size();
+        result += count;
+    }
+    result += child_index;
+    return result;
+}
+
+void RenderFrame::list_to_tree_index(int index, int &parent_index, int& child_index)
+{
+    const LayerProperties* lp = get_properties(index);
+    parent_index = lp->view_index();
+    for(size_t i = 0; i < layers_size(); i++)
+    {
+        if(get_properties(i)->view_index() == parent_index)
+        {
+            child_index = index - i;
+            return ;
+        }
+    }
 }
 
 }

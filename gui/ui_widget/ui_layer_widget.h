@@ -68,6 +68,8 @@ public:
     
 signals:
     void signal_setLayerData(render::LayerProperties&, int);
+
+    void signal_update_layername_list(const QStringList &);
     
 public slots:
     void slot_treeItemChanged(QStandardItem *);

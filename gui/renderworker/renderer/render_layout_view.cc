@@ -4,15 +4,16 @@
 namespace render
 {
 
-LayoutView::LayoutView():m_widget(0), m_index(-1),m_file_name("")
+LayoutView::LayoutView():m_widget(0), m_index(-1),m_file_name(""),m_valid(false),m_enable_attach(true)
 {
 
 }
 
-LayoutView::LayoutView(int index, oasis::OasisLayout *layout, render::RenderFrame* widget):m_widget(widget),m_layout(layout),m_index(index),m_file_name("")
+LayoutView::LayoutView(int index, oasis::OasisLayout *layout, render::RenderFrame* widget):m_widget(widget),m_layout(layout),m_index(index),m_file_name(""),m_valid(false),m_enable_attach(true)
 {
 
 }
+
 
 LayoutView& LayoutView::operator=(const LayoutView & lv)
 {
@@ -46,31 +47,36 @@ bool LayoutView::operator==(const LayoutView& lv)
     }
 }
 
-void LayoutView::append(LayoutView *view)
+void LayoutView:: attach(render::RenderFrame* frame, std::string prep_dir, bool add_layout_view)
 {
-    if(view == this)
+    if(frame == get_widget())
     {
         return ;
     }
 
-    RenderFrame* old_widget = get_widget();
+    detach();
 
-    if(old_widget)
+    if(valid())
     {
-        old_widget->detach_layout_view(*this);
+        frame->add_layout_view(this, add_layout_view);
+        m_enable_attach = add_layout_view ? false : true;
+    }
+    else
+    {
+        frame->load_layout_view(this, prep_dir, add_layout_view);
     }
 
-    if(view->get_widget())
-    {
-        RenderFrame* frame = view->get_widget();
-        frame->add_layout_view(*this);
-    }
 }
 
 void LayoutView::detach()
 {
     RenderFrame* frame = this->get_widget();
-    frame->detach_layout_view(*this);
+    if(frame)
+    {
+        frame->detach_layout_view(this);
+        m_enable_attach = true;
+
+    }
 }
 
 }

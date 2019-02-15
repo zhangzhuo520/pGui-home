@@ -25,7 +25,8 @@ public slots:
 private:
     void init_tableview();
     QTableView *m_table_view;
-    GaugeModel *m_table_model;  
+    GaugeModel *m_table_model;
+    
 };
 
 }

@@ -8,7 +8,7 @@ class RtsMaskDelegate : public QItemDelegate
 {
     Q_OBJECT
 public:
-    RtsMaskDelegate(QObject *parent = 0);
+    RtsMaskDelegate(QObject *parent = 0, const QStringList & list = QStringList());
     ~RtsMaskDelegate();
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

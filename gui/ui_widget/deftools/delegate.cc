@@ -3,6 +3,7 @@
 QWidget *Delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
         QComboBox* box = new QComboBox(parent);
+        box->addItems(QStringList()<<"1"<<"2"<<"3");
         return box;
 }
 

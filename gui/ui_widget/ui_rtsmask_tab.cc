@@ -15,8 +15,8 @@ void RtsMaskTab::init_tab(const QStringList & Tablist)
     delete_all_tab();
     for (int i = 0; i < Tablist.count(); i ++)
     {
-        m_mask_widget = new MaskWidget(this);
-        m_mask_widget->set_layername_list(m_layername_list);
+        m_mask_widget = new MaskWidget(this, m_layername_list);
+        m_maskwidget_vector.append(m_mask_widget);
         addTab(m_mask_widget, Tablist.at(i));
     }
 }
@@ -27,6 +27,7 @@ void RtsMaskTab::delete_all_tab()
     for (int i = 0; i < TabCount; i ++)
     {
         delete widget(0);
+        m_maskwidget_vector.remove(i);
         removeTab(0);
     }
 }
@@ -34,10 +35,16 @@ void RtsMaskTab::delete_all_tab()
 void RtsMaskTab::set_layername_list(const QStringList & list)
 {
     m_layername_list = list;
+    for (int i = 0; i < count(); i ++)
+    {
+        m_maskwidget_vector[i]->set_layername_list(list);
+    }
+
 }
 
-MaskWidget::MaskWidget(QWidget *parent):
-    QWidget(parent)
+MaskWidget::MaskWidget(QWidget *parent, const QStringList & list):
+    QWidget(parent),
+    m_layername_list(list)
 {
       init_ui();
       init_tabwidget();
@@ -78,12 +85,13 @@ void MaskWidget::init_tabwidget()
 {
     m_mask_model = new RtsMaskModel(m_layer_table);
     m_layer_table->setModel(m_mask_model);
-    m_layer_table->setItemDelegate(new RtsMaskDelegate());
+    m_layer_table->setItemDelegate(new RtsMaskDelegate(this, m_layername_list));
     m_layer_table->setSelectionBehavior(QAbstractItemView::SelectItems);
     m_layer_table->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_layer_table->setEditTriggers(QAbstractItemView::SelectedClicked);
+    m_layer_table->setEditTriggers(QAbstractItemView::DoubleClicked);
     m_layer_table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     m_layer_table->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
+    m_layer_table->horizontalHeader()->setHighlightSections(false);
     m_layer_table->setColumnWidth(0, 50);
 }
 

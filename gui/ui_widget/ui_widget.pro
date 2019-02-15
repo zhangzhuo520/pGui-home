@@ -18,7 +18,7 @@ include(painter/painter.pri)
 include(deftools/deftools.pri)
 include(log4qt/log4qt.pri)
 include(fileparsing/file_parsing.pri)
-include(delegate/delegate.pri)
+
 
 SOURCES += main.cc\
     ui_mainwindow.cc \
@@ -44,8 +44,7 @@ SOURCES += main.cc\
     ui_measure_table.cc \
     ui_rtsreview_widget.cc \
     ui_gaugetable.cc \
-    ui_rtscurve.cc \
-    ui_rtsmask_tab.cc
+    ui_rtscurve.cc
 
 
 HEADERS  += mainwindow.h \
@@ -71,8 +70,7 @@ HEADERS  += mainwindow.h \
     ui_measure_table.h \
     ui_rtsreview_widget.h \
     ui_gaugetable.h \
-    ui_rtscurve.h \
-    ui_rtsmask_tab.h
+    ui_rtscurve.h
 
 FORMS    +=
 

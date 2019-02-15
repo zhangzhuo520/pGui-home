@@ -892,22 +892,39 @@ void ScaleFrame::slot_set_pen_color(const QColor& color)
 
 int ScaleFrame::overlay_times = 0;
 
-render::LayoutView ScaleFrame::load_file(const QString & filename, const QString &dirpath, bool add_layout_view)
-{
-    static int overlay_times = 0;
-    if(m_render_frame->layout_views_size() == 1 && add_layout_view)
-    {
-        if(!m_filename.startsWith("Append"))
-        {
-            set_file_name(QString("Append[%1]").arg(overlay_times++));
-        }
-    }
-    else
-    {
-        m_filename = filename;
-    }
-    return m_render_frame->load_file(filename.toStdString(), dirpath.toStdString(), add_layout_view);
-}
+//void ScaleFrame::load_layout_view(render::LayoutView* lv, const QString &dirpath, bool add_layout_view)
+//{
+//    if(m_render_frame->layout_views_size() == 1 && add_layout_view)
+//    {
+//        if(!m_filename.startsWith("Append"))
+//        {
+//            set_file_name(QString("Append[%1]").arg(overlay_times++));
+//        }
+//    }
+//    else
+//    {
+//        m_filename = QString::fromStdString(lv->file_name());
+//    }
+
+//    m_render_frame->load_layout_view(lv, dirpath.toStdString(), add_layout_view);
+//}
+
+//void ScaleFrame::add_layout_view(render::LayoutView* lv, bool add_layout_view)
+//{
+//    if(m_render_frame->layout_views_size() == 1 && add_layout_view)
+//    {
+//        if(!m_filename.startsWith("Append"))
+//        {
+//            set_file_name(QString("Append[%1]").arg(overlay_times++));
+//        }
+//    }
+//    else
+//    {
+//        m_filename = QString::fromStdString(lv->file_name());
+//    }
+
+//    m_render_frame->add_layout_view(lv, add_layout_view);
+//}
 
 render::RenderFrame *ScaleFrame::getRenderFrame()
 {
@@ -1045,8 +1062,25 @@ double ScaleFrame::get_window_max_size()
 
 void ScaleFrame::slot_layout_view_changed(render::RenderFrame* frame)
 {
+    if(frame->layout_views_size() == 1)
+    {
+        m_filename = QString::fromStdString(frame->get_layout_view(0)->file_name());
+    }
+    else if(frame->layout_views_size() > 1)
+    {
+        set_file_name(QString("Append[%1]").arg(overlay_times++));
+    }
     emit signal_layout_view_changed(frame);
 }
+
+
+void ScaleFrame::closeEvent(QCloseEvent *e)
+{
+    qDebug() << "close ScaleFrame";
+    QFrame::closeEvent(e);
+    e->ignore();
+}
+
 
 }
 

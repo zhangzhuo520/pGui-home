@@ -2,11 +2,12 @@
 #define DELEGATE_H
 #include <QItemDelegate>
 #include <QComboBox>
-#include <QStringList>
+#include <QDebug>
 
 class Delegate : public QItemDelegate
 {
     Q_OBJECT
+
 public:
     Delegate(QObject *parent = 0);
 
@@ -16,8 +17,6 @@ public:
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-private:
-    QStringList m_commbox_list;
 };
 
 #endif // DELEGATE_H

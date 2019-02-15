@@ -114,8 +114,8 @@ private slots:
 
 
     void slot_addFile(QString);
-    void slot_creat_canvas(QModelIndex);
-    void slot_creat_overlay_canvas(QModelIndex);
+    void slot_create_canvas(QModelIndex);
+    void slot_create_overlay_canvas(QModelIndex);
     void slot_close_paintwidget(int);
     void slot_updateXY(double, double);
     void slot_showDefGroup(QModelIndex, int);
@@ -146,6 +146,8 @@ private slots:
     void slot_zoom_fit();
 
     void slot_layout_view_changed(render::RenderFrame*);
+
+    void slot_update_layername_list(const QStringList&);
 private:
     void initTitleBar();
     void initMenubar();
@@ -166,6 +168,7 @@ private:
     void init_log_widget();
     void init_cpu_memory();
 
+    void init_rtssetup_dialog();
     void initConnection();
     void initStyle();
 
@@ -180,6 +183,9 @@ private:
     bool defectswidget_exist(QString);
 
     void add_file(QString, bool);
+
+    void update_rts_job_commbox(const QStringList &);
+
 
     DockWidget *fileDockWidget;
     FileProjectWidget *fileWidget;
@@ -200,6 +206,7 @@ private:
     PaintToolbar *m_paint_toolbar;
     QWidget * m_center_widget;
     QScrollArea *m_scrollarea_bar;
+    RtsConfigDialog *m_rtssetup_dialog;
 
     int m_current_tabid;
     QString m_current_filename;
@@ -256,6 +263,7 @@ private:
 
     QStringList m_checklist_file_list;
     QStringList m_defgroup_name_list;
+    QStringList m_open_job_list;
 
     ShowCPUMemory *m_show_cpumemory;
 };

@@ -16,6 +16,10 @@ namespace ui
 #define  logger_file(Value)         Log4Qt::LoggerFile::get_instance(__FILE__, __LINE__, Q_FUNC_INFO)->debug(Value);
 #endif
 
+//#ifndef logger_file_no
+//#define  logger_file_no(Value)         Log4Qt::LoggerFile::get_instance()->debug(Value);
+//#endif
+
 #ifndef logger_widget
 #define  logger_widget(Value)         WidgetLogger::get_instance()->debug(Value);
 #endif

@@ -39,11 +39,15 @@ public:
 
     void initConnecttion();
 
+    void initButtonConfig();
+
     void initRtsTab(const QStringList &);
 
     void read_yaml(QString);
 
     void set_layername_list(const QStringList &);
+
+    void update_job_commbox(const QStringList &);
     
 public slots:
     void slotAddRts();

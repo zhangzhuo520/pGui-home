@@ -10,6 +10,7 @@ RtsConfigDialog::RtsConfigDialog(QWidget *parent) :
     initBottomButton();
     initLayout();
     initConnecttion();
+    initButtonConfig();
 }
 
 RtsConfigDialog::~RtsConfigDialog()
@@ -183,6 +184,16 @@ void RtsConfigDialog::initConnecttion()
     connect(m_model_button, SIGNAL(clicked()), this, SLOT(slot_model_browser()));
 }
 
+void RtsConfigDialog::initButtonConfig()
+{
+    m_usecpu_radiobutton->setChecked(true);
+    m_usegpu_radiobutton->setChecked(false);
+    m_dgs_radiobutton->setChecked(true);
+    m_dgs_radiobutton->setChecked(false);
+    m_maskbias_eidt->setText("0.0");
+    m_deltadose_edit->setText("0.0");
+}
+
 void RtsConfigDialog::initRtsTab(const QStringList & TabList)
 {
     m_mask_tab->init_tab(TabList);
@@ -199,6 +210,12 @@ void RtsConfigDialog::read_yaml(QString yamlPath)
 void RtsConfigDialog::set_layername_list(const QStringList &list)
 {
     m_mask_tab->set_layername_list(list);
+}
+
+void RtsConfigDialog::update_job_commbox(const QStringList & list)
+{
+    m_job_commbox->clear();
+    m_job_commbox->addItems(list);
 }
 
 void RtsConfigDialog::slotAddRts()

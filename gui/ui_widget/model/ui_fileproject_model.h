@@ -13,7 +13,7 @@ class FileProjectModel:public QAbstractTableModel
 {
 Q_OBJECT
 public:
-    typedef typename std::vector<render::LayoutView>::iterator layout_view_iter;
+    typedef typename std::vector<render::LayoutView*>::iterator layout_view_iter;
 
     FileProjectModel(QObject* parent = 0);
 
@@ -21,7 +21,7 @@ public:
     int columnCount(const QModelIndex& parent) const;
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    bool insertRow(int position, render::LayoutView& lv, const QModelIndex& index = QModelIndex());
+    bool insertRow(int position, render::LayoutView* lv, const QModelIndex& index = QModelIndex());
     bool insertRows(int position, int rows, const QModelIndex& index = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex& index = QModelIndex());
     void removeFile(int row);
@@ -34,7 +34,7 @@ public:
     }
 
 private:
-    std::vector<render::LayoutView> m_layout_views;
+    std::vector<render::LayoutView*> m_layout_views;
 
 };
 
