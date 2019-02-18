@@ -3,7 +3,7 @@ namespace ui {
 RtsMaskTab::RtsMaskTab(QWidget *parent):
     QTabWidget(parent)
 {
-    tabBar()->setStyle(new CustomTabStyle);
+   // tabBar()->setStyle(new CustomTabStyle);
 }
 
 RtsMaskTab::~RtsMaskTab()

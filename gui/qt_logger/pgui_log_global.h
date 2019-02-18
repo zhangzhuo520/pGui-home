@@ -21,9 +21,8 @@ namespace ui
 //#endif
 
 #ifndef logger_widget
-#define  logger_widget(Value)         WidgetLogger::get_instance()->debug(Value);
+#define  logger_widget(Value)         WidgetLogger::get_instance()->debug(Value); Log4Qt::LoggerFile::get_instance(__FILE__, __LINE__, Q_FUNC_INFO)->debug(Value);
 #endif
-
 
 #ifndef logger_console
 #define  logger_console      (*(Log4Qt::LoggerConsole::get_instance(__FILE__, __LINE__, Q_FUNC_INFO)))

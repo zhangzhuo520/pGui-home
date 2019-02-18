@@ -9,6 +9,7 @@ RtsConfigDialog::RtsConfigDialog(QWidget *parent) :
     initTabWidget();
     initBottomButton();
     initLayout();
+    initSqlmannager();
     initConnecttion();
     initButtonConfig();
 }
@@ -25,7 +26,7 @@ void RtsConfigDialog::initRtsWidget()
     m_mode_groupbox = new QGroupBox("Mode");
     QVBoxLayout *ModeVLayout = new QVBoxLayout();
     QHBoxLayout *ModeHLayout = new QHBoxLayout();
-    m_dgs_radiobutton = new QRadioButton("RTS on GDS", m_mode_groupbox);
+    m_gds_radiobutton = new QRadioButton("RTS on GDS", m_mode_groupbox);
     m_job_radiobutton = new QRadioButton("RTS on Verification", m_mode_groupbox);
     m_job_radiobutton->setMaximumWidth(LableWidth);
     m_job_commbox = new QComboBox(m_mode_groupbox);
@@ -34,7 +35,7 @@ void RtsConfigDialog::initRtsWidget()
     ModeHLayout->addWidget(m_job_radiobutton);
     ModeHLayout->addWidget(m_job_commbox);
 
-    ModeVLayout->addWidget(m_dgs_radiobutton);
+    ModeVLayout->addWidget(m_gds_radiobutton);
     ModeVLayout->addLayout(ModeHLayout);
     m_mode_groupbox->setLayout(ModeVLayout);
     m_tab_vlayout->addWidget(m_mode_groupbox);
@@ -182,16 +183,23 @@ void RtsConfigDialog::initConnecttion()
 {
     m_model_dialog = NULL;
     connect(m_model_button, SIGNAL(clicked()), this, SLOT(slot_model_browser()));
+    connect(m_job_radiobutton, SIGNAL(toggled(bool)), this, SLOT(slot_job_radiobutton(bool)));
+    connect(m_gds_radiobutton, SIGNAL(toggled(bool)), this, SLOT(slot_gds_radiobutton(bool)));
 }
 
 void RtsConfigDialog::initButtonConfig()
 {
     m_usecpu_radiobutton->setChecked(true);
     m_usegpu_radiobutton->setChecked(false);
-    m_dgs_radiobutton->setChecked(true);
-    m_dgs_radiobutton->setChecked(false);
+    m_gds_radiobutton->setChecked(true);
+    m_gds_radiobutton->setChecked(false);
     m_maskbias_eidt->setText("0.0");
     m_deltadose_edit->setText("0.0");
+}
+
+void RtsConfigDialog::initSqlmannager()
+{
+
 }
 
 void RtsConfigDialog::initRtsTab(const QStringList & TabList)
@@ -201,10 +209,18 @@ void RtsConfigDialog::initRtsTab(const QStringList & TabList)
 
 void RtsConfigDialog::read_yaml(QString yamlPath)
 {
-    YamlParsing yamlParser;
-    yamlParser.read_yaml(yamlPath);
-    QStringList LayerNameList = yamlParser.get_layername_list();
-    initRtsTab(LayerNameList);
+    QFile file(yamlPath);
+    if (file.exists())
+    {
+        YamlParsing yamlParser;
+        yamlParser.read_yaml(yamlPath);
+        QStringList LayerNameList = yamlParser.get_layername_list();
+        initRtsTab(LayerNameList);
+    }
+    else
+    {
+        logger_console.error("yaml file not exists!");
+    }
 }
 
 void RtsConfigDialog::set_layername_list(const QStringList &list)
@@ -222,7 +238,11 @@ void RtsConfigDialog::gds_or_job_selection()
 {
     if (m_job_radiobutton->isChecked() && (!m_job_commbox->currentText().isEmpty()))
     {
-                
+        get_model(m_job_commbox->currentText());
+    }
+    else
+    {
+        // do nothing...
     }
 }
 
@@ -280,9 +300,74 @@ void RtsConfigDialog::slot_read_model(QString FilePath)
     }
     if (isModel)
     {
-         m_job_commbox->addItem(FilePath);
          m_model_commbox->addItem((FilePath));
          read_yaml(FilePath + "/Model_0/model.yaml");
     }
+}
+
+void RtsConfigDialog::slot_job_radiobutton(bool ischecked)
+{
+    if (ischecked)
+    {
+        gds_or_job_selection();
+    }
+    else
+    {
+        //do nothing...
+    }
+}
+
+void RtsConfigDialog::slot_gds_radiobutton(bool ischecked)
+{
+    if (ischecked)
+    {
+        //do nothing
+    }
+}
+
+void RtsConfigDialog::get_model(const QString& jobpath)
+{
+     m_sqlmannager = new SQLManager();
+    QString m_db_path = jobpath + "/defect.db";
+    QFile file(m_db_path);
+    if (file.exists())
+    {
+        m_sqlmannager->setDatabaseName(m_db_path);
+    }
+    else
+    {
+        qDebug() << "m_db_path is Empty";
+    }
+    if(!m_sqlmannager->openDB())
+    {
+        qDebug() << "DB open Failed";
+    }
+
+    QSqlQuery query;
+    query.exec("select * from model");	//执行
+    QString modepath;
+    while (query.next())
+    {
+       modepath = query.value(2).toString();
+       break;
+    }
+
+    m_sqlmannager->closeDB();
+    bool is_model_exist(false);
+    for (int i = 0; i < m_model_commbox->count(); i ++)
+    {
+        if (modepath == m_model_commbox->itemText(i))
+        {
+            is_model_exist = true;
+        }
+    }
+
+    if (!is_model_exist)
+    {
+        m_model_commbox->addItem(modepath);
+    }
+    read_yaml(modepath);
+    delete m_sqlmannager;
+    m_sqlmannager = NULL;
 }
 }

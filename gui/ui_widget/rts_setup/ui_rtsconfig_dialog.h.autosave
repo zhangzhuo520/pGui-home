@@ -9,11 +9,18 @@
 #include <QFrame>
 #include <QGroupBox>
 #include <QFileDialog>
+#include <QFile>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlRecord>
 
-#include "./deftools/defcontrols.h"
 #include "ui_rtsmask_tab.h"
-#include "deftools/global.h"
-#include "fileparsing/yamlparsing.h"
+#include "../db/sqlmanager.h"
+#include "../deftools/defcontrols.h"
+#include "../deftools/global.h"
+#include "../deftools/datastruct.h"
+#include "../fileparsing/yamlparsing.h"
+#include "../qt_logger/pgui_log_global.h"
 
 const int LableWidth = 140;
 const int LableTitilWidth = 50;
@@ -41,6 +48,8 @@ public:
 
     void initButtonConfig();
 
+    void initSqlmannager();
+
     void initRtsTab(const QStringList &);
 
     void read_yaml(QString);
@@ -48,6 +57,8 @@ public:
     void set_layername_list(const QStringList &);
 
     void update_job_commbox(const QStringList &);
+
+    void gds_or_job_selection();
     
 public slots:
     void slotAddRts();
@@ -60,7 +71,13 @@ public slots:
 
     void slot_read_model(QString);
 
+    void slot_job_radiobutton(bool);
+
+    void slot_gds_radiobutton(bool);
+
 private:
+    void get_model(const QString &);
+
     QPushButton *m_add_button;
     QPushButton *m_clone_button;
     QPushButton *m_delete_button;
@@ -72,7 +89,7 @@ private:
     QGroupBox *m_mode_groupbox;
     QGroupBox *m_setup_groupbox;
     QGroupBox *m_option_groupbox;
-    QRadioButton *m_dgs_radiobutton;
+    QRadioButton *m_gds_radiobutton;
     QRadioButton *m_job_radiobutton;
     QComboBox * m_job_commbox;
 
@@ -96,10 +113,12 @@ private:
     QPushButton *m_ok_button;
     QPushButton *m_apply_button;
 
-    QVBoxLayout* Vlayout;
+    QVBoxLayout *Vlayout;
     QHBoxLayout *Hlayout;
 
-    QFileDialog * m_model_dialog;
+    QFileDialog *m_model_dialog;
+    SQLManager *m_sqlmannager;
+    
 };
 }
 #endif // RTSCONFIGWIDGET_H

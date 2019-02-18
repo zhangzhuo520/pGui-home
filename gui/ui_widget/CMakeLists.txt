@@ -24,16 +24,16 @@ SET(PicathoGui_SRCS
     ui_measurepoint.cc
     ui_measure_table.cc
     ui_menu_widget.cc
-    ui_rtsconfig_dialog.cc
     ui_choosefile_dialog.cc
     ui_semimage_dialog.cc
     ui_chipedit_dialog.cc
     ui_scale_frame.cc
     ui_application.cc
-    ui_rtsreview_widget.cc
-    ui_rtscurve.cc
     ui_log_widget.cc
-    ui_rtsmask_tab.cc
+    rts_setup/ui_rtsmask_tab.cc
+    rts_setup/ui_rtscurve.cc
+    rts_setup/ui_rtsreview_widget.cc
+    rts_setup/ui_rtsconfig_dialog.cc
     deftools/cmessagebox.cc
     deftools/defcontrols.cc
     deftools/framelesshelper.cc
@@ -58,7 +58,6 @@ SET(PicathoGui_HEADERS
     ui_checklist.h
     ui_defgroup.h
     ui_paint_toolbar.h
-    ui_rtsmask_tab.h
     ui_gaugetable.h
     ui_paint_widget.h
     ui_tab_paintwidget.h
@@ -67,16 +66,17 @@ SET(PicathoGui_HEADERS
     ui_layer_widget.h
     ui_log_widget.h
     ui_frame.h
-    ui_rtscurve.h
     ui_measurepoint.h
     ui_measure_table.h
-    ui_rtsreview_widget.h
     ui_menu_widget.h
-    ui_rtsconfig_dialog.h
     ui_choosefile_dialog.h
     ui_semimage_dialog.h
     ui_chipedit_dialog.h
     ui_application.h
+    rts_setup/ui_rtsmask_tab.h
+    rts_setup/ui_rtscurve.h
+    rts_setup/ui_rtsconfig_dialog.h
+    rts_setup/ui_rtsreview_widget.h
     deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/iconhelper.h
@@ -98,8 +98,6 @@ SET(PicathoGui_HEADERS
 
 QT4_WRAP_CPP(PicathoGui_MOCS
     ui_mainwindow.h
-    ui_rtsconfig_dialog.h
-    ui_rtsmask_tab.h
     ui_scale_frame.h
     ui_gaugetable.h
     ui_tab_paintwidget.h
@@ -113,13 +111,15 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     ui_paint_toolbar.h
     ui_fileproject_widget.h
     ui_layer_widget.h
-    ui_rtsreview_widget.h
     ui_defgroup.h
     ui_frame.h
-    ui_rtscurve.h
     ui_menu_widget.h
     ui_defects_widget.h
     ui_defgroup.h
+    rts_setup/ui_rtscurve.h
+    rts_setup/ui_rtsconfig_dialog.h
+    rts_setup/ui_rtsmask_tab.h
+    rts_setup/ui_rtsreview_widget.h
     deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/defcontrols.h

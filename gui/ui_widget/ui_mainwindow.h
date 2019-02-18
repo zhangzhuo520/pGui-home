@@ -43,7 +43,7 @@
 #include "ui_fileproject_widget.h"
 #include "ui_layer_widget.h"
 #include "ui_choosefile_dialog.h"
-#include "ui_rtsconfig_dialog.h"
+#include "rts_setup/ui_rtsconfig_dialog.h"
 #include "ui_semimage_dialog.h"
 #include "ui_chipedit_dialog.h"
 #include "ui_scale_frame.h"

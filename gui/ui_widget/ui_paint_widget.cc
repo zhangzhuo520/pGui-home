@@ -85,6 +85,10 @@ void PaintWidget::setPaintStyle(Global::PaintTool paintstyle)
 {
     m_select_mode = paintstyle;
     m_mouse_clicks = LineEnd;
+    if (m_select_mode != Global::Nothing)
+    {
+        m_cross_line_image = *m_empty_image;
+    }
     merge_image();
 }
 

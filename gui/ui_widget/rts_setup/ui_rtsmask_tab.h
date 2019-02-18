@@ -15,8 +15,8 @@
 #include <QHeaderView>
 #include <QVector>
 
-#include "model/ui_rtsmask_model.h"
-#include "delegate/ui_rtsmask_delegate.h"
+#include "../model/ui_rtsmask_model.h"
+#include "../delegate/ui_rtsmask_delegate.h"
 
 namespace ui {
 
