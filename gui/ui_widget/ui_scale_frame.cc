@@ -40,7 +40,7 @@ void ScaleFrame::initRenderFrame()
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), m_paint_widget, SLOT(slot_box_updated(double,double,double, double)));
     connect(m_render_frame, SIGNAL(signal_layout_view_changed(render::RenderFrame*)), this, SLOT(slot_layout_view_changed(render::RenderFrame*)));
 
-    connect(m_paint_widget, SIGNAL(signal_updateDistance(double)), this, SLOT(slot_distance_updated(double)));
+    connect(m_paint_widget, SIGNAL(signal_updateDistance(QString)), this, SLOT(slot_distance_updated(QString)));
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
     connect(m_paint_widget, SIGNAL(signal_get_snap_pos(QPointF, int)), m_render_frame, SLOT(slot_get_snap_pos(QPointF, int)));
     connect(m_paint_widget, SIGNAL(signal_measure_line_list()), this, SLOT(slot_update_mesuretable()));
@@ -985,7 +985,7 @@ void ScaleFrame::slot_pos_updated(double x, double y)
     emit signal_pos_updated(x, y);
 }
 
-void ScaleFrame::slot_distance_updated(double distance)
+void ScaleFrame::slot_distance_updated(QString distance)
 {
     emit signal_updateDistance(distance);
 }

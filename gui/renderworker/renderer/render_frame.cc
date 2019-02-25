@@ -203,7 +203,9 @@ void RenderFrame::prepare_drawing()
         set_plane_resolution(1.0);
         QTime t;
         t.start();
+        setCursor(Qt::WaitCursor);
         start_render();
+        setCursor(Qt::ArrowCursor);
         ui::logger_widget(QString("finish draw  use time: %1 ms").arg(t.elapsed()));
         logger_file(QString("finish draw  use time: %1 ms").arg(t.elapsed()));
         m_redraw_required = false;

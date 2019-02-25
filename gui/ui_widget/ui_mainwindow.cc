@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     writeTestingConfig();
 
-    logger_widget("Software start");
+    logger_widget("Software to start!");
 }
 
 MainWindow::~MainWindow()
@@ -280,13 +280,13 @@ void MainWindow::initToolbar()
     connect(setWindowMaxSizeAction, SIGNAL(triggered()), this, SLOT(slot_setWindowMaxSizeAction()));
     ScaleToolBar->addAction(setWindowMaxSizeAction);
 
-    QToolBar *RtsToolBar = new QToolBar(this);
+    RtsToolBar = new QToolBar(this);
     RtsToolBar->setWindowTitle(tr("RTS Actions"));
     addToolBar(RtsToolBar);
 
     QAction *RtsSetAction = new QAction(QIcon(":/dfjy/images/rts.png"),"RtsSet", this);
     RtsToolBar->addAction(RtsSetAction);
-    QAction *RtsRunAction = new QAction(QIcon(":/dfjy/images/run.png"),"RtsRun", this);
+    RtsRunAction = new QAction(QIcon(":/dfjy/images/run.png"),"RtsRun", this);
     RtsToolBar->addAction(RtsRunAction);
     connect(RtsSetAction, SIGNAL(triggered()), this, SLOT(slot_rts_setting()));
     connect(RtsRunAction, SIGNAL(triggered()), this, SLOT(slot_rts_running()));
@@ -395,8 +395,17 @@ void MainWindow::init_rtssetup_dialog()
     m_rtssetup_dialog = new RtsConfigDialog(this);
     m_rtssetup_dialog->setGeometry(200, 200, 400, 600);
     m_rtssetup_dialog->hide();
-}
 
+    m_rtsrecview_dialog = new RtsReviewDialog(this);
+    m_rtsrecview_dialog->setGeometry(200, 200, 400, 600);
+    m_rtsrecview_dialog->hide();
+
+//    m_indicator = new QProgressIndicator(this);
+//    m_indicator->setColor(Qt::black);
+//    m_indicator->move(width() / 2, height() / 2);
+    m_imagedata_parising = new RtsImageParsing(this);
+    connect(m_imagedata_parising, SIGNAL(signal_parsing_finished()), this, SLOT(slot_rts_image_finished()));
+}
 /**
  * @brief MainWindow::initConnection
  */
@@ -440,6 +449,10 @@ void MainWindow::RTSSetup()
 
 void MainWindow::RunRTS()
 {
+    m_run_process = new RtsRunProcess(this);
+    connect(m_run_process, SIGNAL(signal_rtsrun_finished()), this, SLOT(slot_rtsrun_finished()));
+    connect(m_run_process, SIGNAL(signal_rtsrun_start()), this, SLOT(slot_rtsrun_start()));
+    m_run_process->run();
 }
 
 void MainWindow::GaugeChecker()
@@ -470,6 +483,11 @@ void MainWindow::ChipPlacementEditor()
 void MainWindow::closeEvent(QCloseEvent *)
 {
     writeSettingConfig();
+}
+
+void MainWindow::resizeEvent(QResizeEvent *)
+{
+//    m_indicator->move(width() / 2, height() / 2);
 }
 
 /**
@@ -532,9 +550,9 @@ void MainWindow::slot_rulerAction()
     emit signal_set_paint_tool(paintstyle);
 }
 
-void MainWindow::slot_updateDistance(double length)
+void MainWindow::slot_updateDistance(QString length)
 {
-    distanceLableNum->setText(QString::number(length));
+    distanceLableNum->setText(length);
 }
 
 void MainWindow::slot_AddonActions()
@@ -763,6 +781,7 @@ void MainWindow::slot_currentTab_changed(int index)
     }
 //    layerwidget->getLayerData(renderFrame, m_current_filename);
     layerwidget->getLayerData(renderFrame);
+    m_paint_tabwidget->update_measuretable_data();
 }
 
 /**
@@ -771,7 +790,7 @@ void MainWindow::slot_currentTab_changed(int index)
  */
 void MainWindow::slot_close_paintwidget(int index)
 {
-    QString filename = m_paint_tabwidget->tabText(index);
+    QString filename = m_paint_tabwidget->get_scaleframe(index)->get_file_name();
     m_paint_tabwidget->slot_close_tab(filename);  // close Tabwidget
     close_checklist_job(filename);  // close checklist
 }
@@ -1202,16 +1221,18 @@ void MainWindow::slot_addFile(QString filePath)
  */
 void MainWindow::slot_create_canvas(QModelIndex index)
 {
-    m_current_filename = index.data().toString();
+    FileProjectWidget::layout_view_iter it = fileWidget->get_layout_view_iter(index.row());
+    m_current_filename = QString::fromStdString((*it)->file_name());
     if (!isCavseExist(m_current_filename))
     {
         ScaleFrame* frame = m_paint_tabwidget->creat_canvas();
-        FileProjectWidget::layout_view_iter it = fileWidget->get_layout_view_iter(index.row());
 
         std::string prep_dir = m_prep_dir.toStdString();
         (*it)->attach(frame->getRenderFrame(), prep_dir, false);
 
-        m_paint_tabwidget->append_canvas(m_current_filename);
+        QStringList list = m_current_filename.split("/", QString::SkipEmptyParts);
+        QString filename = list.back();
+        m_paint_tabwidget->append_canvas(filename);
         centerWidget_boundingSignal(m_paint_tabwidget->count() - 1);
 
         if(tab_is_job_or_osa((m_current_filename)))
@@ -1232,16 +1253,15 @@ void MainWindow::slot_create_overlay_canvas(QModelIndex index)
 
     if (m_current_tabid == -1)
     {
-        showWarning(this, "Waring", "Not open canves !");
+        showWarning(this, "Waring", "Not open canvas !");
     }
 
-    m_current_filename = index.data().toString();
     FileProjectWidget::layout_view_iter it = fileWidget->get_layout_view_iter(index.row());
-
+    m_current_filename = QString::fromStdString((*it)->file_name());
     (*it)->attach(m_paint_tabwidget->get_scaleframe(m_current_tabid)->getRenderFrame(), m_prep_dir.toStdString(), true);
 
-    m_paint_tabwidget->setTabText(m_current_tabid, m_paint_tabwidget->get_scaleframe(m_current_tabid)->get_file_name());
-
+    QString file_name(m_paint_tabwidget->get_scaleframe(m_current_tabid)->get_file_name());
+    m_paint_tabwidget->setTabText(m_current_tabid, file_name);
     if (tab_is_job_or_osa(m_current_filename))
     {
         QString path = m_current_filename.left(m_current_filename.size() - 15) + "/defect.db";
@@ -1349,12 +1369,12 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
 
 void MainWindow::initConfigDir()
 {
-    configFile_path = QDir::homePath() + "/.pgui_config";
+    configFile_path = QDir::homePath() + "/.picasso_gui" + "/pgui_config";
     QDir dir(configFile_path);
 
     if (!dir.exists())
     {
-        if(!dir.mkdir(configFile_path))
+        if(!dir.mkpath(configFile_path))
         {
             qDebug() << "make config_dir error !";
             return;
@@ -1374,11 +1394,11 @@ void MainWindow::initPointer()
 
 void MainWindow::initPrepDir()
 {
-    m_prep_dir = QDir::homePath() + "/.PguiPrep";
+    m_prep_dir = QDir::homePath()+ "/.picasso_gui" + "/pgui_prep";
     QDir dir(m_prep_dir);
     if (!dir.exists())
     {
-         if(!dir.mkdir(m_prep_dir))
+         if(!dir.mkpath(m_prep_dir))
         {
             qDebug() << "make prep_dir error !";
             return;
@@ -1522,7 +1542,7 @@ void MainWindow::centerWidget_boundingSignal(int index)
 {
     connect(this, SIGNAL(signal_setPenWidth(QString)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_pen_width(QString)));
     connect(this, SIGNAL(signal_setPenColor(const QColor&)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_pen_color(const QColor&)));
-    connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_updateDistance(double)), this, SLOT(slot_updateDistance(double)));
+    connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_updateDistance(QString)), this, SLOT(slot_updateDistance(QString)));
     connect(m_paint_tabwidget->get_scaleframe(index), SIGNAL(signal_pos_updated(double, double)), this, SLOT(slot_updateXY(double, double)));
     connect(m_paint_toolbar, SIGNAL(signal_setSnapFlag(Global::SnapFLag)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_snapfalg(Global::SnapFLag)));
     connect(m_paint_toolbar, SIGNAL(signal_setPaintStyle(Global::PaintTool)), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_set_painter_style(Global::PaintTool)));
@@ -1530,6 +1550,7 @@ void MainWindow::centerWidget_boundingSignal(int index)
     connect(m_paint_toolbar, SIGNAL(siganl_measure_line_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_measureline()));
     connect(m_paint_toolbar, SIGNAL(signal_mark_clear()), m_paint_tabwidget->get_scaleframe(index), SLOT(slot_clear_mark_point()));
     emit signal_setPenWidth(penWidthCombox->currentText());
+    m_paint_toolbar->updata_toolbar();
 }
 
 bool MainWindow::isCavseExist(QString filename)
@@ -1591,7 +1612,9 @@ void MainWindow::slot_layout_view_changed(render::RenderFrame* frame)
             else
             {
                 QString file_name = scale_frame->get_file_name();
-                m_paint_tabwidget->setTabText(i, file_name);
+                QStringList list = file_name.split("/", QString::SkipEmptyParts);
+                QString abbr_file_name = list.back();
+                m_paint_tabwidget->setTabText(i, abbr_file_name);
             }
         }
     }
@@ -1601,4 +1624,28 @@ void MainWindow::slot_update_layername_list(const QStringList & list)
 {
     m_rtssetup_dialog->set_layername_list(list);
 }
+
+void MainWindow::slot_rtsrun_finished()
+{
+    m_imagedata_parising->parsing_file();
 }
+
+void MainWindow::slot_rtsrun_start()
+{
+    //    m_indicator->startAnimation();
+    RtsRunAction->setEnabled(false);
+    setCursor(Qt::WaitCursor);
+}
+
+void MainWindow::slot_rts_image_finished()
+{
+    QString filepath = QDir::homePath() + "/.picasso_gui/pgui_rts/rts_output.oas";
+    add_file(filepath, false);
+    m_rtsrecview_dialog->show();
+    // m_indicator->stopAnimation();
+    RtsRunAction->setEnabled(true);
+    setCursor(Qt::ArrowCursor);
+}
+
+}
+

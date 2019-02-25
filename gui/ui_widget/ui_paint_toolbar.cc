@@ -1,7 +1,8 @@
 #include "ui_paint_toolbar.h"
 namespace ui{
 PaintToolbar::PaintToolbar(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+    is_first_ruler(true)
 {
     setFixedHeight(20);
     init_button();
@@ -112,6 +113,11 @@ void PaintToolbar::init_connection()
 void PaintToolbar::slot_set_paint_tool(ui::Global::PaintStyle paint_style)
 {
     m_paint_style = paint_style;
+    if (is_first_ruler)
+    {
+        m_measure_line_button->setChecked(true);
+        is_first_ruler = false;
+    }
     updata_toolbar();
 }
 

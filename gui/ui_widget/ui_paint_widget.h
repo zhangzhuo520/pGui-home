@@ -68,7 +68,7 @@ protected:
 
 signals:
     void signal_mouseMove(const QPoint&);
-    void signal_updateDistance(double);
+    void signal_updateDistance(QString);
     void signal_moveCenter();
     void signal_get_snap_pos(QPointF, int);
     void signal_measure_line_list();
@@ -144,6 +144,8 @@ private:
     double m_defect_y;
 
     double m_distance;
+
+    QString m_line_result;
 
     bool m_first_point_find;
 

@@ -10,7 +10,7 @@ QString LoggerConsole :: m_filter = "";
 LoggerFile::LoggerFile(QObject *parent)
 {
     setParent(parent);
-    m_file_path = QDir::homePath() + "/.PicathoGui_log/";
+    m_file_path = QDir::homePath() + "/.picasso_gui" + "/pgui_log/";
     init_file_setting();
     Log4Qt::PropertyConfigurator::configure(*m_file_setting);
     init_file_logger();
@@ -49,7 +49,16 @@ LoggerFile *LoggerFile::get_instance()
 
 void LoggerFile::init_file_setting()
 {
-    QString configFile_path = QDir::homePath() + "/.pgui_config";
+    QString configFile_path = QDir::homePath()+ "/.picasso_gui" + "/pgui_config";
+    QDir dir(configFile_path);
+    if (!dir.exists())
+    {
+        if(!dir.mkpath(configFile_path))
+        {
+            qDebug() << "make config_dir error !";
+            return;
+        }
+    }
     m_file_setting = new QSettings(configFile_path + "/qtlogger_file.conf", QSettings::IniFormat);
     m_file_setting->clear();
     m_file_setting->setValue("log4j.rootLogger", "debug,dailyFile");
@@ -65,7 +74,10 @@ void LoggerFile::init_file_logger()
     QDir Log_Dir(m_file_path);
     if (!Log_Dir.exists())
     {
-        Log_Dir.mkpath(m_file_path);
+        if (Log_Dir.mkpath(m_file_path))
+        {
+            qDebug() << "make log file path error!";
+        }
     }
     m_file_logger = Log4Qt::Logger::logger("File");
 }
@@ -107,7 +119,16 @@ LoggerConsole::~LoggerConsole()
 
 void LoggerConsole::init_console_setting()
 {
-   QString configFile_path = QDir::homePath() + "/.pgui_config";
+   QString configFile_path = QDir::homePath()+ "/.picasso_gui" + "/pgui_config";
+   QDir dir(configFile_path);
+   if (!dir.exists())
+   {
+       if(!dir.mkpath(configFile_path))
+       {
+           qDebug() << "make config_dir error !";
+           return;
+       }
+   }
    m_console_setting = new QSettings(configFile_path + "/qtlogger_console.conf", QSettings::IniFormat);
    m_console_setting->clear();
    m_console_setting->setValue("log4j.rootLogger", "DEBUG, console");

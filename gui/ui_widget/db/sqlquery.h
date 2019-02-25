@@ -57,13 +57,13 @@ public:
     ~CountGroupSQL();
 
     void initData();
-    void setData(CountGroupSql);
+    void setData(CountGroupSqlData);
     bool isValidData();
 
     QSqlQuery outputSQL();
 
 private:
-    CountGroupSql data;
+    CountGroupSqlData data;
 };
 
 class CountDefectSQL

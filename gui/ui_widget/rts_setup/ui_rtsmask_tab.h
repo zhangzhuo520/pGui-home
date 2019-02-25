@@ -17,6 +17,8 @@
 
 #include "../model/ui_rtsmask_model.h"
 #include "../delegate/ui_rtsmask_delegate.h"
+#include "../deftools/datastruct.h"
+#include "../qt_logger/pgui_log_global.h"
 
 namespace ui {
 
@@ -87,6 +89,9 @@ public:
 
     void set_layername_list(const QStringList &);
 
+    const QStringList& get_alisa_list();
+    const QStringList& get_layerdata_list();
+
 public slots:
     void slot_add_row();
     void slot_delete_row();
@@ -111,6 +116,9 @@ public:
     void init_tab(const QStringList &);
     void delete_all_tab();
     void set_layername_list(const QStringList &);
+    QStringList get_alisa_list(int);
+    QStringList get_layerdata_list(int);
+
     ~RtsMaskTab();
 
 private:

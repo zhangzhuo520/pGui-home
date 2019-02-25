@@ -32,8 +32,10 @@ SET(PicathoGui_SRCS
     ui_log_widget.cc
     rts_setup/ui_rtsmask_tab.cc
     rts_setup/ui_rtscurve.cc
-    rts_setup/ui_rtsreview_widget.cc
+    rts_setup/ui_rtsreview_dialog.cc
     rts_setup/ui_rtsconfig_dialog.cc
+    rts_setup/ui_rtsreview_table.cc
+    rts_setup/rts_runprocess.cc
     deftools/cmessagebox.cc
     deftools/defcontrols.cc
     deftools/framelesshelper.cc
@@ -45,11 +47,14 @@ SET(PicathoGui_SRCS
     db/sqlquery.cc
     db/sqlmanager.cc
     fileparsing/yamlparsing.cc
+    fileparsing/rts_imageparsing.cc
+    file_generate/rts_pythonwriter.cc
     model/ui_checklist_model.cc
     model/ui_measuretable_model.cc
     model/ui_sqltabel_model.cc
     model/ui_gauge_model.cc  
     model/ui_rtsmask_model.cc
+    model/ui_universal_model.cc
     model/ui_fileproject_model.cc)
 
 
@@ -76,7 +81,9 @@ SET(PicathoGui_HEADERS
     rts_setup/ui_rtsmask_tab.h
     rts_setup/ui_rtscurve.h
     rts_setup/ui_rtsconfig_dialog.h
-    rts_setup/ui_rtsreview_widget.h
+    rts_setup/ui_rtsreview_dialog.h
+    rts_setup/rts_runprocess.h
+    rts_setup/ui_rtsreview_table.h
     deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/iconhelper.h
@@ -89,11 +96,14 @@ SET(PicathoGui_HEADERS
     db/sqlquery.h
     db/sqlmanager.h
     fileparsing/yamlparsing.h
+    fileparsing/rts_imageparsing.h
+    file_generate/rts_pythonwriter.h
     model/ui_checklist_model.h
     model/ui_measuretable_model.h
     model/ui_gauge_model.h  
     model/ui_sqltabel_model.h
     model/ui_rtsmask_model.h
+    model/ui_universal_model.h
     model/ui_fileproject_model.h)
 
 QT4_WRAP_CPP(PicathoGui_MOCS
@@ -119,7 +129,10 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     rts_setup/ui_rtscurve.h
     rts_setup/ui_rtsconfig_dialog.h
     rts_setup/ui_rtsmask_tab.h
-    rts_setup/ui_rtsreview_widget.h
+    rts_setup/ui_rtsreview_dialog.h
+    rts_setup/rts_runprocess.h
+    rts_setup/ui_rtsreview_table.h
+    fileparsing/rts_imageparsing.h
     deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/defcontrols.h
@@ -133,6 +146,7 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     model/ui_gauge_model.h  
     model/ui_fileproject_model.h
     model/ui_rtsmask_model.h
+    model/ui_universal_model.h
     model/ui_sqltabel_model.h)
 
 QT4_ADD_RESOURCES(PicathoGui_RESOURCES_RCC ${PicathoGui_RESOURCES})

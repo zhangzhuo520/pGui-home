@@ -1,7 +1,7 @@
 #ifndef UI_RTSREVIEW_WIDGET_H
 #define UI_RTSREVIEW_WIDGET_H
 
-#include <QWidget>
+#include <QDialog>
 #include <QLabel>
 #include <QTableWidget>
 #include <QPushButton>
@@ -12,13 +12,16 @@
 #include <QLineEdit>
 #include <QDebug>
 
+#include "ui_rtsreview_table.h"
+
 namespace ui {
-class RtsReviewWidget : public QWidget
+
+class RtsReviewDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit RtsReviewWidget(QWidget * parent = 0);
-    ~RtsReviewWidget();
+    explicit RtsReviewDialog(QWidget * parent = 0);
+    ~RtsReviewDialog();
 
     void init_ui();
 
@@ -26,7 +29,7 @@ private:
     QLabel *m_rts_history_label;
     QPushButton *m_rts_del_button;
     QPushButton *m_rts_delall_button;
-    QTableWidget *m_rts_history_table;
+    RtsReviewTable *m_rts_history_table;
 
 
     QLabel *m_rts_setup_label;
@@ -63,7 +66,7 @@ private:
     QPushButton *m_cutline_del_button;
     QPushButton *m_cutline_delall_button;
 
-    QTableWidget *m_cutline_table;
+    RtsReviewTable *m_cutline_table;
 };
 
 

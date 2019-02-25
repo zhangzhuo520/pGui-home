@@ -18,6 +18,7 @@ include(painter/painter.pri)
 include(deftools/deftools.pri)
 include(log4qt/log4qt.pri)
 include(fileparsing/file_parsing.pri)
+include(file_generate/file_generate.pri)
 include(rts_setup/rts_setup.pri)
 
 SOURCES += main.cc\

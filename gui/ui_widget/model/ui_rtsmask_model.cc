@@ -17,16 +17,26 @@ RtsMaskModel::~RtsMaskModel()
     m_header_list.clear();
 }
 
-void RtsMaskModel::delete_row(const int & row)
+void RtsMaskModel::delete_row()
 {
-    m_data_list.removeAt(row);
-    endRemoveColumns();
+    m_data_list.removeAt(m_data_list.count() - 1);
+    reset();
 }
 
 void RtsMaskModel::delete_all()
 {
     m_data_list.clear();
-    endRemoveColumns();
+    reset();
+}
+
+const QStringList &RtsMaskModel::get_alias_list()
+{
+    return m_alias_list;
+}
+
+const QStringList &RtsMaskModel::get_layerdata_list()
+{
+    return m_data_list;
 }
 
 void RtsMaskModel::set_data_list(const QStringList & list)
@@ -87,6 +97,13 @@ QVariant RtsMaskModel::data(const QModelIndex &item, int role) const
             break;
         }
     }
+    else if (Qt::ToolTipRole == role)
+    {
+        if (item.column() == 1)
+        {
+            return m_data_list.at(item.row());
+        }
+    }
     else
     {
         return QVariant();
@@ -97,7 +114,6 @@ QVariant RtsMaskModel::data(const QModelIndex &item, int role) const
 
 bool RtsMaskModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-
     role = (role == Qt::EditRole) ? Qt::DisplayRole : role;
 
     if((Qt::DisplayRole == role))
@@ -107,9 +123,7 @@ bool RtsMaskModel::setData(const QModelIndex &index, const QVariant &value, int 
             m_data_list[index.row()] = value.toString();
             return true;
         }
-
     }
-
     return true;
 }
 

@@ -38,7 +38,7 @@ QVariant FileProjectModel::data(const QModelIndex &index, int role) const
         {
             render::LayoutView* lv = m_layout_views[index.row()];
             const char* s = lv->file_name().c_str();
-            return QVariant (s);;
+            return QVariant (s);
         }
     }
     else if (role == Qt::TextAlignmentRole)

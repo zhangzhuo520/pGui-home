@@ -13,7 +13,7 @@ namespace ui
 
 class LineData{
 public:
-    LineData(QPointF, QPointF, double);
+    LineData(QPointF, QPointF, QString);
     ~LineData(){}
 
     LineData& operator=(const LineData&);
@@ -33,7 +33,7 @@ public:
 
     QPointF m_first_point;
     QPointF m_last_point;
-    double m_distance;
+    QString m_distance;
 
     int m_line_width;
     QColor m_line_color;

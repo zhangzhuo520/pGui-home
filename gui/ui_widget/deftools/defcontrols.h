@@ -159,6 +159,42 @@ public:
   ~PushButton(){}
 };
 
+class SearchButton :public QPushButton
+{
+    Q_OBJECT
+public:
+    explicit SearchButton(QWidget *parent=0)
+    {
+        Q_UNUSED(parent);
+        setStyleSheet("QPushButton{"\
+                      "border:0px;"
+                      "background-color: rgba(0, 0, 0, 0);}"\
+                      "QPushButton::hover{"\
+                      "background-color: rgba(200, 200, 200);}"
+                      "QPushButton::pressed{"\
+                      "border:0px;"
+                      "background-color: rgba(150, 150, 150);}");
+        setMouseTracking(true);
+    }
+    explicit SearchButton(const QString &text, QWidget *parent=0)
+    {
+        Q_UNUSED(parent);
+        setStyleSheet("QPushButton{"\
+                      "border:0px;"
+                      "background-color: rgba(0, 0, 0, 0);}"\
+                      "QPushButton::hover{"\
+                      "background-color: rgba(200, 200, 200);}"
+                      "QPushButton::pressed{"\
+                      "border:0px;"
+                      "background-color: rgba(150, 150, 150);}");\
+        setText(text);
+        setMouseTracking(true);
+    }
+    ~SearchButton();
+protected:
+    virtual void enterEvent(QEvent *);
+};
+
 class MenuButton :public QPushButton
 {
     Q_OBJECT
@@ -323,7 +359,7 @@ public:
         Q_UNUSED(parent);
         setObjectName("searchedit");
         searchEdit = new QLineEdit(this);
-        searchButton = new QPushButton(this);
+        searchButton = new SearchButton(this);
         QHBoxLayout *Hlayout = new QHBoxLayout(this);
         Hlayout->setContentsMargins(0, 0, 0, 0);
         Hlayout->setSpacing(0);
@@ -337,7 +373,7 @@ public:
     }
 private:
     QLineEdit* searchEdit;
-    QPushButton *searchButton;
+    SearchButton *searchButton;
 };
 
 class TitleWidget : public QWidget
@@ -435,7 +471,7 @@ signals:
     void signal_jump(QString);
 
 private:
-    PushButton * m_jump_button;
+    SearchButton * m_jump_button;
 };
 
 class SettingDialog : public QDialog
@@ -498,6 +534,46 @@ protected:
     {
         emit clicked(current);
     }
+};
+
+class QProgressIndicator : public QWidget
+{
+    Q_OBJECT
+    Q_PROPERTY(int delay READ animationDelay WRITE setAnimationDelay)
+    Q_PROPERTY(bool displayedWhenStopped READ isDisplayedWhenStopped WRITE setDisplayedWhenStopped)
+    Q_PROPERTY(QColor color READ color WRITE setColor)
+public:
+    QProgressIndicator(QWidget* parent = 0);
+
+    int animationDelay() const { return m_delay; }
+
+    bool isAnimated () const;
+
+    bool isDisplayedWhenStopped() const;
+
+    const QColor & color() const { return m_color; }
+
+    virtual QSize sizeHint() const;
+    int heightForWidth(int w) const;
+public slots:
+    void startAnimation();
+
+    void stopAnimation();
+
+    void setAnimationDelay(int delay);
+
+    void setDisplayedWhenStopped(bool state);
+
+    void setColor(const QColor & color);
+protected:
+    virtual void timerEvent(QTimerEvent * event);
+    virtual void paintEvent(QPaintEvent * event);
+private:
+    int m_angle;
+    int m_timerId;
+    int m_delay;
+    bool m_displayedWhenStopped;
+    QColor m_color;
 };
 
 }

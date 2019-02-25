@@ -63,6 +63,8 @@ private:
 
     QFrame *m_line_a;
     QFrame *m_line_b;
+
+    bool is_first_ruler;
 };
 }
 #endif // UI_PAINT_TOOLBAR_H

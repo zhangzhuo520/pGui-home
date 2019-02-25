@@ -32,6 +32,10 @@
 #include <string>
 #include <sstream>
 
+#include "rts_setup/ui_rtsconfig_dialog.h"
+#include "rts_setup/ui_rtsreview_dialog.h"
+#include "rts_setup/ui_rtscurve.h"
+#include "rts_setup/rts_runprocess.h"
 #include "deftools/defcontrols.h"
 #include "deftools/cmessagebox.h"
 #include "deftools/iconhelper.h"
@@ -43,7 +47,6 @@
 #include "ui_fileproject_widget.h"
 #include "ui_layer_widget.h"
 #include "ui_choosefile_dialog.h"
-#include "rts_setup/ui_rtsconfig_dialog.h"
 #include "ui_semimage_dialog.h"
 #include "ui_chipedit_dialog.h"
 #include "ui_scale_frame.h"
@@ -51,6 +54,7 @@
 #include "ui_tab_paintwidget.h"
 #include "ui_log_widget.h"
 #include "ui_gaugetable.h"
+#include "fileparsing/rts_imageparsing.h"
 
 
 namespace ui{
@@ -80,6 +84,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *);
+    void resizeEvent(QResizeEvent *);
 
 signals:
     void singal_append_job(QString);
@@ -127,7 +132,7 @@ private slots:
     void slot_addHistoryAction();
     void slot_penAction();
     void slot_rulerAction();
-    void slot_updateDistance(double);
+    void slot_updateDistance(QString);
     void slot_AddonActions();
     void slot_showScaleAxis(bool);
     void slot_setPosAction();
@@ -146,8 +151,12 @@ private slots:
     void slot_zoom_fit();
 
     void slot_layout_view_changed(render::RenderFrame*);
-
     void slot_update_layername_list(const QStringList&);
+
+    void slot_rtsrun_finished();
+    void slot_rtsrun_start();
+    void slot_rts_image_finished();
+
 private:
     void initTitleBar();
     void initMenubar();
@@ -207,6 +216,8 @@ private:
     QWidget * m_center_widget;
     QScrollArea *m_scrollarea_bar;
     RtsConfigDialog *m_rtssetup_dialog;
+    RtsReviewDialog *m_rtsrecview_dialog;
+
 
     int m_current_tabid;
     QString m_current_filename;
@@ -250,6 +261,9 @@ private:
     QLabel *m_window_unit_label;
     QLineEdit *m_window_lineedit;
 
+    QToolBar *RtsToolBar;
+    QAction *RtsRunAction;
+
     QPushButton *m_setpos_okbutton;
     QPushButton *m_setpos_cancelbutton;
 
@@ -266,6 +280,9 @@ private:
     QStringList m_open_job_list;
 
     ShowCPUMemory *m_show_cpumemory;
+    RtsRunProcess * m_run_process;
+    //    QProgressIndicator *m_indicator;
+    RtsImageParsing *m_imagedata_parising;
 };
 }
 #endif // MAINWINDOW_H

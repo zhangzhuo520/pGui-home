@@ -19,6 +19,8 @@ public:
 
     void set_active_widget(QString);
 
+    void update_measuretable_data();
+
     ~TabPaintWidget();
 
 public slots:

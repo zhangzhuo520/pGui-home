@@ -402,6 +402,7 @@ void LayerWidget::slot_setLayerStyle(int patternIdex)
     int index = m_view->tree_to_list_index(m_active_model_rootIndex, m_active_model_index);
     layerstyle m_layerstyle = m_layer_style_vector.at(index);
     m_layerstyle.pattern_Id = patternIdex;
+    m_layer_style_vector[index] = m_layerstyle;
     QImage image = set_fill_image(m_layerstyle);
     setModelIdexImage(image);
     setLayerData(m_layerstyle);

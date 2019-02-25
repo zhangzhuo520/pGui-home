@@ -62,7 +62,7 @@ public:
     double get_window_max_size();
 signals:
     void signal_pos_updated(double, double);
-    void signal_updateDistance(double);
+    void signal_updateDistance(QString);
     void signal_box_updated();
     void signal_zoom_in();
     void signal_zoom_out();
@@ -74,7 +74,7 @@ signals:
 public slots:
     void slot_box_updated(double,double,double,double);
     void slot_pos_updated(double, double);
-    void slot_distance_updated(double);
+    void slot_distance_updated(QString);
     void slot_set_painter_style(Global::PaintTool);
     void slot_set_pen_width(QString);
     void slot_set_pen_color(const QColor&);

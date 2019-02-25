@@ -1,7 +1,8 @@
 #ifndef DATASTRUCT_H
 #define DATASTRUCT_H
 #include <QString>
-
+#include <QStringList>
+#include <QVector>
 #define SYS_TIPBOX 1
 
 #ifndef MyDebug
@@ -60,7 +61,6 @@ typedef struct rtsmaskdata
 
 typedef struct rtssetupdata
 {
-   QString gds_path;
    QString model_path;
    QVector <RtsMaskData> mask_table_data;
    QString mask_bias;

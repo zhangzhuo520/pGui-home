@@ -26,6 +26,8 @@ public:
     {
         return QSize(250, 60);
     }
+
+    void only_clear_table_data();
     
 signals:
     void signal_set_line_list(const QList <LineData>&);

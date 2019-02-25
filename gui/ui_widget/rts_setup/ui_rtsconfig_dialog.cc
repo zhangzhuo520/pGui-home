@@ -113,11 +113,11 @@ void RtsConfigDialog::initRtsWidget()
     OptionHlayout = new QHBoxLayout();
     QLabel *label7 = new QLabel("Binary File :", m_option_groupbox);
     label7->setMinimumWidth(LableWidth);
-    m_binarypath_edit = new QLineEdit(m_option_groupbox);
+    m_binarypath_commbox = new QComboBox(m_option_groupbox);
     m_binarypath_button = new QPushButton("...",m_option_groupbox);
     m_binarypath_button->setFixedWidth(pushButtonWidth);
     OptionHlayout->addWidget(label7);
-    OptionHlayout->addWidget(m_binarypath_edit);
+    OptionHlayout->addWidget(m_binarypath_commbox);
     OptionHlayout->addWidget(m_binarypath_button);
     OptionHlayout->setStretch(0, 1);
     OptionHlayout->setStretch(1, 5);
@@ -185,6 +185,9 @@ void RtsConfigDialog::initConnecttion()
     connect(m_model_button, SIGNAL(clicked()), this, SLOT(slot_model_browser()));
     connect(m_job_radiobutton, SIGNAL(toggled(bool)), this, SLOT(slot_job_radiobutton(bool)));
     connect(m_gds_radiobutton, SIGNAL(toggled(bool)), this, SLOT(slot_gds_radiobutton(bool)));
+    connect(m_ok_button, SIGNAL(clicked()), this, SLOT(slot_ok_button()));
+    connect(m_cancel_button, SIGNAL(clicked()), this, SLOT(slot_cancel_button()));
+    connect(m_apply_button, SIGNAL(clicked()), this, SLOT(slot_apply_button()));
 }
 
 void RtsConfigDialog::initButtonConfig()
@@ -325,9 +328,26 @@ void RtsConfigDialog::slot_gds_radiobutton(bool ischecked)
     }
 }
 
+void RtsConfigDialog::slot_ok_button()
+{
+      save_setup_data();
+      data_to_file();
+      this->close();
+}
+
+void RtsConfigDialog::slot_cancel_button()
+{
+}
+
+void RtsConfigDialog::slot_apply_button()
+{
+    save_setup_data();
+    data_to_file();
+}
+
 void RtsConfigDialog::get_model(const QString& jobpath)
 {
-     m_sqlmannager = new SQLManager();
+    m_sqlmannager = new SQLManager();
     QString m_db_path = jobpath + "/defect.db";
     QFile file(m_db_path);
     if (file.exists())
@@ -369,5 +389,33 @@ void RtsConfigDialog::get_model(const QString& jobpath)
     read_yaml(modepath);
     delete m_sqlmannager;
     m_sqlmannager = NULL;
+}
+
+void RtsConfigDialog::save_setup_data()
+{
+    m_setup_data.model_path = m_model_commbox->currentText();
+    m_setup_data.binary_file = m_binarypath_commbox->currentText();
+    m_setup_data.delta_defocus = m_defocus_commbox->currentText();
+    m_setup_data.delta_dose = m_deltadose_edit->text();
+    m_setup_data.mask_bias = m_maskbias_eidt->text();
+    for (int i = 0; i < m_mask_tab->count(); i ++)
+    {
+        QStringList alisa_list = m_mask_tab->get_alisa_list(i);
+        QStringList data_list = m_mask_tab->get_layerdata_list(i);
+        for(int j = 0; j < alisa_list.count(); j ++)
+        {
+            m_layer_data.alias = alisa_list.at(i);
+            m_layer_data.layer_data = data_list.at(i);
+            m_mask_data.mask_layerdata.append(m_layer_data);
+        }
+        m_mask_data.mask_name = m_mask_tab->tabText(i);
+        m_setup_data.mask_table_data.append(m_mask_data);
+    }
+}
+
+void RtsConfigDialog::data_to_file()
+{
+    RtsPythonWriter rtswriter(&m_setup_data);
+    rtswriter.save_to_file();
 }
 }

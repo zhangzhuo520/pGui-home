@@ -122,7 +122,7 @@ QVariant MeasureTableModel::data(const QModelIndex &item, int role) const
             return s;
         }
         case 2:
-            return QString::number(m_linedata_list.at(item.row()).m_distance, 'f', 4);
+            return m_linedata_list.at(item.row()).m_distance;
         default:
             break;
         }

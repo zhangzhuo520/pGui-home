@@ -13,8 +13,11 @@ public:
     ~RtsMaskModel();
 
     void append_row(const QString &);
-    void delete_row(const int &);
+    void delete_row();
     void delete_all();
+    const QStringList & get_alias_list();
+    const QStringList & get_layerdata_list();
+
     virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex parent(const QModelIndex &child) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;

@@ -21,6 +21,7 @@
 #include "../deftools/datastruct.h"
 #include "../fileparsing/yamlparsing.h"
 #include "../qt_logger/pgui_log_global.h"
+#include "../file_generate/rts_pythonwriter.h"
 
 const int LableWidth = 140;
 const int LableTitilWidth = 50;
@@ -75,8 +76,17 @@ public slots:
 
     void slot_gds_radiobutton(bool);
 
+    void slot_ok_button();
+
+    void slot_cancel_button();
+
+    void slot_apply_button();
 private:
     void get_model(const QString &);
+
+    void save_setup_data();
+
+    void data_to_file();
 
     QPushButton *m_add_button;
     QPushButton *m_clone_button;
@@ -106,7 +116,7 @@ private:
     QRadioButton * m_usegpu_radiobutton;
     QRadioButton * m_usecpu_radiobutton;
 
-    QLineEdit *m_binarypath_edit;
+    QComboBox *m_binarypath_commbox;
     QPushButton *m_binarypath_button;
 
     QPushButton *m_cancel_button;
@@ -118,7 +128,9 @@ private:
 
     QFileDialog *m_model_dialog;
     SQLManager *m_sqlmannager;
-
+    RtsSetupData m_setup_data;
+    RtsLayerData m_layer_data;
+    RtsMaskData m_mask_data;
 };
 }
 #endif // RTSCONFIGWIDGET_H

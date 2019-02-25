@@ -1,19 +1,19 @@
-#include "ui_rtsreview_widget.h"
+#include "ui_rtsreview_dialog.h"
 
 namespace ui
 {
-RtsReviewWidget::RtsReviewWidget(QWidget *parent):
-    QWidget(parent)
+RtsReviewDialog::RtsReviewDialog(QWidget *parent):
+    QDialog(parent)
 {
     init_ui();
 }
 
-RtsReviewWidget::~RtsReviewWidget()
+RtsReviewDialog::~RtsReviewDialog()
 {
 
 }
 
-void RtsReviewWidget::init_ui()
+void RtsReviewDialog::init_ui()
 {
     QVBoxLayout *AllVlayout = new QVBoxLayout(this);
     QVBoxLayout *TopVlayout = new QVBoxLayout();
@@ -21,7 +21,9 @@ void RtsReviewWidget::init_ui()
     m_rts_history_label = new QLabel("RTS History: ", this);
     m_rts_del_button = new QPushButton("Del", this);
     m_rts_delall_button = new QPushButton("Del All", this);
-    m_rts_history_table = new QTableWidget(this);
+    QStringList m_history_header_list;
+    m_history_header_list << "Index" << "X" << "Y" << "Size";
+    m_rts_history_table = new RtsReviewTable(this, m_history_header_list);
     RtsHLayout->addWidget(m_rts_history_label);
     RtsHLayout->addWidget(new QLabel(""));
     RtsHLayout->addWidget(m_rts_del_button);
@@ -151,7 +153,9 @@ void RtsReviewWidget::init_ui()
     Bottom_four_Hlayout->setStretch(2, 1);
     Bottom_four_Hlayout->setStretch(3, 1);
     Bottom_Vlayout->addLayout(Bottom_four_Hlayout);
-    m_cutline_table = new QTableWidget(this);
+    QStringList cutlint_header_list;
+    cutlint_header_list << "Index" << "Start" << "End" << "Center";
+    m_cutline_table = new RtsReviewTable(this, cutlint_header_list);
     Bottom_Vlayout->addWidget(m_cutline_table);
     AllVlayout->addLayout(Bottom_Vlayout);
     setLayout(AllVlayout);

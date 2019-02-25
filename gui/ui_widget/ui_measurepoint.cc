@@ -92,7 +92,7 @@ bool MeasureLine::removeLineData(QPointF p)
     return false;
 }
 
-LineData::LineData(QPointF p_start, QPointF p_end, double distance):
+LineData::LineData(QPointF p_start, QPointF p_end, QString distance):
     m_first_point(p_start),
     m_last_point(p_end),
     m_distance(distance),

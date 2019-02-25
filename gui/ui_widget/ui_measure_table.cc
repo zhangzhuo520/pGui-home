@@ -40,6 +40,12 @@ void MeasureTable::init()
     connect(m_table_view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slot_checked_line(QModelIndex)));
 }
 
+void MeasureTable::only_clear_table_data()
+{
+    m_linedata_list.clear();
+    m_table_model->set_line_list(m_linedata_list);
+}
+
 //void MeasureTable::set_line_list(QList <LineData> line_list)
 //{
 //    m_linedata_list = line_list;
@@ -85,9 +91,11 @@ void MeasureTable::slot_checked_line(QModelIndex index)
         return;
     }
 
-    clear_select_color();
+//    clear_select_color();
+    QColor temp_color =  m_linedata_list[index.row()].m_line_color;
     m_linedata_list[index.row()].set_line_color(Qt::red);
     emit signal_set_line_list(m_linedata_list);
+    m_linedata_list[index.row()].set_line_color(temp_color);
 }
 
 void MeasureTable::slot_set_line_list(const QList<LineData> &linedata_list)

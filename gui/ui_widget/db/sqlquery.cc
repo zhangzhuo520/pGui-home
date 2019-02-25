@@ -150,7 +150,7 @@ void CountGroupSQL::initData()
     data.table_id = "";
 }
 
-void CountGroupSQL::setData(CountGroupSql newData)
+void CountGroupSQL::setData(CountGroupSqlData newData)
 {
     data.tableName = newData.tableName;
     data.table_id = newData.table_id;

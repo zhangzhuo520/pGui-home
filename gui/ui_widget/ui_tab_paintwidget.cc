@@ -32,6 +32,7 @@ void TabPaintWidget::slot_close_tab(QString fileName)
     delete m_scaleframe_vector.at(index);
     m_scaleframe_vector[index] = NULL;
     m_scaleframe_vector.remove(index);
+    update_measuretable_data();
 }
 
 ScaleFrame* TabPaintWidget::creat_canvas()
@@ -81,6 +82,18 @@ void TabPaintWidget::set_active_widget(QString filename)
     setCurrentIndex(index);
 }
 
+void TabPaintWidget::update_measuretable_data()
+{
+    if (currentIndex() >= 0)
+    {
+        QList <LineData> line_list = m_scaleframe_vector[currentIndex()]->get_measure_line_list();
+        m_measure_table->slot_set_line_list(line_list);
+    }
+    else
+    {
+        m_measure_table->only_clear_table_data();
+    }
+}
 
 int TabPaintWidget::string_to_index(QString fileName)
 {
