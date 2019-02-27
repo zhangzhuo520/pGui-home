@@ -156,6 +156,7 @@ private slots:
     void slot_rtsrun_finished();
     void slot_rtsrun_start();
     void slot_rts_image_finished();
+    void slot_update_canvas_pos();
 
 private:
     void initTitleBar();
@@ -187,7 +188,6 @@ private:
     void delete_checklist_job(QString);
 
     bool tab_is_job_or_osa(QString);
-
     bool defgroup_exist(QString);
     bool defectswidget_exist(QString);
 

@@ -15,10 +15,8 @@
 #include <QHeaderView>
 #include <QVector>
 
-#include "../model/ui_rtsmask_model.h"
-#include "../delegate/ui_rtsmask_delegate.h"
-#include "../deftools/datastruct.h"
-#include "../qt_logger/pgui_log_global.h"
+#include "model/ui_rtsmask_model.h"
+#include "delegate/ui_rtsmask_delegate.h"
 
 namespace ui {
 
@@ -89,10 +87,6 @@ public:
 
     void set_layername_list(const QStringList &);
 
-    const QStringList& get_alisa_list();
-    const QStringList& get_layerdata_list();
-    QString get_boolean()const;
-
 public slots:
     void slot_add_row();
     void slot_delete_row();
@@ -114,13 +108,10 @@ class RtsMaskTab : public QTabWidget
     Q_OBJECT
 public:
     explicit RtsMaskTab(QWidget *parent = 0);
-    ~RtsMaskTab();
     void init_tab(const QStringList &);
     void delete_all_tab();
     void set_layername_list(const QStringList &);
-    QStringList get_alisa_list(int);
-    QStringList get_layerdata_list(int);
-    QString get_boolean(const int&)const;
+    ~RtsMaskTab();
 
 private:
     MaskWidget * m_mask_widget;

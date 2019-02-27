@@ -27,6 +27,12 @@ void FileProjectWidget::init()
     m_project_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_project_table->verticalHeader()->hide();
 
+    m_select_file_dialog = 0;
+    m_file_box = 0;
+    m_select_file_okbutton = 0;
+    m_select_file_cancelbutton = 0;
+    m_file_label= 0;
+
     connect(m_project_table, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slot_DoubleClickItem(QModelIndex)));
     connect(m_project_table, SIGNAL(clicked(QModelIndex)), this, SLOT(slot_ClickItem(QModelIndex)));
     connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_context_menu(QPoint)));
@@ -105,11 +111,14 @@ void FileProjectWidget::slot_AppendFile()
     int maxWidth = 0;
 
     m_file_box->setGeometry(30, 60, 250, 30);
+    render::LayoutView* active_lv = * (m_project_tablemodel->get_layout_view_iter(m_active_index));
+    QString active_filename = QString::fromStdString(active_lv->file_name());
     for(int i = 0; i < rowCount; i++)
     {
         render::LayoutView* lv = * (m_project_tablemodel->get_layout_view_iter(i));
         QString filename = QString::fromStdString(lv->file_name());
-        if(m_active_filename != filename)
+
+        if(active_filename != filename)
         {
             QList<QVariant> list;
             list.append(QVariant(i));
@@ -128,8 +137,9 @@ void FileProjectWidget::slot_AppendFile()
     m_select_file_cancelbutton = new QPushButton("Cancel", m_select_file_dialog);
     connect(m_select_file_cancelbutton, SIGNAL(clicked()), m_select_file_dialog, SLOT(close()));
 
-    maxWidth += 50;
+    maxWidth += 30;
     m_file_box->setGeometry(30, 60, maxWidth < 150 ? 150 : maxWidth , 30);
+    maxWidth += 50;
     m_select_file_dialog->setGeometry(width() / 2 , height() / 2 , maxWidth > 300 ? maxWidth : 300, 140);
     m_file_label->setGeometry(30, 30, 70, 25);
     m_select_file_okbutton->setGeometry(150, 100, 60, 30);

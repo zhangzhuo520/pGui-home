@@ -34,6 +34,7 @@ public:
     void set_defect_point(double x, double y);
     void drawDefectPoint(double, double, QString);
     void draw_gauge_line(QPointF, QPointF, QString);
+    void get_canvas_coord(double *, double *, double *, double *);
     void calcu_defecttext_point();
     void draw_point_size();
     void repaint_image();

@@ -17,8 +17,10 @@ public:
     ~RtsReviewTable();
 
     void append_data(const QString &);
+    void delete_all_data();
+    void delete_data(const int&);
 
-    void delete_data();
+    int count() const;
 
 private:
     UniversalModel *m_rts_review_model;

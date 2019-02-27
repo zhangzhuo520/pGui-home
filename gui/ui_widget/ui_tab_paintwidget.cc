@@ -19,6 +19,19 @@ TabPaintWidget::~TabPaintWidget()
 {
 }
 
+void TabPaintWidget::get_canvas_coord(double * left, double *right, double *bottom, double *top)
+{
+    if (currentIndex() > -1 && currentIndex() < m_scaleframe_vector.count())
+    {
+        m_scaleframe_vector[currentIndex()]->get_canvas_coord(left, right, bottom, top);
+    }
+    else
+    {
+        logger_console << "canvas tab error !";
+        return;
+    }
+}
+
 void TabPaintWidget::slot_close_tab(QString fileName)
 {
     fileName = database_to_oas(fileName);

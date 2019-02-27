@@ -249,6 +249,14 @@ void RtsConfigDialog::gds_or_job_selection()
     }
 }
 
+void RtsConfigDialog::set_canvas_pos(const double &left, const double &right, const double &top, const double &bottom)
+{
+    m_canvas_left = left;
+    m_canvas_right = right;
+    m_canvas_bottom = bottom;
+    m_canvas_top = top;
+}
+
 void RtsConfigDialog::slotAddRts()
 {
     initRtsWidget();
@@ -398,6 +406,16 @@ void RtsConfigDialog::save_setup_data()
     m_setup_data.delta_defocus = m_defocus_commbox->currentText();
     m_setup_data.delta_dose = m_deltadose_edit->text();
     m_setup_data.mask_bias = m_maskbias_eidt->text();
+
+    if (m_usecpu_radiobutton->isChecked())
+    {
+        m_setup_data.use_gpu_or_cup = "cpu";
+    }
+    else if(m_usegpu_radiobutton->isChecked())
+    {
+        m_setup_data.use_gpu_or_cup = "gpu";
+    }
+
     for (int i = 0; i < m_mask_tab->count(); i ++)
     {
         QStringList alisa_list = m_mask_tab->get_alisa_list(i);
@@ -409,13 +427,16 @@ void RtsConfigDialog::save_setup_data()
             m_mask_data.mask_layerdata.append(m_layer_data);
         }
         m_mask_data.mask_name = m_mask_tab->tabText(i);
+        m_mask_data.boolean = m_mask_tab->get_boolean(i);
         m_setup_data.mask_table_data.append(m_mask_data);
     }
+    emit signal_get_current_canvaspos();
 }
 
 void RtsConfigDialog::data_to_file()
 {
     RtsPythonWriter rtswriter(&m_setup_data);
+    rtswriter.set_canvas_pos(m_canvas_left, m_canvas_right, m_canvas_bottom, m_canvas_top);
     rtswriter.save_to_file();
 }
 }

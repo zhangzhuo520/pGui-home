@@ -875,6 +875,14 @@ void ScaleFrame::draw_gauge_line(QPointF start, QPointF end, QString info)
     m_paint_widget->draw_gauge_line(start, end, info);
 }
 
+void ScaleFrame::get_canvas_coord(double * left, double *right, double *bottom, double * top)
+{
+    *left = m_xstart;
+    *right = m_xend;
+    *bottom = m_ystart;
+    *top = m_yend;
+}
+
 void ScaleFrame::repaint_image()
 {
     m_paint_widget->repaint_image(m_xstart, m_xend, m_ystart, m_yend);

@@ -41,7 +41,7 @@ void RtsMaskTab::set_layername_list(const QStringList & list)
     }
 }
 
-QStringList RtsMaskTab::get_alisa_list(int index)
+const QStringList &RtsMaskTab::get_alisa_list(int index)
 {
     if (index < m_maskwidget_vector.count())
     {
@@ -54,7 +54,7 @@ QStringList RtsMaskTab::get_alisa_list(int index)
     }
 }
 
-QStringList RtsMaskTab::get_layerdata_list(int index)
+const QStringList &RtsMaskTab::get_layerdata_list(int index)
 {
     if (index < m_maskwidget_vector.count())
     {
@@ -65,11 +65,6 @@ QStringList RtsMaskTab::get_layerdata_list(int index)
         logger_console << "index error!";
         return QStringList();
     }
-}
-
-QString RtsMaskTab::get_boolean(const int& index) const
-{
-    return m_maskwidget_vector[index]->get_boolean();
 }
 
 MaskWidget::MaskWidget(QWidget *parent, const QStringList & list):
@@ -145,11 +140,6 @@ const QStringList &MaskWidget::get_alisa_list()
 const QStringList &MaskWidget::get_layerdata_list()
 {
     return m_mask_model->get_layerdata_list();
-}
-
-QString MaskWidget::get_boolean() const
-{
-    return m_boolean_edit->text();
 }
 
 void MaskWidget::slot_delete_row()

@@ -24,7 +24,6 @@
 #include "../renderer/render_pattern.h"
 #include "./deftools/cmessagebox.h"
 #include "./model/ui_checklist_model.h"
-#include "./deftools/delegate.h"
 
 namespace ui{
 
@@ -72,6 +71,7 @@ signals:
     void signal_update_layername_list(const QStringList &);
     
 public slots:
+
     void slot_treeItemChanged(QStandardItem *);
 
     void slot_treeDoubleClick(QModelIndex);
@@ -94,7 +94,10 @@ public slots:
 
     void slot_LineWidth_action();
 
+    void slot_LineStyle_action();
+
     void slot_setLineWidth(int line_width);
+
 
 private:
     QWidget* layerToolBar;
@@ -121,7 +124,6 @@ private:
 
     TreeModel *layerTreeModel;
     TreeItem *rootFileItem;
-    Delegate *treeDelegate;
     QAction *linewihthAction1;
     QAction *linewihthAction2;
     QAction *linewihthAction3;

@@ -28,9 +28,24 @@ void RtsReviewTable::append_data(const QString & data)
     m_rts_review_model->set_data_list(m_tabel_data_list);
 }
 
-void RtsReviewTable::delete_data()
+void RtsReviewTable::delete_all_data()
 {
     m_tabel_data_list.clear();
     m_rts_review_model->set_data_list(m_tabel_data_list);
 }
+
+void RtsReviewTable::delete_data(const int & index)
+{
+    if (index > -1 && index < m_tabel_data_list.count())
+    {
+        m_tabel_data_list.removeAt(index);
+        m_rts_review_model->set_data_list(m_tabel_data_list);
+    }
+}
+
+int RtsReviewTable::count() const
+{
+    return m_tabel_data_list.count();
+}
+
 }

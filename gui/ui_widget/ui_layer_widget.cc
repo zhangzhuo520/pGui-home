@@ -151,6 +151,12 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
                 solid = new QAction(QIcon(":/dfjy/images/line_style_3.png"), "solid", this);
                 dash = new QAction(QIcon(":/dfjy/images/line_style_4.png"), "dash", this);
                 dot = new QAction(QIcon(":/dfjy/images/line_style_5.png"), "dot", this);
+                none->setData(QVariant(0));
+                dashdotdot->setData(QVariant(1));
+                solid->setData(QVariant(2));
+                dash->setData(QVariant(3));
+                dot->setData(QVariant(4));
+
                 none->setCheckable(true);
                 none->setChecked(true);
                 menu->addAction(none);
@@ -181,6 +187,10 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
 //                linewihthAction4->setCheckable(true);
                 menu->addAction(linewihthAction4);
                 act->setMenu(menu);
+                for (int i = 0; i < menu->actions().count(); i ++)
+                {
+                    connect(menu->actions().at(i), SIGNAL(triggered()), this, SLOT(slot_LineStyle_action()));
+                }
 
                 for (int i = 0; i < menu->actions().count(); i ++)
                 {
@@ -384,6 +394,12 @@ void LayerWidget::slot_LineWidth_action()
 {
     QAction * action = static_cast <QAction *> (sender());
     LineWidthCommbox->setCurrentIndex(action->text().toInt() - 1);
+}
+
+void LayerWidget::slot_LineStyle_action()
+{
+    QAction* action = static_cast<QAction*> (sender());
+    slot_setLineStyle(action->data().toInt() - 1);
 }
 
 void LayerWidget::slot_setLayerStyle(int patternIdex)

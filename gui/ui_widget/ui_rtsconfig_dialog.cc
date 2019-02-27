@@ -218,14 +218,6 @@ void RtsConfigDialog::update_job_commbox(const QStringList & list)
     m_job_commbox->addItems(list);
 }
 
-void RtsConfigDialog::gds_or_job_selection()
-{
-    if (m_job_radiobutton->isChecked() && (!m_job_commbox->currentText().isEmpty()))
-    {
-                
-    }
-}
-
 void RtsConfigDialog::slotAddRts()
 {
     initRtsWidget();

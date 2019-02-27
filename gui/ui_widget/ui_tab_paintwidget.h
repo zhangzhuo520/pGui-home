@@ -23,6 +23,8 @@ public:
 
     ~TabPaintWidget();
 
+    void get_canvas_coord(double *, double *, double *, double *);
+
 public slots:
     void slot_close_tab(QString);
 
@@ -44,7 +46,6 @@ signals:
     void signal_set_line_list(const QList<LineData> &);
 
     void signal_layout_view_changed(render::RenderFrame*);
-
 private:
     void init_measure_table();
 

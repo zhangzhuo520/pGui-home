@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle("pGui");
 
+    setDockNestingEnabled(true);
+
     //setWindowFlags(Qt::FramelessWindowHint);
     initConfigDir();
 
@@ -297,6 +299,11 @@ void MainWindow::initToolbar()
  */
 void MainWindow::initPaintTab()
 {
+    QWidget* p = centralWidget();
+    if(p)
+    {
+        delete p;
+    }
     m_current_tabid = -1;
     m_center_widget = new QWidget(this);
     m_paint_tabwidget = new TabPaintWidget(this);
@@ -395,6 +402,8 @@ void MainWindow::init_rtssetup_dialog()
     m_rtssetup_dialog = new RtsConfigDialog(this);
     m_rtssetup_dialog->setGeometry(200, 200, 400, 600);
     m_rtssetup_dialog->hide();
+
+    connect(m_rtssetup_dialog, SIGNAL(signal_get_current_canvaspos()), this, SLOT(slot_update_canvas_pos()));
 
     m_rtsrecview_dialog = new RtsReviewDialog(this);
     m_rtsrecview_dialog->setGeometry(200, 200, 400, 600);
@@ -1102,7 +1111,6 @@ void MainWindow::slot_rts_running()
     RunRTS();
 }
 
-
 void MainWindow::show_checklist(QString datapath)
 {
     emit singal_append_job(datapath);
@@ -1645,6 +1653,13 @@ void MainWindow::slot_rts_image_finished()
     // m_indicator->stopAnimation();
     RtsRunAction->setEnabled(true);
     setCursor(Qt::ArrowCursor);
+}
+
+void MainWindow::slot_update_canvas_pos()
+{
+    double left, right, bottom, top;
+    m_paint_tabwidget->get_canvas_coord(&left, &right, &bottom, &top);
+    m_rtssetup_dialog->set_canvas_pos(left, right, bottom, top);
 }
 
 }

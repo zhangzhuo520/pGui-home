@@ -1,37 +1,19 @@
-#include "ui_rtsreview_dialog.h"
+#include "ui_rtsreview_widget.h"
 
 namespace ui
 {
-RtsReviewDialog::RtsReviewDialog(QWidget *parent):
-    QDialog(parent)
+RtsReviewWidget::RtsReviewWidget(QWidget *parent):
+    QWidget(parent)
 {
     init_ui();
-    init_connection();
 }
 
-RtsReviewDialog::~RtsReviewDialog()
+RtsReviewWidget::~RtsReviewWidget()
 {
 
 }
 
-void RtsReviewDialog::slot_delete_index()
-{
-    if (m_rts_history_table->currentIndex().isValid())
-    {
-        m_rts_history_table->delete_data(m_rts_history_table->currentIndex().row());
-    }
-    else
-    {
-        m_rts_history_table->delete_data(m_rts_history_table->count() - 1);
-    }
-}
-
-void RtsReviewDialog::slot_delete_all_index()
-{
-    m_rts_history_table->delete_all_data();
-}
-
-void RtsReviewDialog::init_ui()
+void RtsReviewWidget::init_ui()
 {
     QVBoxLayout *AllVlayout = new QVBoxLayout(this);
     QVBoxLayout *TopVlayout = new QVBoxLayout();
@@ -39,9 +21,7 @@ void RtsReviewDialog::init_ui()
     m_rts_history_label = new QLabel("RTS History: ", this);
     m_rts_del_button = new QPushButton("Del", this);
     m_rts_delall_button = new QPushButton("Del All", this);
-    QStringList m_history_header_list;
-    m_history_header_list << "Index" << "X" << "Y" << "Size";
-    m_rts_history_table = new RtsReviewTable(this, m_history_header_list);
+    m_rts_history_table = new QTableWidget(this);
     RtsHLayout->addWidget(m_rts_history_label);
     RtsHLayout->addWidget(new QLabel(""));
     RtsHLayout->addWidget(m_rts_del_button);
@@ -171,18 +151,10 @@ void RtsReviewDialog::init_ui()
     Bottom_four_Hlayout->setStretch(2, 1);
     Bottom_four_Hlayout->setStretch(3, 1);
     Bottom_Vlayout->addLayout(Bottom_four_Hlayout);
-    QStringList cutlint_header_list;
-    cutlint_header_list << "Index" << "Start" << "End" << "Center";
-    m_cutline_table = new RtsReviewTable(this, cutlint_header_list);
+    m_cutline_table = new QTableWidget(this);
     Bottom_Vlayout->addWidget(m_cutline_table);
     AllVlayout->addLayout(Bottom_Vlayout);
     setLayout(AllVlayout);
-}
-
-void RtsReviewDialog::init_connection()
-{
-    connect(m_rts_del_button, SIGNAL(clicked()), this, SLOT(slot_delete_index()));
-    connect(m_rts_delall_button, SIGNAL(clicked()), this, SLOT(slot_delete_all_index()));
 }
 
 }

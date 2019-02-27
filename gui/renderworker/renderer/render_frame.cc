@@ -203,9 +203,9 @@ void RenderFrame::prepare_drawing()
         set_plane_resolution(1.0);
         QTime t;
         t.start();
-        setCursor(Qt::WaitCursor);
+		setCursor(Qt::WaitCursor);
         start_render();
-        setCursor(Qt::ArrowCursor);
+		setCursor(Qt::ArrowCursor);
         ui::logger_widget(QString("finish draw  use time: %1 ms").arg(t.elapsed()));
         logger_file(QString("finish draw  use time: %1 ms").arg(t.elapsed()));
         m_redraw_required = false;
@@ -829,7 +829,10 @@ void RenderFrame::slot_box_updated()
 std::pair<bool, std::pair<QPointF, QPointF> >RenderFrame::get_snap_point(QPointF p1, int mode)
 {
     oasis::PointF p = get_trans().inverted().transF(oasis::PointF(p1.x(), m_vp.height() - 1- p1.y()));
-    oasis::float64 snap_range = 0.01;
+//    oasis::float64 snap_range = 0.01;
+
+    int snap_pixel = 10;
+    oasis::float64 snap_range = get_trans().inverted().mag() * snap_pixel;
     std::pair<bool,oasis::PointF> result = snap_point(this, p, snap_range, mode);
     if(result.first)
     {
