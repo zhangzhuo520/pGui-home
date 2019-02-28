@@ -27,7 +27,6 @@ public slots:
     void slot_delete_index();
 
     void slot_delete_all_index();
-
 private:
 
     void init_ui();

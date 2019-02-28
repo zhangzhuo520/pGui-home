@@ -207,7 +207,6 @@ void RenderFrame::prepare_drawing()
         start_render();
 		setCursor(Qt::ArrowCursor);
         ui::logger_widget(QString("finish draw  use time: %1 ms").arg(t.elapsed()));
-        logger_file(QString("finish draw  use time: %1 ms").arg(t.elapsed()));
         m_redraw_required = false;
         m_update_image = true;
     }

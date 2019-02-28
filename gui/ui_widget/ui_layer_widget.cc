@@ -588,7 +588,6 @@ void LayerWidget::getLayerData(render::RenderFrame* view)
 
         emit signal_update_layername_list(m_all_layername_list);
     }
-
     layerTree->setColumnWidth(1, 40);
 }
 
@@ -669,7 +668,6 @@ void LayerWidget::setLayerData(layerStyle layer_style)
 
     m_view->set_current_layer(index);
     m_view->set_properties(index, layerProperty);
-
 }
 
 void LayerWidget::setModelIdexImage(QImage image)

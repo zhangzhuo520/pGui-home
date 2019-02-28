@@ -27,8 +27,8 @@ void ImageWorker::save_to_image()
         for (int j = 0; j < m_image_high; j ++)
         {
             qreal color_data = m_image_data_list.at(i * m_image_width + j).toDouble();
-            QColor color(color_data, color_data, color_data);
-            m_image->setPixel(i, j, qRgb(color.red(), color.green(), color.blue()));
+            int data = ((color_data + 2) / 4) * 255;
+            m_image->setPixel(i, j, qRgb(data, data, data));
         }
     }
     QString file_path = QDir::homePath() + "/.picasso_gui/pgui_rts/AiImage.png";

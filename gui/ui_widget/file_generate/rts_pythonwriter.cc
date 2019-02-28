@@ -25,8 +25,7 @@ QString RtsPythonWriter::text_string()
     QString::number(m_canvas_right) + ", " + QString::number(m_canvas_top) + "]  # this should be canvas coordinate\n";
     QString pitch_size = "    patch_size = " + QString::number(m_pitch_size) + "\n";
     QString input_layout_string = input_layout();
-    QString get_layout_data = gds_layout();
-
+    QString get_layout_data_string = gds_layout();
     QString all_data_string =
             "# ---------------RTS job setup -----------------------\n"
             "''' RTS setup'''\n"
@@ -79,19 +78,8 @@ QString RtsPythonWriter::text_string()
   "\n"
             "    outlayout = pu.get_output_layout_handle('outputlayout')\n"
   "\n"
-            "    # read in layer from pre-defined layout in initflow\n"
-            "    a = mainlayout.read(0, 0).merge()\n"
-            "    b = mainlayout.read(2, 0).merge()\n"
-            "    c = mainlayout.read(3, 0).merge()\n"
-            "    ## boolean for main\n"
-            "    main = (a + 2) + (b-3) - c & b + a | b + a ^ b\n"
-  "\n"
-            "    sraf = mainlayout.read(2, 0).merge()\n"
-  "\n"
-            "    srif = mainlayout.read(3, 0).merge()\n"
-  "\n"
-            "    dummy = mainlayout.read(4, 0).merge()\n"
-  "\n"
++           get_layout_data_string
++ "\n"
             "    # do simulation\n"
             "    simresults = pu.simulate({'main': main, 'sraf': sraf, 'srif': srif, 'dummy': dummy}, ['Nominal_Condition'], ['aerial_image', 'aerial_contour', 'resist_image', 'resist_contour'])\n"
             "    resist_contour = simresults['Nominal_Condition']['resist_contour']\n"
@@ -148,7 +136,7 @@ void RtsPythonWriter::set_canvas_pos(const double & left, const double & right, 
     m_canvas_right = right;
     m_canvas_bottom = bottom;
     m_canvas_top = top;
-    m_pitch_size = m_canvas_right - m_canvas_right;
+    m_pitch_size = m_canvas_right - m_canvas_letf;
     if (m_pitch_size > 30)
     {
         m_pitch_size = 30;
@@ -165,8 +153,9 @@ QString RtsPythonWriter::input_gds()
     QStringList AllInputList;
     for (int i = 0; i < m_mask_vector.count(); i ++)
     {
-        for (int j = 0; j < m_mask_vector.at(i).mask_layerdata.count(); i ++)
+        for (int j = 0; j < m_mask_vector.at(i).mask_layerdata.count(); j ++)
         {
+
             QString  string = m_mask_vector.at(i).mask_layerdata.at(j).layer_data;
             QStringList templist = string.split(QRegExp("\\s+|\t"), QString::SkipEmptyParts);
             if (templist.count() > 1)
@@ -175,14 +164,17 @@ QString RtsPythonWriter::input_gds()
             }
         }
     }
-
+    if (AllInputList.count() < 1)
+    {
+        qDebug() << "InputList is Empty!";
+        return QString();
+    }
     QString gds_string = AllInputList.at(0);
     valid_gds_list.append(gds_string);
-
     for(int i = 0; i < AllInputList.count(); i ++)
     {
         bool is_exits = false;
-        for (int j = 0; j < valid_gds_list.count(); i ++)
+        for (int j = 0; j < valid_gds_list.count(); j ++)
         {
             if (AllInputList.at(i) == valid_gds_list.at(j))
             {
@@ -194,13 +186,11 @@ QString RtsPythonWriter::input_gds()
             valid_gds_list.append(AllInputList.at(i));
         }
     }
-
     QString gds;
     for (int i = 0; i < valid_gds_list.count(); i ++)
     {
         gds += "    input_gds_" + QString::number(i) + " = " + "'" + valid_gds_list.at(i) + "'" + "\n";
     }
-
     return gds;
 }
 
@@ -217,34 +207,47 @@ QString RtsPythonWriter::input_layout()
 QString RtsPythonWriter::gds_layout()
 {
     QString gds_string =  "    # read in layer from pre-defined layout in initflow\n";
+    QString layout_data_string;
     for (int i = 0; i < m_mask_vector.count(); i ++)
     {
+        layout_data_string.clear();
         QString mask_name = m_mask_vector.at(i).mask_name;
-        QString boolean = m_mask_vector.at(i).boolean;
-        for (int j = 0; j < m_mask_vector.at(i).mask_layerdata.count(); i ++)
+        QString boolean = QString("    %1 = %2\n").arg(mask_name).arg(m_mask_vector.at(i).boolean);
+        if (1 == m_mask_vector.at(i).mask_layerdata.count())
         {
-            QStringList templist = m_mask_vector.at(i).mask_layerdata.at(j).layer_data.split(QRegExp("\\s+|\t"), QString::SkipEmptyParts);
-            if (templist.count() > 1)
-            {
-                QString s = templist.at(1);
-                qDebug() << s;
-            }
-            QString  data_string = m_mask_vector.at(i).mask_layerdata.at(j).layer_data;
-            QString  alias_string = m_mask_vector.at(i).mask_layerdata.at(j).alias;
+                QStringList templist = m_mask_vector.at(i).mask_layerdata.at(0).layer_data.split(QRegExp("\\s+|\t"), QString::SkipEmptyParts);
+                if (templist.count() > 1)
+                {
+                    QStringList list = templist.at(1).split("/");
+                    if (list.count() > 1)
+                    {
+                        int layer_data = list.at(0).toInt();
+                        int layer_type = list.at(1).toInt();
+                        layout_data_string += QString("    %1 = mainlayout.read(%2, %3).merge()\n").arg(mask_name).arg(layer_data).arg(layer_type);
+                    }
+                }
         }
+        else if (m_mask_vector.at(i).mask_layerdata.count() > 1)
+        {
+            for (int j = 0; j < m_mask_vector.at(i).mask_layerdata.count(); j ++)
+            {
+                QStringList templist = m_mask_vector.at(i).mask_layerdata.at(j).layer_data.split(QRegExp("\\s+|\t"), QString::SkipEmptyParts);
+                QString  alias_string = m_mask_vector.at(i).mask_layerdata.at(j).alias;
+                if (templist.count() > 1)
+                {
+                    QStringList list = templist.at(1).split("/");
+                    if (list.count() > 1)
+                    {
+                        int layer_data = list.at(0).toInt();
+                        int layer_type = list.at(1).toInt();
+                        layout_data_string += QString("    %1 = mainlayout.read(%2, %3).merge()\n").arg(alias_string).arg(layer_data).arg(layer_type);
+                    }
+                }
+            }
+            layout_data_string += boolean;
+        }
+        gds_string += layout_data_string;
     }
-
-//    "    a = mainlayout.read(0, 0).merge()\n"
-//    "    b = mainlayout.read(2, 0).merge()\n"
-//    "    c = mainlayout.read(3, 0).merge()\n"
-//    "    ## boolean for main\n"
-//    "    main = (a + 2) + (b-3) - c & b + a | b + a ^ b\n"
-//"\n"
-//    "    sraf = mainlayout.read(2, 0).merge()\n"
-//"\n"
-//    "    srif = mainlayout.read(3, 0).merge()\n"
-//"\n"
-//    "    dummy = mainlayout.read(4, 0).merge()\n"
     return gds_string;
 }
 

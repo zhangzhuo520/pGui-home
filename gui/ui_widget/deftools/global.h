@@ -11,20 +11,6 @@
 #include "../../qt_logger/pgui_log_global.h"
 namespace ui {
 
-#ifndef TEST_DEBUG
-#define TEST_DEBUG  qDebug()<<"[FILE:"<<__FILE__<<",LINE"<<__LINE__<<",FUNC"<<__FUNCTION__<<"]";
-#endif
-
-#ifndef TIME_DEBUG
-#define TIME_DEBUG qDebug() << QDateTime::currentDateTime().toString("yyyy-MM-dd") +" "+QDateTime::currentDateTime().toString("hh:mm:ss.zzz") + "ms"<<":"\
-    <<"[" << "FILE:"<<__FILE__<<",LINE("<<__LINE__<<"),FUNC" <<__FUNCTION__<< "]";
-#endif
-
-
-#ifndef NeedContinue
-#define NeedContinue  qDebug()<<"[FILE:"<<__FILE__<<",LINE"<<__LINE__<<",FUNC"<<__FUNCTION__<<"] Donn't finished!";
-#endif
-
 class Global
 {
 public:

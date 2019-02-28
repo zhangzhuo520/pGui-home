@@ -22,6 +22,7 @@
 #include "../fileparsing/yamlparsing.h"
 #include "../qt_logger/pgui_log_global.h"
 #include "../file_generate/rts_pythonwriter.h"
+#include "../deftools/cmessagebox.h"
 
 const int LableWidth = 140;
 const int LableTitilWidth = 50;
@@ -90,7 +91,7 @@ signals:
 private:
     void get_model(const QString &);
 
-    void save_setup_data();
+    bool save_setup_data();
 
     void data_to_file();
 

@@ -338,9 +338,12 @@ void RtsConfigDialog::slot_gds_radiobutton(bool ischecked)
 
 void RtsConfigDialog::slot_ok_button()
 {
-      save_setup_data();
-      data_to_file();
-      this->close();
+    if (false == save_setup_data())
+    {
+        return;
+    }
+    data_to_file();
+    this->close();
 }
 
 void RtsConfigDialog::slot_cancel_button()
@@ -349,7 +352,10 @@ void RtsConfigDialog::slot_cancel_button()
 
 void RtsConfigDialog::slot_apply_button()
 {
-    save_setup_data();
+    if (false == save_setup_data())
+    {
+        return;
+    }
     data_to_file();
 }
 
@@ -399,13 +405,14 @@ void RtsConfigDialog::get_model(const QString& jobpath)
     m_sqlmannager = NULL;
 }
 
-void RtsConfigDialog::save_setup_data()
+bool RtsConfigDialog::save_setup_data()
 {
     m_setup_data.model_path = m_model_commbox->currentText();
     m_setup_data.binary_file = m_binarypath_commbox->currentText();
     m_setup_data.delta_defocus = m_defocus_commbox->currentText();
     m_setup_data.delta_dose = m_deltadose_edit->text();
     m_setup_data.mask_bias = m_maskbias_eidt->text();
+    m_setup_data.mask_table_data.clear();
 
     if (m_usecpu_radiobutton->isChecked())
     {
@@ -415,22 +422,42 @@ void RtsConfigDialog::save_setup_data()
     {
         m_setup_data.use_gpu_or_cup = "gpu";
     }
-
     for (int i = 0; i < m_mask_tab->count(); i ++)
     {
         QStringList alisa_list = m_mask_tab->get_alisa_list(i);
         QStringList data_list = m_mask_tab->get_layerdata_list(i);
-        for(int j = 0; j < alisa_list.count(); j ++)
-        {
-            m_layer_data.alias = alisa_list.at(i);
-            m_layer_data.layer_data = data_list.at(i);
-            m_mask_data.mask_layerdata.append(m_layer_data);
-        }
         m_mask_data.mask_name = m_mask_tab->tabText(i);
         m_mask_data.boolean = m_mask_tab->get_boolean(i);
+
+        if (!data_list.isEmpty())
+        {
+            for(int j = 0; j < data_list.count(); j ++)
+            {
+                m_layer_data.alias = alisa_list.at(j);
+                m_layer_data.layer_data = data_list.at(j);
+                m_mask_data.mask_layerdata.append(m_layer_data);
+            }
+        }
+        else
+        {
+            m_mask_data.mask_layerdata.clear();
+        }
+
+        if (m_mask_data.boolean.isEmpty() && (data_list.count() > 1))
+        {
+            QString waring_string = QString("%1 No input boolean!").arg(m_mask_data.mask_name);
+            showWarning(this, "Waring", waring_string);
+            return false;
+        }
         m_setup_data.mask_table_data.append(m_mask_data);
+        m_mask_data.mask_layerdata.clear();
+    }
+    for (int i = 0; i < m_setup_data.mask_table_data.count(); i ++)
+    {
+
     }
     emit signal_get_current_canvaspos();
+    return true;
 }
 
 void RtsConfigDialog::data_to_file()

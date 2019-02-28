@@ -19,6 +19,7 @@ include(deftools/deftools.pri)
 include(log4qt/log4qt.pri)
 include(fileparsing/file_parsing.pri)
 include(rts_setup/rts_setup.pri)
+include(file_generate/file_generate.pri)
 
 SOURCES += main.cc\
     ui_mainwindow.cc \

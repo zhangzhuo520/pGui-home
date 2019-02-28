@@ -41,7 +41,6 @@ SET(PicathoGui_SRCS
     deftools/framelesshelper.cc
     deftools/global.cc
     deftools/iconhelper.cc
-    deftools/delegate.cc
     deftools/showcpumemory.cc
     delegate/ui_rtsmask_delegate.cc
     db/sqlquery.cc
@@ -89,7 +88,6 @@ SET(PicathoGui_HEADERS
     deftools/iconhelper.h
     deftools/defcontrols.h
     deftools/datastruct.h
-    deftools/delegate.h
     deftools/global.h
     deftools/showcpumemory.h
     delegate/ui_rtsmask_delegate.h
@@ -138,7 +136,6 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     deftools/defcontrols.h
     deftools/iconhelper.h
     deftools/showcpumemory.h
-    deftools/delegate.h
     delegate/ui_rtsmask_delegate.h
     db/sqlmanager.h
     model/ui_measuretable_model.h

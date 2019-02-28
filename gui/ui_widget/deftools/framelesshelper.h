@@ -125,7 +125,6 @@ private:
 class FramelessHelper : public QObject
 {
     Q_OBJECT
-
 public:
     explicit FramelessHelper(QObject *parent = 0);
     ~FramelessHelper();
