@@ -6,9 +6,9 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/gui/qt_logger)
 
 SET(QT_USE_SQL TRUE)
 
-SET(PicathoGui_RESOURCES images.qrc)
+SET(PanGenGUI_RESOURCES images.qrc)
 
-SET(PicathoGui_SRCS
+SET(PanGenGUI_SRCS
     main.cc
     ui_mainwindow.cc
     ui_checklist.cc
@@ -57,7 +57,7 @@ SET(PicathoGui_SRCS
     model/ui_fileproject_model.cc)
 
 
-SET(PicathoGui_HEADERS
+SET(PanGenGUI_HEADERS
     ui_mainwindow.h
     ui_checklist.h
     ui_defgroup.h
@@ -104,7 +104,7 @@ SET(PicathoGui_HEADERS
     model/ui_universal_model.h
     model/ui_fileproject_model.h)
 
-QT4_WRAP_CPP(PicathoGui_MOCS
+QT4_WRAP_CPP(PanGenGUI_MOCS
     ui_mainwindow.h
     ui_scale_frame.h
     ui_gaugetable.h
@@ -146,16 +146,16 @@ QT4_WRAP_CPP(PicathoGui_MOCS
     model/ui_universal_model.h
     model/ui_sqltabel_model.h)
 
-QT4_ADD_RESOURCES(PicathoGui_RESOURCES_RCC ${PicathoGui_RESOURCES})
+QT4_ADD_RESOURCES(PanGenGUI_RESOURCES_RCC ${PanGenGUI_RESOURCES})
 
 ADD_DEFINITIONS(${QT_DEFINITIONS})
 
-ADD_EXECUTABLE(PicathoGui
-    ${PicathoGui_HEADERS}
-    ${PicathoGui_RESOURCES}
-    ${PicathoGui_RESOURCES_RCC}
-    ${PicathoGui_SRCS}
-    ${PicathoGui_MOCS})
+ADD_EXECUTABLE(PanGenGUI
+    ${PanGenGUI_HEADERS}
+    ${PanGenGUI_RESOURCES}
+    ${PanGenGUI_RESOURCES_RCC}
+    ${PanGenGUI_SRCS}
+    ${PanGenGUI_MOCS})
 
-TARGET_LINK_LIBRARIES(PicathoGui renderer oasis_api sysutil qt_logger ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(PanGenGUI renderer oasis_api sysutil qt_logger ${QT_LIBRARIES})
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

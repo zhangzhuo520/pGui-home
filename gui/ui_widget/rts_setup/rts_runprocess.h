@@ -19,10 +19,8 @@ public:
     ~RtsRunProcess();
 
     void run();
-
 signals:
     void signal_rtsrun_finished();
-    void signal_rtsrun_start();
 
 public slots:
     void slot_process_start();

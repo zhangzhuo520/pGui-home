@@ -23,11 +23,15 @@ public:
 
     void set_canvas_pos(const double&, const double&, const double&, const double&);
 private:
-    double m_canvas_letf;
-    double m_canvas_right;
-    double m_canvas_top;
-    double m_canvas_bottom;
-    double m_pitch_size;
+    void create_pframe_file();
+
+    void create_run_file();
+
+    int m_canvas_letf;
+    int m_canvas_right;
+    int m_canvas_top;
+    int m_canvas_bottom;
+    int m_pitch_size;
 
     QString text_string();
     QString input_gds();

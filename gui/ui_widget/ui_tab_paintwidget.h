@@ -15,9 +15,11 @@ public:
 
     ScaleFrame *get_scaleframe(int);
 
+    QVector<render::RenderFrame*> get_render_frame_list();
+
     void append_canvas(QString);
 
-    void set_active_widget(QString);
+    void set_active_widget(render::RenderFrame*);
 
     void update_measuretable_data();
 
@@ -26,17 +28,13 @@ public:
     void get_canvas_coord(double *, double *, double *, double *);
 
 public slots:
-    void slot_close_tab(QString);
+    void slot_close_tab(int index);
 
     ScaleFrame* creat_canvas();
 
     void slot_show_measure_table();
 
     void slot_set_line_list(const QList <LineData>&);
-
-//    void load_layout_view(render::LayoutView*, const QString &, bool);
-
-//    void add_layout_view(render::LayoutView* lv, bool add_layout_view);
 
     void slot_layout_view_changed(render::RenderFrame* );
 

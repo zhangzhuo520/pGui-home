@@ -90,7 +90,15 @@ RenderFrame::~RenderFrame()
 
     for(int i = 0; i < layout_views_size(); i++)
     {
-        m_layout_views[i]->set_widget(0);
+        std::vector<LayoutViewProxy>& proxys_vec = m_layout_views[i]->m_proxys;
+        for(size_t j  = 0; j < proxys_vec.size(); j++)
+        {
+            if(proxys_vec[j].frame() == this)
+            {
+                LayoutView* lv = proxys_vec[j].m_layout_view;
+                lv->erase_proxy(proxys_vec[j]);
+            }
+        }
     }
 }
 
@@ -150,7 +158,8 @@ void RenderFrame::start_render()
     {
         if((*it)->visible())
         {
-            render::LayoutView* lv = m_layout_views[(*it)->view_index()];
+//            render::LayoutView* lv = m_layout_views[(*it)->view_index()];
+            render::LayoutViewProxy lv = m_layout_views[(*it)->view_index()];
             oasis::float64 dbu = lv->get_dbu();
 
             oasis::OasisTrans dbu_trans(false, 0.0, dbu, oasis::PointF(0.0, 0.0));
@@ -207,6 +216,7 @@ void RenderFrame::prepare_drawing()
         start_render();
 		setCursor(Qt::ArrowCursor);
         ui::logger_widget(QString("finish draw  use time: %1 ms").arg(t.elapsed()));
+        logger_file(QString("finish draw  use time: %1 ms").arg(t.elapsed()));
         m_redraw_required = false;
         m_update_image = true;
     }
@@ -561,19 +571,13 @@ void RenderFrame::zoom_center(double x, double y)
     }
 }
 
-void RenderFrame::add_layout_view(LayoutView *view)
-{
-    add_layout_view(view, true);
-}
-
-
 void RenderFrame::detach_layout_view(LayoutView* lv)
 {
     int index = index_of_layout_views(lv);
     erase_layout_view(index);
 }
 
-render::LayoutView* RenderFrame::load_layout_view(render::LayoutView* lv, std::string prep_dir, bool add_layout_view)
+void RenderFrame::load_layout_view(render::LayoutView* lv, std::string prep_dir, bool add_layout_view)
 {
     QTime t;
     t.start();
@@ -583,7 +587,6 @@ render::LayoutView* RenderFrame::load_layout_view(render::LayoutView* lv, std::s
     oasis::OasisLayout* layout = new oasis::OasisLayout(file_name);
 
     lv->set_layout(layout);
-    lv->set_widget(this);
 
     try
     {
@@ -598,8 +601,6 @@ render::LayoutView* RenderFrame::load_layout_view(render::LayoutView* lv, std::s
         parser.import_file(layout);
         lv->set_layout(layout);
     }
-
-    lv->set_valid(true);
 
     ui::logger_widget(QString("preprocess: %1 use time: %2 ms ").arg(file_name.c_str()).arg(t.elapsed()));
     logger_file(QString("preprocess: %1 use time: %2 ms ").arg(file_name.c_str()).arg(t.elapsed()));
@@ -651,13 +652,10 @@ render::LayoutView* RenderFrame::load_layout_view(render::LayoutView* lv, std::s
 
     update_view_ops();
     emit signal_layout_view_changed(this);
-    return lv;
 }
 
-render::LayoutView* RenderFrame::add_layout_view(render::LayoutView* lv, bool add_layout_view)
+void  RenderFrame::add_layout_view(render::LayoutView* lv, bool add_layout_view)
 {
-    lv->set_widget(this);
-
     if(!add_layout_view)
     {
         clear_layout_view();
@@ -707,18 +705,17 @@ render::LayoutView* RenderFrame::add_layout_view(render::LayoutView* lv, bool ad
 
     update_view_ops();
     emit signal_layout_view_changed(this);
-    return lv;
 }
 
-LayoutView* RenderFrame::get_layout_view(int index) const
+LayoutView* RenderFrame::get_layout_view(int index)
 {
     if(index > 0 && index < layout_views_size())
     {
-        return m_layout_views[index];
+        return m_layout_views[index].m_layout_view;
     }
     else
     {
-        return m_layout_views[0];
+        return m_layout_views[0].m_layout_view;
     }
 }
 
@@ -726,9 +723,11 @@ void RenderFrame::set_layout_view(render::LayoutView* lv, int lv_index)
 {
     while(lv_index >= layout_views_size())
     {
-        m_layout_views.push_back((LayoutView*) 0);
+        m_layout_views.push_back(LayoutViewProxy());
     }
-    m_layout_views[lv_index] = lv;
+    LayoutViewProxy proxy(lv, this);
+    lv->m_proxys.push_back(proxy);
+    m_layout_views[lv_index] = proxy;
 }
 
 void RenderFrame::create_and_initial_layer_properties(int lv_index, std::set<std::pair<int,int> >& layers)
@@ -771,8 +770,10 @@ void RenderFrame::erase_layout_view(int index)
         return ;
     }
 
-    std::vector<render::LayoutView*>::iterator it = m_layout_views.begin() + index;
-    (*it)->set_widget(0);
+    std::vector<render::LayoutViewProxy>::iterator it = m_layout_views.begin() + index;
+    render::LayoutViewProxy proxy= *it;
+    render::LayoutView* lv = proxy.m_layout_view;
+    lv->erase_proxy(proxy);
     m_layout_views.erase(it);
 
     for(size_t i = 0; i < layers_size(); i++)
@@ -790,14 +791,9 @@ void RenderFrame::erase_layout_view(int index)
         }
     }
 
-    if(m_layout_views.size() == 1)
-    {
-        m_layout_views[0]->set_enable_attach(true);
-    }
-
-    emit signal_layout_view_changed(this);
     update_view_ops();
     update();
+    emit signal_layout_view_changed(this);
 }
 
 void RenderFrame::clear_layout_view()
@@ -886,7 +882,8 @@ void RenderFrame::set_window_max_size(double view_range)
 int RenderFrame::index_of_layout_views(LayoutView* lv)
 {
     int result = 0;
-    for (std::vector<LayoutView*>::iterator it = m_layout_views.begin(); it != m_layout_views.end(); it++, result++)
+//    for (std::vector<LayoutView*>::iterator it = m_layout_views.begin(); it != m_layout_views.end(); it++, result++)
+    for (std::vector<LayoutViewProxy>::iterator it = m_layout_views.begin(); it != m_layout_views.end(); it++, result++)
     {
         if((*it) ==  lv)
         {
@@ -929,6 +926,34 @@ void RenderFrame::list_to_tree_index(int index, int &parent_index, int& child_in
             return ;
         }
     }
+}
+
+double RenderFrame::get_view_range() const
+{
+    oasis::BoxF box = m_vp.box();
+    return std::min(box.width(), box.height());
+}
+
+std::vector<render::LayoutView*> RenderFrame::get_layout_views_list() const
+{
+    std::vector<render::LayoutView*> result;
+    for(size_t i = 0; i < m_layout_views.size(); i++)
+    {
+        result.push_back(m_layout_views[i].m_layout_view);
+    }
+
+    return result;
+}
+
+void RenderFrame::set_background_color(QColor color)
+{
+    int red = color.red();
+    int green = color.green();
+    int blue = color.blue();
+    int sum_color =  red << 16 | green << 8 | blue;
+    m_background_color = (unsigned int) sum_color;
+    m_redraw_required = true;
+    update();
 }
 
 }

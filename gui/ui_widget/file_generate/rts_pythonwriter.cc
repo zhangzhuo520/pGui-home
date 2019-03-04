@@ -32,8 +32,8 @@ QString RtsPythonWriter::text_string()
             "import re\n"
             "import os\n"
             "import gc\n"
-            "import picatho.app.sutil as psu\n"
-            "import picatho.app.util as pu\n"
+            "import pangen.app.sutil as psu\n"
+            "import pangen.app.util as pu\n"
 
             "def get_conditions():\n"
             "    '''Prepare te optimization conditions for concrete application commands'''\n"
@@ -104,10 +104,11 @@ QString RtsPythonWriter::text_string()
     return all_data_string;
 }
 
-
 void RtsPythonWriter::save_to_file()
 {
-    QString rts_python_path = QDir::homePath() + "/.picasso_gui" + "/pgui_rts";
+    create_pframe_file();
+    create_run_file();
+    QString rts_python_path = QDir::homePath() + "/.pangen_gui" + "/pgui_rts";
     QString file_data = text_string();
     QDir dir(rts_python_path);
 
@@ -147,6 +148,80 @@ void RtsPythonWriter::set_canvas_pos(const double & left, const double & right, 
     }
 }
 
+void RtsPythonWriter::create_pframe_file()
+{
+    QString rts_python_path = QDir::homePath() + "/.pangen_gui" + "/pgui_rts";
+    QString file_data =
+            "import pangen.system as psys\n"\
+            "\n"\
+            "def mainflow():\n"\
+            "    options = {}\n"\
+            "    options['python_file'] = \"rts.py\"\n"\
+            "    options['use_gpu'] = \"0\"\n"\
+            "    options['preprocess_thread_count'] = 2\n"\
+            "    psys.execute_session('optimization', mode = \"singlethread\", session_name = 'rts', options = options)\n"\
+            "\n"\
+            "\n"\
+            "\n"\
+            "if __name__ == \"__main__\":\n"\
+            "   psys.info('job beginning >>>>>>>>>>>>>>>>>')\n"\
+            "   mainflow()\n"\
+            "   pass\n";
+    QDir dir(rts_python_path);
+
+    if (!dir.exists())
+    {
+        if(!dir.mkpath(rts_python_path))
+        {
+            qDebug() << "make rts_python_path error !";
+            return;
+        }
+    }
+
+    QString filePath = rts_python_path + "/pframe.py";
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return;
+    QTextStream in(&file);
+    in << file_data << '\n';
+    file.flush();
+    file.close();
+
+
+}
+
+void RtsPythonWriter::create_run_file()
+{
+    QString rts_python_path = QDir::homePath() + "/.pangen_gui" + "/pgui_rts";
+    QString file_data =
+        "#!/bin/bash\n"\
+        "source ~/.bash_profile\n"
+        "#ulimit -c unlimited\n"
+        "pangenpath='/home/zhuozhang/work/pangen/build/script'\n"
+        "export PYTHONPATH=$PYTHONPATH:$pangenpath\n"
+        "/home/zhuozhang/work/pangen/build/bin/pangen -script pframe.py;\n";
+    QDir dir(rts_python_path);
+
+    if (!dir.exists())
+    {
+        if(!dir.mkpath(rts_python_path))
+        {
+            qDebug() << "make rts_python_path error !";
+            return;
+        }
+    }
+
+    QString filePath = rts_python_path + "/run.sh";
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return;
+    QTextStream in(&file);
+    in << file_data << '\n';
+    file.flush();
+    file.close();
+
+
+}
 
 QString RtsPythonWriter::input_gds()
 {
@@ -162,11 +237,15 @@ QString RtsPythonWriter::input_gds()
             {
                 AllInputList.append(templist.at(0));
             }
+            else
+            {
+                qDebug() << "Tabel layer data is Empty ! data: " << templist;
+            }
         }
     }
     if (AllInputList.count() < 1)
     {
-        qDebug() << "InputList is Empty!";
+        qDebug() << "InputList is Empty!" << AllInputList;
         return QString();
     }
     QString gds_string = AllInputList.at(0);

@@ -156,7 +156,7 @@ public:
                       "background-color: rgba(150, 150, 150);}");\
         setText(text);
     }
-  ~PushButton(){}
+//  ~PushButton(){}
 };
 
 class SearchButton :public QPushButton
@@ -190,7 +190,7 @@ public:
         setText(text);
         setMouseTracking(true);
     }
-    ~SearchButton();
+//    ~SearchButton();
 protected:
     virtual void enterEvent(QEvent *);
 };
@@ -237,7 +237,7 @@ protected:
         e->accept();
     }
 
-  ~MenuButton(){}
+//  ~MenuButton(){}
 };
 
 class DockTitleBar : public QWidget

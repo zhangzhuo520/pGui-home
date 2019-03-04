@@ -38,6 +38,8 @@ public:
     void calcu_defecttext_point();
     void draw_point_size();
     void repaint_image();
+    void is_show_axis(bool);
+
     const QString &get_file_name() const
     {
         return m_filename;
@@ -48,7 +50,8 @@ public:
         m_filename = file_name;
     }
 
-
+    QVector<QString> get_file_name_list();
+    double get_view_range() const;
 
     render::RenderFrame* getRenderFrame();
     const QList<LineData> & get_measure_line_list();
@@ -87,6 +90,8 @@ public slots:
     void slot_clear_gauge();
     void slot_update_mesuretable();
     void slot_layout_view_changed(render::RenderFrame*);
+    void slot_set_background_color(QColor);
+
 protected:
     void paintEvent(QPaintEvent *);
     void resizeEvent(QResizeEvent *);
@@ -107,11 +112,7 @@ private:
     QString m_filename;
     double m_xratio;
     double m_yratio;
-//    double m_xratio_prev;
-//    double m_yratio_prev;
-//    double m_point_x;
-//    double m_point_y;
-//    QString m_size_text;
+
     bool m_isdraw_pointtext;
     QImage *m_image;
     QPixmap m_cursor_pixmap;
@@ -130,6 +131,8 @@ private:
     render::RenderFrame *m_render_frame;
 
     static int overlay_times;
+
+    bool m_axis_falg;
 };
 }
 #endif // SCALEFRAME_H

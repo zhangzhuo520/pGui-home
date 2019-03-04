@@ -16,7 +16,8 @@ ScaleFrame::ScaleFrame(QWidget *parent) :
     m_image_width(parent->width()),
     m_image_heigth(parent->height()),
     m_current_posX(0),
-    m_current_posY(0)
+    m_current_posY(0),
+    m_axis_falg(false)
 {
     m_hlayout = new QHBoxLayout(this);
     m_hlayout->setContentsMargins(xSpace, ySpace, 0, 0);
@@ -888,6 +889,19 @@ void ScaleFrame::repaint_image()
     m_paint_widget->repaint_image(m_xstart, m_xend, m_ystart, m_yend);
 }
 
+void ScaleFrame::is_show_axis(bool flag)
+{
+    m_axis_falg = flag;
+    if (flag)
+    {
+        layout()->setContentsMargins(20, 20, 0, 0);
+    }
+    else
+    {
+        layout()->setContentsMargins(0, 0, 0, 0);
+    }
+}
+
 void ScaleFrame::slot_set_pen_width(QString width)
 {
     m_paint_widget->setWidth(width);
@@ -1006,9 +1020,11 @@ void ScaleFrame::slot_set_painter_style(Global::PaintTool paintStyle)
 void ScaleFrame::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
-    QPainter painter(this);
-    painter.drawPixmap(0, 0, m_cursor_pixmap);
-
+    if (m_axis_falg)
+    {
+        QPainter painter(this);
+        painter.drawPixmap(0, 0, m_cursor_pixmap);
+    }
 }
 
 void ScaleFrame::resizeEvent(QResizeEvent *e)
@@ -1063,11 +1079,6 @@ double ScaleFrame::get_window_max_size()
     return m_render_frame->get_window_max_size();
 }
 
-//void ScaleFrame::disable_draw_defects()
-//{
-//    m_paint_widget->disable_draw_defects();
-//}
-
 void ScaleFrame::slot_layout_view_changed(render::RenderFrame* frame)
 {
     if(frame->layout_views_size() == 1)
@@ -1081,7 +1092,6 @@ void ScaleFrame::slot_layout_view_changed(render::RenderFrame* frame)
     emit signal_layout_view_changed(frame);
 }
 
-
 void ScaleFrame::closeEvent(QCloseEvent *e)
 {
     qDebug() << "close ScaleFrame";
@@ -1089,6 +1099,29 @@ void ScaleFrame::closeEvent(QCloseEvent *e)
     e->ignore();
 }
 
+QVector<QString> ScaleFrame::get_file_name_list()
+{
+    QVector<QString> result;
+    if(m_render_frame)
+    {
+        for(int i = 0; i < m_render_frame->layout_views_size(); i++)
+        {
+            QString filename = QString::fromStdString(m_render_frame->get_layout_view(i)->file_name());
+            result.append(filename);
+        }
+    }
+    return result;
+}
+
+double ScaleFrame::get_view_range() const
+{
+    return m_render_frame->get_view_range();
+}
+
+void ScaleFrame::slot_set_background_color(QColor color)
+{
+    m_render_frame->set_background_color(color);
+}
 
 }
 

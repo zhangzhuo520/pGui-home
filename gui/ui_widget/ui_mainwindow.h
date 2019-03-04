@@ -73,7 +73,7 @@ public:
     void writeTestingConfig();
     void addHistoryAction(QString);
     void centerWidget_boundingSignal(int);
-    bool isCavseExist(QString);
+    bool isCanvasExist(FileProjectWidget::layout_view_iter);
     void showCoordinate();
     void DefectReview();
     void RTSSetup();
@@ -87,7 +87,7 @@ protected:
     void resizeEvent(QResizeEvent *);
 
 signals:
-    void singal_append_job(QString);
+    void signal_append_job(QString);
     void signal_addFile(QString, bool);
     void signal_defgroupUpdata(QModelIndex *);
     void signal_defectsUpdata(QModelIndex *);
@@ -97,11 +97,14 @@ signals:
     void signal_getLayerData(render::RenderFrame*, QString);
     void signal_close_job(QString);
 
+    void signal_set_background_color(QColor);
+
 private slots:
     //Menu Action
     void slot_openFile();
     void slot_saveFile();
-    void slot_closeFile(QString);
+    void slot_closeJob(QString, QString);
+    void slot_close_file(QString);
     void slot_openREV();
     void slot_open_gauge();
     void slot_coverage_job();
@@ -127,7 +130,7 @@ private slots:
     void slot_showDefects(QModelIndex, int);
     void slot_showState(QString);
     void slot_changePenWidth(QString);
-    void ShowColorDialog();
+    void slot_set_pen_color();
     void slot_mouseAction();
     void slot_addHistoryAction();
     void slot_penAction();
@@ -154,9 +157,14 @@ private slots:
     void slot_update_layername_list(const QStringList&);
 
     void slot_rtsrun_finished();
-    void slot_rtsrun_start();
+
     void slot_rts_image_finished();
     void slot_update_canvas_pos();
+
+    void slot_append_file(int);
+    void slot_select_append_file();
+
+    void slot_change_background_color();
 
 private:
     void initTitleBar();
@@ -194,7 +202,6 @@ private:
     void add_file(QString, bool);
 
     void update_rts_job_commbox(const QStringList &);
-
 
     DockWidget *fileDockWidget;
     FileProjectWidget *fileWidget;
@@ -238,7 +245,8 @@ private:
     QLabel *distanceLableNum;
     QLabel *stateLable;
 
-    PushButton *colorBtn;
+    PushButton *bgColorBtn;
+    PushButton *penColorBtn;
     PushButton *clearBtn;
     Commbox *penWidthCombox;
 
@@ -283,6 +291,13 @@ private:
     RtsRunProcess * m_run_process;
     //    QProgressIndicator *m_indicator;
     RtsImageParsing *m_imagedata_parising;
+    QProgressIndicator *m_indicator;
+
+    QDialog* m_select_file_dialog;
+    QLabel* m_file_label;
+    QComboBox* m_file_box;
+    QPushButton* m_select_file_okbutton;
+    QPushButton* m_select_file_cancelbutton;
 };
 }
 #endif // MAINWINDOW_H

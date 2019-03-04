@@ -267,6 +267,7 @@ void SettingDialog::slot_ok_button()
 TableView::TableView(QWidget *parent)
 {
     setParent(parent);
+    setMouseTracking(true);
 }
 
 TableView::~TableView()
@@ -282,6 +283,7 @@ void TableView::double_click_item(const QModelIndex & index)
 {
     emit doubleClicked(index);
 }
+
 
 TreeView::TreeView(QWidget *parent)
 {
@@ -304,9 +306,9 @@ void SearchButton::enterEvent(QEvent *e)
 
 }
 
-SearchButton::~SearchButton()
-{
-}
+//SearchButton::~SearchButton()
+//{
+//}
 
 QProgressIndicator::QProgressIndicator(QWidget* parent)
     : QWidget(parent),

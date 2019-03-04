@@ -19,7 +19,7 @@ void ImageWorker::save_to_image()
     m_image = new QImage(QSize(m_image_width, m_image_high), QImage::Format_RGB32);
     if ((m_image_width * m_image_high) != m_image_data_list.count())
     {
-        qDebug() << "Image data pixel number Error !";
+        qDebug() << QString("Image_width: %1, Image_high: %2, Allpixel: %3, Image data pixel number Error !").arg(m_image_width).arg(m_image_high).arg(m_image_data_list.count());
         return;
     }
     for (int i = 0; i < m_image_width; i ++)
@@ -31,13 +31,13 @@ void ImageWorker::save_to_image()
             m_image->setPixel(i, j, qRgb(data, data, data));
         }
     }
-    QString file_path = QDir::homePath() + "/.picasso_gui/pgui_rts/AiImage.png";
+    QString file_path = QDir::homePath() + "/.pangen_gui/pgui_rts/AiImage.png";
     m_image->save(file_path, "PNG", 100);
 }
 
 void ImageWorker::get_text_data()
 {
-    QString fpath = QDir::homePath() + "/.picasso_gui/pgui_rts/rts/middata/0-rts1_nc_resist_image.txt";
+    QString fpath = QDir::homePath() + "/.pangen_gui/pgui_rts/rts/middata/0-rts1_nc_resist_image.txt";
     QMutex Mutex;
     QFile image_file(fpath);
     if (!image_file.exists())

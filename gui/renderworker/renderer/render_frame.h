@@ -55,19 +55,17 @@ public:
 
     QColor background_color() const { return QColor(m_background); }
 
+    void set_background_color(QColor color);
+
     void set_pattern(const render::Pattern &p);
 
     const render::Pattern& pattern() const { return m_pattern; }
 
-//    oasis::OasisLayout*  load_file(std::string file_name, std::string prep_dir);
+    void load_layout_view(render::LayoutView* lv, std::string prep_dor, bool add_layout_view);
 
-//    render::LayoutView* load_file(std::string file_name, std::string prep_dir, bool add_layout_view);
+    void add_layout_view(render::LayoutView* lv, bool add_layout_view);
 
-    render::LayoutView* load_layout_view(render::LayoutView* lv, std::string prep_dor, bool add_layout_view);
-
-    render::LayoutView* add_layout_view(render::LayoutView* lv, bool add_layout_view);
-
-    LayoutView* get_layout_view(int index) const;
+    LayoutView* get_layout_view(int index);
 
     void set_layout_view(render::LayoutView* lv, int index);
 
@@ -96,10 +94,7 @@ public:
         return m_layout_views.size();
     }
 
-    const std::vector<render::LayoutView*>& get_layout_views_list() const
-    {
-        return m_layout_views;
-    }
+    std::vector<render::LayoutView*> get_layout_views_list() const;
 
     const render::LayerProperties* get_properties(int index) const;
 
@@ -147,6 +142,8 @@ public:
     virtual void wheelEvent(QWheelEvent *);
 
     int index_of_layout_views(LayoutView* lv);
+
+    double get_view_range() const;
 
 signals:
     void signal_down_key_pressed();
@@ -206,7 +203,7 @@ private:
     bool m_redraw_required;
     bool m_update_image;
 
-    std::vector<render::LayoutView*> m_layout_views;
+    std::vector<render::LayoutViewProxy> m_layout_views;
 
     unsigned int m_current_layer;
 

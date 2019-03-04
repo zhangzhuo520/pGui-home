@@ -45,14 +45,18 @@ void info_to_file(int sig)
     sprintf(fname, "core.%d-%d-%d_%d_%d_%d",
             ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday,
             ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
+    
     char *path = getenv("HOME");
-    char *picasso_path = new char[22];
-    strcpy(picasso_path, "/.picasso_gui/pgui_core");
-    strcat(path, picasso_path);
+
+    char *pangen_path = new char[22];
+    strcpy(pangen_path, "/.pangen_gui/pgui_core");
+    
+    strcat(path, pangen_path);
     if (-1 == is_dir_exist(path))
     {
         printf("core dir make error!");
     }
+
     char *temppath = new char[1];
     strcpy(temppath, "/");
     strcat(path, temppath);

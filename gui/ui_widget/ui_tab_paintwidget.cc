@@ -32,21 +32,23 @@ void TabPaintWidget::get_canvas_coord(double * left, double *right, double *bott
     }
 }
 
-void TabPaintWidget::slot_close_tab(QString fileName)
+void TabPaintWidget::slot_close_tab(int index)
 {
-    fileName = database_to_oas(fileName);
-    int index = string_to_index(fileName);
-    if (index == -1)
+    if(index >= m_scaleframe_vector.count())
     {
-        return;
+        return ;
     }
 
-    removeTab(index);
-    delete m_scaleframe_vector.at(index);
+    ScaleFrame* frame = m_scaleframe_vector.at(index);
     m_scaleframe_vector[index] = NULL;
-    m_scaleframe_vector.remove(index);
+    m_scaleframe_vector.erase(m_scaleframe_vector.begin() + index);
+
+    removeTab(index);
+    delete frame;
+
     update_measuretable_data();
 }
+
 
 ScaleFrame* TabPaintWidget::creat_canvas()
 {
@@ -83,16 +85,23 @@ void TabPaintWidget::append_canvas(QString fileName)
     }
     addTab(m_scaleframe_vector.at(m_scaleframe_vector.count() - 1), fileName);
     setCurrentIndex(count() - 1);
+    QString tab_tool_tip;
+    QVector<QString> result = m_scaleframe_vector.at(m_scaleframe_vector.count() - 1)->get_file_name_list();
+    tab_tool_tip.append(QString("Single:"));
+    tab_tool_tip.append(result.at(0));
+    setTabToolTip(m_scaleframe_vector.count() - 1, tab_tool_tip);
 }
 
-void TabPaintWidget::set_active_widget(QString filename)
+void TabPaintWidget::set_active_widget(render::RenderFrame* frame)
 {
-    int index = string_to_index(filename);
-    if (index == -1)
+    for(int i = 0; i < m_scaleframe_vector.count(); i++)
     {
-        return;
+        if(frame == m_scaleframe_vector.at(i)->getRenderFrame())
+        {
+            setCurrentIndex(i);
+            return ;
+        }
     }
-    setCurrentIndex(index);
 }
 
 void TabPaintWidget::update_measuretable_data()
@@ -155,4 +164,14 @@ void TabPaintWidget::slot_layout_view_changed(render::RenderFrame* frame)
     emit signal_layout_view_changed(frame);
 }
 
+QVector<render::RenderFrame*> TabPaintWidget::get_render_frame_list()
+{
+    QVector<render::RenderFrame*> result;
+    for(int i = 0; i < m_scaleframe_vector.count(); i++)
+    {
+        result.push_back(m_scaleframe_vector.at(i)->getRenderFrame());
+
+    }
+    return result;
+}
 }

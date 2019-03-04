@@ -37,8 +37,10 @@ QVariant FileProjectModel::data(const QModelIndex &index, int role) const
         if(index.column() == 0)
         {
             render::LayoutView* lv = m_layout_views[index.row()];
-            const char* s = lv->file_name().c_str();
-            return QVariant (s);
+            QString file_name = QString::fromStdString(lv->file_name());
+            QStringList list = file_name.split("/", QString::SkipEmptyParts);
+            QString abbr_file_name = list.back();
+            return QVariant (abbr_file_name);
         }
     }
     else if (role == Qt::TextAlignmentRole)
@@ -99,7 +101,7 @@ bool FileProjectModel::removeRows(int position, int rows, const QModelIndex &ind
 
     for(layout_view_iter it = it_begin; it != it_end; it++)
     {
-        (*it)->detach();
+        (*it)->close();
         delete *it;
         *it = 0;
     }

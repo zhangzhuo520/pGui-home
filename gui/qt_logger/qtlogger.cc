@@ -10,7 +10,7 @@ QString LoggerConsole :: m_filter = "";
 LoggerFile::LoggerFile(QObject *parent)
 {
     setParent(parent);
-    m_file_path = QDir::homePath() + "/.picasso_gui" + "/pgui_log/";
+    m_file_path = QDir::homePath() + "/.pangen_gui" + "/pgui_log/";
     init_file_setting();
     Log4Qt::PropertyConfigurator::configure(*m_file_setting);
     init_file_logger();
@@ -49,7 +49,7 @@ LoggerFile *LoggerFile::get_instance()
 
 void LoggerFile::init_file_setting()
 {
-    QString configFile_path = QDir::homePath()+ "/.picasso_gui" + "/pgui_config";
+    QString configFile_path = QDir::homePath()+ "/.pangen_gui" + "/pgui_config";
     QDir dir(configFile_path);
     if (!dir.exists())
     {
@@ -119,7 +119,7 @@ LoggerConsole::~LoggerConsole()
 
 void LoggerConsole::init_console_setting()
 {
-   QString configFile_path = QDir::homePath()+ "/.picasso_gui" + "/pgui_config";
+   QString configFile_path = QDir::homePath()+ "/.pangen_gui" + "/pgui_config";
    QDir dir(configFile_path);
    if (!dir.exists())
    {

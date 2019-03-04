@@ -12,6 +12,9 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QPushButton>
+#include <QToolTip>
+#include <QCursor>
+
 #include "deftools/global.h"
 #include "deftools/cmessagebox.h"
 #include "model/ui_fileproject_model.h"
@@ -34,13 +37,18 @@ public:
     bool is_file_exist(QString);
 
     void delete_file(QString);
+
+    int file_count() const
+    {
+        return m_project_tablemodel->rowCount(QModelIndex());
+    }
 signals:
     void signal_close_currentFile(QString);
     void signal_openFile();
     void signal_create_canvas(QModelIndex);
     void signal_create_overlay_canvas(QModelIndex);
     void signal_close_tab(QString);
-    void signal_append_file(QModelIndex);
+    void signal_append_file(int);
 
 public slots:
     void slot_DoubleClickItem(QModelIndex);
@@ -50,22 +58,13 @@ public slots:
     void slot_CloseItem();
     void slot_OpenFile();
     void slot_AppendFile();
-    void slot_DetachFile();
-    void slot_SelectAppendFile();
-
-//protected:
-//    virtual void
+    void slot_showToolTip(QModelIndex);
 
 private:
     QString m_active_filename;
     int m_active_index;
     TableView *m_project_table;
     FileProjectModel *m_project_tablemodel;
-    QDialog* m_select_file_dialog;
-    QLabel* m_file_label;
-    QComboBox* m_file_box;
-    QPushButton* m_select_file_okbutton;
-    QPushButton* m_select_file_cancelbutton;
 
 };
 }

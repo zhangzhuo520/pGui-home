@@ -48,7 +48,7 @@ void Frame::initTitleBar()
     pixmap = pixmap.scaled(QSize(50, 23), Qt::KeepAspectRatio);
     signLable->setPixmap(pixmap);
     spaceLabel = new QLabel(TitleBar);
-    spaceLabel->setText("    PicassoGui V1.0.0.1");
+    spaceLabel->setText("    PanGenGUI V1.0.0.1");
     spaceLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter );
     MaxButton = new PushButton(TitleBar);
     MinButton = new PushButton(TitleBar);

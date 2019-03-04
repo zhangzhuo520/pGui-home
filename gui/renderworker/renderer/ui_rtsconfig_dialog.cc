@@ -228,7 +228,6 @@ void RtsConfigDialog::read_yaml(QString yamlPath)
 
 void RtsConfigDialog::set_layername_list(const QStringList &list)
 {
-    m_layerdata_list = list;
     m_mask_tab->set_layername_list(list);
 }
 
@@ -262,17 +261,14 @@ void RtsConfigDialog::slotAddRts()
 {
     initRtsWidget();
     initConnecttion();
-    initButtonConfig();
     QString tabTitle = "rts_" + QString::number(m_rts_tab->count() + 1);
-    m_mask_tab->set_layername_list(m_layerdata_list);
     m_rts_tab->addTab(m_rts_widget, tabTitle);
 }
 
 void RtsConfigDialog::slotDeleteRts()
 {
-    QWidget *w = m_rts_tab->widget(m_rts_tab->count() - 1);
+    delete m_rts_tab->widget(m_rts_tab->count() - 1);
     m_rts_tab->removeTab(m_rts_tab->count() - 1);
-    delete w;
 }
 
 void RtsConfigDialog::slotCloneRts()
@@ -454,7 +450,6 @@ bool RtsConfigDialog::save_setup_data()
             return false;
         }
         m_setup_data.mask_table_data.append(m_mask_data);
-        m_mask_data.mask_layerdata.clear();
     }
     for (int i = 0; i < m_setup_data.mask_table_data.count(); i ++)
     {

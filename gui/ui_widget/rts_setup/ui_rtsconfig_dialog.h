@@ -27,6 +27,7 @@
 const int LableWidth = 140;
 const int LableTitilWidth = 50;
 const int pushButtonWidth = 40;
+
 namespace ui {
 class RtsConfigDialog : public QDialog
 {
@@ -142,6 +143,8 @@ private:
     double m_canvas_right;
     double m_canvas_top;
     double m_canvas_bottom;
+
+    QStringList m_layerdata_list;
 };
 }
 #endif // RTSCONFIGWIDGET_H
