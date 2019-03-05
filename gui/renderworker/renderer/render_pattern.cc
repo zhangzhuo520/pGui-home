@@ -420,7 +420,6 @@ PatternInfo& PatternInfo::operator = (const PatternInfo &d)
     return *this;
 }
 
-
 bool PatternInfo::same(const PatternInfo &d) const
 {
     if (&d == this)
@@ -585,7 +584,6 @@ void PatternInfo::set_pattern(const uint32_t *pt, unsigned int width, unsigned i
     }
 }
 
-
 std::string PatternInfo::to_string() const
 {
     std::string result;
@@ -628,7 +626,6 @@ static const char *uint_from_string(const char *s, uint32_t &word, unsigned int 
     width = std::max(width, col);
     return s;
 }
-
 
 void PatternInfo::from_string(const std::string &str)
 {

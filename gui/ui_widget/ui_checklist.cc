@@ -217,7 +217,6 @@ void CheckList::read_database(QString DBname)
 
     m_sqlmanager->setDatabaseName(DBname);
 
-
     if(m_sqlmanager->openDB())
     {
          QSqlQuery query;

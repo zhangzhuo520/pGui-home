@@ -312,11 +312,6 @@ void MainWindow::initToolbar()
  */
 void MainWindow::initPaintTab()
 {
-    QWidget* p = centralWidget();
-    if(p)
-    {
-        delete p;
-    }
     m_current_tabid = -1;
     m_center_widget = new QWidget(this);
     m_paint_tabwidget = new TabPaintWidget(this);
@@ -760,7 +755,6 @@ void MainWindow::slot_close_database_widget(int job_number)
     {
         defect_widget->close();
     }
-
 }
 
 void MainWindow::slot_close_defects(int index)
@@ -1281,7 +1275,6 @@ void MainWindow::slot_create_canvas(QModelIndex index)
 
 void MainWindow::slot_create_overlay_canvas(QModelIndex index)
 {
-
     if (m_current_tabid == -1)
     {
         showWarning(this, "Warning", "Not open canvas !");

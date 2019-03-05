@@ -1,0 +1,194 @@
+flow:
+  -
+    operation: parsefile
+    inputfile: GDS_80x80_160000.GDS
+    format: gds #(gds | oas) only
+    layers: #optional, default will parse all layer
+      - layer: 1
+        datatype: 0
+      - layer: 2
+        datatype: 0
+      - layer: 3
+        datatype: 0
+      - layer: 4
+        datatype: 0
+      - layer: 5
+        datatype: 0
+      - layer: 6
+        datatype: 0
+      - layer: 7
+        datatype: 0
+      - layer: 8
+        datatype: 0
+      - layer: 9
+        datatype: 0
+      - layer: 10
+        datatype: 0
+      - layer: 11
+        datatype: 0
+    outputfile: InstanceBlock_80x80.oas
+
+  -
+    operation: arrayfile
+    inputfile: InstanceBlock_80x80.oas
+    outputfile: array.oas
+    topcell: DJELTOP2
+    rows: 3
+    cols: 4
+    pitch_x: 30
+    pitch_y: 40
+    center_x: 0
+    center_y: 0
+
+  -
+    operation: loadfile
+    inputfile: InstanceBlock_80x80.oas
+    handlename: layout1
+
+  -
+    operation: cleancache
+    handlename: layout1
+
+  -
+    operation: printcontext
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 1
+    datatype: 0
+    outputfile: p1.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 2
+    datatype: 0
+    outputfile: p2.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 3
+    datatype: 0
+    outputfile: p3.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 4
+    datatype: 0
+    outputfile: p4.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 5
+    datatype: 0
+    outputfile: p5.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 6
+    datatype: 0
+    outputfile: p6.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 7
+    datatype: 0
+    outputfile: p7.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 8
+    datatype: 0
+    outputfile: p8.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 9
+    datatype: 0
+    outputfile: p9.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 10
+    datatype: 0
+    outputfile: p10.oas
+
+  -
+    operation: fetchpolygon
+    handlename: layout1
+    box:
+        left: 0
+        bottom: 0
+        right: 72
+        top: 72
+    layer: 11
+    datatype: 0
+    outputfile: p11.oas
+
+option:
+    debuglevel: 0

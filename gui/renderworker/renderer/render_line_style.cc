@@ -83,7 +83,6 @@ bool LineStyleInfo::same_line_info(const LineStyleInfo &li) const
     return true;
 }
 
-
 bool LineStyleInfo::less_line_info(const LineStyleInfo &li) const 
 {
     if(m_width != li.m_width)
@@ -104,7 +103,6 @@ bool LineStyleInfo::less_line_info(const LineStyleInfo &li) const
     }
     return false;
 }
-
 
 bool  LineStyleInfo::operator== (const LineStyleInfo &li) const
 {

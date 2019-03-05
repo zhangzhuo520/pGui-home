@@ -15,7 +15,7 @@ void RtsCurve::init_ui()
     VLayout->setSpacing(0);
     VLayout->setContentsMargins(0, 0, 0, 0);
     m_toolbar_widget = new QToolBar(this);
-    m_curve_widget = new QWidget(this);
+    m_curve_widget = new CurveWidget(this);
     m_statusbar_widget = new QStatusBar(this);
     VLayout->addWidget(m_toolbar_widget);
     VLayout->addWidget(m_curve_widget);

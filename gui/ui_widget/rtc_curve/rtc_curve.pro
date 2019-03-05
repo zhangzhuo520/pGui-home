@@ -14,11 +14,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     ui_rtscurve.cc \
-    ui_curve_widget.cc
+    ui_curve_widget.cc \
+    qcustomplot.cc \
+    curvetracer.cc
 
 HEADERS  += \
     ui_rtscurve.h \
-    ui_curve_widget.h
+    ui_curve_widget.h \
+    qcustomplot.h \
+    curvetracer.h
 
 RESOURCES += \
     images.qrc \

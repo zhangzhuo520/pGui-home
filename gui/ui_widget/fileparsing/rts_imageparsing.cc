@@ -3,7 +3,9 @@ namespace ui {
 ImageWorker::ImageWorker(QObject *parent):
     QObject(parent),
     m_image_width(0),
-    m_image_high(0)
+    m_image_high(0),
+    m_image_data_path(""),
+    m_image_name("")
 {
     m_all_data_list = new QStringList();
 }
@@ -12,6 +14,16 @@ ImageWorker::~ImageWorker()
 {
     delete m_all_data_list;
     m_all_data_list = 0;
+}
+
+void ImageWorker::set_image_data_path(const QString & path)
+{
+    m_image_data_path = path;
+}
+
+void ImageWorker::set_image_name(const QString &name)
+{
+    m_image_name = name;
 }
 
 void ImageWorker::save_to_image()
@@ -31,13 +43,19 @@ void ImageWorker::save_to_image()
             m_image->setPixel(i, j, qRgb(data, data, data));
         }
     }
-    QString file_path = QDir::homePath() + "/.pangen_gui/pgui_rts/AiImage.png";
+
+    if (m_image_name.isEmpty())
+    {
+        qDebug() << "image name is empty, please set image name!";
+    }
+
+    QString file_path = QDir::homePath() + "/.pangen_gui/pgui_rts/" + m_image_name;
     m_image->save(file_path, "PNG", 100);
 }
 
 void ImageWorker::get_text_data()
 {
-    QString fpath = QDir::homePath() + "/.pangen_gui/pgui_rts/rts/middata/0-rts1_nc_resist_image.txt";
+    QString fpath = m_image_data_path;
     QMutex Mutex;
     QFile image_file(fpath);
     if (!image_file.exists())
@@ -74,13 +92,11 @@ void ImageWorker::get_image_data()
               {
                   m_image_width = m_imagesize_list.at(0).toInt();
                   m_image_high = m_imagesize_list.at(1).toInt();
-                  qDebug() << m_image_width << m_image_high;
               }
             }
             else if (1 == i)
             {
-              QStringList m_image_pos_list = m_all_data_list->at(i).split(QRegExp("\\s+"),  QString::SkipEmptyParts);
-               qDebug() << m_image_pos_list;
+               m_image_pos_list = m_all_data_list->at(i).split(QRegExp("\\s+"),  QString::SkipEmptyParts);
             }
         }
     }
@@ -108,6 +124,10 @@ RtsImageParsing::RtsImageParsing(QObject *parent):
 
 RtsImageParsing::~RtsImageParsing()
 {
+    delete m_image_worker;
+    m_image_worker = 0;
+    delete m_worker_thread;
+    m_worker_thread = 0;
 }
 
 void RtsImageParsing::parsing_file()
@@ -121,4 +141,18 @@ void RtsImageParsing::slot_parsing_finished()
     qDebug() << "image file parsing end";
     emit signal_parsing_finished();
 }
+
+QStringList RtsImageParsing::get_image_file()
+{
+    QStringList image_path_list;
+    QString path = QDir::homePath() + "/.pangen_gui/pgui_rts/";
+    QDir d(path);
+    QFileInfoList filelist = d.entryInfoList();
+    for (int i = 0; i < filelist.size(); i ++)
+    {
+        image_path_list.append(path + filelist.at(i).fileName());
+    }
+    return image_path_list;
+}
+
 }

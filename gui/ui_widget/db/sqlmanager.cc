@@ -17,7 +17,6 @@ void SQLManager::setDatabaseName(QString path)
     }
     else
     {
-
         qDebug() << " SQLPath is Empty!";
     }
 }
