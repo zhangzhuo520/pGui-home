@@ -45,6 +45,8 @@ public:
 
     void initToolBar();
     void initTree();
+    void init_layercontral_widget();
+
     void treeItem_checkAllChild(QStandardItem * item, bool check);
 
     QColor uint_to_color(uint color);

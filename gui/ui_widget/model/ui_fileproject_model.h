@@ -1,7 +1,7 @@
 #ifndef FILEPROJECTMODEL_H
 #define FILEPROJECTMODEL_H
 
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 
 #include "render_layout_view.h"
 #include "render_frame.h"
@@ -9,13 +9,15 @@
 
 namespace ui
 {
-class FileProjectModel:public QAbstractTableModel
+class FileProjectModel:public QAbstractItemModel
 {
 Q_OBJECT
 public:
     typedef typename std::vector<render::LayoutView*>::iterator layout_view_iter;
 
     FileProjectModel(QObject* parent = 0);
+    virtual QModelIndex parent(const QModelIndex &child)const;
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex())const;
 
     int rowCount(const QModelIndex& parent) const;
     int columnCount(const QModelIndex& parent) const;

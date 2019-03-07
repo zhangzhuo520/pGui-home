@@ -105,7 +105,7 @@ private slots:
     void slot_saveFile();
     void slot_closeJob(QString, QString);
     void slot_close_file(QString);
-    void slot_openREV();
+    void slot_openjob();
     void slot_open_gauge();
     void slot_coverage_job();
     void slot_open_coverage_job(QString);
@@ -177,7 +177,7 @@ private:
     void initGaugeTable();
     void initDefGroup();
     void initConfigDir();
-    void initPointer();
+    void init_pointer_value();
     void initPrepDir();
 
     void init_fileProject_widget();
@@ -187,6 +187,8 @@ private:
     void init_cpu_memory();
 
     void init_rtssetup_dialog();
+    void init_setpos_dialog();
+    void init_maxwindow_dialog();
     void initConnection();
     void initStyle();
 
@@ -233,7 +235,7 @@ private:
     LogWidget *logwidget;
     GaugeTable *m_gauge_table;
 
-    CheckList *checklistWidget;
+    CheckList *m_checklist_widget;
     Global::PaintStyle paintstyle;
 
     //stateBar
@@ -289,7 +291,7 @@ private:
 
     ShowCPUMemory *m_show_cpumemory;
     RtsRunProcess * m_run_process;
-    //    QProgressIndicator *m_indicator;
+
     RtsImageParsing *m_imagedata_parising;
     QProgressIndicator *m_indicator;
 

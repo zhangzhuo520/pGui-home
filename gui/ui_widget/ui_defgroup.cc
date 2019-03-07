@@ -10,8 +10,16 @@ DefGroup::DefGroup(DockWidget *parent , QString Path, QModelIndex *defectGroupId
     m_each_page_count(10)
 {
     setParent(parent);
-    setWindowTitle("Job" + QString::number(jobIndex) + "_defGroup");
-    setObjectName("Job" + QString::number(jobIndex) + "_defGroup");
+    if (Global::is_new_dbformat == true)
+    {
+        setWindowTitle("Job" + QString::number(jobIndex) + "_cateGroy");
+        setObjectName("Job" + QString::number(jobIndex) + "_cateGroy");
+    }
+    else
+    {
+        setWindowTitle("Job" + QString::number(jobIndex) + "_defGroup");
+        setObjectName("Job" + QString::number(jobIndex) + "_defGroup");
+    }
     initSql();
     initOtherButton();
     initDefGroupTable();
@@ -28,7 +36,7 @@ void DefGroup::initDefGroupTable()
     DefGroupTable->setShowGrid(false);
     DefGroupTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     DefGroupTable->setSelectionMode(QAbstractItemView::SingleSelection);
-//    DefGroupTable->horizontalHeader()->setClickable(false);
+
     DefGroupTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     DefGroupTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     DefGroupTable->horizontalHeader()->setHighlightSections(false);
@@ -38,8 +46,7 @@ void DefGroup::initDefGroupTable()
     DefGroupTable->verticalHeader()->hide();
 
     DefGroupTable->horizontalHeader()->setSortIndicator(-1, Qt::AscendingOrder);
-//    DefGroupTable->horizontalHeader()->setSortIndicator(2, Qt::AscendingOrder);
-//    DefGroupTable->horizontalHeader()->setSortIndicator(3, Qt::AscendingOrder);
+
     DefGroupTable->horizontalHeader()->setSortIndicatorShown(true);
     DefGroupTable->horizontalHeader()->setClickable(true);
     connect(DefGroupTable->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT (slot_sort_by_column(int, Qt::SortOrder)));
@@ -49,23 +56,7 @@ void DefGroup::initDefGroupTable()
 
 void DefGroup::initOtherButton()
 {
-//    Buttonbar = new QWidget(this);
-//    Buttonbar->setMinimumWidth(10);
-//    sortLable = new QLabel("sort :", Buttonbar);
-//    sortCombox = new Commbox(Buttonbar);
-//    sortCombox->addItems(QStringList() <<"worst_size" << "defect_number" << "detDefGroup_id");
-//    descentButton = new QRadioButton("Descent", Buttonbar);
-//    ascentButton = new QRadioButton("Ascent",Buttonbar);
-//    if(!descentButton->isChecked())
-//    {
-//        descentButton->setChecked(true);
-//        ascentButton->setChecked(false);
-//    }
-//    else
-//    {
-//        descentButton->setChecked(false);
-//        ascentButton->setChecked(true);
-//    }
+
     pervButton = new QPushButton(this);
     pervButton->setIcon(QIcon(":/dfjy/images/last_page.png"));
     nextButton = new QPushButton(this);
@@ -73,9 +64,6 @@ void DefGroup::initOtherButton()
     m_pagecount_label = new QLabel(this);
     m_page_jump_edit = new PageJumpEdit(this);
 
-//    connect(descentButton, SIGNAL(clicked()), this, SLOT(slot_descentButtonCheck()));
-//    connect(ascentButton, SIGNAL(clicked()), this, SLOT(slot_ascentButtonCheck()));
-//    connect(sortCombox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
     connect(pervButton, SIGNAL(clicked()), this, SLOT(slot_pervPage()));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(slot_nextPage()));
     connect(m_page_jump_edit, SIGNAL(signal_jump(QString)), this, SLOT(slot_jump_page(QString)));
@@ -86,15 +74,6 @@ void DefGroup::addLayout()
     m_vlayout = new QVBoxLayout(this);
     m_vlayout->addWidget(DefGroupTable);
 
-//    QHBoxLayout* ButtonBarLayout = new QHBoxLayout(this);
-//    Hlayout1 = new QHBoxLayout();
-//    ButtonBarLayout->addWidget(sortLable);
-//    ButtonBarLayout->addWidget(sortCombox);
-//    ButtonBarLayout->addWidget(descentButton);
-//    ButtonBarLayout->addWidget(ascentButton);
-//    ButtonBarLayout->setContentsMargins(0, 0, 0, 0);
-//    Buttonbar->setLayout(ButtonBarLayout);
-//    Vlayout->addWidget(Buttonbar);
     m_hlayout1 = new QHBoxLayout();
     m_hlayout1->addWidget(pervButton);
     m_hlayout1->addWidget(m_pagecount_label);
@@ -181,49 +160,6 @@ void DefGroup::updata_all_data(QModelIndex *index)
 {
         showDefects(index);
 }
-
-//void DefGroup::slot_DefGroupUpdata(QModelIndex *index)
-//{
-//    showDefects(index);
-//}
-
-//void DefGroup::slot_changSortQrder(QString order)
-//{
-//    DefectGroupData.orderBy = order;
-//    DefectGroupQuery->setData(DefectGroupData);
-//    DefGroupModel->setQuery(DefectGroupQuery->outputSQL());
-//    updataTable();
-//}
-
-//void DefGroup::slot_descentButtonCheck()
-//{
-//    if(descentButton->isDown())
-//    {
-//        descentButton->setDown(false);
-//        ascentButton->setDown(true);
-//    }
-//    else
-//    {
-//        descentButton->setDown(true);
-//        ascentButton->setDown(false);
-//    }
-//    setData();
-//}
-
-//void DefGroup::slot_ascentButtonCheck()
-//{
-//    if(ascentButton->isDown())
-//    {
-//        descentButton->setDown(true);
-//        ascentButton->setDown(false);
-//    }
-//    else
-//    {
-//        descentButton->setDown(false);
-//        ascentButton->setDown(true);
-//    }
-//    setData();
-//}
 
 void DefGroup::slot_pervPage()
 {
@@ -410,7 +346,14 @@ void DefGroup::setData()
 
 void DefGroup::setTotal()
 {
-    CountGroupData.tableName = "detector_defect_group";
+    if(Global::is_new_dbformat == true)
+    {
+        CountGroupData.tableName = "categroy";
+    }
+    else
+    {
+        CountGroupData.tableName = "detector_defect_group";
+    }
     CountGroupData.table_id = QString::number(tableId);
     CountGroupQuery->setData(CountGroupData);
     QSqlQuery query = CountGroupQuery->outputSQL();

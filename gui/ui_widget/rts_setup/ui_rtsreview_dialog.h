@@ -11,6 +11,7 @@
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QDebug>
+#include "ui_rtscurve.h"
 
 #include "ui_rtsreview_table.h"
 
@@ -25,8 +26,8 @@ public:
 
 public slots:
     void slot_delete_index();
-
     void slot_delete_all_index();
+    void slot_draw_cutline();
 private:
 
     void init_ui();
@@ -73,6 +74,7 @@ private:
     QPushButton *m_cutline_delall_button;
 
     RtsReviewTable *m_cutline_table;
+    RtsCurve *m_rtscurve_widget;
 };
 
 

@@ -76,7 +76,13 @@ CMessageBox::CMessageBox(QWidget *parent,
         pushButton->setFixedSize(QSize(80, 30));
         if(button == QDialogButtonBox::Ok || button == QDialogButtonBox::Yes) {
             pushButton->setText(tr("OK"));
-        } else {
+        }
+        else if(button == QDialogButtonBox::Close)
+        {
+            pushButton->setText(tr("No"));
+        }
+        else
+        {
             pushButton->setText(tr("Cancel"));
         }
     }

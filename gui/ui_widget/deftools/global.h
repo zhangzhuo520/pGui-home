@@ -44,6 +44,8 @@ public:
         Pri_Diagonal, // 135
         Aux_Dignonal  //45
     };
+
+    static bool is_new_dbformat;
 };
 
 class UiStyle{

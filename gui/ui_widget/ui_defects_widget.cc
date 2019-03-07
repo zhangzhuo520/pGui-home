@@ -35,8 +35,7 @@ void DefectsWidget::init_defects_table()
     m_defects_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_defects_table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     m_defects_table->horizontalHeader()->setSortIndicator(-1, Qt::AscendingOrder);
-    //    DefGroupTable->horizontalHeader()->setSortIndicator(2, Qt::AscendingOrder);
-    //    DefGroupTable->horizontalHeader()->setSortIndicator(3, Qt::AscendingOrder);
+
     m_defects_table->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
     m_defects_table->horizontalHeader()->setHighlightSections(false);
     m_defects_table->horizontalHeader()->setSortIndicatorShown(true);
@@ -50,34 +49,12 @@ void DefectsWidget::init_defects_table()
 
 void DefectsWidget::initOtherButton()
 {
-//    m_button_bar = new QWidget(this);
-//    m_button_bar->setMinimumWidth(10);
-//    m_sort_lable = new QLabel("sort :", m_button_bar);
-//    m_sort_commbox = new Commbox(m_button_bar);
-//    m_sort_commbox->addItems(QStringList() <<"id" << "x" << "y" << "size");
-//    m_descent_button = new QRadioButton("Descent", m_button_bar);
-//    m_ascen_button = new QRadioButton("Ascent",m_button_bar);
-//    m_extract_button = new QPushButton("Extract", this);
-//    m_moreoptions_button = new QPushButton("more options", this);
-//    if(!m_descent_button->isChecked())
-//    {
-//        m_descent_button->setChecked(true);
-//        m_ascen_button->setChecked(false);
-//    }
-//    else
-//    {
-//        m_descent_button->setChecked(false);
-//        m_ascen_button->setChecked(true);
-//    }
     m_perv_button = new QPushButton(this);
     m_perv_button->setIcon(QIcon(":/dfjy/images/last_page.png"));
     m_next_button = new QPushButton(this);
     m_next_button->setIcon(QIcon(":/dfjy/images/next_page.png"));
     m_pagecount_label = new QLabel(this);
     m_page_jump_edit = new PageJumpEdit(this);
-//    connect(m_descent_button, SIGNAL(clicked()), this, SLOT(slot_m_descent_buttonCheck()));
-//    connect(m_ascen_button, SIGNAL(clicked()), this, SLOT(slot_m_ascen_buttonCheck()));
-//    connect(m_sort_commbox, SIGNAL(currentIndexChanged(QString)), SLOT(slot_changSortQrder(QString)));
     connect(m_perv_button, SIGNAL(clicked()), this, SLOT(slot_pervPage()));
     connect(m_next_button, SIGNAL(clicked()), this, SLOT(slot_nextPage()));
     connect(m_page_jump_edit, SIGNAL(signal_jump(QString)), this, SLOT(slot_jump_click(QString)));
@@ -95,20 +72,6 @@ void DefectsWidget::addLayout()
     m_vlayout->setContentsMargins(0, 0, 0, 0);
     m_vlayout->addWidget(m_defects_table);
 
-//    m_hlayout_s = new QHBoxLayout();
-
-//    QHBoxLayout *m_hlayoutm_button_bar = new QHBoxLayout();
-//    m_hlayoutm_button_bar->addWidget(m_sort_lable);
-//    m_hlayoutm_button_bar->addWidget(m_sort_commbox);
-//    m_hlayoutm_button_bar->addWidget(m_descent_button);
-//    m_hlayoutm_button_bar->addWidget(m_ascen_button);
-//    m_hlayoutm_button_bar->addWidget(m_extract_button);
-//    m_hlayoutm_button_bar->setSpacing(10);
-//    m_button_bar->setLayout(m_hlayoutm_button_bar);
-//    m_hlayout_s->addWidget(m_button_bar);
-//    m_vlayout->addLayout(m_hlayout_s);
-
-//    m_vlayout->addWidget(m_moreoptions_button);
     m_hlayout_s = new QHBoxLayout();
     m_hlayout_s->addWidget(m_perv_button);
     m_hlayout_s->addWidget(m_pagecount_label);
@@ -180,18 +143,6 @@ void DefectsWidget::openDB()
     {
         qDebug() << "DB open Failed";
     }
-}
-
-void DefectsWidget::changeSortKey()
-{
-}
-
-void DefectsWidget::resizeColumns()
-{
-}
-
-void DefectsWidget::sortTable()
-{
 }
 
 void DefectsWidget::setData()
@@ -304,49 +255,6 @@ QTableView *DefectsWidget::getTableView()
 {
     return m_defects_table;
 }
-
-//void DefectsWidget::slot_defectsUpdata(QModelIndex *index)
-//{
-//    showDefects(index);
-//}
-
-//void DefectsWidget::slot_changSortQrder(QString order)
-//{
-//    m_defect_data.orderBy = order;
-//    m_defects_query->setData(m_defect_data);
-//    m_defects_model->setQuery(m_defects_query->outputSQL());
-//    updataTable();
-//}
-
-//void DefectsWidget::slot_m_descent_buttonCheck()
-//{
-//    if(m_descent_button->isDown())
-//    {
-//        m_descent_button->setDown(false);
-//        m_ascen_button->setDown(true);
-//    }
-//    else
-//    {
-//        m_descent_button->setDown(true);
-//        m_ascen_button->setDown(false);
-//    }
-//    setData();
-//}
-
-//void DefectsWidget::slot_m_ascen_buttonCheck()
-//{
-//    if(m_ascen_button->isDown())
-//    {
-//        m_descent_button->setDown(true);
-//        m_ascen_button->setDown(false);
-//    }
-//    else
-//    {
-//        m_descent_button->setDown(false);
-//        m_ascen_button->setDown(true);
-//    }
-//    setData();
-//}
 
 void DefectsWidget::slot_sort_by_column(int index, Qt::SortOrder sort_order)
 {
@@ -495,12 +403,6 @@ void DefectsWidget::slot_set_page_count()
         return;
     }
 }
-
-//void DefectsWidget::closeEvent(QCloseEvent *e)
-//{
-//    emit signal_disable_draw_defects();
-//    QWidget::closeEvent(e);
-//}
 
 }
 

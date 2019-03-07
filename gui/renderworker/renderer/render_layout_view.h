@@ -100,7 +100,6 @@ public:
     render::RenderFrame* single_view();
 
 
-
 private:
     friend class RenderFrame;
 

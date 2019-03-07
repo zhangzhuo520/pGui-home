@@ -21,6 +21,7 @@
 #include "db/sqlmanager.h"
 #include "deftools/framelesshelper.h"
 #include "deftools/defcontrols.h"
+#include "deftools/global.h"
 #include "model/ui_checklist_model.h"
 #include "deftools/cmessagebox.h"
 
@@ -37,21 +38,23 @@ class CheckList : public QWidget
 public:
     explicit CheckList(int width, int height, QWidget *parent = 0);
 
-    void initToolbar();
-
-    void initFoundWidget();
-
     void initJobKey();
 
     void initTreeView();
 
     void updataTreeView();
 
-    void read_database(QString DBname);
+    void new_update_treeview();
+
+    void read_database(const QString&);
+
+    void new_read_database(const QString&);
 
     int get_job_key();
 
     void close_job_key(int);
+
+    void set_read_new_database(const bool&);
 
     ~CheckList();
 
@@ -74,73 +77,32 @@ protected:
 
 signals:
     void signal_showDefGroup(QModelIndex, int);
-
     void signal_close_job(QString);
-
     void signal_append_job(QString);
-
     void signal_close_database_widget(int);
-
     void signal_coverage_job();
+
 private slots:    
     void slot_close_currentjob();
-
     void slot_CheckListContextMenu(const QPoint&);
-
     void slot_update_current_index(QModelIndex);
-
     void slot_showDefGroup(QModelIndex);
-
-    void slot_openLVCK(QString);
-
-    void slot_BtnRename();
-
-    void slot_BtnDelete();
-
-    void slot_BtnLoad();
-
-    void slot_BtnSave();
-
-    void slot_ExportCSV();
-
-    void slot_BtnFound(bool);
-
-    void slot_RenameOk();
-
     void slot_coverage_job();
+
 public slots:
     void slot_add_job(QString);
-
     void slot_close_job(QString);
 
 private:
-    void remove_job(int);
+    bool m_is_read_new_database;
 
+    void remove_job(int);
     QModelIndex get_current_rootindex(QModelIndex);
 
-
-    Commbox *m_checklist_commbox;
-    PushButton *m_rename_button;
-    PushButton *m_delete_button;
-    PushButton *m_load_button;
-    MenuButton *m_save_button;
-    PushButton *m_prev_button;
-    PushButton *m_next_button;
-    PushButton *m_found_button;
-
-    PushButton *m_rtsconfig_button;
-    PushButton *m_runrts_button;
-    PushButton *m_closejob_button;
-    PushButton *m_appendjob_button;
-    PushButton *m_setting_button;
-
-    QDialog *m_rename_dialog;
-    QLineEdit *m_rename_edit;
-
-    Toolbar *m_checklist_toolbar;
     TreeView *m_checklist_tree;
     TreeModel *m_checklist_model;
     SQLManager *m_sqlmanager;
+
     QString m_jobdata;
     QString m_count;
     QString m_cond_count;
@@ -170,6 +132,8 @@ private:
 
     QStringList m_jobpath_list;
     QVector <JobKey> m_jobkey_vector;
+
+    QVector <rootFileItem *> m_rootitem_vector;
 };
 }
 #endif // CheckList_H

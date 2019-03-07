@@ -154,6 +154,8 @@ QTableView{
 
 QTableView::item:selected{
      background: rgb(128, 171, 220);
+     max-height:20px;
+     min-height:20px;
 }
 
 /**********QHeaderView**********/
@@ -192,5 +194,9 @@ QDialog{
 QFrame#Frame{
      border: 1px solid rgb(149, 194, 231);
      background:rgb(216, 216 ,216);
+}
+/**********QTextBrowser**********/
+QTextBrowser{
+     border-style:none;
 }
 

@@ -13,6 +13,8 @@ class TabPaintWidget:public QTabWidget
 public:
     explicit TabPaintWidget(QWidget *parent = 0);
 
+    ~TabPaintWidget();
+
     ScaleFrame *get_scaleframe(int);
 
     QVector<render::RenderFrame*> get_render_frame_list();
@@ -22,8 +24,6 @@ public:
     void set_active_widget(render::RenderFrame*);
 
     void update_measuretable_data();
-
-    ~TabPaintWidget();
 
     void get_canvas_coord(double *, double *, double *, double *);
 

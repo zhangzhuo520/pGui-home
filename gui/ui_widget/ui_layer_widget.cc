@@ -9,6 +9,7 @@ LayerWidget::LayerWidget(QWidget *parent) :
 {
     initToolBar();
     initTree();
+    init_layercontral_widget();
     QVBoxLayout *Vayout = new QVBoxLayout(this);
 
     Vayout->addWidget(layerToolBar);
@@ -54,6 +55,85 @@ void LayerWidget::initTree()
     connect(layerTree ,SIGNAL(doubleClicked(QModelIndex)), this , SLOT(slot_treeDoubleClick(QModelIndex)));
     connect(layerTree, SIGNAL(pressed(QModelIndex)), this, SLOT(slot_activedModelIndex(QModelIndex)));
     layerTree->setModel(layerTreeModel);
+}
+
+void LayerWidget::init_layercontral_widget()
+{
+    LayerControlWidget = new QWidget(this);
+    LayerControlWidget->setMaximumWidth(215);
+
+    QVBoxLayout *Vlayout = new QVBoxLayout(LayerControlWidget);
+
+    QTabWidget* ColorTable = new QTabWidget(LayerControlWidget);
+    ColorWidget *colorwidget = new ColorWidget(ColorTable);
+    ColorWidget *Linecolorwidget = new ColorWidget(ColorTable);
+    ColorWidget *Textcolorwidget = new ColorWidget(ColorTable);
+    ColorTable->addTab(colorwidget, "Fill");
+    ColorTable->addTab(Linecolorwidget, "Line");
+    ColorTable->addTab(Textcolorwidget, "Text");
+
+    QTabWidget* styleTable = new QTabWidget(LayerControlWidget);
+    StyleWidget *styleWidget = new StyleWidget(styleTable);
+    styleTable->addTab(styleWidget, "FillStyle");
+
+    QHBoxLayout *lineStyleLayout = new QHBoxLayout();
+    QLabel *LineStyleLabel = new QLabel("Line Style:",LayerControlWidget);
+    LineStyleCommbox = new Commbox(this);
+    LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(0)), "none");
+    LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(1)), "long dashed");
+    LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(2)), "dashed");
+    LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(3)), "short dash-dotted");
+    LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(4)), "dotted");
+    LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(5)), "dash-dotted");
+    LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(6)), "short dashed");
+    LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(7)), "dash-double-dotted");
+    lineStyleLayout->setContentsMargins(0, 0, 0, 0);
+    lineStyleLayout->setSpacing(0);
+    lineStyleLayout->addWidget(LineStyleLabel);
+    lineStyleLayout->addWidget(LineStyleCommbox);
+
+    QHBoxLayout *lineWidthLayout = new QHBoxLayout();
+    QLabel *LineWidthLabel = new QLabel("Line Width:",LayerControlWidget);
+    LineWidthCommbox = new Commbox(this);
+    LineWidthCommbox->addItem(QIcon(":/dfjy/images/line_width1.png"), "1");
+    LineWidthCommbox->addItem(QIcon(":/dfjy/images/line_width2.png"), "2");
+    LineWidthCommbox->addItem(QIcon(":/dfjy/images/line_width3.png"), "3");
+    LineWidthCommbox->addItem(QIcon(":/dfjy/images/line_width4.png"), "4");
+    lineWidthLayout->setContentsMargins(0, 0, 0, 0);
+    lineWidthLayout->addWidget(LineWidthLabel);
+    lineWidthLayout->addWidget(LineWidthCommbox);
+
+    QHBoxLayout *TransparencyLayout = new QHBoxLayout();
+    QLabel *TransparencyLabel = new QLabel("Transparency:",LayerControlWidget);
+    TransparencyCommbox = new Commbox(this);
+    TransparencyCommbox->addItem("0");
+    TransparencyCommbox->addItem("20");
+    TransparencyCommbox->addItem("50");
+    TransparencyCommbox->addItem("70");
+    TransparencyCommbox->addItem("90");
+    TransparencyLayout->setContentsMargins(0, 0, 0, 0);
+    TransparencyLayout->addWidget(TransparencyLabel);
+    TransparencyLayout->addWidget(TransparencyCommbox);
+
+    QSplitter*splitter = new QSplitter(LayerControlWidget);
+    splitter->setOrientation(Qt::Vertical);
+    splitter->addWidget(ColorTable);
+    splitter->addWidget(styleTable);
+
+    Vlayout->setContentsMargins(0, 0, 0, 0);
+    Vlayout->setSpacing(5);
+    Vlayout->addWidget(splitter);
+    Vlayout->addLayout(lineStyleLayout);
+    Vlayout->addLayout(lineWidthLayout);
+    Vlayout->addLayout(TransparencyLayout);
+    TreeHLayout->addWidget(LayerControlWidget);
+    connect(colorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setBackgroundColor(QColor)));
+    connect(Linecolorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setLineColor(QColor)));
+    connect(styleWidget, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_setLayerStyle(int)));
+
+    connect(LineWidthCommbox, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_setLineWidth(int)));
+    connect(LineStyleCommbox, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_setLineStyle(int)));
+    LayerControlWidget->hide();
 }
 
 void LayerWidget::slot_activedModelIndex(QModelIndex index)
@@ -212,117 +292,11 @@ void LayerWidget::slot_showLayerControlWidget(bool ischeck)
 {
     if(ischeck)
     {
-        LayerControlWidget = new QWidget(this);
-        LayerControlWidget->setMaximumWidth(215);
-
-        QVBoxLayout *Vlayout = new QVBoxLayout(LayerControlWidget);
-//        QWidget *ButtonBar = new QWidget(LayerControlWidget);
-//        ButtonOn= new PushButton(ButtonBar);
-//        ButtonExpose= new PushButton(ButtonBar);
-//        ButtonSelectable= new PushButton(ButtonBar);
-//        ButtonText= new PushButton(ButtonBar);
-//        ButtonNage= new PushButton(ButtonBar);
-//        ButtonCut= new PushButton(ButtonBar);
-//        ButtonOn->setCheckable(true);
-//        ButtonExpose->setCheckable(true);
-//        ButtonSelectable->setCheckable(true);
-//        ButtonText->setCheckable(true);
-//        ButtonNage->setCheckable(true);
-//        ButtonCut->setCheckable(true);
-//        ButtonOn->setIcon(QIcon(":/dfjy/images/on.png"));
-//        ButtonExpose->setIcon(QIcon(":/dfjy/images/layer.png"));
-//        ButtonSelectable->setIcon(QIcon(":/dfjy/images/select.png"));
-//        ButtonText->setIcon(QIcon(":/dfjy/images/text.png"));
-//        ButtonNage->setIcon(QIcon(":/dfjy/images/nega.png"));
-//        ButtonCut->setIcon(QIcon(":/dfjy/images/cut.png"));
-//        QHBoxLayout *Hlayout = new QHBoxLayout(ButtonBar);
-//        Hlayout->setContentsMargins(0, 0, 0, 0);
-//        Hlayout->setSpacing(0);
-//        Hlayout->addWidget(ButtonOn);
-//        Hlayout->addWidget(ButtonExpose);
-//        Hlayout->addWidget(ButtonSelectable);
-//        Hlayout->addWidget(ButtonText);
-//        Hlayout->addWidget(ButtonNage);
-//        Hlayout->addWidget(ButtonCut);
-
-        QTabWidget* ColorTable = new QTabWidget(LayerControlWidget);
-        ColorWidget *colorwidget = new ColorWidget(ColorTable);
-        ColorWidget *Linecolorwidget = new ColorWidget(ColorTable);
-        ColorWidget *Textcolorwidget = new ColorWidget(ColorTable);
-        ColorTable->addTab(colorwidget, "Fill");
-        ColorTable->addTab(Linecolorwidget, "Line");
-        ColorTable->addTab(Textcolorwidget, "Text");
-
-        QTabWidget* styleTable = new QTabWidget(LayerControlWidget);
-        StyleWidget *styleWidget = new StyleWidget(styleTable);
-        styleTable->addTab(styleWidget, "FillStyle");
-
-        QHBoxLayout *lineStyleLayout = new QHBoxLayout();
-        QLabel *LineStyleLabel = new QLabel("Line Style:",LayerControlWidget);
-        LineStyleCommbox = new Commbox(this);
-        LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(0)), "none");
-        LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(1)), "long dashed");
-        LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(2)), "dashed");
-        LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(3)), "short dash-dotted");
-        LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(4)), "dotted");
-        LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(5)), "dash-dotted");
-        LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(6)), "short dashed");
-        LineStyleCommbox->addItem(QPixmap::fromImage(set_line_image(7)), "dash-double-dotted");
-        lineStyleLayout->setContentsMargins(0, 0, 0, 0);
-        lineStyleLayout->setSpacing(0);
-        lineStyleLayout->addWidget(LineStyleLabel);
-        lineStyleLayout->addWidget(LineStyleCommbox);
-
-        QHBoxLayout *lineWidthLayout = new QHBoxLayout();
-        QLabel *LineWidthLabel = new QLabel("Line Width:",LayerControlWidget);
-        LineWidthCommbox = new Commbox(this);
-        LineWidthCommbox->addItem(QIcon(":/dfjy/images/line_width1.png"), "1");
-        LineWidthCommbox->addItem(QIcon(":/dfjy/images/line_width2.png"), "2");
-        LineWidthCommbox->addItem(QIcon(":/dfjy/images/line_width3.png"), "3");
-        LineWidthCommbox->addItem(QIcon(":/dfjy/images/line_width4.png"), "4");
-        lineWidthLayout->setContentsMargins(0, 0, 0, 0);
-        lineWidthLayout->addWidget(LineWidthLabel);
-        lineWidthLayout->addWidget(LineWidthCommbox);
-
-        QHBoxLayout *TransparencyLayout = new QHBoxLayout();
-        QLabel *TransparencyLabel = new QLabel("Transparency:",LayerControlWidget);
-        TransparencyCommbox = new Commbox(this);
-        TransparencyCommbox->addItem("0");
-        TransparencyCommbox->addItem("20");
-        TransparencyCommbox->addItem("50");
-        TransparencyCommbox->addItem("70");
-        TransparencyCommbox->addItem("90");
-        TransparencyLayout->setContentsMargins(0, 0, 0, 0);
-        TransparencyLayout->addWidget(TransparencyLabel);
-        TransparencyLayout->addWidget(TransparencyCommbox);
-
-        QSplitter*splitter = new QSplitter(LayerControlWidget);
-        splitter->setOrientation(Qt::Vertical);
-//        splitter->addWidget(ButtonBar);
-        splitter->addWidget(ColorTable);
-        splitter->addWidget(styleTable);
-
-        Vlayout->setContentsMargins(0, 0, 0, 0);
-        Vlayout->setSpacing(5);
-        Vlayout->addWidget(splitter);
-        Vlayout->addLayout(lineStyleLayout);
-        Vlayout->addLayout(lineWidthLayout);
-        Vlayout->addLayout(TransparencyLayout);
-        TreeHLayout->addWidget(LayerControlWidget);
-        connect(colorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setBackgroundColor(QColor)));
-        connect(Linecolorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setLineColor(QColor)));
-        connect(styleWidget, SIGNAL(signal_selectItemStyle(int)), this, SLOT(slot_setLayerStyle(int)));
-
-        connect(LineWidthCommbox, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_setLineWidth(int)));
-        connect(LineStyleCommbox, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_setLineStyle(int)));
+        LayerControlWidget->show();
     }
     else
     {
-        if (LayerControlWidget != NULL)
-        {
-            TreeHLayout->removeWidget(LayerControlWidget);
-            delete LayerControlWidget;
-        }
+        LayerControlWidget->hide();
     }
 }
 

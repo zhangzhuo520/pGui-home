@@ -1,7 +1,7 @@
 #ifndef UI_RTSCURVE_H
 #define UI_RTSCURVE_H
 
-#include <QWidget>
+#include <QDialog>
 #include <QVBoxLayout>
 #include <QColor>
 #include <QPalette>
@@ -10,20 +10,22 @@
 #include <QStatusBar>
 #include <QIcon>
 #include <QLabel>
+#include <QRadioButton>
+
+#include "ui_curve_widget.h"
 
 namespace ui{
-class RtsCurve : public QWidget
+class RtsCurve : public QDialog
 {
     Q_OBJECT
 public:
-    explicit RtsCurve(QWidget *parent = 0);
+    explicit RtsCurve(QDialog *parent = 0);
 
     void init_ui();
 
     void init_toolbar();
 
-    void init_statusbar();
-    
+    void init_statusbar();    
 signals:
     
 public slots:
@@ -34,11 +36,15 @@ public slots:
 
 private:
     QToolBar *m_toolbar_widget;
-    QWidget *m_curve_widget;
+    CurveWidget *m_curve_widget;
     QStatusBar *m_statusbar_widget;
     QLabel *m_coordinate_label;
-    QLabel *m_cd_value_label;
-    
+    QLabel *m_aicd_label;
+    QLabel *m_aicd_value;
+    QLabel *m_ricd_label;
+    QLabel *m_ricd_value;
+    QLabel *m_eicd_label;
+    QLabel *m_eicd_value;
 };
 }
 

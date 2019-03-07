@@ -107,4 +107,13 @@ typedef struct rtssetupdata
    }
 }RtsSetupData;
 
+typedef struct painttabinfo
+{
+    enum DataType{
+        osa,
+        job
+    }
+
+}Paint
+
 #endif // DATASTRUCT_H

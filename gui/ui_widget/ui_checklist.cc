@@ -8,101 +8,12 @@ CheckList::CheckList(int width, int height, QWidget *parent):
     m_active_tree_index(0)
 {
     m_vlayout = new QVBoxLayout(this);
-    initToolbar();
     initTreeView();
     initJobKey();
-    initFoundWidget();
-    m_vlayout->addWidget(m_checklist_toolbar);
     m_vlayout->addWidget(m_checklist_tree);
     m_vlayout->setSpacing(0);
     m_vlayout->setContentsMargins(0, 0, 0, 0);
     m_sqlmanager = new SQLManager();
-}
-
-void CheckList::initToolbar()
-{
-    m_checklist_toolbar = new Toolbar(this, m_width, m_height);
-    m_checklist_toolbar->setAutoFillBackground(true);
-    QPalette pale = m_checklist_toolbar->palette();
-    pale.setColor(QPalette::Base, UiStyle::ToolBarColor);
-    m_checklist_toolbar->setPalette(pale);
-    m_checklist_commbox = new Commbox(m_checklist_toolbar);
-    m_checklist_commbox->addItem("Defect Centic(Cond.->Mask.->Det.)");
-    m_checklist_commbox->addItem("Defect Centic(Mask.->Cond.->Det.");
-    m_checklist_commbox->addItem("Defect Centic");
-
-
-    m_rename_button = new PushButton(this);
-    m_rename_button->setIcon(QIcon(":/dfjy/images/rename.png"));
-    m_delete_button = new PushButton(this);
-    m_delete_button->setIcon(QIcon(":/dfjy/images/delete.png"));
-    m_load_button = new PushButton(this);
-    m_load_button->setIcon(QIcon(":/dfjy/images/load.png"));
-    m_save_button = new MenuButton(this);
-    m_save_button->setIcon(QIcon(":/dfjy/images/save.png"));
-    m_prev_button = new PushButton(this);
-    m_prev_button->setIcon(QIcon(":/dfjy/images/left.png"));
-    m_next_button = new PushButton(this);
-    m_next_button->setIcon(QIcon(":/dfjy/images/right.png"));
-    m_found_button = new PushButton(this);
-    m_found_button->setIcon(QIcon(":/dfjy/images/found.png"));
-    m_found_button->setCheckable(true);
-    m_rtsconfig_button = new PushButton("RTS-Config", this);
-    m_runrts_button = new PushButton("Run-RTS", this);
-    m_closejob_button = new PushButton("Close-job", this);
-    m_appendjob_button = new PushButton("Append-job", this);
-    m_setting_button = new PushButton("Settings", this);
-
-//    m_checklist_toolbar->addWidget(m_checklist_commbox);
-//    m_checklist_toolbar->addWidget(m_rename_button);
-    m_checklist_toolbar->addWidget(m_delete_button);
-    m_checklist_toolbar->addWidget(m_load_button);
-    m_checklist_toolbar->addWidget(m_save_button);
-    m_checklist_toolbar->addSeparator();
-    m_checklist_toolbar->addWidget(m_prev_button);
-    m_checklist_toolbar->addWidget(m_next_button);
-    m_checklist_toolbar->addWidget(m_found_button);
-//    m_checklist_toolbar->addSeparator();
-//    m_checklist_toolbar->addWidget(m_rtsconfig_button);
-//    m_checklist_toolbar->addWidget(m_runrts_button);
-//    m_checklist_toolbar->addWidget(m_closejob_button);
-    m_checklist_toolbar->addWidget(m_appendjob_button);
-//    m_checklist_toolbar->addWidget(m_setting_button);
-
-//    m_checklist_toolbar->layout()->setSpacing(5);
-//    m_checklist_toolbar->layout()->setContentsMargins(1, 1, 1, 1);
-
-    QMenu *saveMenu = new QMenu(this);
-    m_save_button->setMenu(saveMenu);
-    QAction *saveLvckAction = new QAction("Save CheckList Lvck", saveMenu);
-    QAction *saveCsvAction = new QAction("Export to CSV File", saveMenu);
-    saveMenu->addAction(saveLvckAction);
-    saveMenu->addAction(saveCsvAction);
-
-    connect(m_rename_button, SIGNAL(clicked()), this, SLOT(slot_BtnRename()));
-    connect(m_delete_button, SIGNAL(clicked()), this, SLOT(slot_BtnDelete()));
-    connect(m_load_button, SIGNAL(clicked()), this, SLOT(slot_BtnLoad()));
-    connect(m_save_button, SIGNAL(signal_leftClick()), this, SLOT(slot_BtnSave()), Qt::UniqueConnection);
-    connect(saveLvckAction, SIGNAL(triggered()), this, SLOT(slot_BtnSave()), Qt::UniqueConnection);
-    connect(saveCsvAction, SIGNAL(triggered()), this, SLOT(slot_ExportCSV()), Qt::UniqueConnection);
-    connect(m_found_button, SIGNAL(clicked(bool)), this, SLOT(slot_BtnFound(bool)), Qt::UniqueConnection);
-    connect(m_appendjob_button, SIGNAL(clicked()), this, SLOT(slot_coverage_job()), Qt::UniqueConnection);
-}
-
-void CheckList::initFoundWidget()
-{
-    m_findwidget = new QWidget(this);
-    m_hlayout = new QHBoxLayout(m_findwidget);
-    m_hlayout->setSpacing(0);
-    m_hlayout->setContentsMargins(0, 0, 0, 0);
-    m_findedit = new QLineEdit(m_findwidget);
-    m_infound_button = new PushButton(m_findwidget);
-    m_infound_button->setIcon(QIcon(":/dfjy/images/found.png"));
-
-    m_hlayout->addWidget(m_findedit);
-    m_hlayout->addWidget(m_infound_button);
-   // m_hlayout->addSpacerItem(new QSpacerItem(20, 10, QSizePolicy::Preferred, QSizePolicy::Preferred));
-    m_findwidget->hide();
 }
 
 void CheckList::initJobKey()
@@ -122,8 +33,8 @@ void CheckList::initTreeView()
     m_checklist_model = new TreeModel(m_checklist_tree);
 
     m_checklist_tree->setModel(m_checklist_model);
-    m_headerlist << "Name" << "Type" << "Delta-Focus" << "Delta-Dose" << "Bias"
-               << "Defect No"<< "Group No" << "Size_range" << "Unit" << "Detector_table_id";
+    m_headerlist << "Name" << "Check_type" << "Delta-Focus" << "Delta-Dose" << "Bias"
+               << "Defect No"<< "Category No" << "Size_range" << "Unit" << "Check_id";
     m_checklist_model->setHorizontalHeaderLabels(m_headerlist);
     m_checklist_tree->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_checklist_tree->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -152,6 +63,7 @@ void CheckList::updataTreeView()
     }
     QStandardItem *rootFileItem = new TreeItem(m_jobdata);
     m_checklist_model->appendRow(rootFileItem);
+    m_rootitem_vector.append(rootFileItem);
 
     QStandardItem* pStandardItem = NULL;
     QStandardItem* pStandardChildItem = NULL;
@@ -201,9 +113,65 @@ void CheckList::updataTreeView()
     }
 }
 
-void CheckList::read_database(QString DBname)
+void CheckList::new_update_treeview()
 {
-    // use to save DBdata
+    if (m_jobdata.isEmpty())
+    {
+        return;
+    }
+    QStandardItem *rootFileItem = new TreeItem(m_jobdata);
+    m_checklist_model->appendRow(rootFileItem);
+
+    QStandardItem* pStandardItem = NULL;
+    QStandardItem* pStandardChildItem = NULL;
+    QStandardItem* pStandardGrandsonItem = NULL;
+
+    for (int i = 0; i < m_maskvector.count(); i ++ )
+    {
+        if (!m_maskvector.at(i).value("name").isEmpty())
+        {
+            pStandardItem = new TreeItem(m_maskvector.at(i).value("name"));
+            rootFileItem->appendRow(pStandardItem);
+            rootFileItem->setChild(i, m_headerlist.indexOf("Defect No") ,new TreeItem(m_count));
+        }
+        else
+        {
+            pStandardItem = new TreeItem("Mask Id :" + m_maskvector.at(i).value("mask_id"));
+            rootFileItem->appendRow(pStandardItem);
+            rootFileItem->setChild(i, m_headerlist.indexOf("Defect No") ,new TreeItem(m_count));
+        }
+
+        for (int j = 0; j < m_pw_conditionvector.count(); j ++)
+        {
+            pStandardChildItem = new TreeItem(m_pw_conditionvector.at(j).value("name"));
+            pStandardItem->setChild(j,m_headerlist.indexOf("Name"), pStandardChildItem);
+            pStandardItem->setChild(j, m_headerlist.indexOf("Defect No") ,new TreeItem(m_pw_conditionvector.at(j).value("Count")));
+            pStandardItem->setChild(j, m_headerlist.indexOf("Delta-Focus") ,new TreeItem(m_pw_conditionvector.at(j).value("delta_focus")));
+            pStandardItem->setChild(j, m_headerlist.indexOf("Delta-Dose") ,new TreeItem(m_pw_conditionvector.at(j).value("delta_dose")));
+            pStandardItem->setChild(j, m_headerlist.indexOf("Bias") ,new TreeItem(m_pw_conditionvector.at(j).value("mask_bias")));
+            int pStandardChildItem_row = 0;
+            for (int k = 0; k < m_detectorvector.count(); k ++)
+            {
+                if (m_detectorvector.at(k).value("condition_id") == m_pw_conditionvector.at(j).value("condition_id"))
+                {
+                    pStandardGrandsonItem = new TreeItem(m_detectorvector.at(k).value("name"));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Name"), pStandardGrandsonItem);
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Check_id") ,new TreeItem(m_detectorvector.at(k).value("check_id")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Check_type") ,new TreeItem(m_detectorvector.at(k).value("check_type")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Defect No") ,new TreeItem(m_detectorvector.at(k).value("defect_count")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Category No") ,new TreeItem(m_detectorvector.at(k).value("category_count")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Size_range") ,new TreeItem(m_detectorvector.at(k).value("check_range")));
+                    pStandardChildItem->setChild(pStandardChildItem_row, m_headerlist.indexOf("Unit") ,new TreeItem(m_detectorvector.at(k).value("unit")));
+                    pStandardChildItem_row ++;
+                }
+            }
+        }
+        break;
+    }
+}
+
+void CheckList::read_database(const QString & DBname)
+{
     m_maskmap.clear();
     m_maskvector.clear();
 
@@ -214,13 +182,11 @@ void CheckList::read_database(QString DBname)
     m_detectorvector.clear();
 
     m_jobindex = get_job_key();
-
     m_sqlmanager->setDatabaseName(DBname);
 
     if(m_sqlmanager->openDB())
     {
          QSqlQuery query;
-
          m_jobdata = "job" +  QString::number(m_jobindex) +":" + DBname;
 
          m_jobpath_list.append(m_jobdata);
@@ -263,10 +229,8 @@ void CheckList::read_database(QString DBname)
              m_pw_conditionvector.append(m_pw_conditionmap);
          }
 
-
          query.exec("select detector_table_id,cond1_id,mask1_id,d_name,d_type, defect_number,group_num,defrange,unit from detector");
          rec = query.record();
-
 
          //detector data
          int detector_table_id = rec.indexOf("detector_table_id");
@@ -291,6 +255,7 @@ void CheckList::read_database(QString DBname)
              m_detectormap.insert("unit", query.value(unit).toString());
              m_detectorvector.append(m_detectormap);
          }
+
          QVector <QMap < QString , QString> >::iterator pw_iterator = m_pw_conditionvector.begin();
          for (; pw_iterator != m_pw_conditionvector.end(); pw_iterator ++)
          {
@@ -316,6 +281,121 @@ void CheckList::read_database(QString DBname)
     }
     m_sqlmanager->closeDB();
 }
+
+void CheckList::new_read_database(const QString&DBname)
+{
+    // use to save DBdata
+    m_maskmap.clear();
+    m_maskvector.clear();
+
+    m_pw_conditionmap.clear();
+    m_pw_conditionvector.clear();
+
+    m_detectormap.clear();
+    m_detectorvector.clear();
+
+    m_jobindex = get_job_key();
+    m_sqlmanager->setDatabaseName(DBname);
+
+    if(m_sqlmanager->openDB())
+    {
+         QSqlQuery query;
+
+         m_jobdata = "job" +  QString::number(m_jobindex) +":" + DBname;
+         m_jobpath_list.append(m_jobdata);
+
+         //mask data
+         QString maskDescColName = "name";
+         QString maskIdColName = "mask_id";
+
+         query.exec("select * from mask");
+         QSqlRecord rec = query.record();
+         int nameIndex = rec.indexOf(maskDescColName);
+         int maskIdIndex = rec.indexOf(maskIdColName);
+         while(query.next()){
+             m_maskmap.insert("mask_desc", query.value(nameIndex).toString());
+             m_maskmap.insert("mask_id", query.value(maskIdIndex).toString());
+             m_maskvector.append(m_maskmap);
+         }
+
+         //pw_condition data
+         QString pwNameColName = "name";
+         QString pwCondIdColName = "condition_id";
+         QString pwBiasColName = "mask_bias";
+         QString pwDoseColName = "delta_dose";
+         QString pwFocusColName = "delta_focus";
+
+         query.exec("select * from process_condition");
+         rec = query.record();
+         nameIndex = rec.indexOf(pwNameColName);
+         int condIdIndex = rec.indexOf(pwCondIdColName);
+         int biasIndex = rec.indexOf(pwBiasColName);
+         int doseIndex = rec.indexOf(pwDoseColName);
+         int focusIndex = rec.indexOf(pwFocusColName);
+         while(query.next())
+         {
+             m_pw_conditionmap.insert("name", query.value(nameIndex).toString());
+             m_pw_conditionmap.insert("condition_id", query.value(condIdIndex).toString());
+             m_pw_conditionmap.insert("mask_bias", query.value(biasIndex).toString());
+             m_pw_conditionmap.insert("delta_dose", query.value(doseIndex).toString());
+             m_pw_conditionmap.insert("delta_focus", query.value(focusIndex).toString());
+             m_pw_conditionvector.append(m_pw_conditionmap);
+         }
+
+
+         query.exec("select check_id, condition_id, mask_id,name,check_type, defect_count,category_count,check_range,unit from check");
+         rec = query.record();
+
+
+         //detector data
+         int detector_table_id = rec.indexOf("check_id");
+         int cond1_id = rec.indexOf("condition_id");
+         int mask1_id = rec.indexOf("mask_id");
+         int d_name = rec.indexOf("name");
+         int d_type = rec.indexOf("check_type");
+         int defect_number = rec.indexOf("defect_count");
+         int group_num = rec.indexOf("category_count");
+         int defrange = rec.indexOf("check_range");
+         int unit = rec.indexOf("unit");
+         while(query.next())
+         {
+             m_detectormap.insert("check_id", query.value(detector_table_id).toString());
+             m_detectormap.insert("condition_id", query.value(cond1_id).toString());
+             m_detectormap.insert("mask_id", query.value(mask1_id).toString());
+             m_detectormap.insert("name", query.value(d_name).toString());
+             m_detectormap.insert("check_type", query.value(d_type).toString());
+             m_detectormap.insert("defect_count", query.value(defect_number).toString());
+             m_detectormap.insert("category_count", query.value(group_num).toString());
+             m_detectormap.insert("check_range", query.value(defrange).toString());
+             m_detectormap.insert("unit", query.value(unit).toString());
+             m_detectorvector.append(m_detectormap);
+         }
+         QVector <QMap < QString , QString> >::iterator pw_iterator = m_pw_conditionvector.begin();
+         for (; pw_iterator != m_pw_conditionvector.end(); pw_iterator ++)
+         {
+             query.exec(QString("select sum(defect_count) from check where condition_id = %1;").arg(pw_iterator->value("cond_id")));
+             while (query.next())
+             {
+                 if (query.value(0).toString().isEmpty())
+                 {
+                     pw_iterator->insert("Count", "0");
+                 }
+                 else
+                 {
+                     pw_iterator->insert("Count", query.value(0).toString());
+                 }
+             }
+         }
+
+        query.exec("select sum(defect_count) from check where mask_id and condition_id");
+        while(query.next())
+        {
+            m_count = query.value(0).toString();
+        }
+    }
+    m_sqlmanager->closeDB();
+}
+
 
 int CheckList::get_job_key()
 {
@@ -345,14 +425,28 @@ void CheckList::close_job_key(int Key)
     }
 }
 
+void CheckList::set_read_new_database(const bool & flag)
+{
+    m_is_read_new_database = flag;
+    Global::is_new_dbformat = flag;
+}
+
 CheckList::~CheckList()
 {
 }
 
 void CheckList::slot_add_job(QString dbName)
 {
-    read_database(dbName);
-    updataTreeView();
+    if (m_is_read_new_database)
+    {
+        new_read_database(dbName);
+        new_update_treeview();
+    }
+    else
+    {
+        read_database(dbName);
+        updataTreeView();
+    }
 }
 
 void CheckList::slot_close_job(QString filename)
@@ -370,7 +464,6 @@ void CheckList::slot_close_job(QString filename)
         {
             if (list.count() > 1)
             {
-
                 m_jobindex = list.at(0).right(list.at(0).size() - 3).toInt();
             }
             remove_job(i);
@@ -386,7 +479,6 @@ void CheckList::remove_job(int index)
 
     m_checklist_model->removeRow(index);
     m_jobpath_list.removeAt(index);
-
 }
 
 QModelIndex CheckList::get_current_rootindex(QModelIndex index)
@@ -407,92 +499,18 @@ QModelIndex CheckList::get_current_rootindex(QModelIndex index)
 void CheckList::slot_CheckListContextMenu(const QPoint& point)
 {
     QMenu Checkmenu;
-    QAction* FitAction = new QAction(&Checkmenu);
-    FitAction ->setText("Fit to Selected Item");
-
-    QAction* PanAction = new QAction(&Checkmenu);
-    PanAction->setText("Pan to Selected Item");
-
-    QAction* CopyAction = new QAction(&Checkmenu);
-    CopyAction->setText("Copy to Clipboaed");
-    CopyAction->setShortcuts(QKeySequence::Copy);
-
-    QAction* HighAction = new QAction(&Checkmenu);
-    HighAction->setText("Highlight");
-
-    QAction* ExpandAction = new QAction(&Checkmenu);
-    ExpandAction->setText("Expand Items");
-
-    QAction* CollapseAction = new QAction(&Checkmenu);
-    CollapseAction->setText("Collapse Items");
-
-    QAction* ColorAction = new QAction(&Checkmenu);
-    ColorAction->setText("Color");
-    QMenu ColorMenu;
-    ColorAction->setMenu(&ColorMenu);
-
-    QAction* TextColorAction = new QAction(&Checkmenu);
-    TextColorAction->setText("Text Color");
-    QMenu TextColorMenu;
-    TextColorAction->setMenu(&TextColorMenu);
-
-    QAction* StyleAction = new QAction(&Checkmenu);
-    StyleAction->setText("Style");
-    QMenu StyleMenu;
-    StyleAction->setMenu(&StyleMenu);
-
-    QAction* TextStyleAction = new QAction(&Checkmenu);
-    TextStyleAction->setText("Text Style");
-    QMenu TextStyleMenu;
-    TextStyleAction->setMenu(&TextStyleMenu);
-
-    QAction* CloneAction = new QAction(&Checkmenu);
-    CloneAction->setText("Clone job Results");
-
-    QAction* ViewAction = new QAction(&Checkmenu);
-    ViewAction->setText("View job Configuration");
-
-    QAction* OpenAction = new QAction(&Checkmenu);
-    OpenAction->setText("Open job PostOPC");
-
-    QAction* CustomAction = new QAction(&Checkmenu);
-    CustomAction->setText("Custom Group Query");
-
-    QAction* GroupAction = new QAction(&Checkmenu);
-    GroupAction->setText("Set Defect Group Page Size");
-
-    QAction* SetPageAction = new QAction(&Checkmenu);
-    SetPageAction->setText("Set Defect Page Size");
-
     QAction* DeleteAction = new QAction(&Checkmenu);
+    QAction* AppendJobAction = new QAction(&Checkmenu);
     DeleteAction->setText("Close");
+    AppendJobAction->setText("Append Job");
 
-//    Checkmenu.addAction(FitAction);
-//    Checkmenu.addAction(PanAction);
-//    Checkmenu.addAction(CopyAction);
-//    Checkmenu.addAction(HighAction);
-//    Checkmenu.addAction(ExpandAction);
-//    Checkmenu.addAction(CollapseAction);
-//    Checkmenu.addSeparator();
-//    Checkmenu.addAction(ColorAction);
-//    Checkmenu.addAction(TextColorAction);
-//    Checkmenu.addAction(StyleAction);
-//    Checkmenu.addAction(TextStyleAction);
-//    Checkmenu.addSeparator();
-//    Checkmenu.addAction(CloneAction);
-//    Checkmenu.addAction(ViewAction);
-//    Checkmenu.addAction(OpenAction);
-//    Checkmenu.addAction(CustomAction);
-//    Checkmenu.addAction(GroupAction);
-//    Checkmenu.addAction(SetPageAction);
-//    Checkmenu.addSeparator();
     Checkmenu.addAction(DeleteAction);
-   connect(DeleteAction, SIGNAL(triggered()), this, SLOT(slot_close_currentjob()));
+    Checkmenu.addAction(AppendJobAction);
+    connect(DeleteAction, SIGNAL(triggered()), this, SLOT(slot_close_currentjob()));
+    connect(AppendJobAction, SIGNAL(triggered()), this, SLOT(slot_coverage_job()));
     QPoint tempPos = point;
     tempPos.setY(tempPos.y() + 22);
     Checkmenu.exec(m_checklist_tree->mapToGlobal(tempPos));
-
-
 }
 
 void CheckList::slot_update_current_index(QModelIndex index)
@@ -508,81 +526,6 @@ void CheckList::slot_showDefGroup(QModelIndex index)
     emit signal_showDefGroup(index, int_index);
 }
 
-void CheckList::slot_openLVCK(QString)
-{
-}
-
-void CheckList::slot_BtnRename()
-{
-    m_rename_dialog = new QDialog(this);
-    m_rename_dialog->setWindowTitle("Rename CheckList");
-    QPoint point = m_rename_dialog->mapFromGlobal(QPoint(500, 200));
-    m_rename_dialog->setGeometry(point.x(), point.y(), 230, 100);
-    QLabel *renameLable = new QLabel(m_rename_dialog);
-    renameLable->setGeometry(10, 10, 200, 20);
-    renameLable->setText("Please enter new name:");
-    m_rename_edit = new QLineEdit(m_rename_dialog);
-    m_rename_edit->setGeometry(10, 30, 200, 20);
-    m_rename_edit->setText(m_checklist_commbox->currentText());
-    m_rename_edit->setSelection(0, m_rename_edit->text().length());
-    QPushButton *m_rename_buttonEnter = new QPushButton("Ok", m_rename_dialog);
-    QPushButton * m_rename_buttonCancel = new QPushButton("Cancel", m_rename_dialog);
-    m_rename_buttonEnter->setGeometry(50, 70, 60, 20);
-    m_rename_buttonCancel->setGeometry(120, 70, 60, 20);
-    m_rename_dialog->show();
-    connect(m_rename_buttonCancel, SIGNAL(clicked()), m_rename_dialog, SLOT(close()));
-    connect(m_rename_buttonEnter, SIGNAL(clicked()), this, SLOT(slot_RenameOk()));
-}
-
-void CheckList::slot_BtnDelete()
-{
-    m_checklist_commbox->removeItem(m_checklist_commbox->currentIndex());
-}
-
-void CheckList::slot_BtnLoad()
-{
-    QFileDialog *fileDialog = new QFileDialog(this);
-    fileDialog->setWindowTitle(tr("Load CheckList File"));
-    fileDialog->setDirectory("/home/dfjy/workspace/job");
-    fileDialog->setNameFilter(tr("CheckList File(.lvck)"));
-    connect(fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_openLVCK(QString)), Qt::UniqueConnection);
-    fileDialog->setFileMode(QFileDialog::ExistingFile);
-    fileDialog->setViewMode(QFileDialog::List);
-    fileDialog->show();
-}
-
-void CheckList::slot_BtnSave()
-{
-    QFileDialog *fileDialog = new QFileDialog(this);
-    fileDialog->getSaveFileName(this,tr("Save File"),"/home",tr("File(*.lvck)"));
-}
-
-void CheckList::slot_ExportCSV()
-{
-    QFileDialog *fileDialog = new QFileDialog(this);
-    fileDialog->getSaveFileName(this,tr("Save File"),"/home",tr("File(*.csv)"));
-}
-
-void CheckList::slot_BtnFound(bool isPress)
-{
-    if (isPress)
-    {
-        m_vlayout->insertWidget(1, m_findwidget);
-        m_findwidget->show();
-    }
-    else
-    {
-        m_vlayout->removeWidget(m_findwidget);
-        m_findwidget->hide();
-    }
-}
-
-void CheckList::slot_RenameOk()
-{
-    m_rename_dialog->close();
-    m_checklist_commbox->setItemText(m_checklist_commbox->currentIndex(), m_rename_edit->text());
-}
-
 void CheckList::slot_close_currentjob()
 {
     remove_job(m_active_tree_index);
@@ -594,5 +537,4 @@ void CheckList::slot_coverage_job()
 {
     emit signal_coverage_job();
 }
-
 }

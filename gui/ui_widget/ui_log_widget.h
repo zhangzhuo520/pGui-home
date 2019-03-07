@@ -15,13 +15,10 @@ public:
         LogWidget(QWidget *parent = 0);
         ~LogWidget();
 
-        QTextBrowser *view() const {return m_view;}
-
 public slots:
         void slot_append_log(const QString &);
 private:
-        QMutex m_mutex;
-        QTextBrowser *m_view;
+        QTextBrowser *m_text_browser;
 };
 
 }

@@ -180,7 +180,6 @@ void LayoutView::erase_proxy(LayoutViewProxy& lv)
             m_proxys.erase(m_proxys.begin() + i);
             return;
         }
-
     }
 }
 

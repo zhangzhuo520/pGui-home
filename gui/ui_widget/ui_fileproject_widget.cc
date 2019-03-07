@@ -21,10 +21,11 @@ void FileProjectWidget::init()
     m_project_table->horizontalHeader()->setClickable(false);
     m_project_table->horizontalHeader()->setStretchLastSection(true);
     m_project_table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-
     m_project_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_project_table->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_project_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //m_project_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_project_table->verticalHeader()->setDefaultSectionSize(30);
+    m_project_table->verticalHeader()->setMinimumSectionSize(30);
     m_project_table->verticalHeader()->hide();
 
     connect(m_project_table, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slot_DoubleClickItem(QModelIndex)));

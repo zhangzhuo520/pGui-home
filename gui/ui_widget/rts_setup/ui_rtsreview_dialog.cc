@@ -31,6 +31,11 @@ void RtsReviewDialog::slot_delete_all_index()
     m_rts_history_table->delete_all_data();
 }
 
+void RtsReviewDialog::slot_draw_cutline()
+{
+    m_rtscurve_widget->show();
+}
+
 void RtsReviewDialog::init_ui()
 {
     QVBoxLayout *AllVlayout = new QVBoxLayout(this);
@@ -177,12 +182,16 @@ void RtsReviewDialog::init_ui()
     Bottom_Vlayout->addWidget(m_cutline_table);
     AllVlayout->addLayout(Bottom_Vlayout);
     setLayout(AllVlayout);
+
+    m_rtscurve_widget = new RtsCurve(this);
+    m_rtscurve_widget->hide();
 }
 
 void RtsReviewDialog::init_connection()
 {
     connect(m_rts_del_button, SIGNAL(clicked()), this, SLOT(slot_delete_index()));
     connect(m_rts_delall_button, SIGNAL(clicked()), this, SLOT(slot_delete_all_index()));
+    connect(m_cutline_mode_button, SIGNAL(clicked()), this, SLOT(slot_draw_cutline()));
 }
 
 }

@@ -28,6 +28,8 @@ QVariant TreeModel::data(const QModelIndex &item, int role) const
         }
     case Qt::SizeHintRole:
         return QSize(32, 16);
+    case Qt::ToolTipRole:
+        return item.data();
     default:
         return value;
     }

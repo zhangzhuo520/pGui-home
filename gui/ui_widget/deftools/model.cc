@@ -49,6 +49,18 @@ QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
             return QColor(Qt::white);
         }
     }
+    else if (role == Qt::ToolTip)
+    {
+        if (value.toString().split('.').count() > 1 &&
+                value.toString().split('.').at(1).left(5).toInt() >= epsilon)
+        {
+            return QString ::number(value.toDouble(), 'f', 4);
+        }
+        else
+        {
+            return value;
+        }
+    }
     else
         return value;
 }

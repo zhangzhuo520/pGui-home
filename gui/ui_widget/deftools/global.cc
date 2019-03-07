@@ -6,5 +6,5 @@ QColor UiStyle::DockTitleBarColor = QColor(145, 194, 242);
 QColor UiStyle::ToolBarColor = QColor(216, 216, 216);
 QColor UiStyle::ButtonPressColor = QColor(80, 183, 180);
 QColor UiStyle::ButtonHoverColor = QColor(80, 183, 220);
-
+bool Global::is_new_dbformat = false;
 }

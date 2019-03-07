@@ -40,12 +40,6 @@ public:
 
     void openDB();
 
-    void changeSortKey();
-
-    void resizeColumns();
-
-    void sortTable();
-
     void setData();
 
     void setTotal();
@@ -73,13 +67,6 @@ public slots:
     void slot_custom_contextmenu(QPoint);
 
     void slot_set_page_count();
-//    void slot_defectsUpdata(QModelIndex *);
-
-//    void slot_changSortQrder(QString);
-
-//    void slot_m_descent_buttonCheck();
-
-//    void slot_m_ascen_buttonCheck();
 
     void slot_sort_by_column(int, Qt::SortOrder);
 

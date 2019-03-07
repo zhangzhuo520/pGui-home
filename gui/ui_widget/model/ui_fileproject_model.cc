@@ -4,9 +4,20 @@
 namespace ui
 {
 
-FileProjectModel::FileProjectModel(QObject* parent):QAbstractTableModel(parent)
+FileProjectModel::FileProjectModel(QObject* parent)
 {
+    setParent(parent);
+}
 
+QModelIndex FileProjectModel::parent(const QModelIndex &child)const
+{
+    Q_UNUSED(child);
+    return QModelIndex();
+}
+
+QModelIndex FileProjectModel::index(int row, int column, const QModelIndex &parent)const
+{
+    return hasIndex(row, column, parent) ? createIndex(row, column, 0) : QModelIndex();
 }
 
 int FileProjectModel::rowCount(const QModelIndex& parent) const
@@ -27,7 +38,6 @@ QVariant FileProjectModel::data(const QModelIndex &index, int role) const
     {
         return QVariant();
     }
-
     if((size_t)index.row() >= m_layout_views.size() || index.row() < 0)
     {
         return QVariant();
@@ -45,7 +55,11 @@ QVariant FileProjectModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::TextAlignmentRole)
     {
-        return QVariant(int(Qt::AlignCenter));
+        return QVariant(int(Qt::AlignLeft | Qt::AlignVCenter));
+    }
+    else if (role == Qt::SizeHintRole)
+    {
+        return QSize(100, 15);
     }
     return QVariant();
 }

@@ -35,6 +35,10 @@ QVariant SqlQueryModel::data(const QModelIndex &item, int role) const
             return value;
         }
     }
+    else if (role == Qt::ToolTipRole)
+    {
+        return item.data();
+    }
     else if (role == Qt::TextAlignmentRole)
     {
         return int(Qt::AlignLeft | Qt::AlignVCenter);

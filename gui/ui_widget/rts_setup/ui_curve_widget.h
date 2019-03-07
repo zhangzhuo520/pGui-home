@@ -5,6 +5,8 @@
 #include <QLayout>
 #include <QVector>
 #include <QPaintEvent>
+#include <QLabel>
+#include <QRadioButton>
 
 #include "qcustomplot.h"
 namespace ui {
@@ -36,8 +38,10 @@ private:
     QCPCurve *m_ai_curve;
     QCPCurve *m_ri_curve;
     QCPCurve *m_ei_curve;
+    QCPCurve *m_top_cursor_curve;
 
     QCPCurve *m_ai_ils_curve;
+    QCPCurve *m_bottom_cursor_curve;
 
     QVector <double> m_ai_x_vector;
     QVector <double> m_ri_x_vector;
@@ -62,9 +66,15 @@ public slots:
 
 private:
     SingleWaveWidget *m_image_intensity_plot;
-    SingleWaveWidget *m_ils_plot;
+    SingleWaveWidget *m_wave_widget;
 
     QVBoxLayout *m_vbox_layout;
+
+    QHBoxLayout *m_hboxlayout;
+    QLabel *m_focuson_label;
+    QRadioButton *m_ai_button;
+    QRadioButton *m_ri_button;
+    QRadioButton *m_ei_button;
 
 };
 
