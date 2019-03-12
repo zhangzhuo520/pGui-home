@@ -162,18 +162,14 @@ int main(int argc, char *argv[])
 
     signal(SIGBUS, signal_crash_handler);     // 总线错误
     signal(SIGSEGV, signal_crash_handler);    // SIGSEGV，非法内存访问
-    signal(SIGFPE, signal_crash_handler);       // SIGFPE，数学相关的异常，如被0除，浮点溢出，等等
-    signal(SIGABRT, signal_crash_handler);     // SIGABRT，由调用abort函数产生，进程非正常退出
-#if 1
+    signal(SIGFPE, signal_crash_handler);     // SIGFPE，数学相关的异常，如被0除，浮点溢出，等等
+    signal(SIGABRT, signal_crash_handler);    // SIGABRT，由调用abort函数产生，进程非正常退
     qApp->setStyle(new ui::ProxyStyle);
     QFont font;
     font.setFamily("Sans Serif");
     font.setPointSize (9);
     a.setFont(font);
     ui::MainWindow w;
-#else
-    ui::FlexWidget w;
-#endif
     w.show();
     return a.exec();
 }

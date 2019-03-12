@@ -21,7 +21,6 @@
 #include "db/sqlmanager.h"
 #include "deftools/framelesshelper.h"
 #include "deftools/defcontrols.h"
-#include "deftools/global.h"
 #include "model/ui_checklist_model.h"
 #include "deftools/cmessagebox.h"
 
@@ -42,19 +41,13 @@ public:
 
     void initTreeView();
 
-    void updataTreeView();
-
     void new_update_treeview();
-
-    void read_database(const QString&);
 
     void new_read_database(const QString&);
 
     int get_job_key();
 
     void close_job_key(int);
-
-    void set_read_new_database(const bool&);
 
     ~CheckList();
 
@@ -94,8 +87,6 @@ public slots:
     void slot_close_job(QString);
 
 private:
-    bool m_is_read_new_database;
-
     void remove_job(int);
     QModelIndex get_current_rootindex(QModelIndex);
 
@@ -132,8 +123,7 @@ private:
 
     QStringList m_jobpath_list;
     QVector <JobKey> m_jobkey_vector;
-
-    QVector <rootFileItem *> m_rootitem_vector;
+    QVector <QStandardItem *> m_rootitem_vector;
 };
 }
 #endif // CheckList_H

@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QStringList>
 #include <QCloseEvent>
+#include <QApplication>
 
 #include <string>
 #include <sstream>
@@ -41,6 +42,7 @@
 #include "deftools/iconhelper.h"
 #include "deftools/showcpumemory.h"
 #include "deftools/global.h"
+#include "deftools/datatable.h"
 #include "ui_checklist.h"
 #include "ui_defgroup.h"
 #include "ui_defects_widget.h"
@@ -166,6 +168,8 @@ private slots:
 
     void slot_change_background_color();
 
+    void slot_pos_jump(QModelIndex);
+
 private:
     void initTitleBar();
     void initMenubar();
@@ -175,6 +179,7 @@ private:
     void initPaintTab();
     void initCheckList();
     void initGaugeTable();
+    void initPosTable();
     void initDefGroup();
     void initConfigDir();
     void init_pointer_value();
@@ -213,6 +218,7 @@ private:
     DockWidget *checkListDockWidget;
     DockWidget *logDockWidget;
     DockWidget *m_gauge_dockWidget;
+    DockWidget *m_pos_dockwidget;
     QVector <DockWidget *> m_defgroupdockwidget_vector;
     QVector <DockWidget *> m_defectsdockwidget_vector;
     QFileDialog *m_file_dialog;
@@ -234,6 +240,7 @@ private:
     QTreeView *layerTree;
     LogWidget *logwidget;
     GaugeTable *m_gauge_table;
+    DataTable *m_pos_table;
 
     CheckList *m_checklist_widget;
     Global::PaintStyle paintstyle;
@@ -261,7 +268,7 @@ private:
     QDialog *m_setpos_dialog;
     QLabel *m_pos_label;
     QLabel *m_pos_unit_label;
-    QLineEdit *m_pos_lineedit;
+    HistoryLineEdit *m_pos_lineedit;
     QLabel *m_pos_view_range_label;
     QLabel *m_pos_view_range_unit_label;
     QLineEdit *m_pos_view_range_edit;
@@ -300,6 +307,7 @@ private:
     QComboBox* m_file_box;
     QPushButton* m_select_file_okbutton;
     QPushButton* m_select_file_cancelbutton;
+//    QVector <FrameInfo> m_frameinfo_list;
 };
 }
 #endif // MAINWINDOW_H

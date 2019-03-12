@@ -13,8 +13,6 @@ class TabPaintWidget:public QTabWidget
 public:
     explicit TabPaintWidget(QWidget *parent = 0);
 
-    ~TabPaintWidget();
-
     ScaleFrame *get_scaleframe(int);
 
     QVector<render::RenderFrame*> get_render_frame_list();
@@ -25,25 +23,22 @@ public:
 
     void update_measuretable_data();
 
+    ~TabPaintWidget();
+
     void get_canvas_coord(double *, double *, double *, double *);
 
 public slots:
     void slot_close_tab(int index);
-
     ScaleFrame* creat_canvas();
-
     void slot_show_measure_table();
-
     void slot_set_line_list(const QList <LineData>&);
-
     void slot_layout_view_changed(render::RenderFrame* );
 
 signals:
     void signal_close_tab(QString);
-
     void signal_set_line_list(const QList<LineData> &);
-
     void signal_layout_view_changed(render::RenderFrame*);
+
 private:
     void init_measure_table();
 
@@ -51,7 +46,6 @@ private:
 
     void connect_layer_widget();
 
-    QString database_to_oas(QString);
     int string_to_index(QString);
 
     //  ScaleFrame *m_scaleframe;

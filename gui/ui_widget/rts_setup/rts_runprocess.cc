@@ -7,7 +7,6 @@ RtsRunProcess::RtsRunProcess(QObject *parent):
     m_run_process = new QProcess(this);
     connect(m_run_process, SIGNAL(started()), this, SLOT(slot_process_start()));
     connect(m_run_process, SIGNAL(finished(int)), this, SLOT(slot_process_end(int)));
-//    connect(m_run_process, SIGNAL())
 }
 
 RtsRunProcess::~RtsRunProcess()

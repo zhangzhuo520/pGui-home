@@ -2,6 +2,7 @@
 #define FILEPROJECTMODEL_H
 
 #include <QAbstractItemModel>
+#include <QDebug>
 
 #include "render_layout_view.h"
 #include "render_frame.h"

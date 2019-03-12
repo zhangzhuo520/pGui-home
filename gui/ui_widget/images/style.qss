@@ -172,12 +172,12 @@ QHeaderView::section{
 
 /**********QDockWidget**********/
 QDockWidget{
-     background: rgb(149, 194, 231);
+     background: rgb(255, 255, 255);
      border: 2px solid rgb(149, 194, 231);
 }
 
 QDockWidget > QWidget {
-     background: rgb(149, 194, 231);
+     background: rgb(255, 255, 255);
       border: 2px solid rgb(149, 194, 231);
 }
 

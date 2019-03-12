@@ -7,6 +7,8 @@
 #include <QDateTime>
 #include <QFile>
 #include <QDebug>
+#include <QApplication>
+
 #include "../../qt_logger/qtlogger.h"
 #include "../../qt_logger/pgui_log_global.h"
 namespace ui {
@@ -45,7 +47,9 @@ public:
         Aux_Dignonal  //45
     };
 
-    static bool is_new_dbformat;
+//    static int screen_width;
+
+//    static int screen_height;
 };
 
 class UiStyle{

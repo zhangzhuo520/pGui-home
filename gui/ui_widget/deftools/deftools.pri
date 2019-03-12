@@ -8,8 +8,8 @@ HEADERS += \
     deftools/framelesshelper.h \
     deftools/model.h \
     deftools/showcpumemory.h \
-    deftools/ui_data_table.h \
-    deftools/qcustomplot.h
+    deftools/qcustomplot.h \
+    deftools/datatable.h
 
 SOURCES += \
     $$PWD/defcontrols.cc \
@@ -19,7 +19,7 @@ SOURCES += \
     deftools/framelesshelper.cc \
     deftools/model.cc \
     deftools/showcpumemory.cc \
-    deftools/ui_data_table.cc \
-    deftools/qcustomplot.cc
+    deftools/qcustomplot.cc \
+    deftools/datatable.cc
 
 FORMS +=

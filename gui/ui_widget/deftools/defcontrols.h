@@ -296,12 +296,13 @@ protected:
     void closeEvent(QCloseEvent *event)
     {
         Q_UNUSED(event);
-        if (objectName().right(9) == "_defGroup" || objectName().right(8) == "_defects")
+        if (objectName().right(9) == "_category" || objectName().right(8) == "_defects")
         {
             QString str = objectName().split("_").at(0);
             int index = str.right(str.count() - 3).toInt();
             emit signal_close_database_widget(index);
         }
+
         if (objectName() == "Gauge")
         {
             emit signal_clear_gauge();
@@ -576,5 +577,22 @@ private:
     QColor m_color;
 };
 
+
+class HistoryLineEdit  : public QComboBox
+{
+    Q_OBJECT
+public:
+    explicit HistoryLineEdit(QWidget *parent = 0);
+
+    void add_history(const QString&);
+
+    void setText(const QString&);
+    QString text();
+
+protected:
+
+private:
+    QLineEdit *m_input_edit;
+};
 }
 #endif // DEFCONTROLS_H

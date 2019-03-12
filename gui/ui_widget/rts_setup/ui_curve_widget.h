@@ -38,10 +38,12 @@ private:
     QCPCurve *m_ai_curve;
     QCPCurve *m_ri_curve;
     QCPCurve *m_ei_curve;
-    QCPCurve *m_top_cursor_curve;
+    QCPCurve *m_top_cursor_x_curve;
+    QCPCurve *m_top_cursor_y_curve;
 
     QCPCurve *m_ai_ils_curve;
-    QCPCurve *m_bottom_cursor_curve;
+    QCPCurve *m_bottom_cursor_x_curve;
+    QCPCurve *m_bottom_cursor_y_curve;
 
     QVector <double> m_ai_x_vector;
     QVector <double> m_ri_x_vector;
@@ -50,6 +52,9 @@ private:
     QVector <double> m_ai_y_vector;
     QVector <double> m_ri_y_vector;
     QVector <double> m_ei_y_vector;
+
+    QCPAxisRect *image_intensity_plot;
+    QCPAxisRect *ils_plot;
 };
 
 class CurveWidget : public QWidget

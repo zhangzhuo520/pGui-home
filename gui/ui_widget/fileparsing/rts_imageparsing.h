@@ -13,6 +13,7 @@
 #include <iostream>
 #include <QColor>
 #include <QMutex>
+#include <QSettings>
 
 namespace ui {
 class ImageWorker : public QObject
@@ -21,10 +22,8 @@ class ImageWorker : public QObject
  public:
     explicit ImageWorker(QObject * parent = 0);
     ~ImageWorker();
+    void set_file_path(const QString&);
 
-    void set_image_data_path(const QString&);
-
-    void set_image_name(const QString&);
 
 public slots:
     void slot_start_work();
@@ -39,13 +38,12 @@ private:
 
     QStringList *m_all_data_list;
     QStringList m_image_data_list;
-    QStringList m_image_pos_list;
 
     QImage *m_image;
     int m_image_width;
     int m_image_high;
-    QString m_image_data_path;
-    QString m_image_name;
+
+    QString m_file_name;
 };
 
 class RtsImageParsing : public QObject
@@ -64,10 +62,15 @@ signals:
     void signal_parsing_finished();
 
 private:
-    QStringList get_image_file();
+    void ceate_threads();
 
     ImageWorker *m_image_worker;
     QThread *m_worker_thread;
+    QVector <ImageWorker *> m_image_worker_vector;
+    QVector <QThread *> m_worker_thread_vector;
+
+    QStringList m_filename_list;
+    int m_thread_num;
 };
 }
 

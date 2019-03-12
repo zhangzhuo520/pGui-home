@@ -10,16 +10,9 @@ DefGroup::DefGroup(DockWidget *parent , QString Path, QModelIndex *defectGroupId
     m_each_page_count(10)
 {
     setParent(parent);
-    if (Global::is_new_dbformat == true)
-    {
-        setWindowTitle("Job" + QString::number(jobIndex) + "_cateGroy");
-        setObjectName("Job" + QString::number(jobIndex) + "_cateGroy");
-    }
-    else
-    {
-        setWindowTitle("Job" + QString::number(jobIndex) + "_defGroup");
-        setObjectName("Job" + QString::number(jobIndex) + "_defGroup");
-    }
+    setWindowTitle("Job" + QString::number(jobIndex) + "_category");
+    setObjectName("Job" + QString::number(jobIndex) + "_category");
+
     initSql();
     initOtherButton();
     initDefGroupTable();
@@ -129,6 +122,7 @@ void DefGroup::updataTable()
 
 void DefGroup::openDB()
 {
+    qDebug() << DbPath;
     if (!DbPath.isEmpty())
     {
         sqlManager->setDatabaseName(DbPath);
@@ -147,7 +141,6 @@ void DefGroup::showDefects(QModelIndex *index)
 {
     QModelIndex tableIdIndex = index->sibling(index->row(), 9);
     QModelIndex groupIdIndex = index->sibling(index->row(), 2);
-
 
     tableId = tableIdIndex.data().toInt();
     groupId = groupIdIndex.data().toInt();
@@ -210,7 +203,7 @@ void DefGroup::slot_sort_by_column(int index, Qt::SortOrder sort_order)
     switch (index) {
     case 1:
     {
-        DefectGroupData.orderBy = "detDefGroup_id";
+        DefectGroupData.orderBy = "category_id";
         if (sort_order == Qt::AscendingOrder)
         {
             DefectGroupData.order = "asc";
@@ -223,7 +216,7 @@ void DefGroup::slot_sort_by_column(int index, Qt::SortOrder sort_order)
     }
     case 2:
     {
-        DefectGroupData.orderBy = "defect_number";
+        DefectGroupData.orderBy = "defect_count";
         if (sort_order == Qt::AscendingOrder)
         {
             DefectGroupData.order = "asc";
@@ -346,14 +339,7 @@ void DefGroup::setData()
 
 void DefGroup::setTotal()
 {
-    if(Global::is_new_dbformat == true)
-    {
-        CountGroupData.tableName = "categroy";
-    }
-    else
-    {
-        CountGroupData.tableName = "detector_defect_group";
-    }
+    CountGroupData.tableName = "category";
     CountGroupData.table_id = QString::number(tableId);
     CountGroupQuery->setData(CountGroupData);
     QSqlQuery query = CountGroupQuery->outputSQL();

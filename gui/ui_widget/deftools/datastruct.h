@@ -3,7 +3,8 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
-#define SYS_TIPBOX 1
+namespace ui {
+
 
 #ifndef MyDebug
 #define MyDebug  qDebug()<<"[FILE:"<<__FILE__<<",LINE"<<__LINE__<<",FUNC"<<__FUNCTION__<<"]";
@@ -107,13 +108,37 @@ typedef struct rtssetupdata
    }
 }RtsSetupData;
 
-typedef struct painttabinfo
-{
-    enum DataType{
-        osa,
-        job
-    }
+//typedef struct fileinfo
+//{
+//    enum FileType
+//    {
+//        osa,
+//        job
+//    };
+//    FileType file_type;
+//    QString filename;
 
-}Paint
+//    struct fileinfo operator=(const struct fileinfo& data)
+//    {
+//        struct fileinfo temp_fileinfo;
+//        temp_fileinfo.filename = data.filename;
+//        temp_fileinfo.file_type = data.file_type;
+//        return temp_fileinfo;
+//    }
+//}FileInfo;
+
+//typedef struct frameinfo
+//{
+//    bool overlay;
+//    QVector <FileInfo> fileinfo_vector;
+
+//    struct frameinfo operator=(const struct frameinfo& data)
+//    {
+//        struct frameinfo temp_info;
+
+//        return temp_info;
+//    }
+//}FrameInfo;
+}
 
 #endif // DATASTRUCT_H

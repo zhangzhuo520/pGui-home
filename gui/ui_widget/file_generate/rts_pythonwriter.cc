@@ -151,13 +151,14 @@ void RtsPythonWriter::set_canvas_pos(const double & left, const double & right, 
 void RtsPythonWriter::create_pframe_file()
 {
     QString rts_python_path = QDir::homePath() + "/.pangen_gui" + "/pgui_rts";
+    QString use_gpu = get_gpu();
     QString file_data =
             "import pangen.system as psys\n"\
             "\n"\
             "def mainflow():\n"\
             "    options = {}\n"\
             "    options['python_file'] = \"rts.py\"\n"\
-            "    options['use_gpu'] = \"0\"\n"\
+            "    options['use_gpu'] = \"" + use_gpu + "\"\n"\
             "    options['preprocess_thread_count'] = 2\n"\
             "    psys.execute_session('optimization', mode = \"singlethread\", session_name = 'rts', options = options)\n"\
             "\n"\
@@ -328,6 +329,18 @@ QString RtsPythonWriter::gds_layout()
         gds_string += layout_data_string;
     }
     return gds_string;
+}
+
+QString RtsPythonWriter::get_gpu()
+{
+    if (m_use_gpu_or_cup == "gpu")
+    {
+        return "1";
+    }
+    else
+    {
+        return "0";
+    }
 }
 
 }

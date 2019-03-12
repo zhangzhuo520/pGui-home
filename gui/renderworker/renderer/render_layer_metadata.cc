@@ -33,6 +33,7 @@ LayerMetaData& LayerMetaData::operator =(const LayerMetaData &l)
     return *this;
 }
 
+
 bool LayerMetaData::operator ==(const LayerMetaData &l) const
 {
     return m_layer_name == l.m_layer_name && m_layer_num == l.m_layer_num && m_data_type == l.m_data_type;

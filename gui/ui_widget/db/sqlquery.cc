@@ -28,10 +28,9 @@ void defectSQL::setData(DefectSqlData newData)
     data.orderBy = newData.orderBy;
     data.pageCount = newData.pageCount;
     data.table_id = newData.table_id;
-
-    sqlstr = QString("select id, size, x, y, detdefgroup_id, patch_id, 'None' as defect_property "\
+    sqlstr = QString("select defect_id, size, x, y, category_id, patch_id "\
                      "from defect " \
-                     "where detector_table_id = %1 and detdefgroup_id = %2 order by %3 %4 limit %5,%6;"\
+                     "where check_id = %1 and category_id = %2 order by %3 %4 limit %5,%6;"\
                      ).arg(data.table_id).arg(data.detdefgroup_id).arg(data.orderBy).arg(data.order).arg(data.limitIndex).arg(data.pageCount);
 }
 
@@ -87,9 +86,9 @@ void defectGroupSQL::setData(defectGroupSqlData newData)
     data.pageCount = newData.pageCount;
     data.table_id = newData.table_id;
 
-    sqlString = QString("select detector_table_id, detdefgroup_id, defect_number, worst_size "\
-                        "from detector_defect_group " \
-                        "where detector_table_id = %1 order by %2 %3 limit %4 , %5;"\
+    sqlString = QString("select check_id, category_id, defect_count, worst_size "\
+                        "from category " \
+                        "where check_id = %1 order by %2 %3 limit %4 , %5;"\
                         ).arg(data.table_id).arg(data.orderBy).arg(data.order).arg(data.limitIndex).arg(data.pageCount);
 }
 
@@ -124,14 +123,14 @@ QSqlQuery defectGroupSQL::outputSQL()
 
 QSqlQuery defectGroupSQL::limitSQL(int offset)
 {
-        if (isValidData())
-        {
-            return QSqlQuery(QString("select detector_table_id, detdefgroup_id, defect_number, worst_size "\
-                                     "from detector_defect_group "\
-                                     "where detector_table_id = %1 order by %2 %3 limit %4 %5;").arg(data.table_id).arg(data.orderBy).arg(data.order).arg(data.limitIndex).arg(QString::number(offset)));
-        }
-        else
-            return NULL;
+    if (isValidData())
+    {
+        return QSqlQuery(QString("select check_id, category_id, defect_count, worst_size "\
+                                 "from category "\
+                                 "where check_id = %1 order by %2 %3 limit %4 %5;").arg(data.table_id).arg(data.orderBy).arg(data.order).arg(data.limitIndex).arg(QString::number(offset)));
+    }
+    else
+        return NULL;
 }
 
 //CountGroupSQL
@@ -173,7 +172,7 @@ QSqlQuery CountGroupSQL::outputSQL()
 {
     if (isValidData())
     {
-        return QSqlQuery(QString("select count(*) from  %1 where detector_table_id = %2;")\
+        return QSqlQuery(QString("select count(*) from  %1 where check_id = %2;")\
                          .arg(data.tableName).arg(data.table_id));
     }
     else
@@ -222,7 +221,7 @@ QSqlQuery CountDefectSQL::outputSQL()
 {
     if (isValidData())
     {
-        return QSqlQuery(QString("select count(*) from %1 where detector_table_id = %2 and detdefgroup_id = %3;"\
+        return QSqlQuery(QString("select count(*) from %1 where check_id = %2 and category_id = %3;"\
                                  ).arg(data.tableName).arg(data.table_id).arg(data.defGroup_id));
     }
     else

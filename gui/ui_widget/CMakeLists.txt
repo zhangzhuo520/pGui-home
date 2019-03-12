@@ -45,6 +45,7 @@ SET(PanGenGUI_SRCS
     deftools/global.cc
     deftools/iconhelper.cc
     deftools/showcpumemory.cc
+    deftools/datatable.cc
     delegate/ui_rtsmask_delegate.cc
     db/sqlquery.cc
     db/new_sqlquery.cc
@@ -95,6 +96,7 @@ SET(PanGenGUI_HEADERS
     deftools/iconhelper.h
     deftools/defcontrols.h
     deftools/datastruct.h
+    deftools/datatable.h
     deftools/global.h
     deftools/showcpumemory.h
     delegate/ui_rtsmask_delegate.h
@@ -147,6 +149,7 @@ QT4_WRAP_CPP(PanGenGUI_MOCS
     deftools/defcontrols.h
     deftools/iconhelper.h
     deftools/showcpumemory.h
+    deftools/datatable.h
     delegate/ui_rtsmask_delegate.h
     db/sqlmanager.h
     model/ui_measuretable_model.h

@@ -367,7 +367,15 @@ void LayerWidget::slot_setLineStyle(int line_style)
 void LayerWidget::slot_LineWidth_action()
 {
     QAction * action = static_cast <QAction *> (sender());
-    LineWidthCommbox->setCurrentIndex(action->text().toInt() - 1);
+
+    if (action->text().toInt() == LineWidthCommbox->currentText().toInt())
+    {
+        slot_setLineWidth(action->text().toInt());
+    }
+    else
+    {
+        LineWidthCommbox->setCurrentIndex(action->text().toInt() - 1);
+    }
 }
 
 void LayerWidget::slot_LineStyle_action()

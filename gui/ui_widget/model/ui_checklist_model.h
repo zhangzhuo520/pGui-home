@@ -1,6 +1,7 @@
 #ifndef UI_CHECKLIST_MODEL_H
 #define UI_CHECKLIST_MODEL_H
 #include <QStandardItemModel>
+#include <QStringList>
 
 namespace ui {
 class TreeItem : public QStandardItem
@@ -34,7 +35,7 @@ class TreeModel :public QStandardItemModel
 {
     Q_OBJECT
 public:
-       explicit TreeModel(QObject *parent = 0);
+    explicit TreeModel(QObject *parent = 0);
 
 protected:
     QVariant data(const QModelIndex &item, int role=Qt::DisplayRole) const;

@@ -595,7 +595,9 @@ void RenderFrame::load_layout_view(render::LayoutView* lv, std::string prep_dir,
     }
     catch (oasis::OasisException& e)
     {
-        std::string prep_file_name = oasis::preprocessLayout(file_name, prep_dir, false, oasis::prep_options());
+        oasis::prep_options option;
+        option.thread_count = 20;
+        std::string prep_file_name = oasis::preprocessLayout(file_name, prep_dir, false, option);
         layout = new oasis::OasisLayout(prep_file_name);
         oasis::OasisParser parser;
         parser.import_file(layout);

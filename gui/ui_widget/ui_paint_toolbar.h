@@ -11,7 +11,6 @@ class PaintToolbar : public QWidget
 {
     Q_OBJECT
 
-
 public:
     explicit PaintToolbar(QWidget *parent = 0);
 

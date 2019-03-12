@@ -36,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     init_setpos_dialog();
 
+    initPosTable();
+
     init_maxwindow_dialog();
 
     initConnection();
@@ -100,6 +102,18 @@ void MainWindow::initMenubar()
     window_menu->addAction("window");
     QMenu *help_menu = menuBar()->addMenu(tr("Help"));
     help_menu->addAction("help");
+//    QMenu *addon_menu = menuBar()->addMenu(tr("Addon"));
+//    actionNameList.clear();
+//    actionNameList << "Defect Review" << "RTS Setup" << "Run RTS"
+//                   << "Gauge Checker" << "SEM Image Handler"
+//                   << "Chip Placement Editor";
+//    for(int i = 0; i < actionNameList.count(); i ++)
+//    {
+//        QAction *action = new QAction(actionNameList.at(i), addon_menu);
+//        action->setObjectName(actionNameList.at(i));
+//        addon_menu->addAction(action);
+//        connect(action, SIGNAL(triggered()), this, SLOT(slot_AddonActions()));
+//    }
 }
 
 /**
@@ -137,7 +151,7 @@ void MainWindow::initDockWidget()
     } sets [] = {
         { "File", 0, Qt::LeftDockWidgetArea },
         { "Layer", 0, Qt::LeftDockWidgetArea },
-        { "Workspace", 0, Qt::BottomDockWidgetArea },
+        { "pos", 0, Qt::LeftDockWidgetArea },
         { "CheckList", 0, Qt::BottomDockWidgetArea },
         { "Log", 0, Qt::LeftDockWidgetArea },
         { "Gauge", 0, Qt::RightDockWidgetArea }
@@ -147,8 +161,8 @@ void MainWindow::initDockWidget()
     addDockWidget(sets[0].area, fileDockWidget);
     layerDockWidget = new DockWidget(sets[1].name, this, Qt::WindowFlags(sets[1].flags));
     addDockWidget(sets[1].area, layerDockWidget);
-    //workspaceDockWidget = new DockWidget(sets[2].name, this, Qt::WindowFlags(sets[2].flags));
-    //addDockWidget(sets[2].area, workspaceDockWidget);
+    m_pos_dockwidget = new DockWidget(sets[2].name, this, Qt::WindowFlags(sets[2].flags));
+    addDockWidget(sets[2].area, m_pos_dockwidget);
     checkListDockWidget = new DockWidget(sets[3].name, this, Qt::WindowFlags(sets[3].flags));
     addDockWidget(sets[3].area, checkListDockWidget);
     logDockWidget = new DockWidget(sets[4].name, this, Qt::WindowFlags(sets[4].flags));
@@ -162,6 +176,7 @@ void MainWindow::initDockWidget()
     checkListDockWidget->hide();
 //    m_gauge_dockWidget->setFloating(true);
     m_gauge_dockWidget->hide();
+    m_pos_dockwidget->hide();
 }
 
 /**
@@ -352,6 +367,15 @@ void MainWindow::initGaugeTable()
     connect(m_gauge_dockWidget, SIGNAL(signal_clear_gauge()), this, SLOT(slot_clear_gauge()));
 }
 
+void MainWindow::initPosTable()
+{
+    QStringList headerlist;
+    headerlist << "x" << "y" << "range";
+    m_pos_table = new DataTable(m_pos_dockwidget, headerlist);
+    m_pos_dockwidget->setWidget(m_pos_table);
+    connect(m_pos_table, SIGNAL(clicked(QModelIndex)), this, SLOT(slot_pos_jump(QModelIndex)));
+}
+
 /**
  * @brief MainWindow::init_fileProject_fileTab
  */
@@ -416,14 +440,13 @@ void MainWindow::init_setpos_dialog()
 {
     m_setpos_dialog = new QDialog(this);
     m_setpos_dialog->setWindowTitle("Set Position");
-    m_setpos_dialog->setGeometry(width() / 2 - 150, height() / 2 - 150 , 300, 140);
+    m_setpos_dialog->setGeometry(width() / 2, height() / 2, 300, 140);
     m_pos_label = new QLabel("Pos(x, y):", m_setpos_dialog);
     m_pos_label->setGeometry(30, 30, 65, 25);
-    m_pos_lineedit = new QLineEdit(m_setpos_dialog);
+    m_pos_lineedit = new HistoryLineEdit(m_setpos_dialog);
     m_pos_lineedit->setToolTip("Enter a position as (x, y) in unit um");
     m_pos_lineedit-> setGeometry(100, 30, 150, 25);
     m_pos_lineedit->setText(",");
-    m_pos_lineedit->setCursorPosition(0);
     m_pos_unit_label = new QLabel("um", m_setpos_dialog);
     m_pos_unit_label->setGeometry(255, 30, 30, 25);
 
@@ -674,7 +697,7 @@ void MainWindow::slot_setPosAction()
         double limit = m_paint_tabwidget->get_scaleframe(m_current_tabid)->get_view_range();
         std::ostringstream ss;
         ss << limit;
-        m_pos_lineedit->setText(QString::fromStdString(ss.str()));
+        m_pos_view_range_edit->setText(QString::fromStdString(ss.str()));
     }
     else
     {
@@ -691,22 +714,35 @@ void MainWindow::slot_setWindowMaxSizeAction()
 void MainWindow::slot_setPosButton()
 {
     QStringList list =  m_pos_lineedit->text().split(',');
-    QString view_range = m_pos_view_range_edit->text();
     if (list.count() != 2)
     {
+        showWarning(this, "Warning", "Input is Error!");
         return;
+    }
+    else if (list.at(0).isEmpty() || list.at(1).isEmpty())
+    {
+        showWarning(this, "Warning", "Input is empty!");
+        return;
+    }
+
+    m_pos_lineedit->addItem(m_pos_lineedit->text());
+    QString view_range = m_pos_view_range_edit->text();
+
+    if ((m_current_tabid < m_paint_tabwidget->count()) && (m_paint_tabwidget->count() > 0))
+    {
+        QString data = list.at(0) + "##" + list.at(1) + "##" + view_range;
+        m_pos_table->append_data(data);
+        m_paint_tabwidget->get_scaleframe(m_current_tabid)->set_center_point(list.at(0).toDouble(), list.at(1).toDouble(), view_range.toDouble());
+        m_setpos_dialog->close();
     }
     else
     {
-        if ((m_current_tabid < m_paint_tabwidget->count()) && (m_paint_tabwidget->count() > 0))
-        {
-            m_paint_tabwidget->get_scaleframe(m_current_tabid)->set_center_point(list.at(0).toDouble(), list.at(1).toDouble(), view_range.toDouble());
-            m_setpos_dialog->close();
-        }
-        else
-        {
-            showWarning(this, "Warning", "Not open the canvas!");
-        }
+        showWarning(this, "Warning", "Not open the canvas!");
+    }
+
+    if (m_pos_dockwidget->isHidden())
+    {
+        m_pos_dockwidget->show();
     }
 }
 
@@ -727,7 +763,8 @@ void MainWindow::slot_setWindowMaxSizeButton()
 
 void MainWindow::slot_close_database_widget(int job_number)
 {
-    QString defgroup = "Job" + QString::number(job_number) +"_defGroup";
+    QString defgroup;
+    defgroup = "Job" + QString::number(job_number) +"_category";
     DockWidget *defgroup_widget = findChild < DockWidget * >(defgroup);
 
     int defgroup_index = m_defgroupdockwidget_vector.indexOf(defgroup_widget);
@@ -762,7 +799,7 @@ void MainWindow::slot_close_defects(int index)
 
 void MainWindow::slot_close_defgroup(int index)
 {
-    QString defgroup = "Job" + QString::number(index) +"_defGroup";
+    QString defgroup = "Job" + QString::number(index) +"_category";
     DockWidget *defgroup_widget = findChild < DockWidget * >(defgroup);
     int defgroup_index = m_defgroupdockwidget_vector.indexOf(defgroup_widget);
 
@@ -787,7 +824,6 @@ void MainWindow::slot_currentTab_changed(int index)
     }
     layerwidget->getLayerData(renderFrame);
     m_paint_tabwidget->update_measuretable_data();
-    m_checklist_widget->get_database();
 }
 
 /**
@@ -863,8 +899,8 @@ void MainWindow::slot_saveFile()
 void MainWindow::slot_closeJob(QString job_name, QString file_name)
 {
     //when filewidget close file ,all model delete file
-    close_checklist_job(job_name);
-    delete_checklist_job(job_name);
+    close_checklist_job(file_name);
+    delete_checklist_job(file_name);
 }
 
 void MainWindow::slot_openjob()
@@ -947,10 +983,9 @@ void MainWindow::slot_open_coverage_job(QString dirName)
             add_file(str, true);
             m_checklist_file_list.append(str);
         }
-        if(fileInfo.suffix() == "db")
+        if(fileInfo.suffix() == "sqlite")
         {
-            m_database_path = dirName + "/" + fileInfo.fileName();
-            show_checklist(m_database_path);
+            show_checklist(dirName);
         }
     }
 }
@@ -1054,15 +1089,6 @@ void MainWindow::slot_open_job(QString dirName)
         }
     }
 
-    if (showWarning(this, "Waring", "You want to get New Format Database?", QMessageBox::StandardButtons(QMessageBox::Close | QMessageBox::Ok))
-            == QMessageBox::Ok )
-    {
-        m_checklist_widget->set_read_new_database(true);
-    }
-    else
-    {
-        m_checklist_widget->set_read_new_database(false);
-    }
     QDir dir(dirName);
     QFileInfoList flist = dir.entryInfoList();
     foreach(QFileInfo fileInfo, flist)
@@ -1076,11 +1102,17 @@ void MainWindow::slot_open_job(QString dirName)
             m_checklist_file_list.append(str);
             m_open_job_list.append(dirName);
             update_rts_job_commbox(m_open_job_list);
+
+//            FrameInfo fileinfo;
+//            fileinfo.FileType = FrameInfo::job;
+//            fileinfo.file_list.append(str);
+//            fileinfo.overlay = false;
+//            m_frameinfo_list.append(fileinfo);
         }
-        if(fileInfo.suffix() == "db")
+        if(fileInfo.suffix() == "sqlite")
         {
             m_database_path = dirName + "/" + fileInfo.fileName();
-            show_checklist(m_database_path);
+            show_checklist(dirName);
             logger_widget("Open Database: " + m_database_path);
         }
     }
@@ -1137,7 +1169,7 @@ void MainWindow::delete_checklist_job(QString jobName)
         if (jobName == m_checklist_file_list.at(i))
         {
             m_checklist_file_list.removeAt(i);
-            if (m_open_job_list.count() == m_checklist_file_list.count())
+            if (m_open_job_list.count() != m_checklist_file_list.count())
             {
                 m_open_job_list.removeAt(i);
                 update_rts_job_commbox(m_open_job_list);
@@ -1194,7 +1226,6 @@ void MainWindow::add_file(QString filePath, bool isOverLay)
                 == QMessageBox::Ok )
         {
             fileWidget->delete_file(filePath);
-
         }
         else
         {
@@ -1239,7 +1270,6 @@ void MainWindow::slot_addFile(QString filePath)
 void MainWindow::slot_create_canvas(QModelIndex index)
 {
     FileProjectWidget::layout_view_iter it = fileWidget->get_layout_view_iter(index.row());
-
     QString active_filename = QString::fromStdString((*it)->file_name());
 
     if (!isCanvasExist(it))
@@ -1249,7 +1279,6 @@ void MainWindow::slot_create_canvas(QModelIndex index)
         std::string prep_dir = m_prep_dir.toStdString();
         (*it)->load_into_frame(frame->getRenderFrame(), prep_dir);
 
-
         QStringList list = active_filename.split("/", QString::SkipEmptyParts);
 
         QString filename = list.back();
@@ -1258,7 +1287,7 @@ void MainWindow::slot_create_canvas(QModelIndex index)
 
         if(tab_is_job_or_osa(active_filename))
         {
-            QString path = active_filename.left(active_filename.size() - 15) + "/defect.db";
+            QString path = active_filename.left(active_filename.size() - 15);
             show_checklist(path);
         }
     }
@@ -1302,7 +1331,7 @@ void MainWindow::slot_create_overlay_canvas(QModelIndex index)
 
     if (tab_is_job_or_osa(active_filename))
     {
-        QString path = active_filename.left(active_filename.size() - 15) + "/defect.db";
+        QString path = active_filename.left(active_filename.size() - 15);
         show_checklist(path);
     }
 
@@ -1323,10 +1352,11 @@ void MainWindow::slot_updateXY(double x, double y)
 void MainWindow::slot_showDefGroup(QModelIndex index, int current_defgroup_index)
 {
      QModelIndex tableIdIndex = index.sibling(index.row(), 9);
-     QString widget_title = "Job" + QString::number(current_defgroup_index) +"_defGroup";
+     QString widget_title = "";
+     widget_title = "Job" + QString::number(current_defgroup_index) +"_category";
      if (!tableIdIndex.isValid())
      {
-         logger_file("DefGroup index error! ");
+         logger_file("Category index error! ");
          return;
      }
      logger_file(widget_title);
@@ -1574,6 +1604,7 @@ void MainWindow::addHistoryAction(QString filename)
     QAction *action = new QAction(filename, rencentOpen_menu);
     action->setObjectName(filename);
     rencentOpen_menu->addAction(action);
+    connect(action, SIGNAL(triggered()), this, SLOT(slot_addHistoryAction()));
 }
 
 void MainWindow::centerWidget_boundingSignal(int index)
@@ -1635,6 +1666,7 @@ static bool conflicts(const render::RenderFrame* frame, const QVector<render::Re
     }
     return false;
 }
+
 
 void MainWindow::slot_layout_view_changed(render::RenderFrame* frame)
 {
@@ -1779,8 +1811,6 @@ void MainWindow::slot_append_file(int index)
         }
     }
 
-
-
     maxWidth += 30;
     m_file_box->setGeometry(30, 60, maxWidth < 150 ? 150 : maxWidth , 30);
     maxWidth += 50;
@@ -1851,19 +1881,19 @@ void MainWindow::slot_change_background_color()
     }
 }
 
+void MainWindow::slot_pos_jump(QModelIndex index)
+{
+    double x = index.sibling(index.row(), 0).data().toDouble();
+    double y = index.sibling(index.row(), 1).data().toDouble();
+    double range = index.sibling(index.row(), 2).data().toDouble();
+    m_paint_tabwidget->get_scaleframe(m_current_tabid)->set_center_point(x, y, range);
+}
+
 void MainWindow::slot_close_file(QString db_path)
 {
-    int index = db_path.lastIndexOf("/");
-    if(index == -1)
-    {
-        return ;
-    }
-    else
-    {
-        QString file_name = db_path.left(index);
-        file_name += "/DefectFile.oas";
+        QString file_name = db_path + "/DefectFile.oas";
         fileWidget->delete_file(file_name);
-    }
+        delete_checklist_job(file_name);
 }
 }
 

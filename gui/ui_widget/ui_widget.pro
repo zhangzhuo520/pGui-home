@@ -59,7 +59,7 @@ HEADERS  += mainwindow.h \
     ui_paint_toolbar.h \
     ui_tab_paintwidget.h \
     ui_measure_table.h \
-    ui_gaugetable.h \
+    ui_gaugetable.h
 
 FORMS    +=
 

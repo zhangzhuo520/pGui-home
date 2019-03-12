@@ -21,6 +21,15 @@ void UniversalModel::setHeaderList(const QStringList &headerlist)
     reset();
 }
 
+void UniversalModel::delete_line(const int & index)
+{
+    if (index > -1 && index < m_data_list.count())
+    {
+        m_data_list.removeAt(index);
+        reset();
+    }
+}
+
 void UniversalModel::set_data_list(const QStringList & DataList)
 {
     if (DataList.count() < 0)

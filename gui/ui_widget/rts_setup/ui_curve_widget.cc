@@ -34,7 +34,7 @@ void SingleWaveWidget::paint_curve()
     setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     plotLayout()->clear();
 
-    QCPAxisRect *image_intensity_plot = new QCPAxisRect(this);
+    image_intensity_plot = new QCPAxisRect(this);
     plotLayout()->addElement(0, 0, image_intensity_plot);
     image_intensity_plot->axis(QCPAxis::atBottom)->setLabel(QString("Distance(nm)"));
     image_intensity_plot->axis(QCPAxis::atLeft)->setLabel(QString("Norm intensity"));
@@ -58,7 +58,7 @@ void SingleWaveWidget::paint_curve()
         m_ei_curve->setData(m_ei_x_vector, m_ei_y_vector);
     }
 
-    QCPAxisRect *ils_plot = new QCPAxisRect(this);
+    ils_plot = new QCPAxisRect(this);
 //    ils_plot->
     plotLayout()->addElement(1, 0, ils_plot);
     ils_plot->axis(QCPAxis::atBottom)->setLabel(QString("Distance(nm)"));
@@ -81,20 +81,21 @@ void SingleWaveWidget::paint_curve()
     connect(this->xAxis, SIGNAL(rangeChanged(QCPRange)), ils_plot->axis(QCPAxis::atBottom), SLOT(setRange(QCPRange)));
     connect(ils_plot->axis(QCPAxis::atBottom), SIGNAL(rangeChanged(QCPRange)), this->xAxis, SLOT(setRange(QCPRange)));
 
-
     QCPMarginGroup *group = new QCPMarginGroup(this);
     this->axisRect()->setMarginGroup(QCP::msLeft|QCP::msRight, group);
     ils_plot->setMarginGroup(QCP::msLeft|QCP::msRight, group);
     image_intensity_plot->setMarginGroup(QCP::msLeft|QCP::msRight, group);
 
-//    connect(legend, SIGNAL(selectionChanged(QCPLegend::SelectableParts)), this, SLOT(slot_legen_change(QCPLegend::SelectableParts)));
-    m_top_cursor_curve = new QCPCurve(image_intensity_plot->axis(QCPAxis::atBottom), image_intensity_plot->axis(QCPAxis::atLeft));
-    m_bottom_cursor_curve = new QCPCurve(ils_plot->axis(QCPAxis::atBottom), ils_plot->axis(QCPAxis::atLeft));
+    //    connect(legend, SIGNAL(selectionChanged(QCPLegend::SelectableParts)), this, SLOT(slot_legen_change(QCPLegend::SelectableParts)));
+    m_top_cursor_x_curve = new QCPCurve(image_intensity_plot->axis(QCPAxis::atBottom), image_intensity_plot->axis(QCPAxis::atLeft));
+    m_top_cursor_y_curve = new QCPCurve(image_intensity_plot->axis(QCPAxis::atBottom), image_intensity_plot->axis(QCPAxis::atLeft));
+    m_bottom_cursor_x_curve = new QCPCurve(ils_plot->axis(QCPAxis::atBottom), ils_plot->axis(QCPAxis::atLeft));
+    m_bottom_cursor_y_curve = new QCPCurve(ils_plot->axis(QCPAxis::atBottom), ils_plot->axis(QCPAxis::atLeft));
 }
 
 void SingleWaveWidget::init_connection()
 {
-    connect(this, SIGNAL(mouseMove(QMouseEvent *)),this,SLOT(slot_mousemove_oncurve(QMouseEvent *)));
+    connect(this, SIGNAL(mouseMove(QMouseEvent *)),this, SLOT(slot_mousemove_oncurve(QMouseEvent *)));
 
 }
 
@@ -107,20 +108,44 @@ void SingleWaveWidget::slot_legen_change(QCPLegend::SelectableParts setlet)
 void SingleWaveWidget::slot_mousemove_oncurve(QMouseEvent *event)
 {
     QVector<double> vx,vy;
-    double x = this->xAxis->pixelToCoord(event->pos().x());
-    double y = this->yAxis->pixelToCoord(event->pos().y());
-    vx<<x<<x<<x;
-    vy<<0<<y<<yAxis->range().maxRange;
+    double x = image_intensity_plot->axis(QCPAxis::atBottom)->pixelToCoord(event->pos().x());
+    double y = image_intensity_plot->axis(QCPAxis::atLeft)->pixelToCoord(event->pos().y());
 
-    m_top_cursor_curve->setData(vx,vy);
-    m_top_cursor_curve->setPen(QPen(Qt::red));
+    vx<<x<<x<<x;
+    vy << -yAxis->range().maxRange<< 0 << yAxis->range().maxRange;
+
+    m_top_cursor_y_curve->setData(vx,vy);
+    m_top_cursor_y_curve->setPen(QPen(Qt::red));
 
     vx.clear();
     vy.clear();
+
+    vx << -xAxis->range().maxRange << 0 << xAxis->range().maxRange;
+    vy << y << y<< y;
+
+    m_top_cursor_x_curve->setData(vx,vy);
+    m_top_cursor_x_curve->setPen(QPen(Qt::red));
+
+    vx.clear();
+    vy.clear();
+
+    x = ils_plot->axis(QCPAxis::atBottom)->pixelToCoord(event->pos().x());
+    y = ils_plot->axis(QCPAxis::atLeft)->pixelToCoord(event->pos().y());
+    vx<< -xAxis->range().maxRange << 0 << xAxis->range().maxRange;
+    vy<<y<<y<<y;
+    m_bottom_cursor_x_curve->setData(vx,vy);
+    m_bottom_cursor_x_curve->setPen(QPen(Qt::red));
+
+    vx.clear();
+    vy.clear();
+
     vx<<x<<x<<x;
-    vy<<0<<y<<yAxis->range().maxRange;
-    m_bottom_cursor_curve->setData(vx,vy);
-    m_bottom_cursor_curve->setPen(QPen(Qt::red));
+    vy<<-yAxis->range().maxRange<< 0 <<yAxis->range().maxRange;
+    m_bottom_cursor_y_curve->setData(vx,vy);
+    m_bottom_cursor_y_curve->setPen(QPen(Qt::red));
+
+
+
     this->replot();
 }
 

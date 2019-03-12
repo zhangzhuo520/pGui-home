@@ -38,6 +38,8 @@ private:
     QString input_layout();
     QString gds_layout();
 
+    QString get_gpu();
+
     QString m_binary_file;
     QString m_delta_defocus;
     QString m_delta_dose;

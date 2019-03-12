@@ -16,7 +16,7 @@ DockWidget::DockWidget(const QString &title, QWidget *parent, Qt::WindowFlags fl
     TitleBar = new DockTitleBar(this, title);
     setTitleBarWidget(TitleBar);
 
-    if (title.right(9) == "_defGroup" || title.right(8) == "_defects")
+    if (title.right(9) == "_category" || title.right(8) == "_defects")
     {
         setAttribute(Qt::WA_DeleteOnClose, true);
     }
@@ -421,6 +421,48 @@ void QProgressIndicator::paintEvent(QPaintEvent * /*event*/)
         p.drawRoundedRect(-capsuleWidth*0.5, -(innerRadius+capsuleHeight), capsuleWidth, capsuleHeight, capsuleRadius, capsuleRadius);
         p.restore();
     }
+}
+
+HistoryLineEdit::HistoryLineEdit(QWidget *parent)
+{
+    setParent(parent);
+    setEditable(true);
+    m_input_edit = new QLineEdit(this);
+    setLineEdit(m_input_edit);
+    setStyleSheet(
+                  "QComboBox{"\
+                       "border:1px solid  rgb(150, 150, 150);"\
+                       "padding: 1px; min-width:1em;"\
+                       "background: rgb(255, 255, 255);"\
+                  "}"\
+
+                  "QComboBox:editable{"\
+                       "background: rgb(255, 255, 255);"\
+                  "}"
+
+                  "QComboBox QAbstractItemView{"\
+                       "border: 1px solid rgb(149, 192, 255);"\
+                       "selection-background-color: rgb(128, 171, 220);"\
+                  "}");
+}
+
+void HistoryLineEdit::add_history(const QString& s)
+{
+    if (this->count() > 7)
+    {
+        this->removeItem(0);
+    }
+    this->addItem(s);
+}
+
+void HistoryLineEdit::setText(const QString &s)
+{
+    m_input_edit->setText(s);
+}
+
+QString HistoryLineEdit::text()
+{
+    return m_input_edit->text();
 }
 }
 

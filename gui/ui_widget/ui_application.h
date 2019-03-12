@@ -13,6 +13,10 @@ public:
     GuiApplication(int& argc, char ** argv);
 
     bool notify(QObject * receiver, QEvent* e);
+
+//    int screen_width;
+
+//    int screen_height;
 };
 }
 #endif // UI_APPLICATION_H
