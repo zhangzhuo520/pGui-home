@@ -140,7 +140,7 @@ void RtsConfigDialog::initTopButton()
 
 void RtsConfigDialog::initTabWidget()
 {
-    m_rts_tab = new QTabWidget(this);
+    m_rts_tab = new RtsTabWidget(this);
     QString tabTitle = "rts_" + QString::number(1);
     m_rts_tab->addTab(m_rts_widget, tabTitle);
 }
@@ -456,10 +456,10 @@ bool RtsConfigDialog::save_setup_data()
         m_setup_data.mask_table_data.append(m_mask_data);
         m_mask_data.mask_layerdata.clear();
     }
-    for (int i = 0; i < m_setup_data.mask_table_data.count(); i ++)
-    {
+//    for (int i = 0; i < m_setup_data.mask_table_data.count(); i ++)
+//    {
 
-    }
+//    }
     emit signal_get_current_canvaspos();
     return true;
 }

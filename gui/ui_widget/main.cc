@@ -27,7 +27,7 @@ int is_dir_exist(const char* dir_path)
     {
         return -1;
     }
-    if(-1 == access(dir_path, F_OK)){                 /* 不存在则创建 */
+    if(-1 == access(dir_path, F_OK)){         
          if(-1 == mkdir(dir_path, 0777)){
              return -1;
          }
@@ -35,7 +35,6 @@ int is_dir_exist(const char* dir_path)
     return 0;
 }
 
-// Only rigister Class,can use sigal and slot
 void info_to_file(int sig)
 {
     time_t tSetTime;
@@ -157,13 +156,12 @@ int main(int argc, char *argv[])
     signal(SIGTERM, signal_exit_handler);
  //   signal(SIGINT, signal_exit_handler);
 
-    // ignore SIGPIPE
     signal(SIGPIPE, SIG_IGN);
+    signal(SIGBUS, signal_crash_handler);    
+    signal(SIGSEGV, signal_crash_handler);   
+    signal(SIGFPE, signal_crash_handler);     
+    signal(SIGABRT, signal_crash_handler);   
 
-    signal(SIGBUS, signal_crash_handler);     // 总线错误
-    signal(SIGSEGV, signal_crash_handler);    // SIGSEGV，非法内存访问
-    signal(SIGFPE, signal_crash_handler);     // SIGFPE，数学相关的异常，如被0除，浮点溢出，等等
-    signal(SIGABRT, signal_crash_handler);    // SIGABRT，由调用abort函数产生，进程非正常退
     qApp->setStyle(new ui::ProxyStyle);
     QFont font;
     font.setFamily("Sans Serif");

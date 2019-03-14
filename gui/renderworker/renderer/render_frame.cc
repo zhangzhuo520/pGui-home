@@ -326,19 +326,19 @@ void RenderFrame::wheelEvent(QWheelEvent * e)
 void RenderFrame::keyPressEvent(QKeyEvent * e)
 {
     int key = e->key();
-    if(key == Qt::Key_Down)
+    if(key == Qt::Key_Down || key == Qt::Key_S)
     {
         emit signal_down_key_pressed();
     }
-    else if(key  == Qt::Key_Up)
+    else if(key  == Qt::Key_Up || key == Qt::Key_W)
     {
         emit signal_up_key_pressed();
     }
-    else if(key == Qt::Key_Left)
+    else if(key == Qt::Key_Left || key == Qt::Key_A)
     {
         emit signal_left_key_pressed();
     }
-    else if(key == Qt::Key_Right)
+    else if(key == Qt::Key_Right || key == Qt::Key_D)
     {
         emit signal_right_key_pressed();
     }

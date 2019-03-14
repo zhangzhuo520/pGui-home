@@ -99,7 +99,6 @@ void SingleWaveWidget::init_connection()
 
 }
 
-
 void SingleWaveWidget::slot_legen_change(QCPLegend::SelectableParts setlet)
 {
     Q_UNUSED(setlet);
@@ -187,5 +186,4 @@ void CurveWidget::init_plot()
     m_vbox_layout->setStretch(1, 1);
     setLayout(m_vbox_layout);
 }
-
 }

@@ -1,4 +1,6 @@
 #include "ui_mainwindow.h"
+#include <QPlainTextEdit>
+
 namespace ui {
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -310,8 +312,12 @@ void MainWindow::initToolbar()
     RtsToolBar->addAction(RtsSetAction);
     RtsRunAction = new QAction(QIcon(":/dfjy/images/run.png"),"RtsRun", this);
     RtsToolBar->addAction(RtsRunAction);
+    QAction *RtsFileEdit = new QAction(QIcon(":/dfjy/images/rts_file_edit.png"),"RtsFileEdit", this);
+    RtsToolBar->addAction(RtsFileEdit);
+
     connect(RtsSetAction, SIGNAL(triggered()), this, SLOT(slot_rts_setting()));
     connect(RtsRunAction, SIGNAL(triggered()), this, SLOT(slot_rts_running()));
+    connect(RtsFileEdit, SIGNAL(triggered()), this, SLOT(slot_rts_file_dialog()));
 }
 
 /**
@@ -434,6 +440,8 @@ void MainWindow::init_rtssetup_dialog()
 
     m_imagedata_parising = new RtsImageParsing(this);
     connect(m_imagedata_parising, SIGNAL(signal_parsing_finished()), this, SLOT(slot_rts_image_finished()));
+
+    m_rts_file_dialog = new RtsFileDialog(this);
 }
 
 void MainWindow::init_setpos_dialog()
@@ -1145,6 +1153,11 @@ void MainWindow::slot_rts_running()
     RunRTS();
 }
 
+void MainWindow::slot_rts_file_dialog()
+{
+    m_rts_file_dialog->show();
+}
+
 void MainWindow::show_checklist(QString datapath)
 {
     emit signal_append_job(datapath);
@@ -1252,7 +1265,6 @@ void MainWindow::update_rts_job_commbox(const QStringList & list)
 {
     m_rtssetup_dialog->update_job_commbox(list);
 }
-
 
 /**
  * @brief MainWindow::slot_addFile
@@ -1363,6 +1375,7 @@ void MainWindow::slot_showDefGroup(QModelIndex index, int current_defgroup_index
      if(!tableIdIndex.data().toString().isEmpty() && (!defgroup_exist(widget_title)))
      {
          DockWidget *defGroupDockWidget = new DockWidget(widget_title, this, 0);
+//         defGroupDockWidget->setMinimumWidth(300);
          addDockWidget(Qt::RightDockWidgetArea, defGroupDockWidget);
          DefGroup *defgroup = new DefGroup(defGroupDockWidget, m_database_path, &index, current_defgroup_index);
          defGroupDockWidget->setWidget(defgroup);
@@ -1409,6 +1422,7 @@ void MainWindow::slot_showDefects(QModelIndex index, int jobIndex)
     if(!index.data().toString().isEmpty() && (!defectswidget_exist(widget_title)))
     {
         DockWidget* defectsDockWidget = new DockWidget(widget_title , this, 0);
+//        defectsDockWidget->setMinimumWidth(300);
         addDockWidget(Qt::RightDockWidgetArea, defectsDockWidget);
         m_defectsdockwidget_vector.append(defectsDockWidget);
         DefectsWidget *defectswidget = new DefectsWidget(defectsDockWidget, m_database_path, &index, jobIndex);
@@ -1666,7 +1680,6 @@ static bool conflicts(const render::RenderFrame* frame, const QVector<render::Re
     }
     return false;
 }
-
 
 void MainWindow::slot_layout_view_changed(render::RenderFrame* frame)
 {

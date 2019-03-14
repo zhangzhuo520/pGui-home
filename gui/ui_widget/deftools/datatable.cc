@@ -74,7 +74,7 @@ void DataTable::slot_delete_row()
 
 void DataTable::slot_delete_all()
 {
-    m_data_model->clear_data_list();
+    delete_all_data();
 }
 
 void DataTable::slot_update_index(QModelIndex index)

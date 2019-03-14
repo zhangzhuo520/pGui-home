@@ -92,7 +92,7 @@ void DefGroup::initSql()
 
 void DefGroup::updataTable()
 {
-    logger_widget("Reading database");
+    logger_widget("Reading database1");
     openDB();
     setTotal();
     if(totalCount <= DefectGroupData.pageCount.toInt())
@@ -105,19 +105,17 @@ void DefGroup::updataTable()
         nextButton->setEnabled(true);
         pervButton->setEnabled(true);
     }
-
     if (CurrentPage == 1)
     {
         pervButton->setEnabled(false);
     }
-
     DefectGroupQuery->setData(DefectGroupData);
 
     DefGroupModel->setquery(DefectGroupQuery->outputSQL());
     DefGroupTable->setModel(DefGroupModel);
     sqlManager->closeDB();
     update_page_number();
-    logger_widget("Read database completion");
+    logger_widget("Read database completion1");
 }
 
 void DefGroup::openDB()
@@ -355,7 +353,6 @@ void DefGroup::update_page()
     openDB();
     setTotal();
     DefectGroupQuery->setData(DefectGroupData);
-
     DefGroupModel->setQuery(DefectGroupQuery->outputSQL());
     DefGroupTable->setModel(DefGroupModel);
     DefGroupTable->setColumnWidth(0, 150);
@@ -364,7 +361,6 @@ void DefGroup::update_page()
     DefGroupTable->setColumnWidth(3, 150);
     sqlManager->closeDB();
     update_page_number();
-    logger_widget("Read database completion");
 }
 
 void DefGroup::resizeColumns()

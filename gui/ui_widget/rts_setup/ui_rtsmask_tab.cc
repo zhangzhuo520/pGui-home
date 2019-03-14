@@ -1,7 +1,7 @@
 #include "ui_rtsmask_tab.h"
 namespace ui {
 RtsMaskTab::RtsMaskTab(QWidget *parent):
-    QTabWidget(parent)
+    RtsTabWidget(parent)
 {
    // tabBar()->setStyle(new CustomTabStyle);
 }

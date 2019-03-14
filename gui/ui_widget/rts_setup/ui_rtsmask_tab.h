@@ -19,6 +19,7 @@
 #include "../delegate/ui_rtsmask_delegate.h"
 #include "../deftools/datastruct.h"
 #include "../qt_logger/pgui_log_global.h"
+#include "../deftools/defcontrols.h"
 
 namespace ui {
 
@@ -109,7 +110,7 @@ private:
     QStringList m_layername_list;
 };
 
-class RtsMaskTab : public QTabWidget
+class RtsMaskTab : public RtsTabWidget
 {
     Q_OBJECT
 public:

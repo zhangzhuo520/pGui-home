@@ -57,7 +57,7 @@
 #include "ui_log_widget.h"
 #include "ui_gaugetable.h"
 #include "fileparsing/rts_imageparsing.h"
-
+#include "rts_setup/ui_rtsfile_dialog.h"
 
 namespace ui{
 
@@ -121,7 +121,7 @@ private slots:
 
     void slot_rts_setting();
     void slot_rts_running();
-
+    void slot_rts_file_dialog();
 
     void slot_addFile(QString);
     void slot_create_canvas(QModelIndex);
@@ -297,10 +297,11 @@ private:
     QStringList m_open_job_list;
 
     ShowCPUMemory *m_show_cpumemory;
-    RtsRunProcess * m_run_process;
 
+    RtsRunProcess * m_run_process;
     RtsImageParsing *m_imagedata_parising;
     QProgressIndicator *m_indicator;
+    RtsFileDialog *m_rts_file_dialog;
 
     QDialog* m_select_file_dialog;
     QLabel* m_file_label;

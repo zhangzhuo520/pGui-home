@@ -30,15 +30,18 @@ SET(PanGenGUI_SRCS
     ui_scale_frame.cc
     ui_application.cc
     ui_log_widget.cc
+    rts_setup/qcustomplot.cc
+    rts_setup/highlighter.cc
     rts_setup/ui_rtsmask_tab.cc
     rts_setup/ui_rtscurve.cc
     rts_setup/ui_rtsreview_dialog.cc
     rts_setup/ui_rtsconfig_dialog.cc
     rts_setup/ui_rtsreview_table.cc
     rts_setup/rts_runprocess.cc
-    rts_setup/qcustomplot.cc
     rts_setup/ui_rtscurve.cc
     rts_setup/ui_curve_widget.cc
+    rts_setup/ui_rtsfile_edit.cc
+    rts_setup/ui_rtsfile_dialog.cc
     deftools/cmessagebox.cc
     deftools/defcontrols.cc
     deftools/framelesshelper.cc
@@ -48,7 +51,6 @@ SET(PanGenGUI_SRCS
     deftools/datatable.cc
     delegate/ui_rtsmask_delegate.cc
     db/sqlquery.cc
-    db/new_sqlquery.cc
     db/sqlmanager.cc
     fileparsing/yamlparsing.cc
     fileparsing/rts_imageparsing.cc
@@ -82,15 +84,18 @@ SET(PanGenGUI_HEADERS
     ui_semimage_dialog.h
     ui_chipedit_dialog.h
     ui_application.h
+    rts_setup/qcustomplot.h
+    rts_setup/highlighter.h
     rts_setup/ui_rtsmask_tab.h
     rts_setup/ui_rtscurve.h
     rts_setup/ui_rtsconfig_dialog.h
     rts_setup/ui_rtsreview_dialog.h
     rts_setup/rts_runprocess.h
     rts_setup/ui_rtsreview_table.h
-    rts_setup/qcustomplot.h
     rts_setup/ui_rtscurve.h
     rts_setup/ui_curve_widget.h
+    rts_setup/ui_rtsfile_edit.cc
+    rts_setup/ui_rtsfile_dialog.cc
     deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/iconhelper.h
@@ -102,7 +107,6 @@ SET(PanGenGUI_HEADERS
     delegate/ui_rtsmask_delegate.h
     db/sqlquery.h
     db/sqlmanager.h
-    db/new_sqlquery.h
     fileparsing/yamlparsing.h
     fileparsing/rts_imageparsing.h
     file_generate/rts_pythonwriter.h
@@ -143,6 +147,8 @@ QT4_WRAP_CPP(PanGenGUI_MOCS
     rts_setup/ui_rtsreview_table.h
     rts_setup/qcustomplot.h
     rts_setup/ui_rtscurve.h
+    rts_setup/ui_rtsfile_edit.h
+    rts_setup/ui_rtsfile_dialog.h
     fileparsing/rts_imageparsing.h
     deftools/cmessagebox.h
     deftools/framelesshelper.h

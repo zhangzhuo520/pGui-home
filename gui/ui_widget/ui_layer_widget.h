@@ -132,10 +132,14 @@ private:
     QAction *linewihthAction4;
 
     QAction *none;
-    QAction *dashdotdot;
-    QAction *solid;
-    QAction *dash;
-    QAction *dot;
+    QAction *long_dashed;
+    QAction *dashed;
+    QAction *short_dash_dotted;
+    QAction *dotted;
+    QAction *dash_dotted;
+    QAction *short_dashed;
+    QAction *dash_double_dotted;
+
 
     QWidget *LayerControlWidget;
 

@@ -4,7 +4,7 @@ QMainWindow{
 }
 
 QMainWindow::separator{
-     width: 3px;
+     width: 5px;
 }
 
 QMainWindow::separator:hover{

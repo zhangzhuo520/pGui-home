@@ -187,8 +187,6 @@ void RtsPythonWriter::create_pframe_file()
     in << file_data << '\n';
     file.flush();
     file.close();
-
-
 }
 
 void RtsPythonWriter::create_run_file()

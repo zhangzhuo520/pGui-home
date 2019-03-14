@@ -6,7 +6,10 @@ HEADERS += \
     rts_setup/ui_rtsreview_dialog.h \
     rts_setup/ui_rtsreview_table.h \
     rts_setup/ui_curve_widget.h \
-    rts_setup/qcustomplot.h
+    rts_setup/qcustomplot.h \
+    rts_setup/ui_rtsfile_edit.h \
+    rts_setup/highlighter.h \
+    rts_setup/ui_rtsfile_dialog.h
 
 SOURCES += \
     rts_setup/ui_rtsmask_tab.cc \
@@ -16,4 +19,7 @@ SOURCES += \
     rts_setup/ui_rtsreview_dialog.cc \
     rts_setup/ui_rtsreview_table.cc \
     rts_setup/ui_curve_widget.cc \
-    rts_setup/qcustomplot.cc
+    rts_setup/qcustomplot.cc \
+    rts_setup/ui_rtsfile_edit.cc \
+    rts_setup/highlighter.cc \
+    rts_setup/ui_rtsfile_dialog.cc

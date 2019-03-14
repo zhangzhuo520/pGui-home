@@ -100,7 +100,7 @@ private:
     QPushButton *m_clone_button;
     QPushButton *m_delete_button;
 
-    QTabWidget *m_rts_tab;
+    RtsTabWidget *m_rts_tab;
     QVBoxLayout *m_tab_vlayout;
 
     QWidget *m_rts_widget;

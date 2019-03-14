@@ -1,6 +1,7 @@
 #ifndef UI_TABPAINTWIDGET_H
 #define UI_TABPAINTWIDGET_H
 #include <QTabWidget>
+#include <QScrollArea>
 #include "ui_measure_table.h"
 #include "deftools/defcontrols.h"
 #include "ui_scale_frame.h"
@@ -39,6 +40,9 @@ signals:
     void signal_set_line_list(const QList<LineData> &);
     void signal_layout_view_changed(render::RenderFrame*);
 
+protected:
+//    virtual void resizeEvent(QResizeEvent *);
+
 private:
     void init_measure_table();
 
@@ -57,6 +61,7 @@ private:
     DockWidget *m_measure_dockwidget;
 
     MeasureTable *m_measure_table;
+    QScrollArea *m_scroll_widget;
 };
 
 }

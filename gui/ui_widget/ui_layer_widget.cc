@@ -226,29 +226,35 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
             else if (i == 4)
             {
                 QMenu *menu = new QMenu(this);
-                none = new QAction(QIcon(":/dfjy/images/line_style_1.png"), "none", this);
-                dashdotdot = new QAction(QIcon(":/dfjy/images/line_style_2.png"), "dashdotdot", this);
-                solid = new QAction(QIcon(":/dfjy/images/line_style_3.png"), "solid", this);
-                dash = new QAction(QIcon(":/dfjy/images/line_style_4.png"), "dash", this);
-                dot = new QAction(QIcon(":/dfjy/images/line_style_5.png"), "dot", this);
-                none->setData(QVariant(0));
-                dashdotdot->setData(QVariant(1));
-                solid->setData(QVariant(2));
-                dash->setData(QVariant(3));
-                dot->setData(QVariant(4));
+                none = new QAction(QPixmap::fromImage(set_line_image(0)), "none", this);
+                long_dashed = new QAction(QPixmap::fromImage(set_line_image(1)), "long dashed", this);
+                dashed = new QAction(QPixmap::fromImage(set_line_image(2)), "dashed", this);
+                short_dash_dotted = new QAction (QPixmap::fromImage(set_line_image(3)), "short dash-dotted", this);
+                dotted = new QAction(QPixmap::fromImage(set_line_image(4)), "dotted", this);
+                dash_dotted = new QAction(QPixmap::fromImage(set_line_image(5)), "dash-dotted", this);
+                short_dashed = new QAction(QPixmap::fromImage(set_line_image(6)), "short dashed", this);
+                dash_double_dotted = new QAction(QPixmap::fromImage(set_line_image(7)), "dash-double-dotted", this);
 
-                none->setCheckable(true);
-                none->setChecked(true);
+                none->setData(QVariant(0));
+                long_dashed->setData(QVariant(1));
+                dashed->setData(QVariant(2));
+                short_dash_dotted->setData(QVariant(3));
+                dotted->setData(QVariant(4));
+                dash_dotted->setData(QVariant(5));
+                short_dashed->setData(QVariant(6));
+                dash_double_dotted->setData(QVariant(7));
                 menu->addAction(none);
-                dashdotdot->setCheckable(true);
-                menu->addAction(dashdotdot);
-                solid->setCheckable(true);
-                menu->addAction(solid);
-                dash->setCheckable(true);
-                menu->addAction(dash);
-                dot->setCheckable(true);
-                menu->addAction(dot);
+                menu->addAction(long_dashed);
+                menu->addAction(dashed);
+                menu->addAction(short_dash_dotted);
+                menu->addAction(dotted);
+                menu->addAction(dash_dotted);
+                menu->addAction(dash_double_dotted);
                 act->setMenu(menu);
+                for (int i = 0; i < menu->actions().count(); i ++)
+                {
+                    connect(menu->actions().at(i), SIGNAL(triggered()), this, SLOT(slot_LineStyle_action()));
+                }
             }
             else if(i == 5)
             {
@@ -267,16 +273,11 @@ void LayerWidget::slot_layerContextMenu(const QPoint &pos)
 //                linewihthAction4->setCheckable(true);
                 menu->addAction(linewihthAction4);
                 act->setMenu(menu);
-                for (int i = 0; i < menu->actions().count(); i ++)
-                {
-                    connect(menu->actions().at(i), SIGNAL(triggered()), this, SLOT(slot_LineStyle_action()));
-                }
 
                 for (int i = 0; i < menu->actions().count(); i ++)
                 {
                     connect(menu->actions().at(i), SIGNAL(triggered()), this, SLOT(slot_LineWidth_action()));
                 }
-
             }
         }
         Layermenu->addAction(act);
@@ -381,8 +382,16 @@ void LayerWidget::slot_LineWidth_action()
 void LayerWidget::slot_LineStyle_action()
 {
     QAction* action = static_cast<QAction*> (sender());
-    slot_setLineStyle(action->data().toInt() - 1);
+    if (action->text() == LineStyleCommbox->currentText())
+    {
+        slot_setLineStyle(action->data().toInt());
+    }
+    else
+    {
+        LineStyleCommbox->setCurrentIndex(action->data().toInt());
+    }
 }
+
 
 void LayerWidget::slot_setLayerStyle(int patternIdex)
 {

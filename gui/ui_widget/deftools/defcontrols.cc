@@ -58,18 +58,45 @@ void DockWidget::place(Qt::DockWidgetArea area, bool place)
  * @brief TabWidget::TabWidget
  * @param parent
  */
-TabWidget::TabWidget(QWidget *parent)
+RtsTabWidget::RtsTabWidget(QWidget *parent)
 {
-    Q_UNUSED(parent);
-    sizePolicy().setVerticalPolicy(QSizePolicy::Ignored);
-    setTabsClosable(true);
-    setMouseTracking(true);
+    setParent(parent);
+    setStyleSheet(
+             "QTabWidget{"\
+                  "border: 2px solid rgb(80, 183, 220);"\
+             "}"
+
+             "QTabWidget::pane{"
+                  "border-top: 2px solid #C2C7CB;"
+             "}"
+
+             "QTabWidget::tab-bar{"
+                  "left: 5px;"
+             "}"
+
+             "QTabWidget#TabPaintWidget QStackedWidget{"
+                 "background: rgb(100, 100, 100);"
+             "}"
+
+             /**********QTabBar**********/
+             "QTabBar::tab{"
+                  "background: rgb(200, 200, 200);"
+                  "padding: 2px;"
+             "}"
+
+             "QTabBar::tab:selected, QTabBar::tab:hover{"
+                "background: rgb(150, 150, 150);"
+             "}"
+
+             "QTabBar::tab:!selected{"
+                  "margin-top: 2px;"
+             "}");
 }
 
 /**
  * @brief TabWidget::~TabWidget
  */
-TabWidget::~TabWidget()
+RtsTabWidget::~RtsTabWidget()
 {
 }
 
@@ -191,10 +218,6 @@ void FlexWidget::addWidget(QWidget *widget)
     Vlayout->addWidget(widget);
 }
 
-void TabWidget::slot_TabClose(int index)
-{
-    removeTab(index);
-}
 PageJumpEdit::PageJumpEdit(QWidget *parent)
 {
     setParent(parent);

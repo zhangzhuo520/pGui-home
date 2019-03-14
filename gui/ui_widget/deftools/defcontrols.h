@@ -321,27 +321,12 @@ private:
 /**
  * @brief The TableWidget class
  */
-class TabWidget :public QTabWidget
+class RtsTabWidget :public QTabWidget
 {
       Q_OBJECT
 public:
-    explicit TabWidget(QWidget *parent = 0);
-    ~TabWidget();
-
-signals:
-    void signal_mouseMove(const QPoint& p);
-
-public slots:
-    void slot_TabClose(int);
-
-private:
-    void mouseMoveEvent(QMouseEvent *e)
-    {
-        setCursor(Qt::ArrowCursor);
-        QWidget::mouseMoveEvent(e);
-    }
-
-
+    explicit RtsTabWidget(QWidget *parent = 0);
+    ~RtsTabWidget();
 };
 
 class Commbox :public QComboBox

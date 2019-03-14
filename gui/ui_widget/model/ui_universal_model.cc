@@ -37,7 +37,6 @@ void UniversalModel::set_data_list(const QStringList & DataList)
         logger_console.debug("table data Error !");
         return;
     }
-
     m_data_list = DataList;
     reset();
 }
