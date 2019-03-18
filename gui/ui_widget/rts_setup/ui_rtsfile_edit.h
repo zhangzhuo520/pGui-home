@@ -8,8 +8,10 @@
 #include <QPaintEvent>
 #include <QResizeEvent>
 #include <QPlainTextEdit>
+#include <QEvent>
 #include <QSyntaxHighlighter>
 #include <QDebug>
+
 namespace ui {
 
 class LineNumberArea;
@@ -28,6 +30,7 @@ public:
     void set_mode(editorMode mode);
     void linenumberarea_paintevent(QPaintEvent *);
     int linenumberarea_width();
+    void row_number_update();
 
 protected:
     virtual void resizeEvent(QResizeEvent *e);
@@ -36,9 +39,10 @@ private slots:
     void slot_update_linenumberarea_width(int);
     void slot_highlight_currentline();
     void slot_update_linenumberarea(const QRect &, int);
+    void slot_rownumber_update();
 
 private:
-    QWidget *m_linenumberarea;
+    LineNumberArea *m_linenumberarea;
 };
 
 class LineNumberArea : public QWidget
@@ -47,20 +51,17 @@ public:
     LineNumberArea(RtsFileEdit *editor)
     {
         setParent(editor);
-        qDebug() << "00000000000";
         codeEditor = editor;
     }
 
 protected:
     virtual QSize sizeHint() const
     {
-                qDebug() << "1111111111111";
         return QSize(codeEditor->linenumberarea_width(), 0);
     }
 
     virtual void paintEvent(QPaintEvent *event)
     {
-                    qDebug() << "2222222222";
         codeEditor->linenumberarea_paintevent(event);
     }
 

@@ -85,7 +85,6 @@ void ScaleFrame::slot_clear_gauge()
 void ScaleFrame::slot_update_mesuretable()
 {
     emit signal_update_measuretable();
-
 }
 
 void ScaleFrame::set_defect_point(double x, double y)
@@ -96,6 +95,11 @@ void ScaleFrame::set_defect_point(double x, double y)
 void ScaleFrame::set_center_point(double x, double y, double view_range)
 {
     m_render_frame->set_center_point(x, y, view_range);
+}
+
+void ScaleFrame::set_center_point(double x, double y)
+{
+    m_render_frame->center_at_point(x, y);
 }
 
 void ScaleFrame::initImage()

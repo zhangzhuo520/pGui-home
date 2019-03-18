@@ -1,6 +1,5 @@
 #include "ui_tab_paintwidget.h"
 namespace ui {
-
 TabPaintWidget::TabPaintWidget(QWidget *parent)
 {
     m_mainwindow = parent;
@@ -17,6 +16,7 @@ ScaleFrame *TabPaintWidget::get_scaleframe(int index)
 
 TabPaintWidget::~TabPaintWidget()
 {
+
 }
 
 void TabPaintWidget::get_canvas_coord(double * left, double *right, double *bottom, double *top)
@@ -83,10 +83,8 @@ void TabPaintWidget::append_canvas(QString fileName)
     {
         return;
     }
-    m_scaleframe_vector[m_scaleframe_vector.count() - 1]->setMinimumSize(2000,2000);
-    m_scroll_widget = new QScrollArea(this);
-    m_scroll_widget->setWidget(m_scaleframe_vector[m_scaleframe_vector.count() - 1]);
-    addTab(m_scroll_widget, fileName);
+
+    addTab(m_scaleframe_vector[m_scaleframe_vector.count() - 1], fileName);
     setCurrentIndex(count() - 1);
     QString tab_tool_tip;
     QVector<QString> result = m_scaleframe_vector.at(m_scaleframe_vector.count() - 1)->get_file_name_list();
@@ -132,16 +130,6 @@ int TabPaintWidget::string_to_index(QString fileName)
     return -1;
 }
 
-//QString TabPaintWidget::database_to_oas(QString m_filename)
-//{
-//    if(m_filename.right(3) == ".db")
-//    {
-//        m_filename = m_filename.left(m_filename.size() - 9);
-//        m_filename =  m_filename + "DefectFile.oas";
-//    }
-//    return m_filename;
-//}
-
 void TabPaintWidget::init_measure_table()
 {
     m_measure_dockwidget = new DockWidget("Measure Table", m_mainwindow, Qt::WindowFlags(Qt::LeftDockWidgetArea));
@@ -173,28 +161,8 @@ QVector<render::RenderFrame*> TabPaintWidget::get_render_frame_list()
     for(int i = 0; i < m_scaleframe_vector.count(); i++)
     {
         result.push_back(m_scaleframe_vector.at(i)->getRenderFrame());
-
     }
     return result;
 }
-
-//void TabPaintWidget::resizeEvent(QResizeEvent *e)
-//{
-//    if (currentIndex() < 0)
-//    {
-//        return;
-//    }
-//    if (width() > m_scaleframe_vector[currentIndex()]->width())
-//    {
-//        currentWidget()->resize(width(), height());
-//        m_scaleframe_vector[currentIndex()]->resize(width(), m_scaleframe_vector[currentIndex()]->height());
-//    }
-
-//    if (height() > m_scaleframe_vector[currentIndex()]->height())
-//    {
-//        currentWidget()->resize(width(), height());
-//        m_scaleframe_vector[currentIndex()]->resize(m_scaleframe_vector[currentIndex()]->width(), height());
-//    }
-//}
 
 }

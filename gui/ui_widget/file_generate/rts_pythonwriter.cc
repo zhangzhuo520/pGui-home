@@ -192,13 +192,21 @@ void RtsPythonWriter::create_pframe_file()
 void RtsPythonWriter::create_run_file()
 {
     QString rts_python_path = QDir::homePath() + "/.pangen_gui" + "/pgui_rts";
+    QStringList list = m_binary_file.split("bin");
+    if (list.count() != 2)
+    {
+     //   qDebug() << QString("rts pangen path error!(%1)").arg(list);
+        return;
+    }
+    QString pangen_path = list.at(0) + "script";
+
     QString file_data =
         "#!/bin/bash\n"\
         "source ~/.bash_profile\n"
         "#ulimit -c unlimited\n"
-        "pangenpath='/home/zhuozhang/work/pangen/build/script'\n"
+        "pangenpath='" + pangen_path + "'\n"
         "export PYTHONPATH=$PYTHONPATH:$pangenpath\n"
-        "/home/zhuozhang/work/pangen/build/bin/pangen -script pframe.py;\n";
++       m_binary_file + " -script pframe.py;\n";
     QDir dir(rts_python_path);
 
     if (!dir.exists())
@@ -218,8 +226,6 @@ void RtsPythonWriter::create_run_file()
     in << file_data << '\n';
     file.flush();
     file.close();
-
-
 }
 
 QString RtsPythonWriter::input_gds()
@@ -247,6 +253,7 @@ QString RtsPythonWriter::input_gds()
         qDebug() << "InputList is Empty!" << AllInputList;
         return QString();
     }
+
     QString gds_string = AllInputList.at(0);
     valid_gds_list.append(gds_string);
     for(int i = 0; i < AllInputList.count(); i ++)

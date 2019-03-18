@@ -45,6 +45,8 @@ public:
 
     void initBottomButton();
 
+    void initFileDialog();
+
     void initLayout();
 
     void initConnecttion();
@@ -76,9 +78,13 @@ public slots:
 
     void slot_read_model(QString);
 
+    void slot_get_bianry_path(QString);
+
     void slot_job_radiobutton(bool);
 
     void slot_gds_radiobutton(bool);
+
+    void slot_binarypath_button();
 
     void slot_ok_button();
 
@@ -135,6 +141,7 @@ private:
     QHBoxLayout *Hlayout;
 
     QFileDialog *m_model_dialog;
+    QFileDialog *m_bianry_dialog;
     SQLManager *m_sqlmannager;
     RtsSetupData m_setup_data;
     RtsLayerData m_layer_data;

@@ -31,6 +31,7 @@ public:
     explicit ScaleFrame(QWidget *parent = 0);
 
     void set_center_point(double x, double y, double view_range);
+    void set_center_point(double x, double y);
     void set_defect_point(double x, double y);
     void drawDefectPoint(double, double, QString);
     void draw_gauge_line(QPointF, QPointF, QString);

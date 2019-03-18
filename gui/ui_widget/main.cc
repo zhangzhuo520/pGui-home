@@ -20,7 +20,6 @@
 
 #include "ui_mainwindow.h"
 
-
 int is_dir_exist(const char* dir_path)
 {
     if(dir_path == NULL)

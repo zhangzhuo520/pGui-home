@@ -308,7 +308,6 @@ private:
     QComboBox* m_file_box;
     QPushButton* m_select_file_okbutton;
     QPushButton* m_select_file_cancelbutton;
-//    QVector <FrameInfo> m_frameinfo_list;
 };
 }
 #endif // MAINWINDOW_H

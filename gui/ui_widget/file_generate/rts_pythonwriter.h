@@ -8,7 +8,6 @@
 #include <QRegExp>
 #include <QDebug>
 
-
 #include "../deftools/datastruct.h"
 #include "../qt_logger/pgui_log_global.h"
 

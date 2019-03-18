@@ -12,6 +12,7 @@ RtsConfigDialog::RtsConfigDialog(QWidget *parent) :
     initSqlmannager();
     initConnecttion();
     initButtonConfig();
+    initFileDialog();
 }
 
 RtsConfigDialog::~RtsConfigDialog()
@@ -154,6 +155,26 @@ void RtsConfigDialog::initBottomButton()
     connect(m_cancel_button, SIGNAL(clicked()), this, SLOT(close()));
 }
 
+void RtsConfigDialog::initFileDialog()
+{
+    m_model_dialog = new QFileDialog(this);
+    m_model_dialog->setWindowModality(Qt::ApplicationModal);
+    m_model_dialog->setWindowTitle(tr("Open Layout File"));
+    m_model_dialog->setDirectory(QDir::homePath());
+    m_model_dialog->setNameFilter(tr("Directories"));
+    connect(m_model_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_read_model(QString)), Qt::UniqueConnection);
+    m_model_dialog->setFileMode(QFileDialog::Directory);
+    m_model_dialog->setViewMode(QFileDialog::List);
+
+    m_bianry_dialog = new QFileDialog(this);
+    m_bianry_dialog->setWindowModality(Qt::ApplicationModal);
+    m_bianry_dialog->setWindowTitle(tr("Open Layout File"));
+    m_bianry_dialog->setDirectory(QDir::homePath());
+    connect(m_bianry_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_get_bianry_path(QString)), Qt::UniqueConnection);
+    m_bianry_dialog->setFileMode(QFileDialog::AnyFile);
+    m_bianry_dialog->setViewMode(QFileDialog::List);
+}
+
 void RtsConfigDialog::initLayout()
 {
     Vlayout = new QVBoxLayout(this);
@@ -181,10 +202,10 @@ void RtsConfigDialog::initLayout()
 
 void RtsConfigDialog::initConnecttion()
 {
-    m_model_dialog = NULL;
     connect(m_model_button, SIGNAL(clicked()), this, SLOT(slot_model_browser()));
     connect(m_job_radiobutton, SIGNAL(toggled(bool)), this, SLOT(slot_job_radiobutton(bool)));
     connect(m_gds_radiobutton, SIGNAL(toggled(bool)), this, SLOT(slot_gds_radiobutton(bool)));
+    connect(m_binarypath_button, SIGNAL(clicked()), this, SLOT(slot_binarypath_button()));
     connect(m_ok_button, SIGNAL(clicked()), this, SLOT(slot_ok_button()));
     connect(m_cancel_button, SIGNAL(clicked()), this, SLOT(slot_cancel_button()));
     connect(m_apply_button, SIGNAL(clicked()), this, SLOT(slot_apply_button()));
@@ -281,17 +302,6 @@ void RtsConfigDialog::slotCloneRts()
 
 void RtsConfigDialog::slot_model_browser()
 {
-    if (m_model_dialog == NULL)
-    {
-        m_model_dialog = new QFileDialog(this);
-    }
-    m_model_dialog->setWindowModality(Qt::ApplicationModal);
-    m_model_dialog->setWindowTitle(tr("Open Layout File"));
-    m_model_dialog->setDirectory("/home/dfjy/workspace/job");
-    m_model_dialog->setNameFilter(tr("Directories"));
-    connect(m_model_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_read_model(QString)), Qt::UniqueConnection);
-    m_model_dialog->setFileMode(QFileDialog::Directory);
-    m_model_dialog->setViewMode(QFileDialog::List);
     m_model_dialog->show();
 }
 
@@ -320,6 +330,11 @@ void RtsConfigDialog::slot_read_model(QString FilePath)
     }
 }
 
+void RtsConfigDialog::slot_get_bianry_path(QString path)
+{
+    m_binarypath_commbox->addItem(path);
+}
+
 void RtsConfigDialog::slot_job_radiobutton(bool ischecked)
 {
     if (ischecked)
@@ -338,6 +353,11 @@ void RtsConfigDialog::slot_gds_radiobutton(bool ischecked)
     {
         //do nothing
     }
+}
+
+void RtsConfigDialog::slot_binarypath_button()
+{
+    m_bianry_dialog->show();
 }
 
 void RtsConfigDialog::slot_ok_button()

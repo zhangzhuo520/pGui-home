@@ -227,7 +227,6 @@ void PaintWidget::mousePressEvent (QMouseEvent *e)
             {
                 emit signal_measure_line_list();   // send a signal let line table to get new line list
                 repaint_normal_ruler();
-
             }
         }
         break;
@@ -368,6 +367,10 @@ void PaintWidget::mouseMoveEvent (QMouseEvent *e)
                 {
                     m_measure_point.get_point_list()[j].set_line_width(3);
                 }
+                else
+                {
+                    m_measure_point.get_point_list()[j].set_line_width(1);
+                }
             }
         }
         else
@@ -434,6 +437,7 @@ void PaintWidget::slot_clear_all ()
     m_measure_point.clear_all_data();
     m_gauge_end = m_gauge_start = QPointF(0, 0);
     merge_image();
+    emit signal_measure_line_list();
 }
 
 void PaintWidget::slot_measure_line_clear()
@@ -441,6 +445,7 @@ void PaintWidget::slot_measure_line_clear()
     m_ruler_image.fill(Qt::transparent);
     m_measure_point.clear_all_data();
     merge_image();
+    emit signal_measure_line_list();
 }
 
 void PaintWidget::slot_mark_point()

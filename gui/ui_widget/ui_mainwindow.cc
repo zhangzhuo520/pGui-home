@@ -310,10 +310,10 @@ void MainWindow::initToolbar()
 
     QAction *RtsSetAction = new QAction(QIcon(":/dfjy/images/rts.png"),"RtsSet", this);
     RtsToolBar->addAction(RtsSetAction);
-    RtsRunAction = new QAction(QIcon(":/dfjy/images/run.png"),"RtsRun", this);
-    RtsToolBar->addAction(RtsRunAction);
     QAction *RtsFileEdit = new QAction(QIcon(":/dfjy/images/rts_file_edit.png"),"RtsFileEdit", this);
     RtsToolBar->addAction(RtsFileEdit);
+    RtsRunAction = new QAction(QIcon(":/dfjy/images/run.png"),"RtsRun", this);
+    RtsToolBar->addAction(RtsRunAction);
 
     connect(RtsSetAction, SIGNAL(triggered()), this, SLOT(slot_rts_setting()));
     connect(RtsRunAction, SIGNAL(triggered()), this, SLOT(slot_rts_running()));
@@ -379,7 +379,7 @@ void MainWindow::initPosTable()
     headerlist << "x" << "y" << "range";
     m_pos_table = new DataTable(m_pos_dockwidget, headerlist);
     m_pos_dockwidget->setWidget(m_pos_table);
-    connect(m_pos_table, SIGNAL(clicked(QModelIndex)), this, SLOT(slot_pos_jump(QModelIndex)));
+    connect(m_pos_table, SIGNAL(pressed(QModelIndex)), this, SLOT(slot_pos_jump(QModelIndex)));
 }
 
 /**
@@ -886,7 +886,7 @@ void MainWindow::slot_openFile()
     }
     m_file_dialog->setWindowModality(Qt::ApplicationModal);
     m_file_dialog->setWindowTitle(tr("Open Layout File"));
-    m_file_dialog->setDirectory("/home/dfjy/workspace/job");
+    m_file_dialog->setDirectory(QDir::homePath());
     m_file_dialog->setNameFilter(tr("All layout files(*.oas *.OAS *.GDS *.gds)"));
     connect(m_file_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_addFile(QString)), Qt::UniqueConnection);
     m_file_dialog->setFileMode(QFileDialog::ExistingFiles);
@@ -918,7 +918,7 @@ void MainWindow::slot_openjob()
         m_dir_dialog = new QFileDialog(this);
         m_dir_dialog->setWindowModality(Qt::ApplicationModal);
         m_dir_dialog->setWindowTitle(tr("Open Job"));
-        m_dir_dialog->setDirectory("/home/dfjy/workspace/job");
+        m_dir_dialog->setDirectory(QDir::homePath());
         m_dir_dialog->setNameFilter(tr("Directories"));
         connect(m_dir_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_open_job(QString)), Qt::UniqueConnection);
         m_dir_dialog->setFileMode(QFileDialog::Directory);
@@ -934,7 +934,7 @@ void MainWindow::slot_open_gauge()
         m_gauge_dialog = new QFileDialog(this);
         m_gauge_dialog->setWindowModality(Qt::ApplicationModal);
         m_gauge_dialog->setWindowTitle(tr("Open Gauge"));
-        m_gauge_dialog->setDirectory("/home/dfjy/workspace/job");
+        m_gauge_dialog->setDirectory(QDir::homePath());
         m_gauge_dialog->setNameFilter(tr("Directories"));
         connect(m_gauge_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_read_gauge(QString)), Qt::UniqueConnection);
         m_gauge_dialog->setFileMode(QFileDialog::ExistingFile);
@@ -951,7 +951,7 @@ void MainWindow::slot_coverage_job()
         m_overlay_dialog = new QFileDialog(this);
         m_overlay_dialog->setWindowModality(Qt::ApplicationModal);
         m_overlay_dialog->setWindowTitle(tr("Append job"));
-        m_overlay_dialog->setDirectory("/home/dfjy/workspace/job");
+        m_overlay_dialog->setDirectory(QDir::homePath());
         m_overlay_dialog->setNameFilter(tr("Directories"));
         connect(m_overlay_dialog, SIGNAL(fileSelected(QString)), this, SLOT(slot_open_coverage_job(QString)), Qt::UniqueConnection);
         m_overlay_dialog->setFileMode(QFileDialog::Directory);
@@ -1052,7 +1052,7 @@ void MainWindow::slot_draw_gaugeline(const QModelIndex &index)
     //move point
     if ((m_current_tabid < m_paint_tabwidget->count()) && (m_paint_tabwidget->count() > 0))
     {
-        m_paint_tabwidget->get_scaleframe(m_current_tabid)->set_center_point((end_point_x + start_point_x) / 2, (end_point_y + start_point_y) / 2, (end_point_x - start_point_x) * 2) ;
+        m_paint_tabwidget->get_scaleframe(m_current_tabid)->set_center_point((end_point_x + start_point_x) / 2, (end_point_y + start_point_y) / 2) ;
     }
     else
     {
@@ -1155,6 +1155,7 @@ void MainWindow::slot_rts_running()
 
 void MainWindow::slot_rts_file_dialog()
 {
+    m_rts_file_dialog->resize(800, 400);
     m_rts_file_dialog->show();
 }
 
@@ -1831,7 +1832,7 @@ void MainWindow::slot_append_file(int index)
     m_select_file_dialog->setFixedSize(maxWidth > 300 ? maxWidth : 300, 140);
     m_file_label->setGeometry(30, 30, 70, 25);
     m_select_file_okbutton->setGeometry(150, 100, 60, 30);
-    m_select_file_cancelbutton->setGeometry(220, 100, 60, 30);
+    m_select_file_cancelbutton->setGeometry(20, 100, 60, 30);
     m_select_file_dialog->show();
 }
 

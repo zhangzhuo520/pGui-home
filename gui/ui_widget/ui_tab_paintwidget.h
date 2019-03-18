@@ -24,6 +24,8 @@ public:
 
     void update_measuretable_data();
 
+//    void set_scroll_move_center();
+
     ~TabPaintWidget();
 
     void get_canvas_coord(double *, double *, double *, double *);
@@ -39,9 +41,6 @@ signals:
     void signal_close_tab(QString);
     void signal_set_line_list(const QList<LineData> &);
     void signal_layout_view_changed(render::RenderFrame*);
-
-protected:
-//    virtual void resizeEvent(QResizeEvent *);
 
 private:
     void init_measure_table();
@@ -61,7 +60,6 @@ private:
     DockWidget *m_measure_dockwidget;
 
     MeasureTable *m_measure_table;
-    QScrollArea *m_scroll_widget;
 };
 
 }

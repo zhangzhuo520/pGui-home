@@ -5,7 +5,6 @@ RtsFileEdit::RtsFileEdit(QWidget *parent):
     QPlainTextEdit(parent)
 {
     m_linenumberarea = new LineNumberArea(this);
-
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(slot_update_linenumberarea_width(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(slot_update_linenumberarea(QRect,int)));
     connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(slot_highlight_currentline()));
@@ -28,7 +27,6 @@ void RtsFileEdit::set_mode(RtsFileEdit::editorMode mode)
     }
     else if(mode == EDIT)
     {
-
         this->setReadOnly(false);
         this->setStyleSheet("background:#ffffff;");
         slot_highlight_currentline();
@@ -72,8 +70,17 @@ int RtsFileEdit::linenumberarea_width()
     return space;
 }
 
+void RtsFileEdit::row_number_update()
+{
+    m_linenumberarea->update();
+    m_linenumberarea->repaint();
+}
+
 void RtsFileEdit::resizeEvent(QResizeEvent *e)
 {
+    QPlainTextEdit::resizeEvent(e);
+    QRect cr = contentsRect();
+    m_linenumberarea->setGeometry(QRect(cr.left(), cr.top(), linenumberarea_width(), cr.height()));
 }
 
 void RtsFileEdit::slot_update_linenumberarea_width(int)
@@ -113,6 +120,11 @@ void RtsFileEdit::slot_update_linenumberarea(const QRect &rect, int dy)
     {
         slot_update_linenumberarea_width(0);
     }
+}
+
+void RtsFileEdit::slot_rownumber_update()
+{
+    row_number_update();
 }
 
 }
