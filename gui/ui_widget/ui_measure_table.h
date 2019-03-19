@@ -46,9 +46,7 @@ public slots:
 
     void slot_set_line_list(const QList <LineData>&);
 private:
-    void clear_select_color();
-
-    QTableView *m_table_view;
+    TableView *m_table_view;
     MeasureTableModel *m_table_model;
     QList <LineData> m_linedata_list;
     MeasureTable* m_measure_table;

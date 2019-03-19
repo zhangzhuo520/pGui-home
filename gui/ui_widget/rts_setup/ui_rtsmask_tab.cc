@@ -23,12 +23,12 @@ void RtsMaskTab::init_tab(const QStringList & Tablist)
 
 void RtsMaskTab::delete_all_tab()
 {
-    int TabCount = count();
-    for (int i = 0; i < TabCount; i ++)
+    int TabCount = count() - 1;
+    for (int i = TabCount; i > -1; i--)
     {
-        delete widget(0);
+        delete widget(i);
         m_maskwidget_vector.remove(i);
-        removeTab(0);
+        removeTab(i);
     }
 }
 
@@ -96,6 +96,7 @@ void MaskWidget::init_ui()
     HToplayout->addWidget(m_mask_delete_button);
     QHBoxLayout *HCenterLayout = new QHBoxLayout();
     m_layer_table = new QTableView(this);
+    m_layer_table->setObjectName("RtsLayerTable");
     HCenterLayout->addWidget(m_layer_table);
     QHBoxLayout *HbottomLayout = new QHBoxLayout();
     m_boolean_label = new QLabel("Boolean Operation: " ,this);
@@ -122,6 +123,7 @@ void MaskWidget::init_tabwidget()
     m_layer_table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     m_layer_table->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);
     m_layer_table->horizontalHeader()->setHighlightSections(false);
+    m_layer_table->verticalHeader()->hide();
     m_layer_table->setColumnWidth(0, 50);
 }
 
@@ -135,6 +137,8 @@ void MaskWidget::init_connection()
 void MaskWidget::set_layername_list(const QStringList & list)
 {
     m_layername_list = list;
+    RtsMaskDelegate * deleetage = static_cast <RtsMaskDelegate *>(m_layer_table->itemDelegate());
+    deleetage->set_commbox_list(list);
 }
 
 const QStringList &MaskWidget::get_alisa_list()
@@ -161,6 +165,7 @@ void MaskWidget::slot_add_row()
 {
     if (m_layername_list.isEmpty())
     {
+        qDebug() << "Layer Data is empty!";
         return;
     }
     m_mask_model->append_row(m_layername_list.at(0));

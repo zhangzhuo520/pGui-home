@@ -62,35 +62,48 @@ RtsTabWidget::RtsTabWidget(QWidget *parent)
 {
     setParent(parent);
     setStyleSheet(
-             "QTabWidget{"\
-                  "border: 2px solid rgb(80, 183, 220);"\
-             "}"
+                "QTabWidget{"\
+                "border: 2px solid rgb(80, 183, 220);"\
+                "}"
 
-             "QTabWidget::pane{"
-                  "border-top: 2px solid #C2C7CB;"
-             "}"
+                "QTabWidget::pane{"
+                "border-top: 2px solid #C2C7CB;"
+                "}"
 
-             "QTabWidget::tab-bar{"
-                  "left: 5px;"
-             "}"
+                "QTabWidget::tab-bar{"
+                "left: 5px;"
+                "}"
 
-             "QTabWidget#TabPaintWidget QStackedWidget{"
-                 "background: rgb(100, 100, 100);"
-             "}"
+                "QTabWidget QStackedWidget{"
+                "background: rgb(220, 220, 220);"
+                "}"
 
-             /**********QTabBar**********/
-             "QTabBar::tab{"
-                  "background: rgb(200, 200, 200);"
-                  "padding: 2px;"
-             "}"
+                /**********QTabBar**********/
+                "QTabBar::tab{"
+                "background: rgb(200, 200, 200);"
+                "padding: 2px;"
+                "}"
 
-             "QTabBar::tab:selected, QTabBar::tab:hover{"
+                "QTabBar::tab:selected, QTabBar::tab:hover{"
                 "background: rgb(150, 150, 150);"
-             "}"
+                "}"
 
-             "QTabBar::tab:!selected{"
-                  "margin-top: 2px;"
-             "}");
+                "QTabBar::tab:!selected{"
+                "margin-top: 2px;"
+                "}"
+
+                /**********QTableView**********/
+                "QTableView{"
+                "border:none;"
+                "background: white;"
+                "show-decoration-selected: 1;"
+                "}"
+
+                "QTableView::item:selected{"
+                "background: rgb(128, 171, 220);"
+                "max-height:20px;"
+                "min-height:20px;"
+                "}");
 }
 
 /**

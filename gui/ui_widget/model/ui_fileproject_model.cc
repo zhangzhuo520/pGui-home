@@ -85,7 +85,6 @@ QVariant FileProjectModel::headerData(int section, Qt::Orientation orientation, 
 
 bool FileProjectModel::insertRow(int position, render::LayoutView* lv, const QModelIndex& index)
 {
-    qDebug() << QString::fromStdString((*lv).file_name());
     Q_UNUSED(index);
     beginInsertRows(QModelIndex(), position, position);
     layout_view_iter it = m_layout_views.begin() + position;

@@ -14,7 +14,7 @@ MeasureTable::MeasureTable(QWidget *parent):
 void MeasureTable::init()
 {
     QHBoxLayout *Hlayout = new QHBoxLayout(this);
-    m_table_view = new QTableView(this);
+    m_table_view = new TableView(this);
     m_table_model = new MeasureTableModel(m_table_view);
     m_table_view->setModel(m_table_model);
 
@@ -93,7 +93,18 @@ void MeasureTable::slot_checked_line(QModelIndex index)
 
 //    clear_select_color();
     QColor temp_color =  m_linedata_list[index.row()].m_line_color;
-    m_linedata_list[index.row()].set_line_color(Qt::red);
+    for (int i = 0; i < m_linedata_list.count(); i ++)
+    {
+        if (i == index.row())
+        {
+            m_linedata_list[i].set_line_color(Qt::red);
+        }
+        else
+        {
+            m_linedata_list[i].set_line_color(Qt::black);
+        }
+    }
+
     emit signal_set_line_list(m_linedata_list);
     m_linedata_list[index.row()].set_line_color(temp_color);
 }
@@ -102,14 +113,6 @@ void MeasureTable::slot_set_line_list(const QList<LineData> &linedata_list)
 {
     m_linedata_list = linedata_list;
     m_table_model->set_line_list(linedata_list);
-}
-
-void MeasureTable::clear_select_color()
-{
-    for (int i = 0; i < m_linedata_list.count(); i ++)
-    {
-        m_linedata_list[i].set_line_color(Qt::black);
-    }
 }
 
 }

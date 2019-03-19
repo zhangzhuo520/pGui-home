@@ -102,6 +102,10 @@ QVariant UniversalModel::data(const QModelIndex &item, int role) const
             return QColor(Qt::white);
         }
     }
+    else if (role == Qt::ToolTipRole)
+    {
+        return item.data();
+    }
     else
     {
         return QVariant();

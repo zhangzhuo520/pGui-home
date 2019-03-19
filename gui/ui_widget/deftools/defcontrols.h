@@ -34,7 +34,6 @@
 #include <QDebug>
 #include <QPaintEvent>
 #include <QPixmap>
-#include <QDebug>
 #include <QProxyStyle>
 #include <QFrame>
 #include <QToolBar>
@@ -326,6 +325,7 @@ class RtsTabWidget :public QTabWidget
       Q_OBJECT
 public:
     explicit RtsTabWidget(QWidget *parent = 0);
+
     ~RtsTabWidget();
 };
 
@@ -561,7 +561,6 @@ private:
     bool m_displayedWhenStopped;
     QColor m_color;
 };
-
 
 class HistoryLineEdit  : public QComboBox
 {

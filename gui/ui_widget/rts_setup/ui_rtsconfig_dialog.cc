@@ -142,6 +142,7 @@ void RtsConfigDialog::initTopButton()
 void RtsConfigDialog::initTabWidget()
 {
     m_rts_tab = new RtsTabWidget(this);
+    m_rts_tab->setObjectName("RtsTabWidget");
     QString tabTitle = "rts_" + QString::number(1);
     m_rts_tab->addTab(m_rts_widget, tabTitle);
 }
@@ -181,9 +182,14 @@ void RtsConfigDialog::initLayout()
     Hlayout = new QHBoxLayout();
     Hlayout->setSpacing(10);
     Hlayout->setContentsMargins(0, 0, 0, 0);
+    Hlayout->addWidget(new QLabel(""));
     Hlayout->addWidget(m_add_button);
     Hlayout->addWidget(m_delete_button);
     Hlayout->addWidget(m_clone_button);
+    Hlayout->setStretch(0, 5);
+    Hlayout->setStretch(1, 1);
+    Hlayout->setStretch(2, 1);
+    Hlayout->setStretch(3, 1);
     Vlayout->addLayout(Hlayout);
 
     Hlayout = new QHBoxLayout();
@@ -333,6 +339,7 @@ void RtsConfigDialog::slot_read_model(QString FilePath)
 void RtsConfigDialog::slot_get_bianry_path(QString path)
 {
     m_binarypath_commbox->addItem(path);
+    m_binarypath_commbox->setCurrentIndex(m_binarypath_commbox->count() - 1);
 }
 
 void RtsConfigDialog::slot_job_radiobutton(bool ischecked)
@@ -386,7 +393,7 @@ void RtsConfigDialog::slot_apply_button()
 void RtsConfigDialog::get_model(const QString& jobpath)
 {
     m_sqlmannager = new SQLManager();
-    QString m_db_path = jobpath + "/defect.db";
+    QString m_db_path = jobpath + "/defectDB.sqlite";
     QFile file(m_db_path);
     if (file.exists())
     {
@@ -402,11 +409,11 @@ void RtsConfigDialog::get_model(const QString& jobpath)
     }
 
     QSqlQuery query;
-    query.exec("select * from model");	//执行
+    query.exec("select * from process");	//执行
     QString modepath;
     while (query.next())
     {
-       modepath = query.value(2).toString();
+       modepath = query.value(1).toString();
        break;
     }
 

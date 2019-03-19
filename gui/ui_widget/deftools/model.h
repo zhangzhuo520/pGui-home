@@ -8,7 +8,6 @@
 #include <QString>
 #include <QStandardItemModel>
 #include <QStringListModel>
-#include <QDebug>
 #include "global.h"
 
 //QStringListModel
@@ -30,7 +29,6 @@ public:
     {
         Q_UNUSED(parent);
         setEditable(false);
-
     }
     TreeItem(QIcon icon)
     {
