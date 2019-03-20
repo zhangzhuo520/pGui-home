@@ -15,6 +15,8 @@
 #include <QMutex>
 #include <QSettings>
 
+#include "../qt_logger/pgui_log_global.h"
+
 namespace ui {
 class ImageWorker : public QObject
 {

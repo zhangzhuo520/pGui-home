@@ -36,6 +36,43 @@ void RtsReviewDialog::slot_draw_cutline()
     m_rtscurve_widget->show();
 }
 
+void RtsReviewDialog::slot_cutline_mode_change(int index)
+{
+    switch (index) {
+    case 0:
+        m_cutline_angle_edit->setEnabled(false);
+        m_start_edit->setEnabled(false);
+        m_end_edit->setEnabled(false);
+        break;
+    case 1:
+        m_cutline_angle_edit->setEnabled(false);
+        m_start_edit->setEnabled(false);
+        m_end_edit->setEnabled(false);
+
+        break;
+    case 2:
+        m_cutline_angle_edit->setEnabled(false);
+        m_start_edit->setEnabled(false);
+        m_end_edit->setEnabled(false);
+
+        break;
+    case 3:
+        m_cutline_angle_edit->setEnabled(false);
+        m_start_edit->setEnabled(true);
+        m_end_edit->setEnabled(true);
+
+        break;
+    case 4:
+        m_cutline_angle_edit->setEnabled(true);
+        m_start_edit->setEnabled(false);
+        m_end_edit->setEnabled(false);
+
+        break;
+    default:
+        break;
+    }
+}
+
 void RtsReviewDialog::init_ui()
 {
     QVBoxLayout *AllVlayout = new QVBoxLayout(this);
@@ -130,6 +167,11 @@ void RtsReviewDialog::init_ui()
     QHBoxLayout *Bottom_first_layout = new QHBoxLayout();
     m_cutline_mode_label = new QLabel("Cutline mode: ", this);
     m_cutline_mode_combox = new QComboBox(this);
+    m_cutline_mode_combox->addItem("H/V");
+    m_cutline_mode_combox->addItem("H/V/D");
+    m_cutline_mode_combox->addItem("Any angle");
+    m_cutline_mode_combox->addItem("User input coordinate");
+    m_cutline_mode_combox->addItem("User input angle");
     m_cutline_mode_button = new QPushButton("Draw", this);
     Bottom_first_layout->addWidget(m_cutline_mode_label);
     Bottom_first_layout->addWidget(m_cutline_mode_combox);
@@ -192,6 +234,7 @@ void RtsReviewDialog::init_connection()
     connect(m_rts_del_button, SIGNAL(clicked()), this, SLOT(slot_delete_index()));
     connect(m_rts_delall_button, SIGNAL(clicked()), this, SLOT(slot_delete_all_index()));
     connect(m_cutline_mode_button, SIGNAL(clicked()), this, SLOT(slot_draw_cutline()));
+    connect(m_cutline_mode_combox, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cutline_mode_change(int)));
 }
 
 }

@@ -50,7 +50,7 @@ void ImageWorker::get_text_data()
     QFile image_file(m_file_path);
     if (!image_file.exists())
     {
-        qDebug() << "file not exists!";
+        logger_console << QString("image data file not exists!(%1)").arg(m_file_path);
         return;
     }
     if (!image_file.open(QIODevice::ReadOnly | QIODevice::Text))

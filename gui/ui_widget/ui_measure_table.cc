@@ -91,22 +91,21 @@ void MeasureTable::slot_checked_line(QModelIndex index)
         return;
     }
 
-//    clear_select_color();
-    QColor temp_color =  m_linedata_list[index.row()].m_line_color;
+    QList <LineData> temp_linedata_list = m_linedata_list;
     for (int i = 0; i < m_linedata_list.count(); i ++)
     {
+        if (m_linedata_list[i].m_line_color == Qt::red)
+        {
+            temp_linedata_list[i].set_line_color(Qt::black);
+        }
+
         if (i == index.row())
         {
-            m_linedata_list[i].set_line_color(Qt::red);
-        }
-        else
-        {
-            m_linedata_list[i].set_line_color(Qt::black);
+            temp_linedata_list[i].set_line_color(Qt::red);  //set line color is red represent is line has focus
         }
     }
 
-    emit signal_set_line_list(m_linedata_list);
-    m_linedata_list[index.row()].set_line_color(temp_color);
+    emit signal_set_line_list(temp_linedata_list);
 }
 
 void MeasureTable::slot_set_line_list(const QList<LineData> &linedata_list)

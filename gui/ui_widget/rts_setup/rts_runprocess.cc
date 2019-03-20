@@ -29,6 +29,11 @@ void RtsRunProcess::run()
     }
 }
 
+void RtsRunProcess::stop()
+{
+    m_run_process->close();
+}
+
 void RtsRunProcess::slot_process_start()
 {
     logger_widget("The script is running, Please wait a moment!");

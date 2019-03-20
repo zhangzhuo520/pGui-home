@@ -50,7 +50,6 @@ private:
     MeasureTableModel *m_table_model;
     QList <LineData> m_linedata_list;
     MeasureTable* m_measure_table;
-
     int m_active_index;
 };
 }

@@ -221,7 +221,7 @@ private:
     DockWidget *m_pos_dockwidget;
     QVector <DockWidget *> m_defgroupdockwidget_vector;
     QVector <DockWidget *> m_defectsdockwidget_vector;
-    QFileDialog *m_file_dialog;
+    FileDialog *m_file_dialog;
     QFileDialog *m_dir_dialog;
     QFileDialog *m_overlay_dialog;
     QFileDialog *m_gauge_dialog;

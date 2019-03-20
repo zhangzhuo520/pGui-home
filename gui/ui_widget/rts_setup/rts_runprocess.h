@@ -19,6 +19,8 @@ public:
     ~RtsRunProcess();
 
     void run();
+
+    void stop();
 signals:
     void signal_rtsrun_finished();
 

@@ -10,8 +10,10 @@
 #include <QMouseEvent>
 #include <QLabel>
 #include <QGraphicsDropShadowEffect>
+#include <QFileDialog>
 #include <QLineEdit>
 #include <QTableView>
+#include <QApplication>
 #include "cmessagebox.h"
 
 #include <QStyledItemDelegate>
@@ -577,6 +579,18 @@ protected:
 
 private:
     QLineEdit *m_input_edit;
+};
+
+class FileDialog : public QFileDialog
+{
+public:
+    explicit FileDialog(QWidget *parent = 0);
+    ~FileDialog();
+
+protected:
+    virtual void closeEvent(QCloseEvent *)
+    {
+    }
 };
 }
 #endif // DEFCONTROLS_H

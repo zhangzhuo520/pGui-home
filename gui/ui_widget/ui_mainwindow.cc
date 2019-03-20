@@ -442,6 +442,9 @@ void MainWindow::init_rtssetup_dialog()
     connect(m_imagedata_parising, SIGNAL(signal_parsing_finished()), this, SLOT(slot_rts_image_finished()));
 
     m_rts_file_dialog = new RtsFileDialog(this);
+
+    m_run_process = new RtsRunProcess(this);
+    connect(m_run_process, SIGNAL(signal_rtsrun_finished()), this, SLOT(slot_rtsrun_finished()));
 }
 
 void MainWindow::init_setpos_dialog()
@@ -536,12 +539,15 @@ void MainWindow::RTSSetup()
     QStringList list = layerwidget->get_all_layername();
     m_rtssetup_dialog->set_layername_list(list);
     m_rtssetup_dialog->show();
+
+    //in order to run process error;
+    m_run_process->stop();
+    RtsRunAction->setEnabled(true);
+    setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::RunRTS()
 {
-    m_run_process = new RtsRunProcess(this);
-    connect(m_run_process, SIGNAL(signal_rtsrun_finished()), this, SLOT(slot_rtsrun_finished()));
     m_run_process->run();
     RtsRunAction->setEnabled(false);
     setCursor(Qt::WaitCursor);
@@ -882,7 +888,7 @@ void MainWindow::slot_openFile()
 {
     if (m_file_dialog == NULL)
     {
-        m_file_dialog = new QFileDialog(this);
+        m_file_dialog = new FileDialog(this);
     }
     m_file_dialog->setWindowModality(Qt::ApplicationModal);
     m_file_dialog->setWindowTitle(tr("Open Layout File"));

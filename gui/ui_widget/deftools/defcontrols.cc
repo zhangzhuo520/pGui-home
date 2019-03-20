@@ -500,5 +500,15 @@ QString HistoryLineEdit::text()
 {
     return m_input_edit->text();
 }
+
+FileDialog::FileDialog(QWidget *parent):
+    QFileDialog(parent)
+{
+}
+
+FileDialog::~FileDialog()
+{
+}
+
 }
 

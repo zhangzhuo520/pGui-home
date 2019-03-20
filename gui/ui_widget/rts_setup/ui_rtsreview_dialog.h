@@ -28,6 +28,7 @@ public slots:
     void slot_delete_index();
     void slot_delete_all_index();
     void slot_draw_cutline();
+    void slot_cutline_mode_change(int);
 private:
 
     void init_ui();

@@ -64,7 +64,12 @@ void RtsMaskDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     {
         painter->save();
         painter->setPen(QColor(10, 10, 10));
-        QPoint Point = QPoint(option.rect.left() + 20, option.rect.top() + 20);
+        if (text.length() > 1 && (text.length() * 7) > option.rect.right())
+        {
+            int lenght = option.rect.right() / 19; // (9 * 2   9: 7pixcel/char  2 : start and end)
+            text =  text.left(lenght) + "..." + text.right(lenght);
+        }
+        QPoint Point = QPoint(option.rect.left() + 15, option.rect.top() + 17);
         painter->drawText(Point, text);
         painter->restore();
     }

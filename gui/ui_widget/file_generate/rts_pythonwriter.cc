@@ -174,7 +174,7 @@ void RtsPythonWriter::create_pframe_file()
     {
         if(!dir.mkpath(rts_python_path))
         {
-            qDebug() << "make rts_python_path error !";
+            logger_console << "make rts_python_path error !";
             return;
         }
     }
@@ -213,7 +213,7 @@ void RtsPythonWriter::create_run_file()
     {
         if(!dir.mkpath(rts_python_path))
         {
-            qDebug() << "make rts_python_path error !";
+            logger_console << "make rts_python_path error !";
             return;
         }
     }
