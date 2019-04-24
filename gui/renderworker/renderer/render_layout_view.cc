@@ -1,10 +1,11 @@
 #include "render_layout_view.h"
 #include "render_frame.h"
+#include <QDebug>
 
 namespace render
 {
 
-LayoutView::LayoutView(): m_file_name(""),m_valid(false)
+LayoutView::LayoutView(): m_layout(0),m_file_name(""),m_valid(false)
 {
 
 }
@@ -14,6 +15,19 @@ LayoutView::LayoutView(oasis::OasisLayout *layout):m_layout(layout),m_file_name(
 
 }
 
+LayoutView::~LayoutView()
+{
+    delete m_layout;
+}
+
+void LayoutView::set_layout(oasis::OasisLayout *layout)
+{
+    if(m_layout)
+    {
+        delete m_layout;
+    }
+    m_layout = layout;
+}
 
 LayoutView& LayoutView::operator=(const LayoutView & lv)
 {

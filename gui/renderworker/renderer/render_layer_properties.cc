@@ -13,7 +13,8 @@ LayerProperties::LayerProperties()
       m_metadata(),
       m_layer_index(-1),
       mp_frame(0),
-      m_layout_view_index(-1)
+      m_layout_view_index(-1),
+      m_cached(false)
 {
 
 }
@@ -29,7 +30,8 @@ LayerProperties::LayerProperties(const LayerProperties& lp)
       m_metadata(),
       m_layer_index(-1),
       mp_frame(0),
-      m_layout_view_index(-1)
+      m_layout_view_index(-1),
+      m_cached(false)
 {
     operator=(lp);
 }

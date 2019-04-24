@@ -11,6 +11,7 @@ class PaintToolbar : public QWidget
 {
     Q_OBJECT
 
+
 public:
     explicit PaintToolbar(QWidget *parent = 0);
 
@@ -30,7 +31,7 @@ signals:
     void signal_setPaintStyle(Global::PaintTool);
     void signal_setSnapFlag(Global::SnapFLag);
     void signal_all_clear();
-    void siganl_measure_line_clear();
+    void signal_measure_line_clear();
     void signal_mark_clear();
     void signal_measure_table_click();
     
@@ -41,6 +42,7 @@ public slots:
     void slot_mark_clear_click();
     void slot_measure_line_click(bool);
     void slot_measure_angle_click(bool);
+    void slot_measure_oblique_click(bool);
     void slot_snap_click(bool);
     void slot_eraser_click(bool);
     void slot_table_click();
@@ -54,6 +56,7 @@ private:
     PushButton *m_mark_clear_button;
     PushButton *m_measure_line_button;
     PushButton *m_measure_angle_button;
+    PushButton *m_measure_oblique_button;
     PushButton *m_snap_button;
     PushButton *m_eraser_button;
     PushButton *m_clear_button;
@@ -62,6 +65,7 @@ private:
 
     QFrame *m_line_a;
     QFrame *m_line_b;
+    QFrame *m_line_c;
 
     bool is_first_ruler;
 };

@@ -20,7 +20,8 @@ public:
     bool openDB();
     void closeDB();
 
-    QSqlDatabase getDatabase();
+    QSqlDatabase& getDatabase();
+
 signals:
     
 public slots:

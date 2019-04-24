@@ -23,7 +23,7 @@ QModelIndex FileProjectModel::index(int row, int column, const QModelIndex &pare
 int FileProjectModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return m_layout_views.size();
+    return m_files_info.count();
 }
 
 int FileProjectModel::columnCount(const QModelIndex &parent) const
@@ -38,7 +38,7 @@ QVariant FileProjectModel::data(const QModelIndex &index, int role) const
     {
         return QVariant();
     }
-    if((size_t)index.row() >= m_layout_views.size() || index.row() < 0)
+    if(index.row() >= m_files_info.count() || index.row() < 0)
     {
         return QVariant();
     }
@@ -46,7 +46,7 @@ QVariant FileProjectModel::data(const QModelIndex &index, int role) const
     {
         if(index.column() == 0)
         {
-            render::LayoutView* lv = m_layout_views[index.row()];
+            render::LayoutView* lv = m_files_info[index.row()].layout_view;
             QString file_name = QString::fromStdString(lv->file_name());
             QStringList list = file_name.split("/", QString::SkipEmptyParts);
             QString abbr_file_name = list.back();
@@ -83,44 +83,43 @@ QVariant FileProjectModel::headerData(int section, Qt::Orientation orientation, 
     return QVariant();
 }
 
-bool FileProjectModel::insertRow(int position, render::LayoutView* lv, const QModelIndex& index)
+bool FileProjectModel::insertRow(int position, FileInfo file_info, const QModelIndex& index)
 {
     Q_UNUSED(index);
     beginInsertRows(QModelIndex(), position, position);
-    layout_view_iter it = m_layout_views.begin() + position;
+    files_info_iter it = m_files_info.begin() + position;
 
-    m_layout_views.insert(it, lv);
+    m_files_info.insert(it, file_info);
     endInsertRows();
     return true;
 }
 
-bool FileProjectModel::insertRows(int position, int rows, const QModelIndex &index)
-{
-    Q_UNUSED(index);
-    beginInsertRows(QModelIndex(), position, position + rows - 1);
-    layout_view_iter it = m_layout_views.begin() + position;
+//bool FileProjectModel::insertRows(int position, int rows, const QModelIndex &index)
+//{
+//    Q_UNUSED(index);
+//    beginInsertRows(QModelIndex(), position, position + rows - 1);
+//    files_info_iter it = m_files_info.begin() + position;
 
-    m_layout_views.insert(it, rows, new render::LayoutView());
+//    FileInfo file_info;
+//    m_files_info.insert(it, rows, file_info);
 
-    endInsertRows();
-    return true;
-}
+//    endInsertRows();
+//    return true;
+//}
 
 bool FileProjectModel::removeRows(int position, int rows, const QModelIndex &index)
 {
     Q_UNUSED(index);
     beginRemoveRows(QModelIndex(), position, position + rows - 1);
-    std::vector<render::LayoutView*>::iterator it_begin = m_layout_views.begin() + position;
-    std::vector<render::LayoutView*>::iterator it_end = it_begin + rows;
+    files_info_iter it_begin = m_files_info.begin() + position;
+    files_info_iter it_end = it_begin + rows;
 
-    for(layout_view_iter it = it_begin; it != it_end; it++)
+    for(files_info_iter it = it_begin; it != it_end; it++)
     {
-        (*it)->close();
-        delete *it;
-        *it = 0;
+        (*it).layout_view->close();
     }
 
-    m_layout_views.erase(it_begin, it_end);
+    m_files_info.erase(it_begin, it_end);
     endRemoveRows();
     return true;
 }
@@ -128,24 +127,25 @@ bool FileProjectModel::removeRows(int position, int rows, const QModelIndex &ind
 void FileProjectModel::removeFile(int row)
 {
     removeRows(row, 1);
+    reset();
 }
 
 void FileProjectModel::delete_File(QString filename)
 {
-    for (uint i = 0; i < m_layout_views.size(); i ++)
+    for (int i = 0; i < m_files_info.count(); i ++)
     {
-        if (filename == QString::fromStdString(m_layout_views.at(i)->file_name()))
+        if (filename == QString::fromStdString(m_files_info[i].layout_view->file_name()))
         {
-            removeRows(i, 1);
+            removeFile(i);
         }
     }
 }
 
 bool FileProjectModel::find_file(QString filename)
 {
-    for (uint i = 0; i < m_layout_views.size(); i ++)
+    for (int i = 0; i < m_files_info.count(); i ++)
     {
-        if (filename == QString::fromStdString(m_layout_views.at(i)->file_name()))
+        if (filename == QString::fromStdString(m_files_info[i].layout_view->file_name()))
         {
             return true;
         }

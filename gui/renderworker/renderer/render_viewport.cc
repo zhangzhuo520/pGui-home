@@ -49,8 +49,8 @@ void Viewport::set_box(const oasis::BoxF& box)
     oasis::float64 mx = oasis::float64(box.right()) + oasis::float64(box.left());
     oasis::float64 my = oasis::float64(box.top()) + oasis::float64(box.bottom());
 
-    oasis::float64 dx = (oasis::float64) (0.5 + ((mx) / ratio - oasis::float64(width())) * 0.5);
-    oasis::float64 dy = (oasis::float64) (0.5 + ((my) / ratio - oasis::float64(height())) * 0.5);
+    oasis::float64 dx = floor (0.5 + (mx / ratio - oasis::float64(width())) * 0.5);
+    oasis::float64 dy = floor (0.5 + (my / ratio - oasis::float64(height())) * 0.5);
 
     m_trans =  oasis::OasisTrans(false, 0.0, (oasis::float64)1.0 / ratio, oasis::PointF(-dx, -dy));
 }

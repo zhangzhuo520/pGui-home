@@ -114,6 +114,8 @@ void LayerWidget::init_layercontral_widget()
     TransparencyLayout->setContentsMargins(0, 0, 0, 0);
     TransparencyLayout->addWidget(TransparencyLabel);
     TransparencyLayout->addWidget(TransparencyCommbox);
+    TransparencyCommbox->hide();
+    TransparencyCommbox->hide();
 
     QSplitter*splitter = new QSplitter(LayerControlWidget);
     splitter->setOrientation(Qt::Vertical);
@@ -125,7 +127,7 @@ void LayerWidget::init_layercontral_widget()
     Vlayout->addWidget(splitter);
     Vlayout->addLayout(lineStyleLayout);
     Vlayout->addLayout(lineWidthLayout);
-    Vlayout->addLayout(TransparencyLayout);
+//    Vlayout->addLayout(TransparencyLayout);
     TreeHLayout->addWidget(LayerControlWidget);
     connect(colorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setBackgroundColor(QColor)));
     connect(Linecolorwidget, SIGNAL(signal_selectColor(QColor)), this, SLOT(slot_setLineColor(QColor)));
@@ -187,7 +189,7 @@ void LayerWidget::treeItem_checkAllChild(QStandardItem * item, bool check)
 void LayerWidget::slot_layerContextMenu(const QPoint &pos)
 {
     QStringList MenuTextList;
-    MenuTextList << "color"      << "Text Color" << "Line Color"
+    MenuTextList << "Fill color"      << "Text Color" << "Line Color"
                  << "Fill Style" << "Line Style" << "Line Width";
     QVector <QAction *> actionList;
 

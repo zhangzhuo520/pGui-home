@@ -25,15 +25,16 @@ class FileProjectWidget : public QWidget
 {
     Q_OBJECT
 public:
-    typedef FileProjectModel::layout_view_iter layout_view_iter;
+   typedef typename QVector<FileInfo>::iterator files_info_iter;
     explicit FileProjectWidget(QWidget *parent = 0);
 
     void init();
 
-    layout_view_iter get_layout_view_iter(int index)
+    files_info_iter get_files_info_iter(int index)
     {
-        return m_project_tablemodel->get_layout_view_iter(index);
+        return m_project_tablemodel->get_files_info_iter(index);
     }    
+
     bool is_file_exist(QString);
 
     void delete_file(QString);
@@ -42,11 +43,12 @@ public:
     {
         return m_project_tablemodel->rowCount(QModelIndex());
     }
+
 signals:
     void signal_close_currentFile(QString);
     void signal_openFile();
-    void signal_create_canvas(QModelIndex);
-    void signal_create_overlay_canvas(QModelIndex);
+    void signal_create_canvas(const FileInfo & );
+    void signal_create_overlay_canvas(const FileInfo & );
     void signal_close_tab(QString);
     void signal_append_file(int);
 
@@ -54,7 +56,7 @@ public slots:
     void slot_DoubleClickItem(QModelIndex);
     void slot_ClickItem(QModelIndex);
     void slot_context_menu(QPoint);
-    void slot_addFile(QString, bool);
+    void slot_addFile(QString, FileType, bool);
     void slot_CloseItem();
     void slot_OpenFile();
     void slot_AppendFile();

@@ -79,5 +79,6 @@
         <file>images/rts_right.png</file>
         <file>images/rts_find.png</file>
         <file>images/rts_file_edit.png</file>
+        <file>images/oblique_measure.png</file>
     </qresource>
 </RCC>

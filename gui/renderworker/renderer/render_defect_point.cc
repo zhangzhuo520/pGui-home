@@ -11,6 +11,7 @@ DefectPoint::DefectPoint(double x, double y, RenderObjectWidget *widget, bool is
      m_line_style(0),
      m_pattern(0),
      m_line_width(1),
+     m_point_name(""),
      m_x(x),
      m_y(y)
 {
@@ -51,6 +52,11 @@ void DefectPoint::set_fill_color(QColor fill_color)
         m_fill_color = fill_color;
         redraw();
     }
+}
+
+void DefectPoint::set_point_name(const QString &point_name)
+{
+    m_point_name = point_name;
 }
 
 void DefectPoint::set_point(double x, double y)

@@ -26,6 +26,7 @@ QString RtsPythonWriter::text_string()
     QString pitch_size = "    patch_size = " + QString::number(m_pitch_size) + "\n";
     QString input_layout_string = input_layout();
     QString get_layout_data_string = gds_layout();
+    QString simresults = get_simresults();
     QString all_data_string =
             "# ---------------RTS job setup -----------------------\n"
             "''' RTS setup'''\n"
@@ -81,7 +82,7 @@ QString RtsPythonWriter::text_string()
 +           get_layout_data_string
 + "\n"
             "    # do simulation\n"
-            "    simresults = pu.simulate({'main': main, 'sraf': sraf, 'srif': srif, 'dummy': dummy}, ['Nominal_Condition'], ['aerial_image', 'aerial_contour', 'resist_image', 'resist_contour'])\n"
+            "    simresults = pu.simulate({" + simresults + "}, ['Nominal_Condition'], ['aerial_image', 'aerial_contour', 'resist_image', 'resist_contour'])\n"
             "    resist_contour = simresults['Nominal_Condition']['resist_contour']\n"
             "    outlayout.write(resist_contour, 100, 0, 'resist_contour')\n"
   "\n"
@@ -104,24 +105,22 @@ QString RtsPythonWriter::text_string()
     return all_data_string;
 }
 
-void RtsPythonWriter::save_to_file()
+void RtsPythonWriter::save_to_file(QString FilePath)
 {
-    create_pframe_file();
-    create_run_file();
-    QString rts_python_path = QDir::homePath() + "/.pangen_gui" + "/pgui_rts";
+    create_pframe_file(FilePath);
+    create_run_file(FilePath);
     QString file_data = text_string();
-    QDir dir(rts_python_path);
-
+    QDir dir(FilePath);
     if (!dir.exists())
     {
-        if(!dir.mkpath(rts_python_path))
+        if(!dir.mkpath(FilePath))
         {
             qDebug() << "make rts_python_path error !";
             return;
         }
     }
 
-    QString filePath = rts_python_path + "/rts.py";
+    QString filePath = FilePath + "/rts.py";
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return;
@@ -142,15 +141,18 @@ void RtsPythonWriter::set_canvas_pos(const double & left, const double & right, 
     {
         m_pitch_size = 30;
     }
+    else if (m_pitch_size < 30)
+    {
+        m_pitch_size = 20;
+    }
     else if (m_pitch_size < 0)
     {
         logger_console << "calculate pitch size error!";
     }
 }
 
-void RtsPythonWriter::create_pframe_file()
+void RtsPythonWriter::create_pframe_file(const QString& FilePath)
 {
-    QString rts_python_path = QDir::homePath() + "/.pangen_gui" + "/pgui_rts";
     QString use_gpu = get_gpu();
     QString file_data =
             "import pangen.system as psys\n"\
@@ -168,18 +170,18 @@ void RtsPythonWriter::create_pframe_file()
             "   psys.info('job beginning >>>>>>>>>>>>>>>>>')\n"\
             "   mainflow()\n"\
             "   pass\n";
-    QDir dir(rts_python_path);
+    QDir dir(FilePath);
 
     if (!dir.exists())
     {
-        if(!dir.mkpath(rts_python_path))
+        if(!dir.mkpath(FilePath))
         {
             logger_console << "make rts_python_path error !";
             return;
         }
     }
 
-    QString filePath = rts_python_path + "/pframe.py";
+    QString filePath = FilePath + "/pframe.py";
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return;
@@ -189,9 +191,8 @@ void RtsPythonWriter::create_pframe_file()
     file.close();
 }
 
-void RtsPythonWriter::create_run_file()
+void RtsPythonWriter::create_run_file(const QString& FilePath)
 {
-    QString rts_python_path = QDir::homePath() + "/.pangen_gui" + "/pgui_rts";
     QStringList list = m_binary_file.split("bin");
     if (list.count() != 2)
     {
@@ -207,18 +208,18 @@ void RtsPythonWriter::create_run_file()
         "pangenpath='" + pangen_path + "'\n"
         "export PYTHONPATH=$PYTHONPATH:$pangenpath\n"
 +       m_binary_file + " -script pframe.py;\n";
-    QDir dir(rts_python_path);
+    QDir dir(FilePath);
 
     if (!dir.exists())
     {
-        if(!dir.mkpath(rts_python_path))
+        if(!dir.mkpath(FilePath))
         {
             logger_console << "make rts_python_path error !";
             return;
         }
     }
 
-    QString filePath = rts_python_path + "/run.sh";
+    QString filePath = FilePath + "/run.sh";
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return;
@@ -334,6 +335,20 @@ QString RtsPythonWriter::gds_layout()
         gds_string += layout_data_string;
     }
     return gds_string;
+}
+
+QString RtsPythonWriter::get_simresults()
+{
+    QString s;
+    for (int i = 0; i < m_mask_vector.count(); i ++)
+    {
+        if (m_mask_vector[i].mask_layerdata.count() != 0)
+        {
+            s = s + "'" + m_mask_vector[i].mask_name + "': " + m_mask_vector[i].mask_name + ", ";
+        }
+    }
+    s = s.left(s.size() - 1);
+    return s;
 }
 
 QString RtsPythonWriter::get_gpu()

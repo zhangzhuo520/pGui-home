@@ -18,7 +18,9 @@ public:
 
     QVector<render::RenderFrame*> get_render_frame_list();
 
-    void append_canvas(QString);
+    ScaleFrame* creat_canvas();
+
+    void append_canvas();
 
     void set_active_widget(render::RenderFrame*);
 
@@ -32,22 +34,19 @@ public:
 
 public slots:
     void slot_close_tab(int index);
-    ScaleFrame* creat_canvas();
     void slot_show_measure_table();
-    void slot_set_line_list(const QList <LineData>&);
+    void slot_set_line_list(const QList <LineData*>&);
     void slot_layout_view_changed(render::RenderFrame* );
+    void slot_move_center(QPointF);
 
 signals:
     void signal_close_tab(QString);
-    void signal_set_line_list(const QList<LineData> &);
+    void signal_set_line_list(const QList<LineData*> &);
     void signal_layout_view_changed(render::RenderFrame*);
+    void signal_current_frameinfo(const FrameInfo &);
 
 private:
     void init_measure_table();
-
-    void init_connection();
-
-    void connect_layer_widget();
 
     int string_to_index(QString);
 

@@ -11,7 +11,12 @@ HEADERS += \
     render_layout_view.h \
     render_frame.h \
     render_defect_point.h \
-    render_view_object.h
+    render_view_object.h \
+    render_snap.h \
+    render_monitor_thread.h \
+    render_image.h \
+    render_global.h \
+    render_bitmap_manager.h
 
 SOURCES += \
     render_worker.cc \
@@ -26,4 +31,11 @@ SOURCES += \
     render_layout_view.cc \
     render_frame.cc \
     render_defect_point.cc \
-    render_view_object.cc
+    render_view_object.cc \
+    render_snap.cc \
+    render_monitor_thread.cc \
+    render_image.cc \
+    render_bitmap_manager.cc
+
+OTHER_FILES += \
+    CMakeLists.txt

@@ -3,12 +3,31 @@ namespace ui {
 RtsMaskTab::RtsMaskTab(QWidget *parent):
     RtsTabWidget(parent)
 {
-   // tabBar()->setStyle(new CustomTabStyle);
+    setTabPosition(West);
+    tabBar()->setStyle(new CustomTabStyle);
 }
 
 RtsMaskTab::~RtsMaskTab()
 {
 }
+
+RtsMaskTab & RtsMaskTab::operator =(const RtsMaskTab & obj)
+{
+    delete_all_tab();
+    for (int i = 0; i < obj.count(); i ++)
+    {
+        MaskWidget * widget = static_cast <MaskWidget *> (obj.widget(i));
+        QString boolean = widget->get_boolean();
+        const QStringList layerlist = widget->get_layerdata_list();
+        MaskWidget * new_widget = new MaskWidget(this, obj.get_layername_list());
+        new_widget->set_table_data(layerlist);
+        new_widget->set_boolean(boolean);
+        addTab(new_widget, obj.tabText(i));
+        m_maskwidget_vector.append(new_widget);
+    }
+    return *this;
+}
+
 
 void RtsMaskTab::init_tab(const QStringList & Tablist)
 {
@@ -72,6 +91,11 @@ QString RtsMaskTab::get_boolean(const int& index) const
     return m_maskwidget_vector[index]->get_boolean();
 }
 
+const QStringList& RtsMaskTab::get_layername_list() const
+{
+    return m_layername_list;
+}
+
 MaskWidget::MaskWidget(QWidget *parent, const QStringList & list):
     QWidget(parent),
     m_layername_list(list)
@@ -88,12 +112,18 @@ MaskWidget::~MaskWidget()
 void MaskWidget::init_ui()
 {
     QHBoxLayout *HToplayout = new QHBoxLayout();
+    HToplayout->setSpacing(5);
     m_mask_add_button = new QPushButton("Add", this);
     m_mask_clone_button = new QPushButton("Clone", this);
     m_mask_delete_button = new QPushButton("Delete", this);
+    HToplayout->addWidget(new QLabel(" "));
     HToplayout->addWidget(m_mask_add_button);
     HToplayout->addWidget(m_mask_clone_button);
     HToplayout->addWidget(m_mask_delete_button);
+    HToplayout->setStretch(0, 2);
+    HToplayout->setStretch(1, 1);
+    HToplayout->setStretch(2, 1);
+    HToplayout->setStretch(3, 1);
     QHBoxLayout *HCenterLayout = new QHBoxLayout();
     m_layer_table = new QTableView(this);
     m_layer_table->setObjectName("RtsLayerTable");
@@ -141,6 +171,11 @@ void MaskWidget::set_layername_list(const QStringList & list)
     deleetage->set_commbox_list(list);
 }
 
+void MaskWidget::set_table_data(QStringList list)
+{
+    m_mask_model->set_data_list(list);
+}
+
 const QStringList &MaskWidget::get_alisa_list()
 {
     return m_mask_model->get_alias_list();
@@ -173,6 +208,16 @@ void MaskWidget::slot_add_row()
 
 void MaskWidget::slot_clone_row()
 {
-    m_mask_model->delete_all();
+    QStringList list = m_mask_model->get_layerdata_list();
+    if (list.empty())
+    {
+        return;
+    }
+    m_mask_model->append_row(list.at(list.count() - 1));
+}
+
+void MaskWidget::set_boolean(QString string)
+{
+    m_boolean_edit->setText(string);
 }
 }

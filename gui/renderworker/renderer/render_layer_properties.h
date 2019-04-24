@@ -136,6 +136,16 @@ public:
         m_layout_view_index = index;
     }
 
+    bool cached() const
+    {
+         return m_cached;
+    }
+
+    void set_cached(bool cached)
+    {
+        m_cached = cached;
+    }
+
 private:
     mutable color_t m_frame_color;
     mutable color_t m_fill_color;
@@ -151,6 +161,7 @@ private:
     RenderFrame* mp_frame;
 
     int m_layout_view_index;
+    bool m_cached;
 };
 
 }

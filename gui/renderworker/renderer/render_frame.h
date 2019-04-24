@@ -6,24 +6,22 @@
 
 #include <QMutex>
 #include <QColor>
-
+#include <QTime>
 #include "oasis_types.h"
 
 #include "render_view_object.h"
 #include "render_viewport.h"
-#include "render_bitmap.h"
 #include "render_view_op.h"
 #include "render_pattern.h"
 #include "render_line_style.h"
-#include "render_layer_properties.h"
 #include "render_layout_view.h"
-
-#include <QDebug>
 
 class QImage;
 class QPixmap;
 class QPoint;
+class QPointF;
 class QLine;
+class QLineF;
 class QWheelEvent;
 class QKeyEvent;
 class QPaintEvent;
@@ -37,23 +35,30 @@ namespace oasis
 
 namespace render{
 
-
-
-#ifndef TIME_DEBUG
-#define TIME_DEBUG qDebug() << QDateTime::currentDateTime().toString("yyyy-MM-dd") +" "+QDateTime::currentDateTime().toString("hh:mm:ss.zzz") + "ms";
-#endif
+class RenderManager;
+class BitmapManager;
+class Bitmap;
+class LayerProperties;
+class RTSImage;
 
 class RenderFrame :public RenderObjectWidget
 {
 Q_OBJECT
 public:
+
+    enum MouseStyle
+    {
+        Normal,
+        Busy
+    };
+
     RenderFrame(QWidget *parent = 0);
 
     virtual ~RenderFrame();
 
     void set_view_ops();
 
-    QColor background_color() const { return QColor(m_background); }
+    QColor background_color() const { return QColor(m_bg_color); }
 
     void set_background_color(QColor color);
 
@@ -94,14 +99,26 @@ public:
         return m_layout_views.size();
     }
 
-    std::vector<render::LayoutView*> get_layout_views_list() const;
-
-    const render::LayerProperties* get_properties(int index) const;
-
     size_t layers_size() const
     {
         return m_layers_properties.size();
     }
+
+    const oasis::OasisTrans& get_trans() const
+    {
+        return m_vp.trans();
+    }
+
+    int worker_nums() const
+    {
+        return m_worker_nums;
+    }
+
+    std::vector<render::LayoutView*> get_layout_views_list() const;
+
+    const render::LayerProperties* get_properties(int index) const;
+
+    void set_layer_cached(int index, bool cache);
 
     int tree_to_list_index(int parent_index, int child_index);
 
@@ -113,13 +130,9 @@ public:
 
     oasis::BoxF get_box() const;
 
-    const oasis::OasisTrans& get_trans() const
-    {
-        return m_vp.trans();
-    }
-
-
     std::pair<bool, std::pair<QPointF, QPointF> > get_snap_point(QPointF p, int mode);
+
+    std::pair<bool, std::pair<QLineF, QLineF> >get_snap_edge(QPointF p, int mode);
 
     void set_defect_point(double x, double y);
 
@@ -133,26 +146,51 @@ public:
 
     void detach_layout_view(LayoutView* );
 
-    void set_window_max_size(double limit);
-
-    double get_window_max_size() { return m_window_max_size; }
-
     virtual void paintEvent(QPaintEvent *);
 
     virtual void wheelEvent(QWheelEvent *);
 
     int index_of_layout_views(LayoutView* lv);
+    Bitmap* create_bitmap();
+    void update_image();
 
+    void finish_drawing();
+    void init_bitmaps(unsigned int layers, unsigned int width,
+                     unsigned int height, double resolution,
+                     bool shift, const oasis::Point&shift_disp,
+                     bool restart, const std::vector<int>& restart_bitmaps);
+
+    void set_worker_nums(int workers);
     double get_view_range() const;
+
+    virtual QImage& background_image() const
+    {
+        return *m_image;
+    }
+
+    std::vector<QString> get_rts_image_paths();
+    void disable_rts_image(QString& file_path);
+    void enable_rts_image(QString& file_path);
+    void disble_all_rts_image();
+    void clear_all_rts_images();
+
+    void add_rts_image(const QStringList& info_path_list);
+    void set_mouse_style(MouseStyle style);
+
+    void copy_bitmaps(const std::vector<int>& update_layers, const std::vector<render::Bitmap*>& planes, int x, int y);
+    void copy_bitmap(int update_layers, render::Bitmap* contour_bitmap, render::Bitmap* fill_bitmap, int x, int y);
 
 signals:
     void signal_down_key_pressed();
     void signal_up_key_pressed();
     void signal_left_key_pressed();
     void signal_right_key_pressed();
+    void signal_zoom_out_pressed();
+    void signal_zoom_in_pressed();
     void signal_pos_updated(double x, double y);
     void signal_box_updated(double left, double bot, double right, double top);
     void signal_get_snap_pos(bool, QPointF, QPointF, int mode);
+    void signal_get_snap_edge(bool, QLineF, QLineF, int);
     void signal_layout_view_changed(render::RenderFrame*);
 
 public slots:
@@ -161,11 +199,13 @@ public slots:
     void slot_left_shift();
     void slot_right_shift();
     void slot_get_snap_pos(QPointF, int mode);
+    void slot_get_snap_edge(QPointF, int mode);
     void slot_box_updated();
     void slot_zoom_in();
     void slot_zoom_out();
     void slot_refresh();
     void slot_zoom_fit();
+    void slot_go_to_position(QPointF);
 
 protected:
     virtual void mouseMoveEvent(QMouseEvent* e);
@@ -185,13 +225,19 @@ private:
 
     void shift_view(double scale, double dx, double dy);
 
+    void redraw_all();
+    void stop_redraw();
+
+    std::vector<RTSImage*> get_rts_images();
+
     std::vector<render::ViewOp> m_view_ops;
     std::vector<render::Bitmap *> m_buffer;
+    std::vector<render::Bitmap *> m_split_bitmaps;
 
     QImage *m_image;
+    QImage *m_image_bg;
     QPixmap *m_pixmap;
     double m_resolution;
-    color_t m_background;
 
     QMutex m_mutex;
     render::Pattern m_pattern;
@@ -207,13 +253,18 @@ private:
 
     unsigned int m_current_layer;
 
-    QColor m_background_color;
+    color_t m_bg_color;
 
-    double m_window_max_size;
+    BitmapManager* m_bitmap_manager;
+    RenderManager* m_render_manager;
+
+    bool m_restart_render;
+    int m_worker_nums;
+
+    std::vector<int> m_required_redraw_layer;
+    QTime m_draw_timer;
 };
-
 }
-
 #endif
 
 

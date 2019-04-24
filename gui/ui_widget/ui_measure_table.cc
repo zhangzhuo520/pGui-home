@@ -14,7 +14,7 @@ MeasureTable::MeasureTable(QWidget *parent):
 void MeasureTable::init()
 {
     QHBoxLayout *Hlayout = new QHBoxLayout(this);
-    m_table_view = new TableView(this);
+    m_table_view = new QTableView(this);
     m_table_model = new MeasureTableModel(m_table_view);
     m_table_view->setModel(m_table_model);
 
@@ -91,27 +91,55 @@ void MeasureTable::slot_checked_line(QModelIndex index)
         return;
     }
 
-    QList <LineData> temp_linedata_list = m_linedata_list;
-    for (int i = 0; i < m_linedata_list.count(); i ++)
-    {
-        if (m_linedata_list[i].m_line_color == Qt::red)
-        {
-            temp_linedata_list[i].set_line_color(Qt::black);
-        }
+//    QList <LineData>* temp_linedata_list = m_linedata_list;
+//    for (int i = 0; i < m_linedata_list.count(); i ++)
+//    {
+//        if (m_linedata_list[i]->m_line_color == Qt::red)
+//        {
+//            temp_linedata_list[i]->set_line_color(Qt::black);
+//        }
 
-        if (i == index.row())
+//        if (i == index.row())
+//        {
+//            temp_linedata_list[i]->set_line_color(Qt::red);  //set line color is red represent is line has focus
+//        }
+//    }
+    QPointF start_point(0, 0);
+    QPointF end_point(0, 0);
+    for(int i = 0; i < m_linedata_list.count(); i++)
+    {
+        if(m_linedata_list[i]->m_line_color == Qt::red)
         {
-            temp_linedata_list[i].set_line_color(Qt::red);  //set line color is red represent is line has focus
+            m_linedata_list[i]->set_line_color(Qt::black);
+        }
+        if( i == index.row())
+        {
+            m_linedata_list[i]->set_line_color(Qt::red);
+            start_point = m_linedata_list[i]->m_first_point;
+            end_point = m_linedata_list[i]->m_last_point;
         }
     }
 
-    emit signal_set_line_list(temp_linedata_list);
+    QPointF center_point((start_point.x() + end_point.x()) / 2, (start_point.y() + end_point.y()) / 2);
+
+
+
+    emit signal_set_line_list(m_linedata_list);
+    emit signal_move_center(center_point);
 }
 
-void MeasureTable::slot_set_line_list(const QList<LineData> &linedata_list)
+void MeasureTable::slot_set_line_list(const QList<LineData*> &linedata_list)
 {
     m_linedata_list = linedata_list;
     m_table_model->set_line_list(linedata_list);
+}
+
+void MeasureTable::clear_select_color()
+{
+    for (int i = 0; i < m_linedata_list.count(); i ++)
+    {
+        m_linedata_list[i]->set_line_color(Qt::black);
+    }
 }
 
 }

@@ -30,18 +30,22 @@ SET(PanGenGUI_SRCS
     ui_scale_frame.cc
     ui_application.cc
     ui_log_widget.cc
+    ui_navigator.cc
     rts_setup/qcustomplot.cc
     rts_setup/highlighter.cc
     rts_setup/ui_rtsmask_tab.cc
     rts_setup/ui_rtscurve.cc
     rts_setup/ui_rtsreview_dialog.cc
     rts_setup/ui_rtsconfig_dialog.cc
+    rts_setup/ui_rtsconfig_widget.cc
     rts_setup/ui_rtsreview_table.cc
     rts_setup/rts_runprocess.cc
+    rts_setup/rts_manager.cc
     rts_setup/ui_rtscurve.cc
     rts_setup/ui_curve_widget.cc
     rts_setup/ui_rtsfile_edit.cc
     rts_setup/ui_rtsfile_dialog.cc
+    rts_setup/image_worker.cc
     deftools/cmessagebox.cc
     deftools/defcontrols.cc
     deftools/framelesshelper.cc
@@ -52,6 +56,7 @@ SET(PanGenGUI_SRCS
     delegate/ui_rtsmask_delegate.cc
     db/sqlquery.cc
     db/sqlmanager.cc
+    db/sqlindex_thread.cc
     fileparsing/yamlparsing.cc
     fileparsing/rts_imageparsing.cc
     file_generate/rts_pythonwriter.cc
@@ -84,18 +89,22 @@ SET(PanGenGUI_HEADERS
     ui_semimage_dialog.h
     ui_chipedit_dialog.h
     ui_application.h
+    ui_navigator.h
     rts_setup/qcustomplot.h
     rts_setup/highlighter.h
     rts_setup/ui_rtsmask_tab.h
     rts_setup/ui_rtscurve.h
+    rts_setup/ui_rtsconfig_widget.h
     rts_setup/ui_rtsconfig_dialog.h
     rts_setup/ui_rtsreview_dialog.h
     rts_setup/rts_runprocess.h
+    rts_setup/rts_manager.h
     rts_setup/ui_rtsreview_table.h
     rts_setup/ui_rtscurve.h
     rts_setup/ui_curve_widget.h
-    rts_setup/ui_rtsfile_edit.cc
-    rts_setup/ui_rtsfile_dialog.cc
+    rts_setup/ui_rtsfile_edit.h
+    rts_setup/ui_rtsfile_dialog.h
+    rts_setup/image_worker.h
     deftools/cmessagebox.h
     deftools/framelesshelper.h
     deftools/iconhelper.h
@@ -107,6 +116,7 @@ SET(PanGenGUI_HEADERS
     delegate/ui_rtsmask_delegate.h
     db/sqlquery.h
     db/sqlmanager.h
+    db/sqlindex_thread.h
     fileparsing/yamlparsing.h
     fileparsing/rts_imageparsing.h
     file_generate/rts_pythonwriter.h
@@ -138,7 +148,9 @@ QT4_WRAP_CPP(PanGenGUI_MOCS
     ui_menu_widget.h
     ui_defects_widget.h
     ui_defgroup.h
+    ui_navigator.h
     rts_setup/ui_rtscurve.h
+    rts_setup/ui_rtsconfig_widget.h
     rts_setup/ui_rtsconfig_dialog.h
     rts_setup/ui_rtsmask_tab.h
     rts_setup/ui_rtsreview_dialog.h
@@ -146,7 +158,9 @@ QT4_WRAP_CPP(PanGenGUI_MOCS
     rts_setup/ui_curve_widget.h
     rts_setup/ui_rtsreview_table.h
     rts_setup/qcustomplot.h
+    rts_setup/rts_manager.h
     rts_setup/ui_rtscurve.h
+    rts_setup/image_worker.h
     rts_setup/ui_rtsfile_edit.h
     rts_setup/ui_rtsfile_dialog.h
     fileparsing/rts_imageparsing.h
@@ -158,6 +172,7 @@ QT4_WRAP_CPP(PanGenGUI_MOCS
     deftools/datatable.h
     delegate/ui_rtsmask_delegate.h
     db/sqlmanager.h
+    db/sqlindex_thread.h
     model/ui_measuretable_model.h
     model/ui_checklist_model.h
     model/ui_gauge_model.h  
@@ -165,6 +180,9 @@ QT4_WRAP_CPP(PanGenGUI_MOCS
     model/ui_rtsmask_model.h
     model/ui_universal_model.h
     model/ui_sqltabel_model.h)
+
+FIND_PACKAGE(X11 REQUIRED)
+INCLUDE(${X11_INCLUDE_DIR})
 
 QT4_ADD_RESOURCES(PanGenGUI_RESOURCES_RCC ${PanGenGUI_RESOURCES})
 
@@ -177,5 +195,5 @@ ADD_EXECUTABLE(PanGenGUI
     ${PanGenGUI_SRCS}
     ${PanGenGUI_MOCS})
 
-TARGET_LINK_LIBRARIES(PanGenGUI renderer oasis_api sysutil qt_logger ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES(PanGenGUI renderer oasis_api sysutil qt_logger ${QT_LIBRARIES} ${X11_LIBRARIES})
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

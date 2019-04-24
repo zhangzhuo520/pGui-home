@@ -11,6 +11,7 @@ QMainWindow::separator:hover{
      background: rgb(145, 194, 242);
 }
 
+/**********QWidget*************/
 QWidget #PaintWidget{
      background:transparent;
 }
@@ -75,8 +76,7 @@ QTabWidget#TabPaintWidget QStackedWidget{
     background: rgb(100, 100, 100);
 }
 
-/**********QTabBar**********/
-QTabBar::tab{
+QTabWidget#TabPaintWidget QTabBar::tab{
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
      stop: 0 rgb(210, 210, 210), stop: 0.4 rgb(255, 255, 255),
      stop: 0.5 rgb(230, 230, 230), stop: 1.0 rgb(255, 255, 255));
@@ -88,15 +88,18 @@ QTabBar::tab{
      padding: 2px;
 }
 
-QTabBar::tab:selected, QTabBar::tab:hover{
+QTabWidget#TabPaintWidget QTabBar::tab:selected, QTabWidget#TabPaintWidget  QTabBar::tab:hover{
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
      stop: 0 rgb(145, 194, 242), stop: 0.4 #f4f4f4,
      stop: 0.5 rgb(145, 194, 242), stop: 1.0 #f4f4f4);
 }
 
-QTabBar::tab:!selected{
+QTabWidget#TabPaintWidget QTabBar::tab:!selected{
      margin-top: 2px;
 }
+
+/**********QTabBar**********/
+
 
 /**********QStatusBar**********/
 QStatusBar{

@@ -19,8 +19,7 @@ public:
 
     void get_curve_data();
 
-    void paint_curve();
-    
+    void paint_curve();    
 signals:
     
 public slots:
@@ -80,7 +79,6 @@ private:
     QRadioButton *m_ai_button;
     QRadioButton *m_ri_button;
     QRadioButton *m_ei_button;
-
 };
 
 }

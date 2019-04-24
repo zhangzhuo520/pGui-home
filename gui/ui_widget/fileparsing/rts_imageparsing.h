@@ -22,10 +22,9 @@ class ImageWorker : public QObject
 {
     Q_OBJECT
  public:
-    explicit ImageWorker(QObject * parent = 0);
+    explicit ImageWorker(const QString& path = "");
     ~ImageWorker();
-    void set_file_path(const QString&);
-
+    void set_file_name(const QString&);
 
 public slots:
     void slot_start_work();
@@ -42,10 +41,13 @@ private:
     QStringList m_image_data_list;
 
     QImage *m_image;
+    QImage *m_color_bar_image;
     int m_image_width;
     int m_image_high;
 
     QString m_file_name;
+    QString m_file_path;
+    QList <int > m_colorbar_list;
 };
 
 class RtsImageParsing : public QObject
@@ -55,7 +57,9 @@ public:
     RtsImageParsing(QObject *parent = 0);
     ~RtsImageParsing();
 
-    void parsing_file();
+    void parsing_file(QString);
+
+    void clear_image();
 
 public slots:
     void slot_parsing_finished();
@@ -66,6 +70,8 @@ signals:
 private:
     void ceate_threads();
 
+    void delet_threads();
+
     ImageWorker *m_image_worker;
     QThread *m_worker_thread;
     QVector <ImageWorker *> m_image_worker_vector;
@@ -73,6 +79,7 @@ private:
 
     QStringList m_filename_list;
     int m_thread_num;
+    QString m_file_path;
 };
 }
 

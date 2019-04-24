@@ -1,7 +1,9 @@
 #include "ui_fileproject_widget.h"
 namespace ui {
 FileProjectWidget::FileProjectWidget(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+    m_active_filename(""),
+    m_active_index(-1)
 {
     init();
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -48,7 +50,8 @@ void FileProjectWidget::slot_DoubleClickItem(QModelIndex index)
 {
     m_active_index = index.row();
     m_active_filename = index.data().toString();
-    emit signal_create_canvas(index);
+    FileInfo file_info = *(m_project_tablemodel->get_files_info_iter(m_active_index));
+    emit signal_create_canvas(file_info);
 }
 
 void FileProjectWidget::slot_ClickItem(QModelIndex modelIndex)
@@ -80,17 +83,19 @@ void FileProjectWidget::slot_AppendFile()
     emit signal_append_file(m_active_index);
 }
 
-void FileProjectWidget::slot_addFile(QString path, bool isOverLay)
+void FileProjectWidget::slot_addFile(QString path, FileType file_type, bool isOverLay)
 {
     render::LayoutView* lv = new render::LayoutView();
     std::string s = path.toStdString();
     lv->set_file_name(s);
-    m_project_tablemodel->insertRow(m_project_tablemodel->rowCount(QModelIndex()), lv);
+    FileInfo file_info;
+    file_info.layout_view = lv;
+    file_info.file_type = file_type;
+    m_project_tablemodel->insertRow(m_project_tablemodel->rowCount(QModelIndex()), file_info);
     QModelIndex modelIndex = m_project_tablemodel->index(m_project_tablemodel->rowCount(QModelIndex()) - 1, 0);
     if (isOverLay)
     {
-        TIME_DEBUG
-        emit signal_create_overlay_canvas(modelIndex);
+        emit signal_create_overlay_canvas(file_info);
     }
     else
     {
@@ -127,8 +132,8 @@ void FileProjectWidget::slot_showToolTip(QModelIndex index)
         return ;
     }
     int row = index.row();
-    layout_view_iter it = get_layout_view_iter(row);
-    QString file_path = QString::fromStdString((*it)->file_name());
+    files_info_iter it = get_files_info_iter(row);
+    QString file_path = QString::fromStdString((*it).layout_view->file_name());
     if(file_path.isEmpty())
     {
         return ;

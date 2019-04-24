@@ -37,17 +37,16 @@ public:
 
     LayoutView& operator= (const LayoutView& );
 
+    ~LayoutView();
+
     bool operator==(const LayoutView& lv);
 
     oasis::OasisLayout* get_layout() const
     {
-        return m_layout.get();
+        return m_layout;
     }
 
-    void set_layout(oasis::OasisLayout* layout)
-    {
-        m_layout.reset(layout);
-    }
+    void set_layout(oasis::OasisLayout* layout);
 
     void attach(render::RenderFrame* frame, std::string prep_dir, bool add_layout_view);
 
@@ -65,7 +64,7 @@ public:
 
     oasis::float64 get_dbu() const
     {
-        oasis::OasisLayout* p = m_layout.get();
+        oasis::OasisLayout* p = m_layout;
         if(p)
         {
             return p->get_dbu();
@@ -74,11 +73,6 @@ public:
         {
             return 0.0001;
         }
-    }
-
-    int get_count() const
-    {
-        return m_layout.use_count();
     }
 
     bool valid() const
@@ -104,7 +98,7 @@ public:
 private:
     friend class RenderFrame;
 
-    std::shared_ptr<oasis::OasisLayout> m_layout;
+    oasis::OasisLayout* m_layout;
 
     std::string m_file_name;
 

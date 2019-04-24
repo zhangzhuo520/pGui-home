@@ -21,7 +21,7 @@ void MeasureTableModel::delete_line(const int & row)
     endRemoveColumns();
 }
 
-void MeasureTableModel::set_line_list(const QList<LineData> & line_list)
+void MeasureTableModel::set_line_list(const QList<LineData*> & line_list)
 {
     m_linedata_list = line_list;
     reset();
@@ -63,8 +63,8 @@ QVariant MeasureTableModel::data(const QModelIndex &item, int role) const
         switch (item.column()) {
         case 0:
         {
-            double x =  m_linedata_list.at(item.row()).m_first_point.x();
-            double y =  m_linedata_list.at(item.row()).m_first_point.y();
+            double x =  m_linedata_list.at(item.row())->m_first_point.x();
+            double y =  m_linedata_list.at(item.row())->m_first_point.y();
 
             QString s = '(' + QString::number(x, 'f' ,4) + ", " + QString::number(y,'f', 4) + ')';
 
@@ -72,15 +72,15 @@ QVariant MeasureTableModel::data(const QModelIndex &item, int role) const
         }
         case 1:
         {
-            double x =  m_linedata_list.at(item.row()).m_last_point.x();
-            double y =  m_linedata_list.at(item.row()).m_last_point.y();
+            double x =  m_linedata_list.at(item.row())->m_last_point.x();
+            double y =  m_linedata_list.at(item.row())->m_last_point.y();
 
             QString s = '(' + QString::number(x, 'f' ,4) + ", " + QString::number(y,'f', 4) + ')';
 
             return s;
         }
         case 2:
-            return m_linedata_list.at(item.row()).m_distance;
+            return m_linedata_list.at(item.row())->m_distance;
         default:
             break;
         }
@@ -106,8 +106,8 @@ QVariant MeasureTableModel::data(const QModelIndex &item, int role) const
         switch (item.column()) {
         case 0:
         {
-            double x =  m_linedata_list.at(item.row()).m_first_point.x();
-            double y =  m_linedata_list.at(item.row()).m_first_point.y();
+            double x =  m_linedata_list.at(item.row())->m_first_point.x();
+            double y =  m_linedata_list.at(item.row())->m_first_point.y();
 
             QString s = '(' + QString::number(x, 'f' ,4) + ", " + QString::number(y,'f', 4) + ')';
 
@@ -115,14 +115,14 @@ QVariant MeasureTableModel::data(const QModelIndex &item, int role) const
         }
         case 1:
         {
-            double x =  m_linedata_list.at(item.row()).m_last_point.x();
-            double y =  m_linedata_list.at(item.row()).m_last_point.y();
+            double x =  m_linedata_list.at(item.row())->m_last_point.x();
+            double y =  m_linedata_list.at(item.row())->m_last_point.y();
 
             QString s = '(' + QString::number(x, 'f' ,4) + ", " + QString::number(y,'f', 4) + ')';
             return s;
         }
         case 2:
-            return m_linedata_list.at(item.row()).m_distance;
+            return m_linedata_list.at(item.row())->m_distance;
         default:
             break;
         }

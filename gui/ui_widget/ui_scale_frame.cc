@@ -1,5 +1,7 @@
 #include "ui_scale_frame.h"
+#include "../renderer/render_layout_view.h"
 #include <QPushButton>
+
 namespace ui
 {
 
@@ -38,13 +40,18 @@ void ScaleFrame::initRenderFrame()
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), this, SLOT(slot_box_updated(double,double,double,double)));
     connect(m_render_frame, SIGNAL(signal_pos_updated(double,double)), this, SLOT(slot_pos_updated(double, double)));
     connect(m_render_frame, SIGNAL(signal_get_snap_pos(bool, QPointF, QPointF, int)), m_paint_widget, SLOT(slot_get_snap_pos(bool, QPointF, QPointF, int)));
+    connect(m_render_frame, SIGNAL(signal_get_snap_edge(bool, QLineF, QLineF, int)), m_paint_widget, SLOT(slot_get_snap_edge(bool, QLineF, QLineF, int)));
     connect(m_render_frame, SIGNAL(signal_box_updated(double,double,double,double)), m_paint_widget, SLOT(slot_box_updated(double,double,double, double)));
     connect(m_render_frame, SIGNAL(signal_layout_view_changed(render::RenderFrame*)), this, SLOT(slot_layout_view_changed(render::RenderFrame*)));
+
 
     connect(m_paint_widget, SIGNAL(signal_updateDistance(QString)), this, SLOT(slot_distance_updated(QString)));
     connect(m_paint_widget, SIGNAL(signal_moveCenter()), this, SLOT(slot_move_point_center()));
     connect(m_paint_widget, SIGNAL(signal_get_snap_pos(QPointF, int)), m_render_frame, SLOT(slot_get_snap_pos(QPointF, int)));
+    connect(m_paint_widget, SIGNAL(signal_get_snap_edge(QPointF,int)), m_render_frame, SLOT(slot_get_snap_edge(QPointF, int)));
     connect(m_paint_widget, SIGNAL(signal_measure_line_list()), this, SLOT(slot_update_mesuretable()));
+    connect(m_paint_widget, SIGNAL(signal_cutline_list()), this, SLOT(slot_update_cutline_table()));
+    connect(m_paint_widget, SIGNAL(signal_go_to_position(QPointF)), m_render_frame, SLOT(slot_go_to_position(QPointF)));
     connect(this, SIGNAL(signal_refresh()), m_render_frame, SLOT(slot_refresh()));
     connect(this, SIGNAL(signal_zoom_in()), m_render_frame, SLOT(slot_zoom_in()));
     connect(this, SIGNAL(signal_zoom_out()), m_render_frame, SLOT(slot_zoom_out()));
@@ -85,6 +92,11 @@ void ScaleFrame::slot_clear_gauge()
 void ScaleFrame::slot_update_mesuretable()
 {
     emit signal_update_measuretable();
+}
+
+void ScaleFrame::slot_update_cutline_table()
+{
+    emit signal_updata_cutline_table();
 }
 
 void ScaleFrame::set_defect_point(double x, double y)
@@ -870,6 +882,7 @@ void ScaleFrame::darw_Y_axis(QPainter & painter)
 
 void ScaleFrame::drawDefectPoint(double x, double y, QString Stringsize)
 {
+    logger_file("drawDefectPoint");
     m_isdraw_pointtext = true;
     m_render_frame->set_defect_point(x, y);
     m_paint_widget->draw_defect_point_text(x, y, Stringsize);
@@ -884,8 +897,8 @@ void ScaleFrame::get_canvas_coord(double * left, double *right, double *bottom, 
 {
     *left = m_xstart;
     *right = m_xend;
-    *bottom = m_ystart;
-    *top = m_yend;
+    *bottom = m_yend;
+    *top = m_ystart;
 }
 
 void ScaleFrame::repaint_image()
@@ -918,53 +931,29 @@ void ScaleFrame::slot_set_pen_color(const QColor& color)
 
 int ScaleFrame::overlay_times = 0;
 
-//void ScaleFrame::load_layout_view(render::LayoutView* lv, const QString &dirpath, bool add_layout_view)
-//{
-//    if(m_render_frame->layout_views_size() == 1 && add_layout_view)
-//    {
-//        if(!m_filename.startsWith("Append"))
-//        {
-//            set_file_name(QString("Append[%1]").arg(overlay_times++));
-//        }
-//    }
-//    else
-//    {
-//        m_filename = QString::fromStdString(lv->file_name());
-//    }
-
-//    m_render_frame->load_layout_view(lv, dirpath.toStdString(), add_layout_view);
-//}
-
-//void ScaleFrame::add_layout_view(render::LayoutView* lv, bool add_layout_view)
-//{
-//    if(m_render_frame->layout_views_size() == 1 && add_layout_view)
-//    {
-//        if(!m_filename.startsWith("Append"))
-//        {
-//            set_file_name(QString("Append[%1]").arg(overlay_times++));
-//        }
-//    }
-//    else
-//    {
-//        m_filename = QString::fromStdString(lv->file_name());
-//    }
-
-//    m_render_frame->add_layout_view(lv, add_layout_view);
-//}
-
 render::RenderFrame *ScaleFrame::getRenderFrame()
 {
     return m_render_frame;
 }
 
-const QList<LineData> & ScaleFrame::get_measure_line_list()
+const QList<LineData*> & ScaleFrame::get_measure_line_list()
 {
     return m_paint_widget->get_measure_line_list();
 }
 
-void ScaleFrame::set_measure_line_list(const QList<LineData> & line_list)
+void ScaleFrame::set_measure_line_list(const QList<LineData*> & line_list)
 {
     m_paint_widget->set_measure_line_list(line_list);
+}
+
+const QList<LineData*> &ScaleFrame::get_cutline_list()
+{
+    return m_paint_widget->get_cutline_list();
+}
+
+void ScaleFrame::set_cutline_list(const QList<LineData*> & list)
+{
+    m_paint_widget->set_cutline_list(list);
 }
 
 void ScaleFrame::setImageSize(QSize size)
@@ -1018,7 +1007,7 @@ void ScaleFrame::slot_distance_updated(QString distance)
 
 void ScaleFrame::slot_set_painter_style(Global::PaintTool paintStyle)
 {
-    m_paint_widget->setPaintStyle(paintStyle);
+    m_paint_widget->set_paint_style(paintStyle);
 }
 
 void ScaleFrame::paintEvent(QPaintEvent *e)
@@ -1073,16 +1062,6 @@ void ScaleFrame::zoom_fit()
     emit signal_zoom_fit();
 }
 
-void ScaleFrame::set_window_max_size(double limit)
-{
-    m_render_frame->set_window_max_size(limit);
-}
-
-double ScaleFrame::get_window_max_size()
-{
-    return m_render_frame->get_window_max_size();
-}
-
 void ScaleFrame::slot_layout_view_changed(render::RenderFrame* frame)
 {
     if(frame->layout_views_size() == 1)
@@ -1091,8 +1070,27 @@ void ScaleFrame::slot_layout_view_changed(render::RenderFrame* frame)
     }
     else if(frame->layout_views_size() > 1)
     {
-        set_file_name(QString("Append[%1]").arg(overlay_times++));
+        set_file_name(QString("Append[%1]").arg(frame->layout_views_size()));
     }
+
+    for(auto i = 0; i < m_frame_info.fileinfo_vector.count(); i ++)
+    {
+        render::LayoutView * layout_view = m_frame_info.fileinfo_vector[i].layout_view;
+        bool is_exist = false;
+        for (auto j = 0; j < frame->layout_views_size(); j ++)
+        {
+            if (layout_view == frame->get_layout_view(j))
+            {
+                is_exist = true;
+            }
+        }
+
+        if (!is_exist)
+        {
+            m_frame_info.fileinfo_vector.remove(i);
+        }
+    }
+
     emit signal_layout_view_changed(frame);
 }
 
@@ -1125,6 +1123,12 @@ double ScaleFrame::get_view_range() const
 void ScaleFrame::slot_set_background_color(QColor color)
 {
     m_render_frame->set_background_color(color);
+}
+
+void ScaleFrame::slot_paint_cutline(Global::RtsCutLineAngle angel_mode, QVariant data)
+{
+    m_paint_widget->set_paint_style(Global::CutLine);
+    m_paint_widget->set_rts_cutline(angel_mode, data);
 }
 
 }

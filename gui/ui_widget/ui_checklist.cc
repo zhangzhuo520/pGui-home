@@ -1,4 +1,8 @@
 #include "ui_checklist.h"
+#include "ui_defgroup.h"
+#include "db/sqlmanager.h"
+#include "db/sqlindex_thread.h"
+#include "model/ui_checklist_model.h"
 
 namespace ui {
 CheckList::CheckList(int width, int height, QWidget *parent):
@@ -7,13 +11,17 @@ CheckList::CheckList(int width, int height, QWidget *parent):
     m_height(height),
     m_active_tree_index(0)
 {
-    m_vlayout = new QVBoxLayout(this);
-    initTreeView();
-    initJobKey();
-    m_vlayout->addWidget(m_checklist_tree);
+    m_vlayout = new QVBoxLayout();
     m_vlayout->setSpacing(0);
     m_vlayout->setContentsMargins(0, 0, 0, 0);
+
+    initTreeView();
+    initJobKey();
+
+    m_vlayout->addWidget(m_checklist_tree);
+    setLayout(m_vlayout);
     m_sqlmanager = new SQLManager();
+    m_sqlindex_thread = new SqlIndexThread(this);
 }
 
 void CheckList::initJobKey()
@@ -63,8 +71,8 @@ void CheckList::new_update_treeview()
         return;
     }
     QStandardItem *rootFileItem = new TreeItem(m_jobdata);
+    m_rootitem_vector.append(rootFileItem);
     m_checklist_model->appendRow(rootFileItem);
-
     QStandardItem* pStandardItem = NULL;
     QStandardItem* pStandardChildItem = NULL;
     QStandardItem* pStandardGrandsonItem = NULL;
@@ -125,15 +133,13 @@ void CheckList::new_read_database(const QString&DBname)
     m_detectormap.clear();
     m_detectorvector.clear();
 
-    m_jobindex = get_job_key();
     m_sqlmanager->setDatabaseName(DBname + "/defectDB.sqlite");
 
     if(m_sqlmanager->openDB())
     {
          QSqlQuery query;
 
-         m_jobdata = "job" +  QString::number(m_jobindex) +":" + DBname;
-         m_jobpath_list.append(m_jobdata);
+         m_jobdata = "job" +  QString::number(m_jobindex) + ":" + DBname;
 
          //mask data
          QString maskDescColName = "name";
@@ -256,44 +262,258 @@ void CheckList::close_job_key(int Key)
 
 CheckList::~CheckList()
 {
-}
+    m_maskmap.clear();
+    m_maskvector.clear();
+    m_pw_conditionmap.clear();
+    m_pw_conditionvector.clear();
+    m_detectormap.clear();
+    m_detectorvector.clear();
+    m_jobkey_vector.clear();
 
-void CheckList::slot_add_job(QString dbName)
-{
-    new_read_database(dbName);
-    new_update_treeview();
-}
-
-void CheckList::slot_close_job(QString filename)
-{
-    QString m_filename = filename.left(filename.size() - 15);
-    QString m_jobpath = "";
-    for (int i = 0; i < m_jobpath_list.count(); i ++)
+    for (int i = 0; i < m_rootitem_vector.count(); i ++)
     {
-        QStringList list = m_jobpath_list.at(i).split(':');
-        if (list.count() > 1)
+        delete m_rootitem_vector.at(i);
+        m_rootitem_vector[i] = 0;
+    }
+    m_rootitem_vector.clear();
+
+    delete m_sqlindex_thread;
+    m_sqlindex_thread = 0;
+
+    delete m_sqlmanager;
+    m_sqlmanager = 0;
+}
+
+void CheckList::update_current_job(const FrameInfo & frame_info)
+{
+    setEnabled(true);
+    for (auto i = 0; i < m_checklist_model->rowCount(); i ++)
+    {
+        if (m_rootitem_vector.count() > i)
         {
-            m_jobpath = list.at(1).left(list.at(1).count() - 10);
-        }
-        if (m_jobpath == m_filename)
-        {
-            if (list.count() > 1)
-            {
-                m_jobindex = list.at(0).right(list.at(0).size() - 3).toInt();
-            }
-            remove_job(i);
+            m_checklist_tree->setRowHidden(i, m_checklist_model->indexFromItem(m_rootitem_vector.at(i)).parent(), true);
         }
     }
+
+    if (frame_info.file_type == FileType::file)
+    {
+        setEnabled(false);
+        return;
+    }
+    for(int i = 0; i < frame_info.fileinfo_vector.count(); i ++)
+    {
+        QString temp_job_path =  QString::fromStdString(frame_info.fileinfo_vector[i].layout_view->file_name());
+        temp_job_path = temp_job_path.left(temp_job_path.count() - 15);
+        for (auto i = 0; i < m_rootitem_vector.count(); i ++)
+        {
+            QString job_path = m_rootitem_vector[i]->text();
+            QStringList path_list = job_path.split(":");
+
+            try
+            {
+                if (path_list.count() < 2)
+                {
+                    throw "path_list error!";
+                }
+                if (path_list.at(1) == temp_job_path)
+                {
+                    m_checklist_tree->setRowHidden(i, m_checklist_model->indexFromItem(m_rootitem_vector.at(i)).parent(), false);
+                }
+            }
+            catch(QString)
+            {
+                return;
+            }
+        }
+    }
+}
+
+// when delete file, frame_info is delete before this, so frame_info is empty. so add the flag
+void CheckList::delete_job(const FrameInfo & frame_info, const bool & is_file_delete, QVector <fileinfo> all_filetype_vector, const bool & is_close_active_window)
+{
+    if (all_filetype_vector.count() > m_rootitem_vector.count())  //file add return , don't delete
+    {
+        return;
+    }
+
+    QVector <QStandardItem *> temp_index_vector;
+    temp_index_vector.clear();
+    for(int i = m_rootitem_vector.count() - 1; i > -1; i --)
+    {
+        if (!m_checklist_tree->isRowHidden(i, m_checklist_model->indexFromItem(m_rootitem_vector.at(i)).parent()))   //get checklist tree show modelindex
+        {
+            temp_index_vector.append(m_rootitem_vector.at(i));
+        }
+    }
+
+    // click paintTab close button, not close file delete
+    //reason : when delete file, frame_info is delete before this, so frame_info is empty. so add the flag
+    if (!is_file_delete)
+    {
+        if (is_close_active_window)
+        {
+            if (frame_info.fileinfo_vector.isEmpty())  //
+            {
+                for (auto i = 0; i < temp_index_vector.count(); i ++)
+                {
+                    QString job_path = temp_index_vector[i]->text();
+                    QStringList path_list = job_path.split(":");
+                    int job_id = path_list.at(0).right(path_list.at(0).count() - 3).toInt();
+                    close_job_key(job_id);
+                    emit signal_close_database_widget(job_id);
+                    int index = m_checklist_model->indexFromItem(temp_index_vector.at(i)).row();
+                    m_checklist_model->removeRow(index);
+                    m_rootitem_vector.remove(m_rootitem_vector.indexOf(temp_index_vector.at(i)));
+                }
+            }
+            else
+            {
+                for (auto i = 0; i < temp_index_vector.count(); i ++)
+                {
+                    bool is_exits = false;
+                    QString job_path = temp_index_vector[i]->text();
+                    QStringList path_list = job_path.split(":");
+                    for(auto j = 0; j < frame_info.fileinfo_vector.count(); j ++)
+                    {
+                        QString temp_job_path =  QString::fromStdString(frame_info.fileinfo_vector[j].layout_view->file_name());
+                        temp_job_path = temp_job_path.left(temp_job_path.count() - 15);
+                        try
+                        {
+                            if (path_list.count() < 2)
+                            {
+                                throw "path_list error!";
+                            }
+
+                            if (path_list.at(1) == temp_job_path)
+                            {
+                                is_exits = true;
+                            }
+                        }
+                        catch(...)
+                        {
+                            logger_widget(QString("job_path error: %1").arg(job_path));
+                            return;
+                        }
+                    }
+
+                    if (is_exits)
+                    {
+                        QString log = "delete :" + path_list.at(1);
+                        logger_file (log);
+                        int job_id = path_list.at(0).right(path_list.at(0).count() - 3).toInt();
+                        int row = m_checklist_model->indexFromItem(temp_index_vector.at(i)).row();
+                        m_checklist_model->removeRow(row);
+                        close_job_key(job_id);
+                        emit signal_close_database_widget(job_id);
+                        m_rootitem_vector.remove(m_rootitem_vector.indexOf(temp_index_vector[i]));
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (auto i = 0; i < m_rootitem_vector.count(); i ++)
+            {
+                bool is_exits = false;
+                QString job_path = m_rootitem_vector[i]->text();
+                QStringList path_list = job_path.split(":");
+                for(auto j = 0; j < frame_info.fileinfo_vector.count(); j ++)
+                {
+                    QString temp_job_path =  QString::fromStdString(frame_info.fileinfo_vector[j].layout_view->file_name());
+                    temp_job_path = temp_job_path.left(temp_job_path.count() - 15);
+                    try
+                    {
+                        if (path_list.count() < 2)
+                        {
+                            throw "path_list error!";
+                        }
+
+                        if (path_list.at(1) == temp_job_path)
+                        {
+                            is_exits = true;
+                        }
+                    }
+                    catch(...)
+                    {
+                        logger_widget(QString("job_path error: %1").arg(job_path));
+                        return;
+                    }
+                }
+
+                if (is_exits)
+                {
+                    QString log = "delete :" + path_list.at(1);
+                    int job_id = path_list.at(0).right(path_list.at(0).count() - 3).toInt();
+                    int row = m_checklist_model->indexFromItem(m_rootitem_vector.at(i)).row();
+                    m_checklist_model->removeRow(row);
+                    close_job_key(job_id);
+                    emit signal_close_database_widget(job_id);
+                    m_rootitem_vector.remove(i);
+                }
+            }
+        }
+    }
+    else  //the job is delete ahead of time,
+    {
+        for (auto i = 0; i < m_rootitem_vector.count(); i ++)
+        {
+            bool is_exits = false;
+            QString job_path = m_rootitem_vector[i]->text();
+            QStringList path_list = job_path.split(":");
+            for(auto j = 0; j < all_filetype_vector.count(); j ++)
+            {
+                QString temp_job_path =  QString::fromStdString(all_filetype_vector[j].layout_view->file_name());
+                temp_job_path = temp_job_path.left(temp_job_path.count() - 15);
+                try
+                {
+                    if (path_list.count() < 2)
+                    {
+                        throw "path_list error!";
+                    }
+
+                    if (path_list.at(1) == temp_job_path)
+                    {
+                        is_exits = true;
+                    }
+                }
+                catch(...)
+                {
+                    logger_widget(QString("job_path error: %1").arg(job_path));
+                    return;
+                }
+            }
+
+            if (!is_exits)
+            {
+                QString log = "delete :" + path_list.at(1);
+                logger_file (log);
+                int job_id = path_list.at(0).right(path_list.at(0).count() - 3).toInt();
+                int row = m_checklist_model->indexFromItem(m_rootitem_vector.at(i)).row();
+                m_checklist_model->removeRow(row);
+                close_job_key(job_id);
+                emit signal_close_database_widget(job_id);
+                m_rootitem_vector.remove(i);
+            }
+        }
+    }
+}
+
+void CheckList::slot_add_job(const QString& db_path)
+{
+    logger_file ("add :" + db_path);
+    m_jobindex = get_job_key();
+
+    new_read_database(db_path);
+    new_update_treeview();
+
+    m_sqlindex_thread->set_database_path(db_path);
+    m_sqlindex_thread->start_work();
 }
 
 void CheckList::remove_job(int index)
 {
     emit signal_close_job(m_active_index_name);
     emit signal_close_database_widget(m_jobindex);
-    close_job_key(m_jobindex);
-
-    m_checklist_model->removeRow(index);
-    m_jobpath_list.removeAt(index);
 }
 
 QModelIndex CheckList::get_current_rootindex(QModelIndex index)
@@ -307,7 +527,6 @@ QModelIndex CheckList::get_current_rootindex(QModelIndex index)
         m_active_index_name = list.at(1);
         m_jobindex = list.at(0).right(list.at(0).size() - 3).toInt();
     }
-
     return index;
 }
 
@@ -316,7 +535,7 @@ void CheckList::slot_CheckListContextMenu(const QPoint& point)
     QMenu Checkmenu;
     QAction* DeleteAction = new QAction(&Checkmenu);
     QAction* AppendJobAction = new QAction(&Checkmenu);
-    DeleteAction->setText("Close");
+    DeleteAction->setText("Close Job");
     AppendJobAction->setText("Append Job");
 
     Checkmenu.addAction(DeleteAction);
@@ -352,4 +571,9 @@ void CheckList::slot_coverage_job()
 {
     emit signal_coverage_job();
 }
+
+void CheckList::slot_update_job(const FrameInfo & frame_info)
+{
+}
+
 }

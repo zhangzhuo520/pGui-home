@@ -39,6 +39,7 @@ void DefGroup::initDefGroupTable()
     DefGroupTable->verticalHeader()->hide();
 
     DefGroupTable->horizontalHeader()->setSortIndicator(-1, Qt::AscendingOrder);
+
     DefGroupTable->horizontalHeader()->setSortIndicatorShown(true);
     DefGroupTable->horizontalHeader()->setClickable(true);
     connect(DefGroupTable->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT (slot_sort_by_column(int, Qt::SortOrder)));
@@ -48,6 +49,7 @@ void DefGroup::initDefGroupTable()
 
 void DefGroup::initOtherButton()
 {
+
     pervButton = new QPushButton(this);
     pervButton->setIcon(QIcon(":/dfjy/images/last_page.png"));
     nextButton = new QPushButton(this);
@@ -118,7 +120,6 @@ void DefGroup::updataTable()
 
 void DefGroup::openDB()
 {
-    qDebug() << DbPath;
     if (!DbPath.isEmpty())
     {
         sqlManager->setDatabaseName(DbPath);

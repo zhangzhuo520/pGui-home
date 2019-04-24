@@ -18,25 +18,25 @@ class RtsPythonWriter
 public:
     RtsPythonWriter(const RtsSetupData *data = 0);
 
-    void save_to_file();
+    void save_to_file(QString);
 
     void set_canvas_pos(const double&, const double&, const double&, const double&);
 private:
-    void create_pframe_file();
+    void create_pframe_file(const QString&);
 
-    void create_run_file();
+    void create_run_file(const QString&);
 
-    int m_canvas_letf;
-    int m_canvas_right;
-    int m_canvas_top;
-    int m_canvas_bottom;
-    int m_pitch_size;
+    double m_canvas_letf;
+    double m_canvas_right;
+    double m_canvas_top;
+    double m_canvas_bottom;
+    double m_pitch_size;
 
     QString text_string();
     QString input_gds();
     QString input_layout();
     QString gds_layout();
-
+    QString get_simresults();
     QString get_gpu();
 
     QString m_binary_file;

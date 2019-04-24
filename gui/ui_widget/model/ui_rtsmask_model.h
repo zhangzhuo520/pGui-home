@@ -13,6 +13,7 @@ public:
     ~RtsMaskModel();
 
     void append_row(const QString &);
+    void set_data_list(const QStringList &);
     void delete_row();
     void delete_all();
     const QStringList & get_alias_list();
@@ -31,7 +32,6 @@ public:
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 private:
-    void set_data_list(const QStringList &);
     QStringList m_data_list;
     QStringList m_header_list;
     QStringList m_alias_list;

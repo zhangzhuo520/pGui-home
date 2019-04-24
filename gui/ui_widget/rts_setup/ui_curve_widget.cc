@@ -13,19 +13,31 @@ SingleWaveWidget::SingleWaveWidget(QWidget *parent):
 
 void SingleWaveWidget::get_curve_data()
 {
-    for (double i = 0; i < 100; )
-    {
-        m_ai_x_vector.append(i);
-        m_ri_x_vector.append(i);
-        m_ei_x_vector.append(i);
+//    for (double i = 0; i < 100; )
+//    {
+//        m_ai_x_vector.append(i);
+//        m_ri_x_vector.append(i);
+//        m_ei_x_vector.append(i);
 
-        double data = (double)(rand()/(double)RAND_MAX);
-        m_ai_y_vector.append(data);
-        data = (double)(rand()/(double)RAND_MAX);
-        m_ri_y_vector.append(data);
-        data = (double)(rand()/(double)RAND_MAX);
-        m_ei_y_vector.append(data);
-        i = i + 0.01;
+//        double data = (double)(rand()/(double)RAND_MAX);
+//        m_ai_y_vector.append(data);
+//        data = (double)(rand()/(double)RAND_MAX);
+//        m_ri_y_vector.append(data);
+//        data = (double)(rand()/(double)RAND_MAX);
+//        m_ei_y_vector.append(data);
+//        i = i + 0.01;
+//    }
+
+    for(int i=0;i<100;i++)
+    {
+        double x = i / 5.0 - 10;
+        double y = x * x * x;
+        m_ai_x_vector.append(x);
+        m_ai_y_vector.append(y);
+        m_ri_x_vector.append(x);
+        m_ri_y_vector.append(y);
+        m_ei_x_vector.append(x);
+        m_ei_y_vector.append(y);
     }
 }
 
@@ -96,7 +108,6 @@ void SingleWaveWidget::paint_curve()
 void SingleWaveWidget::init_connection()
 {
     connect(this, SIGNAL(mouseMove(QMouseEvent *)),this, SLOT(slot_mousemove_oncurve(QMouseEvent *)));
-
 }
 
 void SingleWaveWidget::slot_legen_change(QCPLegend::SelectableParts setlet)

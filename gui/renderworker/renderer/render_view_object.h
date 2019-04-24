@@ -4,16 +4,48 @@
 #include <vector>
 #include <map>
 
-#include <QWidget>
-
 #include "render_view_op.h"
 
+#include <QWidget>
 namespace render{
 
 class Viewport;
 class RenderFrame;
 class Bitmap;
 class RenderObjectWidget;
+
+class BackgroundObject
+{
+public:
+    BackgroundObject(RenderObjectWidget* widget);
+
+    virtual ~BackgroundObject();
+
+    virtual void render_background(const Viewport& vp, RenderObjectWidget* frame = 0) = 0;
+
+    bool is_visible() const
+    {
+        return m_visible;
+    }
+
+    void set_visible(bool visible);
+
+    void redraw();
+
+    RenderObjectWidget* widget() const
+    {
+        return m_widget;
+    }
+
+private:
+    friend class RenderObjectWidget;
+
+    BackgroundObject(const BackgroundObject& d);
+    BackgroundObject& operator=(const BackgroundObject& d);
+
+    RenderObjectWidget* m_widget;
+    bool m_visible;
+};
 
 class RenderObject{
 public:
@@ -61,6 +93,8 @@ public:
 
     void render_foreground(const render::Viewport& viewport, RenderObjectWidget* frame, bool is_static);
 
+    void render_background(const render::Viewport& viewport, RenderObjectWidget* frame);
+
     void clear_foreground();
 
     std::size_t foreground_bitmaps() const
@@ -68,6 +102,7 @@ public:
         return m_foreground_bitmaps.size();
     }
 
+    virtual QImage& background_image() const = 0;
 
     unsigned int plane_width() const
     {
@@ -119,6 +154,10 @@ public:
         return m_require_update_static;
     }
 
+    bool require_update_background() const
+    {
+        return m_require_update_background;
+    }
     object_iter begin_object()
     {
         return m_objects.begin();
@@ -129,23 +168,34 @@ public:
         return m_objects.end();
     }
 
+    void erase_object(object_iter);
+
+    std::vector<BackgroundObject*>& get_bg_objects()
+    {
+        return m_bg_objects;
+    }
+
+    void update_static_foreground();
+    void update_background();
+
 private:
 
     friend class RenderObject;
+    friend class BackgroundObject;
 
     unsigned int m_plane_width;
     unsigned int m_plane_height;
     double m_plane_resolution;
 
     bool m_require_update_static;
-
+    bool m_require_update_background;
     std::vector<render::RenderObject*> m_objects;
     std::map<render::ViewOp, int > m_foreground_table;
     std::vector<render::Bitmap*> m_foreground_bitmaps;
     std::vector<render::ViewOp> m_foreground_view_ops;
+    std::vector<render::BackgroundObject*> m_bg_objects;
 
     void sort_planes();
-    void update_static_foreground();
 };
 
 }

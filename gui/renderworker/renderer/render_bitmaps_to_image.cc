@@ -555,6 +555,7 @@ void bitmap_to_bitmap(const render::Bitmap &bitmap, unsigned char * data, unsign
     //nothing yet
 }
 
+
 void bitmaps_to_image(
     const std::vector<render::ViewOp> &view_ops_in,
     const std::vector<render::Bitmap *> &pbitmaps,

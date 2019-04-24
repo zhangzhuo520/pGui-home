@@ -9,7 +9,12 @@ HEADERS += \
     rts_setup/qcustomplot.h \
     rts_setup/ui_rtsfile_edit.h \
     rts_setup/highlighter.h \
-    rts_setup/ui_rtsfile_dialog.h
+    rts_setup/ui_rtsfile_dialog.h \
+    rts_setup/ui_rtsconfig_widget.h \
+    rts_setup/ui_rtscutline.h \
+    rts_setup/rts_manager.h \
+    rts_setup/ui_rtsreview_widget.h \
+    rts_setup/image_worker.h
 
 SOURCES += \
     rts_setup/ui_rtsmask_tab.cc \
@@ -22,4 +27,9 @@ SOURCES += \
     rts_setup/qcustomplot.cc \
     rts_setup/ui_rtsfile_edit.cc \
     rts_setup/highlighter.cc \
-    rts_setup/ui_rtsfile_dialog.cc
+    rts_setup/ui_rtsfile_dialog.cc \
+    rts_setup/ui_rtsconfig_widget.cc \
+    rts_setup/ui_rtscutline.cc \
+    rts_setup/rts_manager.cc \
+    rts_setup/ui_rtsreview_widget.cc \
+    rts_setup/image_worker.cc

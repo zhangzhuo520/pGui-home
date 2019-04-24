@@ -22,7 +22,7 @@ public:
 
     void setHeaderList(const QStringList &);
     void delete_line(const int &);
-    void set_line_list(const QList <LineData> &);
+    void set_line_list(const QList <LineData*> &);
     virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex parent(const QModelIndex &child) const;
 
@@ -33,7 +33,7 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation,
                                 int role = Qt::DisplayRole)const;
 private:
-   QList <LineData> m_linedata_list;
+   QList <LineData*> m_linedata_list;
    QStringList m_header_list;
 };
 }

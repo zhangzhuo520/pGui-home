@@ -19,6 +19,7 @@
 #include "deftools/datastruct.h"
 
 #include "ui_mainwindow.h"
+#include <X11/Xlib.h>
 
 int is_dir_exist(const char* dir_path)
 {
@@ -150,6 +151,7 @@ void signal_crash_handler(int handel)
 
 int main(int argc, char *argv[])
 {
+    XInitThreads();
     ui::GuiApplication a(argc, argv);
     atexit(qt_gui_exit);
     signal(SIGTERM, signal_exit_handler);

@@ -62,39 +62,52 @@ void PaintToolbar::init_button()
     m_line_b->setFrameShadow(QFrame::Sunken);
     m_line_b->setGeometry(72, 2, 2, 18);
 
+    m_measure_oblique_button = new PushButton(this);
+    m_measure_oblique_button->setObjectName("measureObliqueButton");
+    m_measure_oblique_button->setToolTip("Oblique Measure Line");
+    m_measure_oblique_button->setIcon(QIcon(":/dfjy/images/oblique_measure.png"));
+    m_measure_oblique_button->setCheckable(true);
+    m_measure_oblique_button->setGeometry(78, 2, 18, 18);
 
+    m_line_c = new QFrame(this);
+    m_line_c->setFrameShape(QFrame::VLine);
+    m_line_c->setFrameShadow(QFrame::Sunken);
+    m_line_c->setGeometry(98, 2, 2, 18);
 
     m_eraser_button = new PushButton(this);
     m_eraser_button->setObjectName("measureEraserButton");
     m_eraser_button->setToolTip("Delete");
     m_eraser_button->setIcon(QIcon(":/dfjy/images/eraser.png"));
     m_eraser_button->setCheckable(true);
-    m_eraser_button->setGeometry(78, 2, 18, 18);
+    m_eraser_button->setGeometry(104, 2, 18, 18);
 
     m_measure_clear_button = new PushButton(this);
     m_measure_clear_button->setObjectName("measureClearButton");
     m_measure_clear_button->setToolTip("Delete");
     m_measure_clear_button->setIcon(QIcon(":/dfjy/images/clean.png"));
-    m_measure_clear_button->setGeometry(98, 2, 18, 18);
+    m_measure_clear_button->setGeometry(134, 2, 18, 18);
 
     m_table_button = new PushButton(this);
     m_table_button->setObjectName("tableButton");
     m_table_button->setToolTip("Table");
     m_table_button->setIcon(QIcon(":/dfjy/images/measure_table.png"));
     m_table_button->setCheckable(true);
-    m_table_button->setGeometry(128, 2, 18, 18);
+    m_table_button->setGeometry(164, 2, 18, 18);
 
     m_snap_button->hide();
     m_mark_point_button->hide();
     m_mark_clear_button->hide();
     m_measure_line_button->hide();
     m_measure_angle_button->hide();
+    m_measure_oblique_button->hide();
+
     m_clear_button->show();
     m_eraser_button->hide();
     m_table_button->hide();
     m_measure_clear_button->hide();
     m_line_a->hide();
     m_line_b->hide();
+    m_line_c->hide();
 }
 
 void PaintToolbar::init_connection()
@@ -103,6 +116,7 @@ void PaintToolbar::init_connection()
     connect(m_mark_clear_button, SIGNAL(clicked()), this, SLOT(slot_mark_clear_click()));
     connect(m_measure_line_button, SIGNAL(clicked(bool)), this, SLOT(slot_measure_line_click(bool)));
     connect(m_measure_angle_button, SIGNAL(clicked(bool)), this, SLOT(slot_measure_angle_click(bool)));
+    connect(m_measure_oblique_button, SIGNAL(clicked(bool)), this, SLOT(slot_measure_oblique_click(bool)));
     connect(m_snap_button, SIGNAL(clicked(bool)), this, SLOT(slot_snap_click(bool)));
     connect(m_clear_button, SIGNAL(clicked()), this, SLOT(slot_clear_click()));
     connect(m_eraser_button, SIGNAL(clicked(bool)), this, SLOT(slot_eraser_click(bool)));
@@ -137,6 +151,7 @@ void PaintToolbar::slot_mark_point_click(bool flag)
         m_measure_line_button->setChecked(false);
         m_eraser_button->setChecked(false);
         m_measure_angle_button->setChecked(false);
+        m_measure_oblique_button->setChecked(false);
         emit signal_setPaintStyle(Global::MarkCross);
     }
     else
@@ -156,6 +171,7 @@ void PaintToolbar::slot_measure_line_click(bool flag)
     if (flag)
     {
         m_measure_angle_button->setChecked(false);
+        m_measure_oblique_button->setChecked(false);
         m_eraser_button->setChecked(false);
         m_mark_point_button->setChecked(false);
         emit signal_setPaintStyle(Global::MeasureLine);
@@ -171,9 +187,26 @@ void PaintToolbar::slot_measure_angle_click(bool flag)
     if (flag)
     {
         m_measure_line_button->setChecked(false);
+        m_measure_oblique_button->setChecked(false);
         m_eraser_button->setChecked(false);
         m_mark_point_button->setChecked(false);
         emit signal_setPaintStyle(Global::MeasureAngle);
+    }
+    else
+    {
+        emit signal_setPaintStyle(Global::Nothing);
+    }
+}
+
+void PaintToolbar::slot_measure_oblique_click(bool flag)
+{
+    if(flag)
+    {
+        m_measure_line_button->setChecked(false);
+        m_measure_angle_button->setChecked(false);
+        m_eraser_button->setChecked(false);
+        m_mark_point_button->setChecked(false);
+        emit signal_setPaintStyle(Global::MeasureOblique);
     }
     else
     {
@@ -200,6 +233,7 @@ void PaintToolbar::slot_eraser_click(bool flag)
     {
         m_measure_line_button->setChecked(false);
         m_measure_angle_button->setChecked(false);
+        m_measure_oblique_button->setChecked(false);
         m_mark_point_button->setChecked(false);
         emit signal_setPaintStyle(Global::RemoveLine);
     }
@@ -221,7 +255,7 @@ void PaintToolbar::slot_clear_click()
 
 void PaintToolbar::slot_measure_line_clear()
 {
-    emit siganl_measure_line_clear();
+    emit signal_measure_line_clear();
 }
 
 void PaintToolbar::updata_toolbar()
@@ -233,8 +267,10 @@ void PaintToolbar::updata_toolbar()
         m_mark_clear_button->hide();
         m_measure_line_button->hide();
         m_measure_angle_button->hide();
+        m_measure_oblique_button->hide();
         m_line_a->hide();
         m_line_b->hide();
+        m_line_c->hide();
         m_snap_button->hide();
         m_eraser_button->hide();
         m_measure_clear_button->hide();
@@ -248,14 +284,15 @@ void PaintToolbar::updata_toolbar()
         m_mark_clear_button->show();
         m_measure_line_button->hide();
         m_measure_angle_button->hide();
+        m_measure_oblique_button->hide();
         m_line_b->hide();
+        m_line_c->hide();
         m_clear_button->hide();
         m_snap_button->hide();
         m_eraser_button->hide();
         m_measure_clear_button->hide();
         m_table_button->hide();
         emit signal_setPaintStyle(Global::Nothing);
-
     }
     else if(m_paint_style == Global::Measrue)
     {
@@ -264,9 +301,11 @@ void PaintToolbar::updata_toolbar()
         m_snap_button->show();
         m_eraser_button->show();
         m_measure_clear_button->show();
+        m_measure_oblique_button->show();
         m_clear_button->hide();
         m_line_a->show();
         m_line_b->show();
+        m_line_c->show();
         m_table_button->show();
         m_mark_point_button->hide();
         m_mark_clear_button->hide();
@@ -285,6 +324,10 @@ void PaintToolbar::updata_toolbar()
         else if (m_mark_point_button->isChecked())
         {
              emit signal_setPaintStyle(Global::MarkCross);
+        }
+        else if (m_measure_oblique_button->isChecked())
+        {
+             emit signal_setPaintStyle(Global::MeasureOblique);
         }
         else
         {

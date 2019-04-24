@@ -7,34 +7,39 @@
 #include <QDateTime>
 #include <QFile>
 #include <QDebug>
-#include <QApplication>
+//#include <QApplication>
+//#include <QCoreApplication>
 
 #include "../../qt_logger/qtlogger.h"
 #include "../../qt_logger/pgui_log_global.h"
 namespace ui {
-
+class QApplication;
+class QDesktopWidget;
 class Global
 {
 public:
     enum PaintStyle
     {
-        Normal,
+        Normal = 0,
         Mark,
-        Measrue
+        Measrue,
+        RtsCutLine
     };
 
     enum PaintTool
     {
-        Nothing,
+        Nothing = 0,
         MeasureLine,
         MeasureAngle,
         MarkCross,
-        RemoveLine
+        RemoveLine,
+        CutLine,
+        MeasureOblique
     };
 
     enum SnapFLag
     {
-        SnapOpen,
+        SnapOpen = 0,
         SnapClose
     };
 
@@ -46,6 +51,20 @@ public:
         Pri_Diagonal, // 135
         Aux_Dignonal  //45
     };
+    
+    enum RtsCutLineAngle
+    {
+        HVD = 0,
+        HV,
+        Any_Angle,
+        User_Input_coord,
+        User_Input_Angle
+    };
+
+
+    static bool is_new_dbformat;
+
+    static bool delet_dir(QString);
 
 //    static int screen_width;
 
@@ -60,8 +79,7 @@ public:
     static QColor ButtonHoverColor;
     static QVector <QColor> ItemColorList;
     static QVector <int> ItemPetternList;
-
-
 };
+
 }
 #endif // GLOBAL_H

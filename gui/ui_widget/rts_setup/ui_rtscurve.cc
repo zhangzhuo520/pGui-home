@@ -1,4 +1,13 @@
 #include "ui_rtscurve.h"
+#include "../ui_measurepoint.h"
+#include <QVBoxLayout>
+#include <QColor>
+#include <QPalette>
+#include <QIcon>
+#include <QLabel>
+#include <QStatusBar>
+#include <QToolBar>
+#include "ui_curve_widget.h"
 namespace ui {
 RtsCurve::RtsCurve(QDialog *parent) :
     QDialog(parent)
@@ -6,6 +15,14 @@ RtsCurve::RtsCurve(QDialog *parent) :
     init_ui();
     init_toolbar();
     init_statusbar();
+}
+
+void RtsCurve::draw_curve(const QString &path, const LineData &)
+{
+}
+
+void RtsCurve::culate_cutlint_curve()
+{
 }
 
 void RtsCurve::init_ui()
@@ -69,5 +86,4 @@ void RtsCurve::slot_home_action()
 void RtsCurve::slot_find_action()
 {
 }
-
 }

@@ -1,17 +1,98 @@
 #include "ui_rtsreview_dialog.h"
+#include "ui_rtscurve.h"
+#include "image_worker.h"
+#include "rts_manager.h"
+#include "../ui_mainwindow.h"
+#include "../deftools/cmessagebox.h"
 
+#include <QLabel>
+#include <QTableWidget>
+#include <QPushButton>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QLine>
 namespace ui
 {
 RtsReviewDialog::RtsReviewDialog(QWidget *parent):
-    QDialog(parent)
+    m_mainwindow(static_cast <MainWindow *>(parent)),
+    m_current_image_path(""),
+    m_rts_count_flag(0),
+    m_image_count_flag(0)
 {
     init_ui();
     init_connection();
+    slot_cutline_mode_change(m_cutline_mode_combox->currentIndex());
+
+    m_imagedata_worker = new ImageDataWorker();
 }
 
 RtsReviewDialog::~RtsReviewDialog()
 {
 
+}
+
+void RtsReviewDialog::append_history_data(const QString & data)
+{
+    m_rts_history_table->append_data(data);
+}
+
+void RtsReviewDialog::append_setup_combox(const QString & string)
+{
+    m_setup_combox->addItem(string);
+}
+
+void RtsReviewDialog::rts_setup_clear()
+{
+    m_setup_combox->clear();
+    m_display_image_combox->clear();
+}
+
+void RtsReviewDialog::set_cutline_table( const QList <LineData*> & line_data_list)
+{
+    m_cutline_table->set_cutline_list(line_data_list);
+    QString image_path = "";
+    if (m_rtscurve_widget->isHidden())
+    {
+        m_rtscurve_widget->draw_curve(image_path, *line_data_list.last());
+        m_rtscurve_widget->show();
+    }
+    else
+    {
+        m_rtscurve_widget->draw_curve(image_path, *line_data_list.last());
+    }
+}
+
+void RtsReviewDialog::append_image_commbox(const QString & image)
+{
+    m_display_image_combox->addItem(image);
+}
+
+void RtsReviewDialog::clear_image_commbox()
+{
+    m_display_image_combox->clear();
+}
+
+void RtsReviewDialog::updata_image_setup()
+{
+    m_rts_manager = m_mainwindow->rts_manager();
+    int index = m_setup_combox->currentIndex();
+    RtsInfo info = m_rts_manager->rts_info(index);
+    m_current_image_list.clear();
+    m_current_image_list = info.image_list();
+    clear_image_commbox();
+    for (int i = 0; i < m_current_image_list.count(); i ++)
+    {
+        m_display_image_combox->addItem(m_current_image_list.at(i).split("/").last());
+    }
+
+    if (m_display_image_combox->currentIndex() == -1)
+    {
+        return;
+    }
+
+    m_current_image_path = m_current_image_list.at(m_display_image_combox->currentIndex());
+    m_mainwindow->enable_rts_image(m_current_image_path);
 }
 
 void RtsReviewDialog::slot_delete_index()
@@ -33,7 +114,47 @@ void RtsReviewDialog::slot_delete_all_index()
 
 void RtsReviewDialog::slot_draw_cutline()
 {
-    m_rtscurve_widget->show();
+    parse_image();
+    switch (m_cutline_mode_combox->currentIndex())
+    {
+    case 0:
+        emit signal_paint_cutline(Global::HV, QVariant());
+        break;
+    case 1:
+        emit signal_paint_cutline(Global::HVD, QVariant());
+        break;
+    case 2:
+        emit signal_paint_cutline(Global::Any_Angle, QVariant());
+        break;
+    case 3:
+    {
+        QStringList p1 = m_start_edit->text().split(",");
+        QStringList p2 = m_end_edit->text().split(",");
+        if (p1.isEmpty() || p2.isEmpty())
+        {
+            showWarning(this, "Warning", "No coordinate values!");
+            return;
+        }
+
+        QLineF line(QPointF(p1.at(0).toDouble(), p1.at(1).toDouble()), QPointF(p2.at(0).toDouble(), p2.at(1).toDouble()));
+        emit signal_paint_cutline(Global::User_Input_coord, line);
+        break;
+    }
+    case 4:
+    {
+        QString angle = m_cutline_angle_edit->text();
+        if (angle.isEmpty())
+        {
+            showWarning(this, "Warning", "No Angle value!");
+            return;
+        }
+
+        emit signal_paint_cutline(Global::User_Input_Angle, angle.toDouble());
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void RtsReviewDialog::slot_cutline_mode_change(int index)
@@ -73,6 +194,52 @@ void RtsReviewDialog::slot_cutline_mode_change(int index)
     }
 }
 
+void RtsReviewDialog::slot_history_table_double(QModelIndex index)
+{
+    QString x = index.sibling(index.row(), 1).data().toString();
+    QString y = index.sibling(index.row(), 2).data().toString();
+    QString range = index.sibling(index.row(), 3).data().toString();
+    emit signal_set_pos_range(x, y, range);
+}
+
+void RtsReviewDialog::slot_deleta_cutline()
+{
+    if (m_cutline_table->currentIndex().isValid())
+    {
+        m_cutline_table->delete_data(m_cutline_table->currentIndex().row());
+    }
+    else
+    {
+        m_cutline_table->delete_data(m_cutline_table->count() - 1);
+    }
+    emit signal_updata_cutline_list(m_cutline_table->cutline_list());
+}
+
+void RtsReviewDialog::slot_delete_all_cutline()
+{
+    m_cutline_table->delete_all_data();
+    emit signal_updata_cutline_list(m_cutline_table->cutline_list());
+}
+
+void RtsReviewDialog::slot_update_image(int index)
+{
+    if (index == -1)
+    {
+        return;
+    }
+    m_current_image_path = m_current_image_list.at(index);
+    m_mainwindow->enable_rts_image(m_current_image_path);
+}
+
+void RtsReviewDialog::slot_update_rts_setup(int index)
+{
+    if (index == -1)
+    {
+        return;
+    }
+    updata_image_setup();
+}
+
 void RtsReviewDialog::init_ui()
 {
     QVBoxLayout *AllVlayout = new QVBoxLayout(this);
@@ -83,7 +250,7 @@ void RtsReviewDialog::init_ui()
     m_rts_delall_button = new QPushButton("Del All", this);
     QStringList m_history_header_list;
     m_history_header_list << "Index" << "X" << "Y" << "Size";
-    m_rts_history_table = new RtsReviewTable(this, m_history_header_list);
+    m_rts_history_table = new RtsReviewHistoryTable(this, m_history_header_list);
     RtsHLayout->addWidget(m_rts_history_label);
     RtsHLayout->addWidget(new QLabel(""));
     RtsHLayout->addWidget(m_rts_del_button);
@@ -226,6 +393,7 @@ void RtsReviewDialog::init_ui()
     setLayout(AllVlayout);
 
     m_rtscurve_widget = new RtsCurve(this);
+    m_rtscurve_widget->resize(800, 600);
     m_rtscurve_widget->hide();
 }
 
@@ -235,6 +403,16 @@ void RtsReviewDialog::init_connection()
     connect(m_rts_delall_button, SIGNAL(clicked()), this, SLOT(slot_delete_all_index()));
     connect(m_cutline_mode_button, SIGNAL(clicked()), this, SLOT(slot_draw_cutline()));
     connect(m_cutline_mode_combox, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cutline_mode_change(int)));
+    connect(m_rts_history_table, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slot_history_table_double(QModelIndex)));
+    connect(m_cutline_del_button, SIGNAL(clicked()), SLOT(slot_deleta_cutline()));
+    connect(m_cutline_delall_button, SIGNAL(clicked()), SLOT(slot_delete_all_cutline()));
+    connect(m_display_image_combox, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_update_image(int)));
+    connect(m_setup_combox, SIGNAL(currentIndexChanged(int)), SLOT(slot_update_rts_setup(int)));
 }
 
+void RtsReviewDialog::parse_image()
+{
+    m_imagedata_worker->set_image_path(m_current_image_path);
+    m_imagedata_worker->start();
+}
 }

@@ -1,5 +1,10 @@
 #include "render_snap.h"
 #include "render_frame.h"
+#include "render_layer_properties.h"
+#include "render_layout_view.h"
+
+#include <QDebug>
+
 namespace render
 {
 
@@ -143,20 +148,20 @@ std::pair<bool,oasis::PointF> snap_point(RenderFrame *frame, oasis::PointF p1, o
 
 }
 
-//std::pair<bool, oasis::EdgeF> snap_edge(RenderFrame *frame, oasis::PointF p1, oasis::float64 snap_range)
-//{
+std::pair<bool, oasis::EdgeF> snap_edge(RenderFrame *frame, oasis::PointF p1, oasis::float64 snap_range, int mode)
+{
 
-//    SnapSearcher searcher(p1);
-//    searcher.find(frame, snap_range);
-//    if(searcher.is_found())
-//    {
-//        return std::make_pair(true, searcher.get_snapped_edge());
-//    }
-//    else{
-//        return std::make_pair(false, oasis::EdgeF());
-//    }
+    SnapSearcher searcher(p1);
+    searcher.find(frame, mode, snap_range);
+    if(searcher.is_found())
+    {
+        return std::make_pair(true, searcher.get_snapped_edge());
+    }
+    else{
+        return std::make_pair(false, oasis::EdgeF());
+    }
 
-//}
+}
 
 //std::pair<bool, oasis::Polygon> collect_polygon(RenderFrame *frame, oasis::Point p1, oasis::float64 snap_range)
 //{

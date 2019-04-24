@@ -30,8 +30,8 @@ public:
     void only_clear_table_data();
     
 signals:
-    void signal_set_line_list(const QList <LineData>&);
-
+    void signal_set_line_list(const QList <LineData*>&);
+    void signal_move_center(QPointF);
 
 public slots:
     void slot_context_menu(QPoint);
@@ -44,11 +44,13 @@ public slots:
 
     void slot_checked_line(QModelIndex);
 
-    void slot_set_line_list(const QList <LineData>&);
+    void slot_set_line_list(const QList <LineData*>&);
 private:
-    TableView *m_table_view;
+    void clear_select_color();
+
+    QTableView *m_table_view;
     MeasureTableModel *m_table_model;
-    QList <LineData> m_linedata_list;
+    QList <LineData*> m_linedata_list;
     MeasureTable* m_measure_table;
     int m_active_index;
 };

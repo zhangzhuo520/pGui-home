@@ -10,6 +10,7 @@ namespace render
 const uint32_t color_table[] ={
 
     0x00000000, // black
+    0x00ffff00, // yellow
     0x00bebebe, // grey
     0x00655acf, // navy blue
     0x0000ced1, // dark turquoise
@@ -20,7 +21,7 @@ const uint32_t color_table[] ={
     0x00ff4500  // orange red1
 };
 
-const int color_table_size = 9;
+const int color_table_size = 10;
 
 
 QColor convert_uint32_t_to_qcolor(int index)

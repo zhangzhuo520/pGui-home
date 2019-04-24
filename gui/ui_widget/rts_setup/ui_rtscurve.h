@@ -2,30 +2,23 @@
 #define UI_RTSCURVE_H
 
 #include <QDialog>
-#include <QVBoxLayout>
-#include <QColor>
-#include <QPalette>
-#include <QMainWindow>
-#include <QToolBar>
-#include <QStatusBar>
-#include <QIcon>
-#include <QLabel>
-#include <QRadioButton>
 
 #include "ui_curve_widget.h"
 
+class QLabel;
+class QStatusBar;
+class QToolBar;
 namespace ui{
+class CurveWidget;
+class LineData;
 class RtsCurve : public QDialog
 {
     Q_OBJECT
 public:
     explicit RtsCurve(QDialog *parent = 0);
+    void draw_curve(const QString &path, const LineData &);
+    void culate_cutlint_curve();
 
-    void init_ui();
-
-    void init_toolbar();
-
-    void init_statusbar();    
 signals:
     
 public slots:
@@ -33,6 +26,11 @@ public slots:
     void slot_right_action();
     void slot_home_action();
     void slot_find_action();
+
+private:
+    void init_ui();
+    void init_toolbar();
+    void init_statusbar();
 
 private:
     QToolBar *m_toolbar_widget;

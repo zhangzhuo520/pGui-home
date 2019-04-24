@@ -29,38 +29,38 @@
 #include <QStringList>
 #include <QCloseEvent>
 #include <QApplication>
-
+#include <QLayout>
 #include <string>
 #include <sstream>
 
-#include "rts_setup/ui_rtsconfig_dialog.h"
-#include "rts_setup/ui_rtsreview_dialog.h"
-#include "rts_setup/ui_rtscurve.h"
-#include "rts_setup/rts_runprocess.h"
+#include "deftools/showcpumemory.h"
 #include "deftools/defcontrols.h"
 #include "deftools/cmessagebox.h"
 #include "deftools/iconhelper.h"
-#include "deftools/showcpumemory.h"
 #include "deftools/global.h"
+#include "deftools/datastruct.h"
 #include "deftools/datatable.h"
-#include "ui_checklist.h"
-#include "ui_defgroup.h"
-#include "ui_defects_widget.h"
 #include "ui_fileproject_widget.h"
-#include "ui_layer_widget.h"
-#include "ui_choosefile_dialog.h"
-#include "ui_semimage_dialog.h"
-#include "ui_chipedit_dialog.h"
-#include "ui_scale_frame.h"
-#include "ui_paint_toolbar.h"
-#include "ui_tab_paintwidget.h"
-#include "ui_log_widget.h"
-#include "ui_gaugetable.h"
-#include "fileparsing/rts_imageparsing.h"
-#include "rts_setup/ui_rtsfile_dialog.h"
-
+#include "ui_measurepoint.h"
 namespace ui{
-
+class RtsConfigDialog;
+class RtsReviewDialog;
+class RtsCurve;
+class RtsRunProcess;
+class CheckList;
+class DefGroup;
+class DefectsWidget;
+class FileProjectWidget;
+class LayerWidget;
+class ScaleFrame;
+class PaintToolbar;
+class GaugeTable;
+class RtsImageParsing;
+class RtsFileDialog;
+class LogWidget;
+class TabPaintWidget;
+class Navigator;
+class RtsManager;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -75,7 +75,6 @@ public:
     void writeTestingConfig();
     void addHistoryAction(QString);
     void centerWidget_boundingSignal(int);
-    bool isCanvasExist(FileProjectWidget::layout_view_iter);
     void showCoordinate();
     void DefectReview();
     void RTSSetup();
@@ -83,30 +82,32 @@ public:
     void GaugeChecker();
     void SEMImageHandler();
     void ChipPlacementEditor();
+    void set_canvas_pos_range(const QString&, const QString&, const QString&);
+
+    void enable_rts_image(QString &);
+    RtsManager *rts_manager();
 
 protected:
     void closeEvent(QCloseEvent *);
     void resizeEvent(QResizeEvent *);
 
 signals:
-    void signal_append_job(QString);
-    void signal_addFile(QString, bool);
+    void signal_append_job(const QString&);
+    void signal_addFile(QString, FileType ,bool);
     void signal_defgroupUpdata(QModelIndex *);
     void signal_defectsUpdata(QModelIndex *);
     void signal_setPenWidth(QString);
     void signal_setPenColor(const QColor &);
     void signal_set_paint_tool(Global::PaintStyle);
-    void signal_getLayerData(render::RenderFrame*, QString);
-    void signal_close_job(QString);
-
+//    void signal_getLayerData(render::RenderFrame*, QString);
     void signal_set_background_color(QColor);
+    void signal_paint_cutline(Global::RtsCutLineAngle, QVariant);
 
 private slots:
     //Menu Action
     void slot_openFile();
     void slot_saveFile();
-    void slot_closeJob(QString, QString);
-    void slot_close_file(QString);
+    void slot_close_job_file(QString);
     void slot_openjob();
     void slot_open_gauge();
     void slot_coverage_job();
@@ -124,8 +125,8 @@ private slots:
     void slot_rts_file_dialog();
 
     void slot_addFile(QString);
-    void slot_create_canvas(QModelIndex);
-    void slot_create_overlay_canvas(QModelIndex);
+    void slot_create_canvas(const FileInfo&);
+    void slot_create_overlay_canvas(const FileInfo& );
     void slot_close_paintwidget(int);
     void slot_updateXY(double, double);
     void slot_showDefGroup(QModelIndex, int);
@@ -142,8 +143,8 @@ private slots:
     void slot_showScaleAxis(bool);
     void slot_setPosAction();
     void slot_setPosButton();
-    void slot_setWindowMaxSizeAction();
-    void slot_setWindowMaxSizeButton();
+//    void slot_setWindowMaxSizeAction();
+//    void slot_setWindowMaxSizeButton();
 
     void slot_close_database_widget(int);
     void slot_close_defects(int);
@@ -158,9 +159,9 @@ private slots:
     void slot_layout_view_changed(render::RenderFrame*);
     void slot_update_layername_list(const QStringList&);
 
-    void slot_rtsrun_finished();
 
-    void slot_rts_image_finished();
+    void slot_rts_finished(QVector <RtsReviewInfo>);
+    void slot_rts_run_error(const QString &);
     void slot_update_canvas_pos();
 
     void slot_append_file(int);
@@ -170,20 +171,27 @@ private slots:
 
     void slot_pos_jump(QModelIndex);
 
+    void slot_rts_set_pos(QString, QString, QString);
+    void slot_paint_cutline(Global::RtsCutLineAngle, QVariant);
+    void slot_clear_rts_image(int);
+    void slot_close_rts_file(int);
+    void slot_update_cutline_table();
+    void slot_update_cutline_paint(const QList <LineData *>&);
+
 private:
-    void initTitleBar();
-    void initMenubar();
-    void initStatebar();
-    void initDockWidget();
-    void initToolbar();
-    void initPaintTab();
-    void initCheckList();
-    void initGaugeTable();
-    void initPosTable();
-    void initDefGroup();
-    void initConfigDir();
-    void init_pointer_value();
-    void initPrepDir();
+    void init_titlebar();
+    void init_menubar();
+    void init_statebar();
+    void init_dockwidget();
+    void init_toolbar();
+    void init_paint_tab();
+    void init_checklist();
+    void init_gaugetable();
+    void init_navigator();
+    void init_postable();
+    void init_defgroup();
+    void init_config_dir();
+    void init_prep_dir();
 
     void init_fileProject_widget();
     void init_fileProject_layerTree();
@@ -193,20 +201,16 @@ private:
 
     void init_rtssetup_dialog();
     void init_setpos_dialog();
-    void init_maxwindow_dialog();
-    void initConnection();
-    void initStyle();
+    void init_select_file_dialog();
+    void init_connection();
+    void init_style();
 
     void show_gauge_table(QStringList);
-    void show_checklist(QString);
-    void close_checklist_job(QString);
-    void delete_checklist_job(QString);
-
-    bool tab_is_job_or_osa(QString);
+    void show_checklist(const QString&);
     bool defgroup_exist(QString);
     bool defectswidget_exist(QString);
 
-    void add_file(QString, bool);
+    void add_file(const QString&, const FileType &, const bool &);
 
     void update_rts_job_commbox(const QStringList &);
 
@@ -219,12 +223,10 @@ private:
     DockWidget *logDockWidget;
     DockWidget *m_gauge_dockWidget;
     DockWidget *m_pos_dockwidget;
+    DockWidget *m_navigator_dockwidget;
+    Navigator *m_navigator_widget;
     QVector <DockWidget *> m_defgroupdockwidget_vector;
     QVector <DockWidget *> m_defectsdockwidget_vector;
-    FileDialog *m_file_dialog;
-    QFileDialog *m_dir_dialog;
-    QFileDialog *m_overlay_dialog;
-    QFileDialog *m_gauge_dialog;
 
     TabPaintWidget *m_paint_tabwidget;
     PaintToolbar *m_paint_toolbar;
@@ -237,6 +239,7 @@ private:
     int m_current_tabid;
     QString m_current_filename;
     QString m_database_path;
+    QString m_database_name;
     QTreeView *layerTree;
     LogWidget *logwidget;
     GaugeTable *m_gauge_table;
@@ -273,10 +276,10 @@ private:
     QLabel *m_pos_view_range_unit_label;
     QLineEdit *m_pos_view_range_edit;
 
-    QDialog *m_setwindow_dialog;
-    QLabel *m_window_label;
-    QLabel *m_window_unit_label;
-    QLineEdit *m_window_lineedit;
+//    QDialog *m_setwindow_dialog;
+//    QLabel *m_window_label;
+//    QLabel *m_window_unit_label;
+//    QLineEdit *m_window_lineedit;
 
     QToolBar *RtsToolBar;
     QAction *RtsRunAction;
@@ -292,16 +295,14 @@ private:
     QStringList historyFileList;
     QString m_prep_dir;
 
-    QStringList m_checklist_file_list;
     QStringList m_defgroup_name_list;
     QStringList m_open_job_list;
 
     ShowCPUMemory *m_show_cpumemory;
 
-    RtsRunProcess * m_run_process;
-    RtsImageParsing *m_imagedata_parising;
     QProgressIndicator *m_indicator;
     RtsFileDialog *m_rts_file_dialog;
+    RtsManager *m_rts_manager;
 
     QDialog* m_select_file_dialog;
     QLabel* m_file_label;

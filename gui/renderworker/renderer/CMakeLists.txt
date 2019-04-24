@@ -1,9 +1,12 @@
 SET(SOURCE_FILES 
     render_snap.cc
     render_frame.cc
+    render_bitmap_manager.cc
     render_layout_view.cc
     render_defect_point.cc
+    render_image.cc
     render_view_object.cc
+    render_monitor_thread.cc
     render_worker.cc
     render_bitmaps_to_image.cc
     render_layer_properties.cc

@@ -3,6 +3,7 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include "render_layout_view.h"
 namespace ui {
 
 
@@ -48,6 +49,9 @@ typedef struct countdefectsql
     QString defGroup_id;
 }CountDefectSqlData;
 
+/*
+ * Rts struct
+ */
 typedef struct rtslayerdata
 {
    QString alias;
@@ -108,37 +112,65 @@ typedef struct rtssetupdata
    }
 }RtsSetupData;
 
-//typedef struct fileinfo
-//{
-//    enum FileType
-//    {
-//        osa,
-//        job
-//    };
-//    FileType file_type;
-//    QString filename;
+typedef struct rtsreviewinfo
+{
+    int index;
+    QString range;
+    QString x;
+    QString y;
+    QString output_path;
 
-//    struct fileinfo operator=(const struct fileinfo& data)
-//    {
-//        struct fileinfo temp_fileinfo;
-//        temp_fileinfo.filename = data.filename;
-//        temp_fileinfo.file_type = data.file_type;
-//        return temp_fileinfo;
-//    }
-//}FileInfo;
+    struct rtsreviewinfo operator =(const struct rtsreviewinfo& data)
+    {
+        index = data.index;
+        range = data.range;
+        x = data.x;
+        y = data.y;
+        output_path = data.output_path;
+        return *this;
+    }
+}RtsReviewInfo;
 
-//typedef struct frameinfo
-//{
-//    bool overlay;
-//    QVector <FileInfo> fileinfo_vector;
+/*
+ * Rts struct
+ */
+enum FileType
+{
+    job = 10,
+    file
+};
 
-//    struct frameinfo operator=(const struct frameinfo& data)
-//    {
-//        struct frameinfo temp_info;
+typedef struct fileinfo
+{
+    render::LayoutView* layout_view;
+    FileType file_type;
 
-//        return temp_info;
-//    }
-//}FrameInfo;
+    struct fileinfo operator = (const struct fileinfo & obj)
+    {
+        this->layout_view = obj.layout_view;
+        this->file_type = obj.file_type;
+        return *this;
+    }
+} FileInfo;
+
+typedef struct frameinfo
+{
+    FileType file_type;
+    QVector <FileInfo> fileinfo_vector;
+
+    struct frameinfo operator=(const struct frameinfo& obj)
+    {
+        this->file_type = obj.file_type;
+        this->fileinfo_vector.clear();
+        for (int i = 0; i < obj.fileinfo_vector.count(); i ++)
+        {
+            fileinfo_vector.append(obj.fileinfo_vector.at(i));
+        }
+
+        return *this;
+    }
+} FrameInfo;
+
 }
 
 #endif // DATASTRUCT_H

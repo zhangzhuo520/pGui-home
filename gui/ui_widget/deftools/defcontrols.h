@@ -134,12 +134,13 @@ public:
                       "QPushButton::pressed{"\
                       "background-color: rgba(150, 150, 150);}"
 
-                      "QPushButton#markButton,QPushButton#measureLineButton,QPushButton#measureAngleButton,QPushButton#snapButton,QPushButton#measureEraserButton{"\
+
+                      "QPushButton#markButton,QPushButton#measureLineButton,QPushButton#measureAngleButton,QPushButton#snapButton,QPushButton#measureEraserButton,QPushButton#measureObliqueButton{"\
                       "border:0px;}"
-                      "QPushButton#markButton::hover,QPushButton#measureLineButton::hover,QPushButton#measureAngleButton::hover,QPushButton#snapButton::hover,QPushButton#measureEraserButton::hover{"\
+                      "QPushButton#markButton::hover,QPushButton#measureLineButton::hover,QPushButton#measureAngleButton::hover,QPushButton#snapButton::hover,QPushButton#measureEraserButton::hover,QPushButton#measureObliqueButton::hover{"\
                       "border:0px;"
                       "background-color: rgba(180, 180, 180);}"
-                      "QPushButton#markButton::checked,QPushButton#measureLineButton::checked,QPushButton#measureAngleButton::checked,QPushButton#snapButton::checked,QPushButton#measureEraserButton::checked{"\
+                      "QPushButton#markButton::checked,QPushButton#measureLineButton::checked,QPushButton#measureAngleButton::checked,QPushButton#snapButton::checked,QPushButton#measureEraserButton::checked,QPushButton#measureObliqueButton::checked{"\
                       "border:0px;"
                       "background-color: rgba(100, 100, 100);}");\
 
@@ -296,6 +297,7 @@ protected:
 
     void closeEvent(QCloseEvent *event)
     {
+
         Q_UNUSED(event);
         if (objectName().right(9) == "_category" || objectName().right(8) == "_defects")
         {
@@ -308,6 +310,7 @@ protected:
         {
             emit signal_clear_gauge();
         }
+        this->close();
     }
 
 private:
@@ -329,6 +332,11 @@ public:
     explicit RtsTabWidget(QWidget *parent = 0);
 
     ~RtsTabWidget();
+
+    QTabBar* tab_bar()
+    {
+        return tabBar();
+    }
 };
 
 class Commbox :public QComboBox

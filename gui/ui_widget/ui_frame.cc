@@ -72,7 +72,6 @@ void Frame::setWindowsSizeChange()
     pHelper->setRubberBandOnResize(true);
 }
 
-
 void Frame::slot_changeWindowSize()
 {
     if (!isMaximized())

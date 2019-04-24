@@ -14,6 +14,7 @@
 
 #include "ui_paint_widget.h"
 #include "../renderer/render_frame.h"
+
 namespace ui {
 
 const double esp = 0.000001;
@@ -45,26 +46,36 @@ public:
     {
         return m_filename;
     }
-
     void set_file_name(const QString& file_name)
     {
         m_filename = file_name;
+    }
+
+    void set_frame_info(const FrameInfo &frame_info)
+    {
+        m_frame_info = frame_info;
+    }
+
+    FrameInfo &frame_info()
+    {
+        return m_frame_info;
     }
 
     QVector<QString> get_file_name_list();
     double get_view_range() const;
 
     render::RenderFrame* getRenderFrame();
-    const QList<LineData> & get_measure_line_list();
-    void set_measure_line_list(const QList<LineData> &);
+    const QList<LineData*> & get_measure_line_list();
+    void set_measure_line_list(const QList<LineData*> &);
+
+    const QList<LineData*> &get_cutline_list();
+    void set_cutline_list(const QList<LineData*>&);
 
     void zoom_in();
     void zoom_out();
     void refresh();
     void zoom_fit();
 
-    void set_window_max_size(double);
-    double get_window_max_size();
 signals:
     void signal_pos_updated(double, double);
     void signal_updateDistance(QString);
@@ -74,6 +85,7 @@ signals:
     void signal_refresh();
     void signal_zoom_fit();
     void signal_update_measuretable();
+    void signal_updata_cutline_table();
     void signal_layout_view_changed(render::RenderFrame*);
 
 public slots:
@@ -90,8 +102,10 @@ public slots:
     void slot_clear_mark_point();
     void slot_clear_gauge();
     void slot_update_mesuretable();
+    void slot_update_cutline_table();
     void slot_layout_view_changed(render::RenderFrame*);
     void slot_set_background_color(QColor);
+    void slot_paint_cutline(Global::RtsCutLineAngle, QVariant);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -134,6 +148,7 @@ private:
     static int overlay_times;
 
     bool m_axis_falg;
+    FrameInfo m_frame_info;
 };
 }
 #endif // SCALEFRAME_H

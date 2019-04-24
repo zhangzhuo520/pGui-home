@@ -79,6 +79,7 @@ void LoggerFile::init_file_logger()
             qDebug() << "make log file path error!";
         }
     }
+    Log4Qt::LogManager::setHandleQtMessages(true);
     m_file_logger = Log4Qt::Logger::logger("File");
 }
 

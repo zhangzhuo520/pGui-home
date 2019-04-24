@@ -14,6 +14,7 @@
 #include <QPainter>
 #include <QHeaderView>
 #include <QVector>
+#include <QDebug>
 
 #include "../model/ui_rtsmask_model.h"
 #include "../delegate/ui_rtsmask_delegate.h"
@@ -41,10 +42,11 @@ public:
         if (type == QStyle::CT_TabBarTab) {
             s.transpose();
             s.rwidth() = 80; // 设置每个tabBar中item的大小
-            s.rheight() = 33;
+            s.rheight() = 25;
         }
         return s;
     }
+
     void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
     {
         if (element == CE_TabBarTabLabel) {
@@ -53,19 +55,27 @@ public:
                 QRect allRect = tab->rect;
                 if (tab->state & QStyle::State_Selected) {
                     painter->save();
-                    painter->setPen(0x89cfff);
-                    painter->setBrush(QBrush(0x89cfff));
-                    painter->drawRect(allRect.adjusted(6, 6, -6, -6));
+                    painter->setPen(QColor(120, 120, 120));
+                    painter->setBrush(QBrush(QColor(150, 150, 150)));
+                    painter->drawRect(allRect.adjusted(-6, 1, -6, -1));
+                    painter->restore();
+                }
+                else
+                {
+                    painter->save();
+                    painter->setPen(QColor(150, 150, 150));
+                    painter->setBrush(QBrush(QColor(180, 180, 180)));
+                    painter->drawRect(allRect.adjusted(-8, 3, -8, -3));
                     painter->restore();
                 }
                 QTextOption option;
                 option.setAlignment(Qt::AlignCenter);
                 if (tab->state & QStyle::State_Selected) {
-                    painter->setPen(0xf8fcff);
+                    painter->setPen(QColor(20, 20, 20));
                 }
 
                 else {
-                    painter->setPen(0x5d5d5d);
+                    painter->setPen(QColor(50, 50, 50));
                 }
                 painter->drawText(allRect, tab->text, option);
                 return;
@@ -87,8 +97,9 @@ public:
     void init_ui();
     void init_tabwidget();
     void init_connection();
-
     void set_layername_list(const QStringList &);
+    void set_table_data(QStringList);
+    void set_boolean(QString);
 
     const QStringList& get_alisa_list();
     const QStringList& get_layerdata_list();
@@ -116,12 +127,14 @@ class RtsMaskTab : public RtsTabWidget
 public:
     explicit RtsMaskTab(QWidget *parent = 0);
     ~RtsMaskTab();
+    RtsMaskTab & operator=(const RtsMaskTab &);
     void init_tab(const QStringList &);
     void delete_all_tab();
     void set_layername_list(const QStringList &);
     QStringList get_alisa_list(int);
     QStringList get_layerdata_list(int);
     QString get_boolean(const int&)const;
+    const QStringList& get_layername_list()const;
 
 private:
     MaskWidget * m_mask_widget;

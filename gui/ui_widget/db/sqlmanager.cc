@@ -37,7 +37,7 @@ void SQLManager::closeDB()
     db.close();
 }
 
-QSqlDatabase SQLManager::getDatabase()
+QSqlDatabase& SQLManager::getDatabase()
 {
     return db;
 }
